@@ -1,148 +1,216 @@
-# rokid — Rokid AIUI Agents（海外版 / Global）
+# far-ear — 远听助手（Rokid 眼镜 AIUI Agent）
 
-Rokid AI 眼镜的 **AIUI 智能体** 仓库。我们只开发 Agent，不开发 App。
-组织方式：**一个 Agent 一个目录**，每个目录是一套完整的 AIUI 项目
-（`app.json` + `AGENTS.md` + `app.js` + `pages/`）。仓库根目录另放两个打包好的
-`.aix` 文件（备选导入用，见「备选方案」）。往 Studio 导入单个 Agent 走
-**专属分支**（见「Studio 导入方法」），不要直接导 main 的子目录。
+50 个「指向性生活问题」Agent 的第 17 个。看得见说话的人，
+却听不清他说什么 — 会议室前排的发言、隔着客厅的电视、
+另一个房间喊你的话。本 Agent 的解法不是放大房间声音
+（运行时没有这种能力，见下方诚实说明），而是四步：脸朝向
+声源让 4 麦阵列以远场模式拾音、电平条帮你把头对准、把
+听到的转成带「可能听错」标注的文字、最后由贴在你耳边的
+眼镜扬声器用 TTS 把那句话清楚地再说一遍。
 
-## Agents
+## 预览截图
 
-| 目录 | 说明 | 导入分支 | 真机测试状态 |
-|---|---|---|---|
-| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | `agent-my-agent` | 尚未正式导入（分支导入已实测成功） |
-| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | `agent-glasses-benchmark` | Studio 名 `12345`，Build `1.0.19`，Debug version ready |
-| `gaze-translate/` | 50 个指向性 Agent 之 #01 凝视翻译：看文字、稳头、长焦拍、翻译朗读 | `agent-gaze-translate` | 尚未导入 Studio |
+截图统一存放于仓库根目录 `screenshots/far-ear/`。
 
-每个 Agent 的真机测试信息（Studio 里的名称、Build 版本、App 分类、描述、Agent ID、状态）
-完整记录在该 Agent 目录自己的 README 里，以那里为准。
+![首页待机态（朝向 SRC NONE 如实标注、MIC idle、字幕行带 may be wrong 前缀、页脚常驻「不放大直播音频」说明）](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/far-ear/preview-far-ear-index.png)
 
-## 截图目录
+![DEMO 完成态（合成电平停在 78、朝向 DEMO 85°、样例字幕明确标注 [DEMO]「请大家看第三页」、提示可点 REPEAT 在耳边重播）](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/far-ear/preview-far-ear-demo.png)
 
-所有 Agent 的预览截图集中存放在仓库根目录的 `screenshots/` 下，一个 Agent 一个
-子目录（`screenshots/<agent>/`）。每个 Agent 的 README 都有「预览截图」一节，
-直接嵌入这些图片，在 GitHub 上打开 README 即可看图。
+## 解决的问题
 
-## 开发环境与工具链
+听不清远处人声时，人的本能是把头转向声源、侧耳去听 —
+但距离和混响不会因为你侧耳就消失，听漏的关键一句还是
+漏了。手机更帮不上忙：它不在你头上，不知道你面朝哪儿，
+拾音也不冲着你看的方向。眼镜同时有朝向感知的 4 麦阵列
+和贴耳的扬声器，于是可以把「侧耳听」变成一条链路：先
+瞄准拾音，再把内容固定成文字，最后在耳边重播 — 漏掉的
+那句有了第二次机会。
+
+## 指向性设计（为什么必须用眼镜）
+
+- **头部就是阵列的瞄准器（GAZE/HEAD）**：界面常驻显示
+  `AbsoluteOrientationSensor` 的头部朝向与来源标注
+  （SENSOR / DEMO / NONE），并明示「脸朝向声源 — 你的
+  头决定阵列朝哪儿收音」。朝向只作显示与引导，不编造、
+  不参与伪造任何方向结论。
+- **远场麦克风模式（MIC4）**：LISTEN 用 `getUserMedia`
+  的 `captureSource: 'microphone'` + `microphoneMode:
+  'far-field'` + `echoCancellation: true` 开麦 — 4 麦
+  阵列的远场模式去收远处的声音，而不是默认 wearer
+  模式那样优先收佩戴者自己的声音；开麦后读回
+  `track.getSettings()` 如实显示设备实际选中的模式。
+  模式被设备拒绝（OverconstrainedError）时回退默认
+  麦克风并如实提示，不假装模式生效。
+- **电平引导瞄准**：远场流接 Web Audio `AnalyserNode`
+  （只接分析器不接输出，防啸叫），每 100ms 算一次 RMS
+  显示电平条。脸对准声源时电平升高 — 转头找到电平
+  最高的位置，就是把阵列瞄准了声源，不用任何按钮确认。
+- **近耳重播（本 Agent 的核心把戏）**：CAPTION 用基准
+  Agent 的 `SpeechRecognition` 模式（zh-CN）把听到的
+  内容转成一行文字；REPEAT 把这行文字用 TTS 朗读。
+  眼镜扬声器就贴在耳边 — 房间那头半听半猜的一句，
+  在耳边完整再说一遍。头部稳定时点头 = REPEAT，
+  开会时不用腾手、不用低头点按钮。
+
+## 功能流程
+
+1. 待机：界面显示头部朝向与来源、电平条、MIC 状态；
+   页脚常驻一行「no live amplification」如实说明
+2. LISTEN：点 LISTEN（或 Enter）→ 查麦克风与 Web
+   Audio，不可用 FAIL 写明 → 远场模式开麦，脸朝向
+   声源，转头看电平条找最高点；STOP 立即停麦
+3. CAPTION：点 CAPTION 对当前听到的内容做一次识别
+   尝试；结果行永远带前缀「HEARD (far - may be
+   wrong):」；识别不可用显示 SKIP 并写明原因
+4. REPEAT：朗读最近一条字幕（点头亦可）；没有字幕时
+   朗读引导句。CLEAR 清空字幕与电平
+5. DEMO：合成约 3 秒起伏的假电平，随后给出一条明确
+   标注 [DEMO] 的样例字幕「请大家看第三页」，REPEAT
+   可直接朗读它 — 无麦克风无传感器也能完整演示
+
+> 诚实说明：本 Agent **不放大直播音频**。AIUI 运行时没有
+> 文档化的音频透传 / 监听（passthrough/monitoring）API，
+> 它绝不声称把房间声音放大送进耳朵。它的价值只有四件
+> 事：远场拾音、电平引导瞄准、字幕转写、近耳 TTS
+> 重播。另外，远场语音识别本来就容易出错 — 距离越远、
+> 混响越大、口音越重，错得越多；字幕行每次都带
+> 「may be wrong」标注，只能当「大概听到了什么」的
+> 参考，重要场合请走近确认，不要拿字幕当记录凭证。
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| RECORD_AUDIO | LISTEN 时以远场模式开麦：`getUserMedia` 远场拾音 + `AnalyserNode` 实时算 RMS 电平；CAPTION 时 `SpeechRecognition` 识别。只算电平数值、只留最近一条字幕在内存，不录音、不保存、不上传 |
+
+朝向传感器在 AIUI 里不需要单独的权限声明。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <name>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（终端起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/far-ear
+~/tools/bin/aix pack . -o ../dist/far-ear.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-打包注意：项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-`skills-lock.json`、`node_modules/`，否则开发文件会进包（实测 2.3 KB 会涨到 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线
+（`shot-far.js`；DEMO 截图的点击序列为 canvas 内 DEMO (240, 227)
+点 1 次后等约 5 秒待合成电平走完、样例字幕落屏：注意
+artifacts/preview.html 需先把 importmap 的 jspm 地址换成本地
+`/ink/index.js` 再复制到 preview-tools/www/）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-1. **本地开发**：在对应 Agent 目录里开发、改页面。
-2. **预览**：开发完成后用 `aix preview` 出该 Agent **所有页面**的预览图确认效果。
-3. **推 GitHub**：代码推到本仓库对应 Agent 目录，同时把同一套文件同步到该
-   Agent 的专属分支 `agent-<名字>` 的**根目录**（分支根 = Agent 根）。
-4. **Studio 导入**：Global AIUI Studio → New Agent → **Import from GitHub** →
-   粘贴分支地址导入（见下面「Studio 导入方法」），一个分支导一个 Agent。
-5. **真机测试（云端下发）**：见下面专门章节。
-6. **提交审核**：真机测试通过并确认后，在 Studio 的 **Submit** 页签填写
-   Review Information（Feature Description、Opening Message、Preview Media、Change Log）
-   并 Submit for Review。
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用
+   分支导入：`https://github.com/sakai55/rokid/tree/agent-far-ear`
+   （该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging
+   点 **Repackage and Save**，确认顶部出现绿色
+   **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版
+   Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，
+   等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 far-ear」，站在客厅一端让另一人在
+   另一端正常音量说话：点 LISTEN 转头看电平条是否在正对
+   对方时最高，点 CAPTION 看字幕与原话差多少，点 REPEAT
+   听耳边重播是否更清楚；会议场景再重复一次
 
-## Studio 导入方法（2026-10-24 实测结论，只用这一条）
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-导入对话框（IMPORT PROJECT / "GitHub Subdirectory Import"）**只有 URL 一个
-输入框**，没有分支/路径选择。Studio 把 `/tree/` 后面的**整段当作一个 ref**，
-不会拆成「ref + 路径」。由此实测：
+| 项目 | 值 |
+|---|---|
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 约 15.6 KB（本地打包 `dist/far-ear.aix`，分次打包有 ±0.01 KB 级抖动） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-- ✅ **分支地址（唯一可用）**：`https://github.com/sakai55/rokid/tree/agent-my-agent`
-  （换成目标 Agent 的分支名）。分支名是单段，能被正确解析为分支，
-  导入的就是**该分支根目录**——所以每个 Agent 有一个专属分支，
-  分支根目录放该 Agent 的全套文件。导入后生成名为 `sakai55/rokid` 的 Draft，
-  进 Studio 后改名。两个现有分支均已实测导入成功、文件树完整。
-- ❌ 子目录地址 `…/tree/main/my-agent`：报 `GitHub ref not found: main/my-agent`
-  （官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败，不是本仓库的问题）。
-- ❌ commit 号地址 `…/tree/<完整SHA>/my-agent`：同样报 ref not found。
-- ❌ 仓库根地址 `https://github.com/sakai55/rokid`：能导入，但生成的是
-  **空心 Agent**（Code 文件树为空），不能用。
-- ❌ blob 文件地址 `…/blob/main/my-agent/app.json`：能过导入，但 Run 报
-  「请先创建Agent的项目文件」，列表里也不会留下可用 Agent。
+## 验证情况
 
-改代码后要重新导入新版本：先把新文件同步到该 Agent 的分支根目录，再在
-Studio 里重新粘贴分支地址导入（或在已有草稿里更新），然后走真机测试流程。
+**已验证**
 
-## Studio 导入方法二：AIX 导入（备选保底）
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
+  解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
+  全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留；
+  6 个 bindtap 处理函数（listenTap / stopTap / captionTap /
+  repeatTap / demoTap / clearTap）全部有定义。
+- 逻辑验算：把页面对象以 wx 打桩方式加载进 Node 实测 —
+  `_levelBar` 输出正确（0 → 全空、0.78 → 8 格、>1 钳制）；
+  `_yawDeg` 四元数换算正确（单位四元数 → 0°、绕 z ±90°
+  → 90°/270°、空/短输入 → null）；DEMO 全流程模拟跑通：
+  约 3.1 秒后字幕落为「请大家看第三页」且 DEMO 标记为真，
+  电平冻结在 78，朝向行显示「AIM: 85 deg · SRC: DEMO」，
+  与预览渲染逐字一致。
+- 打包：`aix pack` 成功；`aix list` 核对包内含 README.md、AGENTS.md、
+  app.js、app.json、package.json、pages/index/index.ink
+  （artifacts/ 已被 .aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见
+  Preview Media）：首页待机态完整渲染（朝向 SRC NONE 如实
+  标注 — 预览主机方向传感器报错，页脚如实显示，不编造
+  朝向；「不放大直播音频」说明常驻）；点 DEMO 后合成
+  电平动画走完并进入完成态：电平 78、字幕行
+  「HEARD (far - may be wrong) [DEMO]: 请大家看第三页」、
+  页脚提示 REPEAT 可朗读。预览主机无麦克风、无
+  SpeechRecognition，LISTEN 的 FAIL 路径与 CAPTION 的
+  SKIP 路径为代码完备、未在此环境触发截图。
 
-仓库根目录放着打包好的 `.aix`（代码变更后用 `aix pack` 重打并更新根目录文件）：
+**未验证**
 
-- `my-agent.aix`
-- `glasses-benchmark.aix`
-- `gaze-translate.aix`
+- 真机 4 麦 `far-field` 模式是否被接受、远场拾音的实际
+  距离与电平动态范围；模式回退路径未在真机触发过。
+- 真机远场 `SpeechRecognition` 的实际错误率（距离、
+  混响、口音的影响程度）— 这是本 Agent 最大的未知数，
+  只能真机多场景实测。
+- 真机 AbsoluteOrientationSensor 朝向读数的精度与
+  零点参考；头部稳定检测、点头 REPEAT、TTS 近耳
+  重播的实际清晰度。
 
-步骤：
+---
 
-1. 在 GitHub 仓库根目录点开要导入的 `.aix` 文件，点下载按钮存到本地。
-2. 打开 Global AIUI Studio（en-US）→ New Agent → **Import from AIX**。
-3. 选择刚下载的 `.aix` 上传，导入后生成 Draft，文件树即包内完整工程。
-4. 后续同样走 Device Debug 打包保存 → 真机测试（见下文）。
+## 提审资料（Review Submission）
 
-这条路不依赖 GitHub 地址解析，GitHub 导入出问题或赶时间时用它保底；
-日常首选仍是方法一（分支地址导入），因为它直接对应仓库里的最新代码。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
 
-## ⚠️ 海外版本注意事项（必须全链路海外，缺一不可）
+### Feature Description
 
-1. **Studio 必须是 Global 站 + 英文**：只用
-   [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US)，
-   地址是 global、语言参数必须是 `en-US`。不要用国内站（aiui.rokid.com），
-   两站账号和项目不互通。
-2. **账号必须是海外版注册**：在 [account-web.rokid.com](https://account-web.rokid.com/)
-   的**英文版**注册/登录 Rokid 账号（本项目账号地区：Japan）。
-   用国内版注册的账号不算海外开发账号。
-3. **下发走云端，不走数据线**：在 Studio 里打包保存后由云端下发到眼镜，
-   不用 ADB、不用数据线直装。
-4. **手机 App 必须是海外版 Hi Rokid**：Google Play 的
-   **Hi Rokid - Rokid Glasses**（包名 `com.rokid.sprite.global.aiapp`，
-   发行方 Rokid International），**不是国内版 Rokid Ai App**。
-   眼镜资源包的更新入口在 Hi Rokid 里。
-5. 以上四点（Global 账号 + en-US Studio + 云端下发 + Hi Rokid）齐全，
-   才算海外版开发；任何一环用了国内版，链路就不通。
+Far Ear helps you catch speech from across the room - a meeting speaker, the TV, someone calling from the kitchen. Face the source: your head aims the glasses' 4-mic array in far-field mode, and a live level bar shows when your aim is on it. Tap CAPTION to turn far speech into text (always labelled may-be-wrong), then REPEAT plays it back through the speaker at your ear.
 
-## 真机测试（云端下发）详细步骤
+### Opening Message
 
-在 Global AIUI Studio（en-US）里打开该 Agent：
+Hi, I'm **Far Ear** - I help you hear far-away speech a second time, clearly.
 
-1. 进 **Device Debug** 页签，先填 **Basic Information**：
-   - Agent Icon（建议 1:1 图片）
-   - **Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清 AI 助手应在什么场景、
-     什么前提下、被什么样的用户请求唤起这个 Agent
-   - Version 和 Agent ID 由系统生成，不可手改；**Version 是 Build 号，
-     每次重新打包保存自动递增**（如 1.0.19）
-2. 在 **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功的标志**：页面顶部出现绿色状态
-   **● Debug version ready — Ready for device debugging**。
-   没出现这个状态，说明这一版还没有保存成功，App 端拉不到，不要去 App 里白等。
-4. 手机打开 **Hi Rokid**（海外版），确认已连接眼镜，进
-   「设置 → 开发者选项 → AIUI」→ 点「更新眼镜资源包」，等眼镜端下载完成，
-   看到「智能体资源包下载成功」。
-5. 对眼镜语音打开该 Agent（如「乐奇，打开 xxx」）开始真机测试。
-6. 改代码后循环：改 → 推 GitHub → Studio 更新导入 → Repackage and Save
-   （Build 号递增，重新出现 Debug version ready）→ Hi Rokid 更新眼镜资源包 → 再测。
-   **只改代码不重新 Repackage and Save，App 拉到的还是旧版。**
+Face the person or the TV and tap **LISTEN**: the far-field mic opens and the level bar rises when your aim is on the source. Tap **CAPTION** to see what was heard as text - far speech is often misheard, so the line is always marked *may be wrong*. Tap **REPEAT** (or nod) and I say it again at your ear. No live amplification - caption plus near-ear repeat. Try **DEMO** with no mic.
 
-## 提交审核
+### Preview Media
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-1. 在 Studio 的 **Submit** 页签填 Review Information：
-   Feature Description、Opening Message、Preview Media、Change Log。
-   **这四项的成稿统一放在各 Agent 自己 README 的「提审资料（Review Submission）」
-   章节里，分段写好，提交时整段复制**（Feature Description ≤500 字、
-   Opening Message ≤500 字且支持 Markdown；Preview Media 需 3–5 个
-   JPG/PNG/MP4 且至少 1 图 1 视频，每次提交前重新确认）。
-2. 确认权限声明与代码实际用到的能力一致（如定位 GEOLOCATION、相机 CAMERA、
-   录音 RECORD_AUDIO 必须在 `app.json.permissions` 里声明）。
-3. 点 **Submit for Review** 提交，等待审核结果；被拒按原因修改后
-   重新打包保存、重新提交。
+- Image 1：`artifacts/preview-far-ear-index.png`（aix preview 首页待机态：朝向 SRC NONE 如实标注、MIC idle、字幕 may be wrong 前缀与不放大说明，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-far-ear-demo.png`（DEMO 完成态：合成电平 78、[DEMO] 样例字幕「请大家看第三页」、REPEAT 待触发，本地文件）
+- Video：待真机补 — 真机录制「客厅一端 LISTEN 转头对准 → CAPTION 出字幕 → REPEAT 耳边重播」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
+
+### Change Log
+
+#### Build 1.0.0
+
+**Features added**
+
+- Head-aimed far-field listening: LISTEN opens the microphone with the documented far-field mode (with a labeled fallback to the default microphone when the device rejects that mode), feeds a Web Audio AnalyserNode, and shows a live RMS level bar every 100 ms so turning your head to the highest level aims the 4-mic array at the source; the mode the device actually selected is read back from the track settings and shown.
+- Far-speech captions: CAPTION runs one SpeechRecognition attempt (zh-CN) on what the microphone hears; the result line always carries the prefix "HEARD (far - may be wrong)" because far-field recognition is error-prone, and an unavailable recognizer produces an honest SKIP line instead of a fake caption.
+- Near-ear repeat: REPEAT speaks the latest caption through the glasses' own speaker beside your ear - a sentence half-heard across the room gets a second, clear hearing; a nod while your head is steady triggers the same repeat. The app never claims live amplification: the runtime documents no audio passthrough, and the UI footer says so permanently.
+- DEMO synthetic run: about three seconds of wandering fake level followed by a clearly tagged [DEMO] sample caption, exercising the full level → caption → repeat flow with no microphone or sensor.
+- Privacy by design: levels are computed live and no audio is recorded, stored or uploaded; only the latest caption line is kept in memory; microphone tracks are stopped and the AudioContext is closed on STOP, page hide and unload.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
