@@ -29,7 +29,7 @@
   `onOrientationStabilityChange` 报告头部稳定时才进入可扫状态
   （HEAD STEADY）；点头（`onHeadGesture` 的 `nod`）在无待确认项时
   触发扫码、有待确认项时确认加入对比表 — 用点头代替腾手点按钮；
-  摇头（shake，若宿主上报）清空表格。
+  清空表格用 CLEAR 按钮。
 - **对比表在视线内**：最多 4 件商品的价格、规格、单位价
   （每 100g / 100ml）同屏对照，单位价最低的一行高亮标 BEST，
   一行结论（VERDICT）始终可见。
@@ -46,7 +46,7 @@
    无价格不参与单位价比较）
 4. 点头或点 ADD 确认加入对比表（最多 4 件，重复码会提示已在表中）
 5. 表格自动重算单位价并标 BEST、更新结论；REMOVE 删最后一行，
-   CLEAR（或摇头）清空
+   CLEAR 清空
 6. 点 SPEAK 朗读结论
 7. DEMO 按钮：依次取内置四种牛奶作为待确认项，预览即可看到
    装满的对比表
@@ -93,11 +93,11 @@ ADD (390, 154) 交替各 4 次）。
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 12.81 KB（本地打包 `dist/shelf-compare.aix`） |
+| AIX Package Size | 12.84 KB（本地打包 `dist/shelf-compare.aix`） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -109,7 +109,7 @@ ADD (390, 154) 交替各 4 次）。
 - 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
   解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
   全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留。
-- 打包：`aix pack` 成功，`dist/shelf-compare.aix` 12.81 KB；`aix list`
+- 打包：`aix pack` 成功，`dist/shelf-compare.aix` 12.84 KB；`aix list`
   核对包内含 AGENTS.md、app.js、app.json、package.json、
   pages/index/index.ink（artifacts/ 已被 .aixignore 排除）。
 - 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见下方
@@ -122,7 +122,7 @@ ADD (390, 154) 交替各 4 次）。
 
 - 真机相机取流、wide 模式拍照与 BarcodeDetector 条码解码
   （预览主机无相机，SCAN 的 FAIL 路径已如实写明原因，真机待测）。
-- 真机头部稳定检测、点头/摇头手势、TTS 朗读结论的效果。
+- 真机头部稳定检测、点头手势、TTS 朗读结论的效果。
 - 内置目录为演示数据（约 10 件商品的示例价格/规格），未接任何
   实时商超数据源；未知条码只能以 Unknown item 加入、无单位价。
 
@@ -153,6 +153,20 @@ Aim at a product on the shelf, hold your head steady, then nod or tap **SCAN** t
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Removed the undocumented 'shake' head-gesture branch; head gestures use the documented 'nod' only (capability-boundary audit 2026-10-24).
 
 #### Build 1.0.0
 
