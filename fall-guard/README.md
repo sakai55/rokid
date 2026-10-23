@@ -18,7 +18,7 @@
 
 ## 指向性设计（为什么必须用眼镜）
 
-- **头部运动流（HEAD）**：`AbsoluteOrientationSensor` 四元数流是唯一的信号源（AIUI 没有跌倒 API）。相邻四元数夹角 ÷ 时间 = 头部角速度；任意 3 秒窗口内的姿势变化量 = 翻转增益。界面如实标注来源 `SENSOR / DEMO / NONE`。
+- **头部运动流（HEAD）**：本 Agent 只用 `AbsoluteOrientationSensor` 四元数流作信号源（运行时另有 Accelerometer/Gyroscope，本 Agent 未使用；AIUI 没有跌倒 API）。相邻四元数夹角 ÷ 时间 = 头部角速度；任意 3 秒窗口内的姿势变化量 = 翻转增益。界面如实标注来源 `SENSOR / DEMO / NONE`。
 - **两段判据（防误报的核心）**：正常回头、扭头和摔倒翻转一样快，单看速度必然天天误报——判据在第二段：翻转（3 秒内 ≥ 60°）**之后**连续 15 秒彻底静止（转速 < 15°/s 且不离开停止姿势的 3° 锥形区）。能自己动起来的人，观察立刻取消。两段缺一不可，这是写进状态机的，不是宣传话术。
 - **冻流不算静止**：传感器流中断超过 3 秒，静止观察立即取消——冻住的数据和一动不动的头长得一模一样，宁可漏观察，不拿假数据凑数。
 - **耳朵确认（MIC + TTS）**：CHECK 期间麦克风听**任意**声音（不设关键词、不做声纹——摔伤的人可能说不出完整的话），点头和点按同样有效；ALERT 的朗读是说给**附近的人**听的，这是眼镜扬声器在这个场景里真正的用途。
@@ -65,7 +65,7 @@ cd ~/workspace/rokid/fall-guard
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 20.8 KB（本地打包 `dist/fall-guard.aix`，含本 README） |
+| AIX Package Size | 约 21.2 KB（本地打包 `dist/fall-guard.aix`，含本 README） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -78,7 +78,7 @@ cd ~/workspace/rokid/fall-guard
 - 四元数夹角数学：Node 加载页面对象验证——单位四元数自夹角 0、与 rotX(90°) 夹角 90、rotX(30°) 与 rotX(80°) 夹角 50、q 与 −q 夹角 0（同一姿势）；null 与零范数输入返回 null。
 - 状态机：Node 加载页面对象（wx 打桩）跑 40 条断言全过——无翻转的 30 秒静止不触发；翻转后持续运动 20 秒不触发；翻转 + 15 秒静止进入 CHECK 并记 `check-pattern`，点按应答回 MONITOR 并记 `responded-ok`；静止观察中途动一下立刻取消且计时清零；传感器流中断使观察取消（冻流不算静止）；45° 转头 + 静止不触发（未达 60° 增益）；CHECK 静默 60 秒升级 ALERT 并记 `alert-no-response`，求助朗读文案含联系人姓名且断言全文不含「已联系 / 已呼叫」；BACK 解除记 `alert-dismissed`；手动 HELP 直达 ALERT 并记 `alert-manual`；日志上限 30 条保最新；联系人存储往返恢复。
 - DEMO 确定性：联系人为虚构「子女 · 小明」，落点为 STILL 9.0s / 15s（纯种子，无 Date 依赖）；约 6 秒后状态机自行走进 CHECK；DEMO 期间联系人不落盘、演示事件不入真实日志，CLEAR 退出后真实联系人恢复——均由断言覆盖。
-- 打包：`aix pack` 成功，20.81 KB（21,306 B）；`aix list` 核对包内含 AGENTS.md、app.js、app.json、package.json、README.md、pages/index/index.ink（artifacts/ 已被 .aixignore 排除）。
+- 打包：`aix pack` 成功，21.18 KB（21,688 B）；`aix list` 核对包内含 AGENTS.md、app.js、app.json、package.json、README.md、pages/index/index.ink（artifacts/ 已被 .aixignore 排除）。
 - 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见下方 Preview Media）：初始监测态完整渲染（预览主机无可用方向传感器，如实显示 `SRC: NONE`）；DEMO 态渲染出 STILL 种子后状态机自行升级的 CHECK 确认态（大字「你还好吗？」+ 应答倒计时），与 Node 断言行为一致。
 
 **未验证**
@@ -117,11 +117,17 @@ Honest limit: **I cannot call anyone** - only show and speak the contact. I dete
 
 ### Change Log
 
+#### Build 1.0.1
+
+**Fixes**
+
+- Corrected the on-screen detection rule to match the implementation: it previously read "JOLT > 240 deg/s", a threshold that does not exist in the code; the screen now states the real rule (a jolt is 60 degrees or more of reorientation within 3 seconds, then 15 s motionless = CHECK). Also removed the incorrect platform claim that the orientation stream is "the only motion basis in the AIUI runtime" - the runtime also documents Accelerometer/Gyroscope, which this agent does not use (capability-boundary audit, 2026-10-24).
+
 #### Build 1.0.0
 
 **Features added**
 
-- Fall-pattern state machine on the documented AbsoluteOrientationSensor quaternion stream (the only motion basis in the AIUI runtime - there is no fall-detection API): angular speed from successive quaternions, a jolt is 60 degrees or more of reorientation inside any 3-second window, and the CHECK state requires a further 15 continuous seconds of stillness (speed under 15 deg/s, inside a 3-degree cone of the stopped pose). Either half alone - a fast turn, or a motionless head - can never trigger, which is what keeps normal head turns, walking and lying down from raising false checks all day.
+- Fall-pattern state machine on the documented AbsoluteOrientationSensor quaternion stream (this agent's chosen motion basis - the runtime also documents Accelerometer/Gyroscope, which this agent does not use; there is no fall-detection API): angular speed from successive quaternions, a jolt is 60 degrees or more of reorientation inside any 3-second window, and the CHECK state requires a further 15 continuous seconds of stillness (speed under 15 deg/s, inside a 3-degree cone of the stopped pose). Either half alone - a fast turn, or a motionless head - can never trigger, which is what keeps normal head turns, walking and lying down from raising false checks all day.
 - Spoken check with open response: on a match the glasses ask 'are you OK?' immediately and every 15 seconds, listen for ANY recognized speech (deliberately no keyword and no voiceprint - a hurt person may only manage a groan), and accept a head nod, an OK tap or the Enter key as the same answer; a response logs 'responded-ok' and returns to monitoring. Movement during the stillness watch, and any break in the sensor stream (a frozen stream would otherwise fake stillness), cancels the watch outright.
 - Pre-set emergency contact card: relation cycled with REL (child / spouse / neighbor / caregiver), the name dictated once with NAME and stored verbatim on-device (wx key fallGuardContact - a name is never silently 'corrected'); 60 seconds without a response, or a manual HELP tap in any state, raises the ALERT card, which shows the contact in big type and reads the help sentence aloud every 20 seconds (with a dial-120 fallback line when no contact is set). An on-device event log (times and outcome categories only, capped at 30, wx key fallGuardLog) supports family review.
 - DEMO simulation, memory only: a synthetic 95-degree jolt followed by stillness lands in the STILL watch at 9.0 of 15 seconds and escalates into CHECK on its own seconds later; the demo contact is fictional and labeled DEMO, is never persisted, and demo events never enter the real log.

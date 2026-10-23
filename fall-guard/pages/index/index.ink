@@ -13,7 +13,7 @@ export default {
     sensorLine: 'MOTION: --- deg/s · SRC: NONE',
     stateLine: 'STATE: MONITOR · CONTACT —',
     rows: [
-      { text: 'JOLT > 240 deg/s, then 15 s motionless = CHECK' },
+      { text: 'JOLT: 60°+ turn within 3 s, then 15 s motionless = CHECK' },
       { text: 'CHECK asks 60 s - any reply, nod or OK cancels' },
       { text: 'NO REPLY = ALERT card (it cannot call anyone)' },
       { text: 'EVENTS LOGGED: 0 (times + outcomes only)' }
@@ -124,9 +124,11 @@ export default {
 
   // ---------- orientation stream ----------
   //
-  // The only documented motion basis is the AbsoluteOrientationSensor
-  // quaternion stream (about 5 Hz here) plus the host's
-  // onOrientationStabilityChange events. There is no fall API, so
+  // This agent uses only the AbsoluteOrientationSensor quaternion
+  // stream (about 5 Hz here) plus the host's
+  // onOrientationStabilityChange events. (The runtime also documents
+  // Accelerometer/Gyroscope; this agent does not use them.) There is
+  // no fall API, so
   // this agent watches a PATTERN in that stream:
   //   angle between successive quaternions  -> angular speed
   //   a fast reorientation (gain over a 3 s window) -> "jolt"
@@ -691,7 +693,7 @@ export default {
         (this._stable === null ? '' : (this._stable ? ' · HOST: stable' : ' · HOST: moving')),
       stateLine: 'STATE: ' + this._state + ' · CONTACT ' + contactTxt,
       rows: [
-        { text: 'JOLT > 240 deg/s, then 15 s motionless = CHECK' },
+        { text: 'JOLT: 60°+ turn within 3 s, then 15 s motionless = CHECK' },
         { text: 'CHECK asks 60 s - any reply, nod or OK cancels' },
         { text: 'NO REPLY = ALERT card (it cannot call anyone)' },
         { text: 'EVENTS LOGGED: ' + this._log.length + (last
