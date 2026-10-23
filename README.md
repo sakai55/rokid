@@ -1,148 +1,223 @@
-# rokid — Rokid AIUI Agents（海外版 / Global）
+# posture-guard — 姿势守卫（Rokid 眼镜 AIUI Agent）
 
-Rokid AI 眼镜的 **AIUI 智能体** 仓库。我们只开发 Agent，不开发 App。
-组织方式：**一个 Agent 一个目录**，每个目录是一套完整的 AIUI 项目
-（`app.json` + `AGENTS.md` + `app.js` + `pages/`）。仓库根目录另放两个打包好的
-`.aix` 文件（备选导入用，见「备选方案」）。往 Studio 导入单个 Agent 走
-**专属分支**（见「Studio 导入方法」），不要直接导 main 的子目录。
+50 个「指向性生活问题」Agent 的第 32 个。低头看手机、看电脑
+久了脖子僵——你不是不知道要抬头，你是没意识到这一低头就
+是四十分钟。本 Agent 先让你看正前方校准一次「你的平视」，
+之后持续监测头部俯仰：低过平视 25° 就给这一段低头计时，
+超限时轻轻出声提醒一次「抬头休息一下」，抬头即停。
 
-## Agents
+> ⚠️ **诚实定位（先读）**：它量的是**头低的角度**，不是
+> 你的脖子。它测不到颈椎受力，也不知道你在看什么——桌上
+> 摊一本书读，低头角度和玩手机一模一样，照样计时。它是
+> 休息提醒，不是体态检测仪，更不是医疗建议；脖子持续
+> 疼痛请看医生。
 
-| 目录 | 说明 | 导入分支 | 真机测试状态 |
-|---|---|---|---|
-| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | `agent-my-agent` | 尚未正式导入（分支导入已实测成功） |
-| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | `agent-glasses-benchmark` | Studio 名 `12345`，Build `1.0.19`，Debug version ready |
-| `gaze-translate/` | 50 个指向性 Agent 之 #01 凝视翻译：看文字、稳头、长焦拍、翻译朗读 | `agent-gaze-translate` | 尚未导入 Studio |
+## 预览截图
 
-每个 Agent 的真机测试信息（Studio 里的名称、Build 版本、App 分类、描述、Agent ID、状态）
-完整记录在该 Agent 目录自己的 README 里，以那里为准。
+截图统一存放于仓库根目录 `screenshots/posture-guard/`。
 
-## 截图目录
+![未校准初始态：预览主机无传感器如实显示 SRC: NONE，等待看正前方点 CAL](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/posture-guard/preview-posture-guard-index.png)
 
-所有 Agent 的预览截图集中存放在仓库根目录的 `screenshots/` 下，一个 Agent 一个
-子目录（`screenshots/<agent>/`）。每个 Agent 的 README 都有「预览截图」一节，
-直接嵌入这些图片，在 GitHub 上打开 README 即可看图。
+![DEMO 监测中：模拟低头 34°，演示时钟 60 倍速使这一段跨过 20 分钟上限，提醒已触发（抬头休息一下）](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/posture-guard/preview-posture-guard-reminder.png)
 
-## 开发环境与工具链
+## 解决的问题
+
+颈椎的账是按「连续低头时长」算的，但人对低头时长完全没
+有感觉：刷手机「就看五分钟」，抬头时一个小时没了。手机
+的屏幕使用时间统计管的是 App，管不了你的头低了多久；
+定个番茄钟又太粗——中间你明明抬头活动过，它照样响。
+眼镜的独特之处在于：它就戴在你的头上，头部俯仰角是它的
+原生读数。把「这一段低头」做成一个有暂停、有清零规则的
+状态机，提醒才贴合真实的脖子，而不是贴合钟表。
+
+## 指向性设计（为什么必须用眼镜）
+
+- **俯仰 = 头部原生读数（HEAD）**：`AbsoluteOrientationSensor`
+  四元数取俯仰。低头是绕眼镜横轴（镜腿轴线）的转动，对应
+  ZYX 欧拉分解的 `atan2(2(wx+yz), 1−2(x²+y²))`；合成
+  四元数验证：平视佩戴约 +90°、低头 30° 约 +60°、抬头
+  20° 约 +110°，且不随头部朝向（yaw）变化。
+- **校准定平视（CAL）**：读数的绝对值没有意义——每个人
+  戴眼镜的角度都不同。看正前方点 CAL，当前读数就是你的
+  平视基准，DROOP 永远是「基准 − 当前读数」，正数 = 头在
+  平视以下。基准与上限存 wx 同步存储 `postureGuard`。
+- **低头段状态机（防骗规则）**：DROOP > 25° 算 DOWN 并
+  累计这一段（stretch）；抬头不到 10 秒只**暂停**（扭头
+  看一眼门不算休息），满 10 秒才**清零**并重新武装提醒；
+  累计达到上限，提醒在这一段里恰好触发**一次**。传感器
+  读数缺失时一切暂停——不累计、也不清零。
+- **耳朵提醒（TTS）**：超限时大字「抬头休息一下」+ 朗读
+  「你已经低头二十分钟了，抬头看看远处，活动一下脖子。」
+  （分钟数随上限变）。SPEAK 随时朗读本次统计：累计低头、
+  最长一段、已提醒次数。
+- **不编读数（诚实边界）**：来源如实标注
+  `SENSOR / DEMO / NONE`；没有读数时 CAL 直接拒绝，绝不
+  编造一个平视基准（同 #07 / #30 的规则）。
+
+## 功能流程
+
+1. 校准（一次性）：舒适地看正前方，点 CAL → 平视基准
+   落盘；换了使用姿势（坐 ↔ 躺）重新 CAL 即可
+2. 监测：打开 Agent 后自动计时——低头超过 25°，STRETCH
+   开始累计；短暂抬头（<10 秒）只暂停，抬头满 10 秒
+   清零；达到上限（LIMIT 轮换 5 / 10 / 20 分钟，默认 20）
+   朗读提醒一次，此后这段内不再重复
+3. 统计：列表常驻 STRETCH 进度、本次累计低头、最长
+   一段、提醒次数；SPEAK 朗读统计；RESET 开新会话
+   （保留校准），CLEAR 清除校准
+4. DEMO 仿真：内存里模拟一位监测中的佩戴者（不写存储、
+   不覆盖真实校准）：平视 90°、当前低头 34°、进行中的
+   一段已累计 18:24 / 20:00，本次统计为纯常数（最长一段
+   24:12 + 当前段 18:24 = 累计 42:36，此前已提醒过
+   1 次）。演示时钟 60 倍速——进入几秒后这一段跨过
+   上限、提醒真实触发；再点 DEMO 在低头 34° / 抬头 −6°
+   间切换。DEMO 中点 CLEAR 退出演示并恢复真实校准
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| （无） | 本 Agent 不声明任何权限：不用相机、不用麦克风、不用定位 |
+
+app.json 无 `permissions` 字段（同 #07 / #15 / #28 / #30）；头部
+朝向传感器在 AIUI 里不需要单独的权限声明。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <name>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（终端起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/posture-guard
+~/tools/bin/aix pack . -o ../dist/posture-guard.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-打包注意：项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-`skills-lock.json`、`node_modules/`，否则开发文件会进包（实测 2.3 KB 会涨到 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线
+（`shot-posture.js`；Shot A = 初始未校准态无点击；Shot B = 点
+DEMO 一次（canvas 坐标 238,316，视觉定位确认）等待约 4 秒，
+演示时钟 60 倍速使 STRETCH 跨过 20:00、提醒态入镜）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-1. **本地开发**：在对应 Agent 目录里开发、改页面。
-2. **预览**：开发完成后用 `aix preview` 出该 Agent **所有页面**的预览图确认效果。
-3. **推 GitHub**：代码推到本仓库对应 Agent 目录，同时把同一套文件同步到该
-   Agent 的专属分支 `agent-<名字>` 的**根目录**（分支根 = Agent 根）。
-4. **Studio 导入**：Global AIUI Studio → New Agent → **Import from GitHub** →
-   粘贴分支地址导入（见下面「Studio 导入方法」），一个分支导一个 Agent。
-5. **真机测试（云端下发）**：见下面专门章节。
-6. **提交审核**：真机测试通过并确认后，在 Studio 的 **Submit** 页签填写
-   Review Information（Feature Description、Opening Message、Preview Media、Change Log）
-   并 Submit for Review。
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用
+   分支导入：`https://github.com/sakai55/rokid/tree/agent-posture-guard`
+   （该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging
+   点 **Repackage and Save**，确认顶部出现绿色
+   **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版
+   Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，
+   等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 posture-guard」，先看正前方点 CAL，
+   再低头看手机：把 LIMIT 临时切到 5 分钟验证提醒触发一次、
+   中途抬头 5 秒验证只暂停不清零、抬头 15 秒验证清零，
+   然后切回 20 分钟日常使用
 
-## Studio 导入方法（2026-10-24 实测结论，只用这一条）
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-导入对话框（IMPORT PROJECT / "GitHub Subdirectory Import"）**只有 URL 一个
-输入框**，没有分支/路径选择。Studio 把 `/tree/` 后面的**整段当作一个 ref**，
-不会拆成「ref + 路径」。由此实测：
+| 项目 | 值 |
+|---|---|
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 约 17.5 KB（本地打包 `dist/posture-guard.aix`，含本 README） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-- ✅ **分支地址（唯一可用）**：`https://github.com/sakai55/rokid/tree/agent-my-agent`
-  （换成目标 Agent 的分支名）。分支名是单段，能被正确解析为分支，
-  导入的就是**该分支根目录**——所以每个 Agent 有一个专属分支，
-  分支根目录放该 Agent 的全套文件。导入后生成名为 `sakai55/rokid` 的 Draft，
-  进 Studio 后改名。两个现有分支均已实测导入成功、文件树完整。
-- ❌ 子目录地址 `…/tree/main/my-agent`：报 `GitHub ref not found: main/my-agent`
-  （官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败，不是本仓库的问题）。
-- ❌ commit 号地址 `…/tree/<完整SHA>/my-agent`：同样报 ref not found。
-- ❌ 仓库根地址 `https://github.com/sakai55/rokid`：能导入，但生成的是
-  **空心 Agent**（Code 文件树为空），不能用。
-- ❌ blob 文件地址 `…/blob/main/my-agent/app.json`：能过导入，但 Run 报
-  「请先创建Agent的项目文件」，列表里也不会留下可用 Agent。
+## 验证情况
 
-改代码后要重新导入新版本：先把新文件同步到该 Agent 的分支根目录，再在
-Studio 里重新粘贴分支地址导入（或在已有草稿里更新），然后走真机测试流程。
+**已验证**
 
-## Studio 导入方法二：AIX 导入（备选保底）
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
+  解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
+  全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留；
+  app.json 无 `permissions` 字段（零权限，与设计一致）。
+- 俯仰数学：用 Node 载入页面对象的 `_pitchDeg` 喂合成
+  四元数——单位四元数 0°、平视佩戴姿态 90°、低头 30°
+  得 60°、抬头 20° 得 110°、叠加 50° yaw 后仍为 90°
+  （俯仰读数与朝向无关）；坏四元数返回 null；DROOP 符号
+  验证（低头为正、抬头为负）。
+- 低头段状态机：Node 加载页面对象（wx 打桩）跑 61 条断言
+  全过——DOWN 时间逐 tick 累计、299750ms 不提醒 /
+  300000ms 恰好触发（上限 5 分钟档）、提醒文案与上限
+  分钟数一致、同一段内持续低头不重复提醒、抬头 9750ms
+  只暂停（段保留、提醒不重新武装、抬头时间不计入累计）、
+  抬头满 10000ms 清零并重新武装、新一段可再次触发、
+  DROOP 恰好 25° 不算 DOWN / 25.1° 算、读数缺失时段与
+  抬头计时双双冻结、RESET 保校准清统计、CLEAR 清校准
+  并落盘、校准经存储往返恢复、上限 5/10/20 轮换并落盘。
+- DEMO 确定性：同套断言验证 DEMO 落点——模拟平视 90°、
+  低头 34°、STRETCH 恰为 18:24 / 20:00、最长 24:12 与
+  当前段 18:24 合计恰为累计 42:36（纯常数、无 Date）、
+  列表行文案与 DROOP 行与断言一致；60 倍速时钟下 6 个
+  有效 tick 推进到 19:54 不触发、第 7 个跨过 20:00 触发
+  提醒且文案为 PLAN 的二十分钟句；DEMO 全程不写 wx
+  存储，CLEAR 退出后恢复真实设置。
+- 打包：`aix pack` 成功（大小见上表）；`aix list` 核对包内含
+  AGENTS.md、app.js、app.json、package.json、README.md、
+  pages/index/index.ink（artifacts/ 已被 .aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见下方
+  Preview Media）：初始未校准态完整渲染（预览主机无可用
+  方向传感器，如实显示 `SRC: NONE`，CAL 拒绝路径与设计
+  一致）；DEMO 态渲染出低头 34°、STRETCH 跨过上限后
+  的提醒态（大字「抬头休息一下」），与 Node 断言的演示
+  时钟行为一致。
 
-仓库根目录放着打包好的 `.aix`（代码变更后用 `aix pack` 重打并更新根目录文件）：
+**未验证**
 
-- `my-agent.aix`
-- `glasses-benchmark.aix`
-- `gaze-translate.aix`
+- 真机 AbsoluteOrientationSensor 的俯仰精度/零点与 5Hz
+  读数下状态机的实际手感——预览主机没有可用传感器，
+  未测；尤其眼镜佩戴松紧、镜腿角度对平视基准的影响，
+  要在真机上校准后低头看一段手机才有结论。
+- 25° 阈值与「抬头 10 秒清零」在真机日常使用中是否合
+  适（会不会提醒太勤/太钝）——经验规则，需真机长时
+  佩戴调整。
+- TTS 提醒（超限朗读与 SPEAK 统计）在真机上的效果。
+- 本 Agent 不判断颈椎状态，这是设计定位而非缺陷：
+  持续疼痛请就医。
 
-步骤：
+---
 
-1. 在 GitHub 仓库根目录点开要导入的 `.aix` 文件，点下载按钮存到本地。
-2. 打开 Global AIUI Studio（en-US）→ New Agent → **Import from AIX**。
-3. 选择刚下载的 `.aix` 上传，导入后生成 Draft，文件树即包内完整工程。
-4. 后续同样走 Device Debug 打包保存 → 真机测试（见下文）。
+## 提审资料（Review Submission）
 
-这条路不依赖 GitHub 地址解析，GitHub 导入出问题或赶时间时用它保底；
-日常首选仍是方法一（分支地址导入），因为它直接对应仓库里的最新代码。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
 
-## ⚠️ 海外版本注意事项（必须全链路海外，缺一不可）
+### Feature Description
 
-1. **Studio 必须是 Global 站 + 英文**：只用
-   [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US)，
-   地址是 global、语言参数必须是 `en-US`。不要用国内站（aiui.rokid.com），
-   两站账号和项目不互通。
-2. **账号必须是海外版注册**：在 [account-web.rokid.com](https://account-web.rokid.com/)
-   的**英文版**注册/登录 Rokid 账号（本项目账号地区：Japan）。
-   用国内版注册的账号不算海外开发账号。
-3. **下发走云端，不走数据线**：在 Studio 里打包保存后由云端下发到眼镜，
-   不用 ADB、不用数据线直装。
-4. **手机 App 必须是海外版 Hi Rokid**：Google Play 的
-   **Hi Rokid - Rokid Glasses**（包名 `com.rokid.sprite.global.aiapp`，
-   发行方 Rokid International），**不是国内版 Rokid Ai App**。
-   眼镜资源包的更新入口在 Hi Rokid 里。
-5. 以上四点（Global 账号 + en-US Studio + 云端下发 + Hi Rokid）齐全，
-   才算海外版开发；任何一环用了国内版，链路就不通。
+Posture Guard watches your head pitch so long phone-and-laptop sessions stop ending in a stiff neck. Calibrate once by looking straight ahead; from then on the glasses measure how far your head droops below that neutral. Droop past 25 degrees for the limit you pick (5, 10 or 20 minutes - brief lifts under 10 seconds only pause the clock) and it speaks one gentle reminder to look up and roll your neck. Session totals, longest stretch and reminder count stay on screen.
 
-## 真机测试（云端下发）详细步骤
+### Opening Message
 
-在 Global AIUI Studio（en-US）里打开该 Agent：
+Hi, I'm **Posture Guard** - I keep an eye on how long your head stays down.
 
-1. 进 **Device Debug** 页签，先填 **Basic Information**：
-   - Agent Icon（建议 1:1 图片）
-   - **Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清 AI 助手应在什么场景、
-     什么前提下、被什么样的用户请求唤起这个 Agent
-   - Version 和 Agent ID 由系统生成，不可手改；**Version 是 Build 号，
-     每次重新打包保存自动递增**（如 1.0.19）
-2. 在 **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功的标志**：页面顶部出现绿色状态
-   **● Debug version ready — Ready for device debugging**。
-   没出现这个状态，说明这一版还没有保存成功，App 端拉不到，不要去 App 里白等。
-4. 手机打开 **Hi Rokid**（海外版），确认已连接眼镜，进
-   「设置 → 开发者选项 → AIUI」→ 点「更新眼镜资源包」，等眼镜端下载完成，
-   看到「智能体资源包下载成功」。
-5. 对眼镜语音打开该 Agent（如「乐奇，打开 xxx」）开始真机测试。
-6. 改代码后循环：改 → 推 GitHub → Studio 更新导入 → Repackage and Save
-   （Build 号递增，重新出现 Debug version ready）→ Hi Rokid 更新眼镜资源包 → 再测。
-   **只改代码不重新 Repackage and Save，App 拉到的还是旧版。**
+Look **straight ahead** and tap **CAL** once. After that I time every head-down stretch: droop past **25 degrees** counts as down, a lift under **10 seconds** only pauses the clock, and at your **limit** (tap LIMIT: 5 / 10 / 20 min) I remind you **once** per stretch to look up. I measure **head pitch only**, not your spine - a break reminder, not medical advice. Persistent pain? Please see a doctor.
 
-## 提交审核
+### Preview Media
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-1. 在 Studio 的 **Submit** 页签填 Review Information：
-   Feature Description、Opening Message、Preview Media、Change Log。
-   **这四项的成稿统一放在各 Agent 自己 README 的「提审资料（Review Submission）」
-   章节里，分段写好，提交时整段复制**（Feature Description ≤500 字、
-   Opening Message ≤500 字且支持 Markdown；Preview Media 需 3–5 个
-   JPG/PNG/MP4 且至少 1 图 1 视频，每次提交前重新确认）。
-2. 确认权限声明与代码实际用到的能力一致（如定位 GEOLOCATION、相机 CAMERA、
-   录音 RECORD_AUDIO 必须在 `app.json.permissions` 里声明）。
-3. 点 **Submit for Review** 提交，等待审核结果；被拒按原因修改后
-   重新打包保存、重新提交。
+- Image 1：`artifacts/preview-posture-guard-index.png`（aix preview 初始未校准态：SRC: NONE、等待 CAL，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-posture-guard-reminder.png`（DEMO 提醒态：模拟低头 34°，60 倍速时钟使 STRETCH 跨过 20:00 上限，大字「抬头休息一下」，本地文件）
+- Video：待真机补 — 真机录制「看正前方 CAL → 低头看手机（LIMIT 临时切 5 分钟）→ 提醒触发 → 抬头 15 秒清零」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
+
+### Change Log
+
+#### Build 1.0.0
+
+**Features added**
+
+- Head-pitch monitoring from the AbsoluteOrientationSensor quaternion: pitch is the ZYX-Euler X angle (nodding about the glasses' lateral axis), validated in Node against synthetic quaternions (level worn pose about +90 degrees, nod down 30 about +60, look up 20 about +110, invariant to yaw). DROOP is always the difference from your own calibrated neutral, never an absolute anatomical claim.
+- One-tap calibration (CAL): look straight ahead and the current reading becomes your neutral, persisted on-device in wx storage (key postureGuard, together with the reminder limit); CAL honestly refuses when no pitch reading exists instead of inventing a neutral, and re-calibrating invalidates the running stretch.
+- Head-down stretch state machine (250 ms tick): droop over 25 degrees counts as DOWN and accumulates; a lift under 10 seconds only pauses the stretch (a glance at the door earns no fresh neck), a lift of 10 seconds or more resets it and re-arms the reminder; a missing sensor reading freezes everything - no growth, no reset. At the limit the reminder fires exactly once per stretch: big on-screen break prompt plus a spoken Chinese reminder whose minute count follows the limit.
+- Reminder limit selector (LIMIT): 5 / 10 / 20 minutes, default 20, persisted; session stats always on screen (current stretch against the limit, session head-down total, longest stretch, reminder count) and readable aloud via SPEAK; RESET starts a new session keeping the calibration, CLEAR removes it; DEMO simulates a wearer mid-session in memory only (neutral 90 degrees, droop 34 degrees, stretch seeded at 18:24 of 20:00 from pure constants, session stats seeded coherently) on a stated 60x accelerated clock so the reminder genuinely fires seconds after entry, and further DEMO taps toggle the simulated head down/up.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
