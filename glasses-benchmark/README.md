@@ -2,6 +2,22 @@
 
 第一个开发测试智能体：一键跑完 Rokid 眼镜在 AIUI 下的全部功能，共 21 项。
 
+## 真机测试信息（Global AIUI Studio · Device Debug）
+
+| 项目 | 值 |
+|---|---|
+| Agent Name（Studio） | 12345 |
+| Version（Build） | 1.0.19 |
+| App Category | Life |
+| Intent Description | full |
+| Agent ID | ca29aef525bd42db377edba9021656 |
+| AIX Package Size | 7.93 KB |
+| 状态 | ● Debug version ready — Ready for device debugging |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
+
+> 每次在 Studio 里 Repackage and Save 后，Build 号会递增，上表同步更新。
+
 ## 测试项
 
 | # | 项目 | 测什么 |
@@ -38,11 +54,13 @@
 ~/tools/bin/aix preview .
 ```
 
-## 真机测试（路径一）
+## 真机测试（海外版 · 云端下发）
 
-1. 推到 GitHub → Global AIUI Studio 从 GitHub 导入
-2. Studio「构建与提审」打包保存新版本
-3. Rokid AI App → 设置 → 开发者选项 → AIUI → 更新眼镜资源包
+1. 推到 GitHub → Global AIUI Studio（en-US）从 GitHub 导入（子目录 `glasses-benchmark`）
+2. Studio 的 **Device Debug** 页签填 Basic Information（Name / Category / Intent Description），
+   在 AIX Packaging 点 **Repackage and Save**，确认顶部出现绿色
+   **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版，不是国内版 Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包
 4. 对眼镜说「乐奇，打开 glasses-benchmark」，点 RUN ALL
 
 注意：07 Fetch 需要眼镜联网（经手机蓝牙/Wi-Fi）；14 定位、10/11 麦克风/相机
