@@ -1,196 +1,130 @@
-<div align="center">
+# cross-street — 过街确认（Rokid 眼镜 AIUI Agent）
 
-# `rokid` — Rokid AIUI Agents
+50 个「指向性生活问题」Agent 的第 34 个。过马路出事，往往不是不会看，而是走神——低头看手机、想着心事，一侧根本没看就迈了步。本 Agent 在你起步之前管住你的头：先左转头停稳、再右转头停稳（顺序可反），两侧都确认了才播报「左右都看过了」。
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
+> ⚠️ **诚实定位（先读）**：它确认的是**你的头转过去并停稳了**，不是「路上没车」。它没有相机参与、看不见车辆、电动车和信号灯——PLAN 里这项写的「可通行参考」，在本 Agent 里只落实为对**看的动作**的完成记录，判定行逐字是「双向确认完成（仅供参考）— 眼镜看不见车辆，过街全程请继续观察」。界面与朗读文案里不存在任何「可以通行 / 安全通过」式的说法。它消灭的只有一种失败：忘了看、只看了一边。
 
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
+## 预览截图
 
-</div>
+截图统一存放于仓库根目录 `screenshots/cross-street/`。
 
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：根目录的 `<slug>.aix` 下载后走 **Import from AIX**。
+![初始态：站在路边面朝马路点 START；预览主机无传感器如实显示 SRC: NONE，规则与进度条常驻界面](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/cross-street/preview-cross-street-index.png)
 
-## 目录
+![DEMO 进行态：基准 100°，左侧已确认，头在 +40°，指引「向右还差 20° 到确认区」；DEMO 不写日志（LOG 仍为 0）](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/cross-street/preview-cross-street-ritual.png)
 
-- [仓库结构](#仓库结构)
-- [Agents](#agents)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
+## 解决的问题
 
-## 仓库结构
+「左右看」是每个人都学过的动作，失败模式不在知识而在执行：赶时间、低头看手机、和同伴说话、只朝来车方向瞥一眼就走。特别是安静又快的电动车，常常就从没看的那一侧过来。手机做不了这件事——它不知道你的头朝哪；眼镜可以：它就长在头上，头部朝向就是现成的信号。把过街拆成一个不可跳步的仪式：基准、一侧确认、另一侧确认，每一步都要用真实的转头 + 停稳来完成，过完这个仪式，「没看」这件事就没有藏身之处了。
 
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── <slug>.aix                 # 每个 Agent 打包好的 AIX（根目录，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
-```
+## 指向性设计（为什么必须用眼镜）
 
-## Agents
+- **基准朝向（HEAD）**：`AbsoluteOrientationSensor` 四元数算 yaw。START 时你面朝马路的朝向被存为基准——眼镜不知道马路在哪，基准就是你点开始时脸朝的方向，这是明说的约定而不是假装的定位。
+- **相对转头角（HEAD）**：rel = 当前朝向 − 基准（−180..180，+ = 右转，与全系列一致的符号约定）。左右各 ≥60° 才进确认区；界面上的进度条把 rel 实时画出来：`◆` 是你的头，`+` 是两侧 ±60° 确认区，`|` 是基准方向，还差多少度一目了然。
+- **停稳判定（HEAD 稳定性）**：进了确认区还要连续停稳 1 秒——头部朝向 250ms 内没有 ≥2° 变化、样本流活着、且宿主 `onOrientationStabilityChange` 没有报告移动中。样本流超过 750ms 没有新样本即视为已断（5Hz 下正常间隔约 200ms）：冻住的流和停稳的头长得一样，绝不拿它凑数；且 250ms 沉降 + 1000ms 保持放不进 750ms 的死亡窗口，流一断，保持永远攒不满。点头只朗读进度——点头是俯仰，永远冒充不了转头。
+- **耳朵收尾（TTS）**：每侧确认即出声播报，免得你低头看界面；双确认后朗读判定，全程不用手、不用看屏幕细节。
 
-### 基础与工具
+## 功能流程
 
-| 目录 | 说明 | 导入分支 | 状态 |
-|---|---|---|---|
-| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | `agent-my-agent` | 分支导入已实测成功 |
-| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | `agent-glasses-benchmark` | Studio 名 `12345` · Build `1.0.19` · Debug version ready |
-| `gaze-translate/` | 指向性 Agent #01 凝视翻译：看文字 → 稳头 → 长焦拍 → 翻译朗读 | `agent-gaze-translate` | 本地全流程完成，待 Studio 导入 |
+1. 站到路边，面朝你要过的马路，点 START（或按 Enter）：当前朝向存为基准，界面显示 `REF: xxx°`
+2. 向左转头超过 60°，停稳 1 秒 → 左侧 ✓ + 朗读「左边看过了。」（先右后左完全一样，顺序不限）
+3. 向另一侧转头超过 60°，停稳 1 秒 → 右侧 ✓；两侧齐了进入完成态：大字「左右都看过了 — LOOKED BOTH WAYS」+ 逐字判定行 + 朗读「左右都看过了。过街时请继续左右观察，注意车辆。」
+4. 完成时间记入本机日志 `crossStreetLog`（只存时间，最多 30 条）；LOG 朗读累计次数与最近一次；RESET 回到路边重来（日志保留）；CLEAR 清日志（DEMO 中点 CLEAR 是退出演示）
 
-### 指向性 Agent（50 个计划 · #01–#33 已落地）
+## 权限
 
-每个 slug 对应：目录 `<slug>/` · 根目录包 `<slug>.aix` · 分支 `agent-<slug>` · 截图 `screenshots/<slug>/`。
-功能与状态看各自目录里的 README。
+| 权限 | 用途 |
+|---|---|
+| （无） | 本 Agent 不申请任何权限 |
 
-|  |  |  |  |
-|---|---|---|---|
-| `gaze-translate` | `shelf-compare` | `expiry-check` | `plant-doctor` |
-| `manual-lens` | `head-nav` | `find-my-thing` | `meet-point` |
-| `parking-return` | `sound-compass` | `far-ear` | `ambient-captions` |
-| `name-call` | `cook-along` | `assemble-guide` | `baby-care-hands` |
-| `med-look` | `home-find` | `meter-reader` | `home-patrol` |
-| `parcel-sort` | `clean-check` | `fresh-pick` | `outfit-check` |
-| `receipt-keeper` | `market-radar` | `allergen-guard` | `garden-hands` |
-| `repair-buddy` | `exit-radar` | `cry-watch` | `posture-guard` |
-| `fall-guard` |  |  |  |
+不用相机、不用麦克风、不用定位；头部朝向传感器在 AIUI 里不需要单独的权限声明，故 app.json 无 `permissions` 字段（同 #07 / #15 / #28 / #30）。
 
-> 每个 Agent 的真机测试信息（Studio 名称 / Build / 分类 / 描述 / Agent ID / 状态）
-> 完整记录在**该 Agent 自己目录的 README** 里，以那里为准。
-
-## 快速开始
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/cross-street
+~/tools/bin/aix pack . -o ../dist/cross-street.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线（`shot-cross.js`；Shot A = 初始路边态无点击；Shot B = 点 DEMO 一次（canvas 坐标 233,308，视觉定位），落在进行态 1/2：左侧已确认、头在 +40°、向右还差 20°）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-```mermaid
-flowchart LR
-    A[本地开发<br/>slug 目录] --> B[aix preview<br/>全部页面预览图]
-    B --> C[推 GitHub<br/>main 目录 + 根 .aix + 截图]
-    C --> D[同步分支<br/>agent-slug 根目录]
-    D --> E[Studio 导入<br/>tree/agent-slug]
-    E --> F[Device Debug<br/>Repackage and Save]
-    F --> G[Hi Rokid<br/>更新眼镜资源包]
-    G --> H[眼镜语音打开<br/>真机测试]
-    H --> I[Submit<br/>提交审核]
-```
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用分支导入：`https://github.com/sakai55/rokid/tree/agent-cross-street`（该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging 点 **Repackage and Save**，确认顶部出现绿色 **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版 Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 cross-street」；**先在安全的人行道/空地验证、不要站在车行道上调参数**：面朝一个方向点 START，依次左转 60° 以上停稳、右转 60° 以上停稳，应听到两侧播报与双确认判定；再验证只转一侧、转够但不停稳、快速甩头扫过都不确认；**重点验证左右符号**：左转时界面 REL 应为负、指引应指向左（与兄弟 Agent 共用同一套符号约定，真机首次必须实测一次）；最后再到真实路口完整走一遍——并照常边过街边左右观察
 
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放根目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 项目 | 值 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 约 19.3 KB（本地打包 `dist/cross-street.aix`，含本 README） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-**分支法要点**
+## 验证情况
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+**已验证**
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON 解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留；app.json **确实没有** `permissions` 字段，与零权限设计一致（断言覆盖）。
+- 文案纪律：断言页面源码包含逐字判定行「双向确认完成（仅供参考）— 眼镜看不见车辆，过街全程请继续观察」，且不含「安全通过 / 可以安全过街 / 可以通行 / 安全过街 / 可以过街 / 放心通过 / 通行许可 / 可以过了」中任何一串——判定只记录「看过」，从不宣称路是空的。
+- 相对角数学：Node 加载页面对象验证——`_rel` 跨 0°/360° 环绕正确（基准 350°、头转到 50° = +60；基准 10°、头转到 310° = −60），进度条 21 格、基准位与 ◆ 位置正确（含 +40 → 第 14 格、−70 → 第 2 格、钳制在两端）。
+- 状态机：Node 加载页面对象（wx 打桩）跑 **84 条断言全过**——无朝向时 START 拒绝且不编造基准；快速甩头扫过 −70° 不确认（转头未停稳）；在 +30° 完美停稳 3 秒不确认（停稳未转够）；停稳满 1 秒确认该侧并朗读对应侧文案；**先右后左**的顺序同样完成并进入 DONE、判定行逐字显示、判定朗读发出、日志记 1 条且只存时间、持久化到 wx 存储、DONE 中多余 tick 不重复记账、RESET 回 IDLE 且保留日志、日志可从存储往返恢复；环绕基准下恰好 ±60° 确认、−59° 差 1° 不确认（边界是 60°）；确认中途转回阈值内、宿主报告「移动中」、样本流冻死三种打断都使保持计时清零且无法凑满（750ms 新鲜度窗口）；点头只朗读进度、永远不确认任何一侧。
+- DEMO 确定性：基准 100°、左侧已确认、头在 +40°、指引恰为「还差 20°」，全部为纯常量种子（无 Date 依赖）；再点一次 DEMO 后由真实状态机确认右侧并走完判定；DEMO 期间不写日志、不落盘，CLEAR 退出后回到真实 IDLE——均由断言覆盖。
+- 打包：`aix pack` 成功，19.26 KB（19,721 B）；`aix list` 核对包内含 AGENTS.md、app.js、app.json、package.json、README.md、pages/index/index.ink（artifacts/ 已被 .aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见下方 Preview Media）：初始路边态完整渲染（预览主机无可用方向传感器，如实显示 `SRC: NONE`，传感器 error 被页脚接住、无崩溃）；DEMO 态渲染出进行态 1/2（左侧 ✓、REL +40、进度条 ◆ 在位、向右指引 20°），与 Node 断言行为一致。
 
-1. 在仓库根目录点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+**未验证**
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+- 真机 AbsoluteOrientationSensor 的 yaw 零点漂移与左右符号：rel 的正负约定与兄弟 Agent 共用同一套（+ = 右），但「左转时 rel 变负」必须在真机上实测确认一次——这是本 Agent 真机首测的第一项，README 的真机步骤里已列明。若真机符号相反，翻转的只是符号映射一处，不影响状态机。
+- 真机上头部朝向的抖动幅度：停稳门限（2° / 250ms）是按经验设的，眼镜佩戴松动、步行中的自然摆动会不会让 1 秒保持难以攒满，要真机在路边实测；阈值（60° / 1 秒 / 2°）届时可能需要按实测调整。
+- 真机 TTS 播报在街道噪声环境下的可听性，以及行人实际过街节奏里这个仪式是否顺手（会不会因为赶时间被跳过）——只能靠真实路口试用回答。
+- 本 Agent 看不见车辆与信号灯、基准取决于你点 START 时的朝向——这些是能力边界而非缺陷，见文首诚实定位。
 
-</details>
+---
 
-## 海外链路（全链路海外，缺一不可）
+## 提审资料（Review Submission）
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，提交时整段复制。每次提交前重新确认 Preview Media。
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Feature Description
 
-## 真机测试（云端下发）
+Cross Street makes sure you actually look both ways before crossing. At the curb, face the road and tap START: that heading becomes the reference. Turn your head 60 degrees or more to one side and hold it steady for one second and that side is confirmed; then do the other side, in either order. When both sides are confirmed it announces that you looked both ways - a record of the looking ritual only. It cannot see cars, bikes or lights, and it never declares a crossing safe.
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+### Opening Message
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
+Hi, I'm **Cross Street**. At the curb, face the road and tap **START** - that heading is your reference. Turn your head **60 degrees or more left** and **hold steady 1 second**; then the same to the **right**. Either order works. When both sides check in, I announce that you **looked both ways** and log the time. Honest limit: I only verify your head turned and paused. **I cannot see vehicles or traffic lights**, and I never call a crossing safe - keep looking all the way across.
 
-</details>
+### Preview Media
 
-## 提交审核
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+- Image 1：`artifacts/preview-cross-street-index.png`（aix preview 初始路边态：SRC: NONE、规则与 ±60° 进度条常驻、无基准提示，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-cross-street-ritual.png`（DEMO 进行态 1/2：基准 100°、左侧已确认、头在 +40°、指引「向右还差 20°」，DEMO 不写日志，本地文件）
+- Video：待真机补 — 真机在安全人行道录制「面朝一方点 START → 左转停稳确认 → 右转停稳确认 → 双确认判定行与朗读」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+### Change Log
 
-## 维护约定
+#### Build 1.0.0
 
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库根目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+**Features added**
+
+- Look-both-ways ritual state machine on the documented AbsoluteOrientationSensor quaternion stream (yaw), the same heading basis as the sibling agents: START at the curb captures the heading you face as the reference (with no heading the capture is refused - a reference is never invented, and the agent honestly does not know where the road is). Each side then confirms independently, in either order, when the head has turned 60 degrees or more that way from the reference AND held steady for one continuous second; mid-hold movement, turning back inside the threshold, a host 'moving' stability event, or a dead sample stream all reset the hold, so a fast head sweep can never fake a side.
+- Live relative-angle guidance: the current heading, the signed relative angle, and a 21-step progress bar (marker = your head, '+' = the +-60 degree hold zones, '|' = the reference) plus a plain next-step line ('20 degrees more to the hold zone', 'holding 0.6s / 1.0s'), so the wearer always knows what the ritual still needs. Each confirmed side is spoken aloud ('left side looked'), and a head nod only ever reads progress aloud - a nod is a pitch motion and can never stand in for a turn.
+- Two-sided verdict with strict wording discipline: when both sides are confirmed the glasses show and say that you looked both ways, with the on-screen verdict stating it is a reference only and that the glasses cannot see vehicles - no page or speech copy anywhere claims a crossing is safe or permitted. Completed rituals are logged on-device with their time only (wx key crossStreetLog, capped at 30), and a DEMO mode plays a half-finished ritual in memory (reference 100 degrees, left side done, head at +40 degrees) that the real state machine then completes, without ever writing the log.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
