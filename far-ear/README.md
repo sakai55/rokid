@@ -6,7 +6,9 @@
 （运行时没有这种能力，见下方诚实说明），而是四步：脸朝向
 声源让 4 麦阵列以远场模式拾音、电平条帮你把头对准、把
 听到的转成带「可能听错」标注的文字、最后由贴在你耳边的
-眼镜扬声器用 TTS 把那句话清楚地再说一遍。
+眼镜扬声器用 TTS 把那句话清楚地再说一遍。注意拾音与
+识别是两条管线：远场模式只作用于拾音电平，识别由宿主
+识别器用其自身麦克风完成（详见下方「管线如实拆分」）。
 
 ## 预览截图
 
@@ -51,6 +53,13 @@
   眼镜扬声器就贴在耳边 — 房间那头半听半猜的一句，
   在耳边完整再说一遍。头部稳定时点头 = REPEAT，
   开会时不用腾手、不用低头点按钮。
+- **管线如实拆分（重要）**：CAPTION 的识别由宿主
+  SpeechRecognition 用它自己的麦克风完成，far-field
+  模式只作用于 LISTEN 的电平流（getUserMedia），
+  不作用于识别。LISTEN 的远场流只喂 `AnalyserNode`
+  算电平帮你瞄准，从不喂给识别器 — 两条管线在界面
+  与文档里分开标注（电平行标 far-field、字幕行标
+  host ASR），不假装识别也跑在远场模式下。
 
 ## 功能流程
 
@@ -59,9 +68,11 @@
 2. LISTEN：点 LISTEN（或 Enter）→ 查麦克风与 Web
    Audio，不可用 FAIL 写明 → 远场模式开麦，脸朝向
    声源，转头看电平条找最高点；STOP 立即停麦
-3. CAPTION：点 CAPTION 对当前听到的内容做一次识别
-   尝试；结果行永远带前缀「HEARD (far - may be
-   wrong):」；识别不可用显示 SKIP 并写明原因
+3. CAPTION：点 CAPTION 由宿主 `SpeechRecognition`
+   做一次识别尝试（识别器用它自己的麦克风 — 与
+   LISTEN 的远场电平流是两条独立管线，远场模式不
+   作用于识别）；结果行永远带前缀「HEARD (far -
+   may be wrong):」；识别不可用显示 SKIP 并写明原因
 4. REPEAT：朗读最近一条字幕（点头亦可）；没有字幕时
    朗读引导句。CLEAR 清空字幕与电平
 5. DEMO：合成约 3 秒起伏的假电平，随后给出一条明确
@@ -72,7 +83,10 @@
 > 文档化的音频透传 / 监听（passthrough/monitoring）API，
 > 它绝不声称把房间声音放大送进耳朵。它的价值只有四件
 > 事：远场拾音、电平引导瞄准、字幕转写、近耳 TTS
-> 重播。另外，远场语音识别本来就容易出错 — 距离越远、
+> 重播。其中字幕的识别由宿主 SpeechRecognition 用它
+> 自己的麦克风完成，far-field 模式只作用于 LISTEN 的
+> 电平流（getUserMedia），不作用于识别。另外，识别
+> 远处语音本来就容易出错 — 距离越远、
 > 混响越大、口音越重，错得越多；字幕行每次都带
 > 「may be wrong」标注，只能当「大概听到了什么」的
 > 参考，重要场合请走近确认，不要拿字幕当记录凭证。
@@ -81,7 +95,7 @@
 
 | 权限 | 用途 |
 |---|---|
-| RECORD_AUDIO | LISTEN 时以远场模式开麦：`getUserMedia` 远场拾音 + `AnalyserNode` 实时算 RMS 电平；CAPTION 时 `SpeechRecognition` 识别。只算电平数值、只留最近一条字幕在内存，不录音、不保存、不上传 |
+| RECORD_AUDIO | LISTEN 时以远场模式开麦：`getUserMedia` 远场拾音 + `AnalyserNode` 实时算 RMS 电平（远场模式只作用于这条电平流）；CAPTION 时宿主 `SpeechRecognition` 用其自身麦克风识别。只算电平数值、只留最近一条字幕在内存，不录音、不保存、不上传 |
 
 朝向传感器在 AIUI 里不需要单独的权限声明。
 
@@ -120,11 +134,11 @@ artifacts/preview.html 需先把 importmap 的 jspm 地址换成本地
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 15.6 KB（本地打包 `dist/far-ear.aix`，分次打包有 ±0.01 KB 级抖动） |
+| AIX Package Size | 约 16.5 KB（本地打包 `dist/far-ear.aix`，分次打包有 ±0.01 KB 级抖动） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -162,9 +176,9 @@ artifacts/preview.html 需先把 importmap 的 jspm 地址换成本地
 
 - 真机 4 麦 `far-field` 模式是否被接受、远场拾音的实际
   距离与电平动态范围；模式回退路径未在真机触发过。
-- 真机远场 `SpeechRecognition` 的实际错误率（距离、
-  混响、口音的影响程度）— 这是本 Agent 最大的未知数，
-  只能真机多场景实测。
+- 真机上宿主 `SpeechRecognition` 识别远处语音的实际
+  错误率（距离、混响、口音的影响程度）— 这是本 Agent
+  最大的未知数，只能真机多场景实测。
 - 真机 AbsoluteOrientationSensor 朝向读数的精度与
   零点参考；头部稳定检测、点头 REPEAT、TTS 近耳
   重播的实际清晰度。
@@ -178,13 +192,13 @@ artifacts/preview.html 需先把 importmap 的 jspm 地址换成本地
 
 ### Feature Description
 
-Far Ear helps you catch speech from across the room - a meeting speaker, the TV, someone calling from the kitchen. Face the source: your head aims the glasses' 4-mic array in far-field mode, and a live level bar shows when your aim is on it. Tap CAPTION to turn far speech into text (always labelled may-be-wrong), then REPEAT plays it back through the speaker at your ear.
+Far Ear helps you catch speech from across the room - a meeting speaker, the TV, someone calling from the kitchen. Face the source and tap LISTEN: the far-field mic mode drives a live level bar (LISTEN's own stream) so your head can aim the 4-mic array at the source. Tap CAPTION and the host speech recognizer - on its own microphone; the far-field mode does not feed recognition - writes it as text, always labelled may-be-wrong. REPEAT then plays it back through the speaker at your ear.
 
 ### Opening Message
 
-Hi, I'm **Far Ear** - I help you hear far-away speech a second time, clearly.
+Hi, I'm **Far Ear** - I help you hear far-away speech a second time.
 
-Face the person or the TV and tap **LISTEN**: the far-field mic opens and the level bar rises when your aim is on the source. Tap **CAPTION** to see what was heard as text - far speech is often misheard, so the line is always marked *may be wrong*. Tap **REPEAT** (or nod) and I say it again at your ear. No live amplification - caption plus near-ear repeat. Try **DEMO** with no mic.
+Face the person or the TV and tap **LISTEN**: the far-field mic opens for the level meter, and the bar rises when your aim is on the source. Tap **CAPTION** and the built-in recognizer turns the speech into text - far speech is often misheard, so it is always marked *may be wrong*. Tap **REPEAT** (or nod) and I say it again at your ear. No live amplification - caption plus near-ear repeat. Try **DEMO** with no mic.
 
 ### Preview Media
 
@@ -197,12 +211,26 @@ Face the person or the TV and tap **LISTEN**: the far-field mic opens and the le
 
 ### Change Log
 
+#### Build 1.0.1
+
+**Features added**
+
+- None (honesty/disclosure fix only).
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Pipeline disclosure added (capability-boundary audit 2026-10-24): the docs and UI previously narrated LISTEN → CAPTION as one far-field pipeline. In fact the far-field mode applies only to LISTEN's getUserMedia level stream (AnalyserNode meter); CAPTION's recognition is done by the host SpeechRecognition on its own microphone and is not far-field. README, AGENTS.md, the submission copy and the caption-state UI labels now state this split explicitly.
+
 #### Build 1.0.0
 
 **Features added**
 
 - Head-aimed far-field listening: LISTEN opens the microphone with the documented far-field mode (with a labeled fallback to the default microphone when the device rejects that mode), feeds a Web Audio AnalyserNode, and shows a live RMS level bar every 100 ms so turning your head to the highest level aims the 4-mic array at the source; the mode the device actually selected is read back from the track settings and shown.
-- Far-speech captions: CAPTION runs one SpeechRecognition attempt (zh-CN) on what the microphone hears; the result line always carries the prefix "HEARD (far - may be wrong)" because far-field recognition is error-prone, and an unavailable recognizer produces an honest SKIP line instead of a fake caption.
+- Far-speech captions: CAPTION runs one attempt of the host SpeechRecognition (zh-CN), which listens on the recognizer's own microphone path - the far-field mode applies only to LISTEN's level stream, not to recognition; the result line always carries the prefix "HEARD (far - may be wrong)" because recognizing speech from across a room is error-prone, and an unavailable recognizer produces an honest SKIP line instead of a fake caption.
 - Near-ear repeat: REPEAT speaks the latest caption through the glasses' own speaker beside your ear - a sentence half-heard across the room gets a second, clear hearing; a nod while your head is steady triggers the same repeat. The app never claims live amplification: the runtime documents no audio passthrough, and the UI footer says so permanently.
 - DEMO synthetic run: about three seconds of wandering fake level followed by a clearly tagged [DEMO] sample caption, exercising the full level → caption → repeat flow with no microphone or sensor.
 - Privacy by design: levels are computed live and no audio is recorded, stored or uploaded; only the latest caption line is kept in memory; microphone tracks are stopped and the AudioContext is closed on STOP, page hide and unload.

@@ -323,7 +323,10 @@ export default {
     if (!silent) this._curLevel = 0;
   },
 
-  // ---------- CAPTION (SpeechRecognition, benchmark pattern as in cook-along) ----------
+  // ---------- CAPTION (host SpeechRecognition, benchmark pattern as in cook-along) ----------
+  // Honest split: the recognizer listens on the HOST's own microphone path.
+  // The far-field microphoneMode applies ONLY to LISTEN's getUserMedia
+  // level stream above - it does NOT feed or shape this recognition.
 
   captionTap() {
     var self = this;
@@ -350,7 +353,7 @@ export default {
           self.setData({
             capLine: 'HEARD (far - may be wrong): ' + txt.slice(0, 36),
             status: 'CAPTION in - REPEAT hears it at your ear',
-            lastEvent: 'EVT: caption heard (far ASR - may be wrong)'
+            lastEvent: 'EVT: caption heard (host ASR - may be wrong)'
           });
         } catch (e) {}
       };
@@ -365,9 +368,9 @@ export default {
       rec.onend = function () { if (self._recog === rec) self._recog = null; };
       rec.start();
       this.setData({
-        capLine: 'HEARD: listening for far speech...',
-        status: 'CAPTION: listening - keep facing the source',
-        lastEvent: 'EVT: ASR started (far speech, zh-CN)'
+        capLine: 'HEARD: host ASR listening...',
+        status: 'CAPTION: host ASR listening - face the source',
+        lastEvent: 'EVT: ASR started (host mic, zh-CN)'
       });
     } catch (e) {
       this.setData({
