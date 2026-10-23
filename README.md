@@ -1,210 +1,208 @@
-<div align="center">
+# memory-anchor — 记忆锚点（Rokid 眼镜 AIUI Agent）
 
-# `rokid` — Rokid AIUI Agents
+50 个「指向性生活问题」Agent 的第 38 个。想法和待办总是「转头就忘」：
+看着药瓶想起晚上要吃药，转身就没影；站在洗手台前想起要买牙膏，走到
+门口已经忘了。本 Agent 让你看着相关物品说出备忘，把备忘与「物品分类
++ 你当时的头部朝向 + 时间」绑成一个锚点；下次你再朝向那个方向，
+锚点自己弹出来提醒你。
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
+## 预览截图
 
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
+截图统一存放于仓库根目录 `screenshots/memory-anchor/`。
 
-</div>
+![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/memory-anchor/preview-memory-anchor-index.png)
 
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：根目录的 `<slug>.aix` 下载后走 **Import from AIX**。
+![DEMO 登记 2 个锚点后的清单与指引态（TURN 提示指向药锚点）](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/memory-anchor/preview-memory-anchor-list.png)
 
-## 目录
+![朝向转到 45° 停留 2 秒后，药锚点的提醒卡片弹出（ANCHOR 高亮行）](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/memory-anchor/preview-memory-anchor-remind.png)
 
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
+## 解决的问题
 
-## 仓库结构
+备忘的难点不是「记不住」，是「记下了也想不起来看」：手机备忘录要
+掏手机、解锁、翻列表，而且和「当时你在看哪件东西」毫无关系。想法
+冒出来的那一瞬间，人正看着某件东西——本 Agent 就把备忘钉在那一眼
+的朝向上：记的时候看着它说一句，之后每次你的头转回那个方向，
+备忘自己找上门。
 
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── <slug>.aix                 # 每个 Agent 打包好的 AIX（根目录，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
-```
+## 指向性设计（为什么必须用眼镜）
 
-## 快速开始
+- **朝向即锚点（HEAD）**：备忘与登记时的头部朝向（`AbsoluteOrientationSensor`
+  四元数算 yaw）绑定。提醒的触发条件不是时间、不是地点围栏，而是
+  「你又看向了当时那个方向」——这是只有头戴设备才有的触发器：
+  手机不知道你在看哪儿。
+- **停留 2 秒 = 真的在看（DWELL）**：朝向进入锚点 ±15° 锥内并连续
+  停留 2 秒才触发提醒卡片 + 一次 TTS 朗读；只是转头路过不触发。
+  离开锥外满 5 秒才重新布防，同一次面对只念一遍，不轰炸。
+- **口述即记录（ASR verbatim）**：NOTE 先做佩戴者模式麦克风可用性
+  检查（检查流读回设置即停，单独一行 `MIC CHECK:` 显示结果），
+  备忘由宿主 `SpeechRecognition`（zh-CN）口述输入，**原样**显示
+  等你核对，点 SAVE 或头部稳定时点头才锚定；没有待保存备忘时
+  点头永远不会保存任何东西。
+- **诚实边界常驻界面**：锚点绑的是**方向**，不是物品本身（眼镜
+  没有物品识别）；物品被挪走，方向仍指向旧位置。提醒只在本
+  Agent 打开时发生，没有后台提醒。界面常驻行写明：
+  「REMIND: only while open · binds direction, not the thing」。
+
+## 功能流程
+
+1. 看着要记的东西，点 CAT 选分类（钥匙/文件/药/工具/食材/其他），
+   点 NOTE 说出备忘（先过一遍 wearer 麦克风可用性检查，检查结果
+   在 `MIC CHECK:` 行；口述由宿主识别完成）
+2. 备忘原文显示在 MEMO 行，核对无误后点 SAVE（或头部稳定时点头）
+   → 锚点存入本机（最多 10 条，超限丢弃最旧一条并出声说明丢了哪条）
+3. 之后本 Agent 开着时，转头朝向锚点方向并停留 2 秒 → 提醒卡片
+   弹出「ANCHOR： 分类 · 备忘 · noted 时间」，TTS 念一遍备忘；
+   离开方向 5 秒后重新布防
+4. SEL 轮换锚点看相对方向（TURN 提示，+ 为右）；SPEAK 朗读选中
+   锚点；DONE 连点两次删除选中锚点（第一下只确认防误删）
+5. DEMO 按钮：登记 2 个标注 DEMO 的锚点（药 @45° / 钥匙 @200°），
+   再点 DEMO 每次把模拟朝向 +45°，转到 45° 停 2 秒即可在预览里
+   看到提醒触发
+
+> 诚实说明：提醒 = 朝向触发，不是物品识别，也不是定时/后台提醒；
+> 备忘文字来自宿主 ASR 转写，听错会原样存下，所以 SAVE 前请看
+> 一眼屏幕。麦克风的 wearer 模式只做可用性检查，不影响宿主识别
+> 的收音（2026-10-24 能力边界审计口径）。
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| RECORD_AUDIO | NOTE 的佩戴者模式麦克风可用性检查（getUserMedia）与宿主 SpeechRecognition 口述备忘 |
+
+不申请相机与定位：本设计没有拍照环节（朝向即锚点），朝向传感器在
+AIUI 里不需要单独的权限声明。麦克风只在用户点 NOTE 时启动，检查流
+读完设置立即停轨，识别结束即停止。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/memory-anchor
+~/tools/bin/aix pack . -o ../dist/memory-anchor.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线
+（`shot-anchor.js`，独立页面副本 `preview-anchor.html`；点击序列为
+canvas 内坐标 DEMO (240, 297)：清单图点 1 次，提醒图再点 1 次把模拟
+朝向步进到 45° 并等待停留触发）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-<div align="center">
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用
+   分支导入：`https://github.com/sakai55/rokid/tree/agent-memory-anchor`
+   （该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging
+   点 **Repackage and Save**，确认顶部出现绿色
+   **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版
+   Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，
+   等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 memory-anchor」，站在药柜前看着药瓶点
+   NOTE 说备忘、SAVE 锚定；走开再回来转头朝向药柜停 2 秒，验证
+   提醒卡片与朗读；再换个房间朝同一罗盘方向验证「绑方向不绑
+   物品」的边界说明是否属实
 
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-</div>
-
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放根目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
-
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 项目 | 值 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 约 20.0 KB（本地打包 `dist/memory-anchor.aix`） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-**分支法要点**
+## 验证情况
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+**已验证**
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
+  解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
+  全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留。
+- 状态机测试：Node 里以 wx 存根加载页面对象跑 **55 条断言全过**——
+  覆盖：空存储加载、NOTE 无 ASR 时的预置回退与 verbatim 待保存、
+  无朝向时 SAVE 拒绝、无待保存备忘时点头/SAVE 绝不保存、点头需
+  头部稳定才确认、ASR 听写原文 verbatim 入库、上限 10 条丢最旧
+  并有 EVT 说明、±15° 锥边界（15° 内 / 16° 外）、锥内停留 2 秒
+  才触发且每次面对只朗读一遍、离开不足 5 秒瞥回不重复触发、
+  离开满 5 秒重新布防后再次触发、相对角符号（+ 为右）、DONE
+  两步删除、DEMO 两锚点同一时钟快照与 45° 停留触发提醒。
+- 打包：`aix pack` 成功；`aix list` 核对包内含 README.md、AGENTS.md、
+  app.js、app.json、package.json、pages/index/index.ink
+  （artifacts/ 已被 .aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图三张（见
+  Preview Media）：首页初始态完整渲染；DEMO 登记 2 个锚点后清单
+  与 TURN 指引完整显示；朝向步进到 45° 停留 2 秒后药锚点提醒
+  卡片高亮弹出、EVT 标注 spoken once。NOTE 的待保存 verbatim
+  状态在预览主机上走宿主真实识别通路（识别服务不可达时如实显示
+  ASR FAIL 与 MIC CHECK 结果），其预置回退与确认纪律由上面的
+  Node 状态机测试覆盖。
 
-1. 在仓库根目录点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+**未验证**
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+- 真机 AbsoluteOrientationSensor 朝向精度与零点参考（宿主定义）：
+  锥角与停留判定都建立在朝向读数上，真机需对已知方向核对左右
+  与 15° 锥宽是否合用。
+- 真机头部稳定检测、点头手势、TTS 朗读备忘的效果。
+- 真机 SpeechRecognition（zh-CN）口述备忘的识别效果（预览主机
+  上识别服务不可达时 NOTE 如实显示 ASR FAIL，预置回退路径在
+  无识别能力的主机上才触发，两条路径真机待测）；wearer 模式
+  可用性检查在真机 getUserMedia 上的读回值（预览主机上检查
+  如实显示 FAIL 并写明原因）。
+- 提醒的实际合用性：2 秒停留 / ±15° 锥 / 离开 5 秒重布防是按
+  「路过不触发、回头不再吵」的取向定的，真机日常使用后再调。
 
-</details>
+---
 
-## 海外链路（全链路海外，缺一不可）
+## 提审资料（Review Submission）
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Feature Description
 
-## 真机测试（云端下发）
+Memory Anchor pins a spoken memo to the direction you are facing. Look at the thing you want to remember, tap NOTE and say the memo: your words are kept verbatim, bound to a category, your head heading and the time. Later, while the agent is open, face that direction again and hold it for two seconds - the memo card pops up and is read aloud once. The anchor binds a direction, not the object itself, and nothing reminds you while the agent is closed.
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+（453 字符）
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
+### Opening Message
 
-</details>
+Hi, I'm **Memory Anchor** — I remember what you were looking at when a thought struck.
 
-## 提交审核
+Face the thing, tap **NOTE** and say the memo; check my words on screen, then tap **SAVE** or nod to anchor them to that direction and time. Later, with me open, face the same direction for two seconds and I'll show and speak the memo once. Tap **SEL** to browse anchors, **DONE** twice to delete one, **SPEAK** to hear the selected memo, or **DEMO** to try two sample anchors.
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+（465 字符）
 
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+### Preview Media
 
-## 维护约定
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库根目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+- Image 1：`artifacts/preview-memory-anchor-index.png`（aix preview 首页：MEMORY ANCHOR 初始态，含分类/备忘/麦克风检查行、空锚点清单、提醒卡片区与 NOTE/CAT/SAVE/SEL/DONE/SPEAK/DEMO 按钮，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-memory-anchor-list.png`（DEMO 登记 2 个锚点后的清单态：药 @45° / 钥匙 @200° 两条记录、ANCHORS 2/10、TURN 指引指向药锚点，本地文件）
+- Image 3：`artifacts/preview-memory-anchor-remind.png`（提醒触发态：模拟朝向步进到 45° 停留 2 秒后，药锚点卡片高亮弹出「ANCHOR: 药 · 睡前吃一片降压药 · noted 时间」、FACING IT 高亮、EVT 标注 spoken once，本地文件）
+- Video：待真机补 — 真机录制「看着药瓶 NOTE 口述 → SAVE 锚定 → 走开转回来朝向药柜停 2 秒 → 提醒卡片弹出并朗读」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 3 张图；还需至少 1 个视频，总数保持在 3–5 个后才可提交）
 
-## Agent 清单
+### Change Log
 
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
+#### Build 1.0.0
 
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
+**Features added**
+
+- Direction-bound memos: face a thing, dictate a memo (host SpeechRecognition, zh-CN) after a wearer-mode microphone availability check - the check stream only verifies the mode opens (settings read back, tracks stopped at once) and does not feed or shape recognition; the dictated text is shown verbatim and only a confirmed memo can be anchored, bound to a category chip, the current head heading and the time, persisted in wx sync storage (key `memoryAnchors`, up to 10, oldest dropped with an on-screen note when full).
+- Facing reminders: while the agent is open, holding your heading within ±15 degrees of an anchor for 2 continuous seconds surfaces its card ("ANCHOR: category · memo · noted time") and speaks the memo once per facing episode; re-arming needs 5 seconds outside the cone, so glancing around never spams.
+- Anchor list with relative-direction guidance (rel = anchor − current heading, + is right, 8-way arrows and TURN prompts, FACING IT highlight), SPEAK playback of the selected anchor, and a two-step DONE delete that arms first to prevent accidents.
+- DEMO seeds two labeled sample anchors (medicine at 45 degrees, spare key at 200 degrees) from a single clock snapshot and steps a simulated heading +45 degrees per tap, so the 2-second dwell reminder can be previewed end to end.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
