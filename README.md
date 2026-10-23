@@ -21,7 +21,6 @@
 ## 目录
 
 - [仓库结构](#仓库结构)
-- [Agents](#agents)
 - [快速开始](#快速开始)
 - [标准工作流](#标准工作流)
 - [Studio 导入（实测结论）](#studio-导入实测结论)
@@ -29,6 +28,7 @@
 - [真机测试（云端下发）](#真机测试云端下发)
 - [提交审核](#提交审核)
 - [维护约定](#维护约定)
+- [Agent 清单](#agent-清单)
 
 ## 仓库结构
 
@@ -43,36 +43,6 @@ rokid/
 ├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
 └── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
 ```
-
-## Agents
-
-### 基础与工具
-
-| 目录 | 说明 | 导入分支 | 状态 |
-|---|---|---|---|
-| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | `agent-my-agent` | 分支导入已实测成功 |
-| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | `agent-glasses-benchmark` | Studio 名 `12345` · Build `1.0.19` · Debug version ready |
-| `gaze-translate/` | 指向性 Agent #01 凝视翻译：看文字 → 稳头 → 长焦拍 → 翻译朗读 | `agent-gaze-translate` | 本地全流程完成，待 Studio 导入 |
-
-### 指向性 Agent（50 个计划 · #01–#33 已落地）
-
-每个 slug 对应：目录 `<slug>/` · 根目录包 `<slug>.aix` · 分支 `agent-<slug>` · 截图 `screenshots/<slug>/`。
-功能与状态看各自目录里的 README。
-
-|  |  |  |  |
-|---|---|---|---|
-| `gaze-translate` | `shelf-compare` | `expiry-check` | `plant-doctor` |
-| `manual-lens` | `head-nav` | `find-my-thing` | `meet-point` |
-| `parking-return` | `sound-compass` | `far-ear` | `ambient-captions` |
-| `name-call` | `cook-along` | `assemble-guide` | `baby-care-hands` |
-| `med-look` | `home-find` | `meter-reader` | `home-patrol` |
-| `parcel-sort` | `clean-check` | `fresh-pick` | `outfit-check` |
-| `receipt-keeper` | `market-radar` | `allergen-guard` | `garden-hands` |
-| `repair-buddy` | `exit-radar` | `cry-watch` | `posture-guard` |
-| `fall-guard` |  |  |  |
-
-> 每个 Agent 的真机测试信息（Studio 名称 / Build / 分类 / 描述 / Agent ID / 状态）
-> 完整记录在**该 Agent 自己目录的 README** 里，以那里为准。
 
 ## 快速开始
 
@@ -194,3 +164,46 @@ flowchart LR
 - 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
 - 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库根目录，并与代码同步更新。
 - GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+
+## Agent 清单
+
+全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
+每个 Agent 的真机状态、提审资料看它自己目录里的 README。
+
+| # | Agent | 一句话说明 | 导入分支 |
+|---|---|---|---|
+| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
+| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
+| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
+| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
+| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
+| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
+| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
+| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
+| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
+| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
+| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
+| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
+| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
+| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
+| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
+| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
+| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
+| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
+| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
+| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
+| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
+| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
+| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
+| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
+| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
+| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
+| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
+| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
+| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
+| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
+| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
+| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
+| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
+| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
+| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
