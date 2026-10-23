@@ -323,8 +323,8 @@ export default {
   },
 
   // No code could be decoded: the parcel is NOT blocked - it will be
-  // committed under a sequential batch label and its photo was the
-  // record. Never pretend a decode happened.
+  // committed under a sequential batch label; the photo itself is
+  // not retained. Never pretend a decode happened.
   _noCode(note) {
     this._pending.code = null;
     this._pending.noCode = true;
