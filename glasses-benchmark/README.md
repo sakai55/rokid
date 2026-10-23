@@ -2,6 +2,14 @@
 
 第一个开发测试智能体：一键跑完 Rokid 眼镜在 AIUI 下的全部功能，共 21 项。
 
+## 预览截图
+
+截图统一存放于仓库根目录 `screenshots/glasses-benchmark/`。
+
+![首页（READY 状态）](../screenshots/glasses-benchmark/preview-glasses-benchmark-index.png)
+
+![RUN ALL 跑完后的结果页](../screenshots/glasses-benchmark/preview-index-runall.png)
+
 ## 真机测试信息（Global AIUI Studio · Device Debug）
 
 | 项目 | 值 |

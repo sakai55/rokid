@@ -4,6 +4,12 @@
 
 在 AIUI Studio 中导入本仓库时，子目录选 `my-agent`。
 
+## 预览截图
+
+截图统一存放于仓库根目录 `screenshots/my-agent/`。
+
+![首页预览](../screenshots/my-agent/preview-my-agent-index.png)
+
 ## 真机测试信息（Global AIUI Studio · Device Debug）
 
 | 项目 | 值 |

@@ -12,9 +12,16 @@ Rokid AI 眼镜的 **AIUI 智能体** 仓库。我们只开发 Agent，不开发
 |---|---|---|---|
 | `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | `agent-my-agent` | 尚未正式导入（分支导入已实测成功） |
 | `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | `agent-glasses-benchmark` | Studio 名 `12345`，Build `1.0.19`，Debug version ready |
+| `gaze-translate/` | 50 个指向性 Agent 之 #01 凝视翻译：看文字、稳头、长焦拍、翻译朗读 | `agent-gaze-translate` | 尚未导入 Studio |
 
 每个 Agent 的真机测试信息（Studio 里的名称、Build 版本、App 分类、描述、Agent ID、状态）
 完整记录在该 Agent 目录自己的 README 里，以那里为准。
+
+## 截图目录
+
+所有 Agent 的预览截图集中存放在仓库根目录的 `screenshots/` 下，一个 Agent 一个
+子目录（`screenshots/<agent>/`）。每个 Agent 的 README 都有「预览截图」一节，
+直接嵌入这些图片，在 GitHub 上打开 README 即可看图。
 
 ## 开发环境与工具链
 
@@ -71,6 +78,7 @@ Studio 里重新粘贴分支地址导入（或在已有草稿里更新），然�
 
 - `my-agent.aix`
 - `glasses-benchmark.aix`
+- `gaze-translate.aix`
 
 步骤：
 
