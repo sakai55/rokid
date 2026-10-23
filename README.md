@@ -208,3 +208,5 @@ aix preview .                               # 本地预览（起服务 / --html-
 | 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
 | 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
 | 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
+| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
+| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
