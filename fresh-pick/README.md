@@ -38,8 +38,10 @@
   替你选，更不会自动挑最好的那档（同 #22 的先选后确认
   纪律）。没选就点头/确认会被拦下并提示先选。
 - **感测的是你，不是水果（诚实边界）**：AIUI 运行时
-  没有把照片变成成熟度结论的链路——照片不能送 LLM，
-  也没有图像分类。所以每一分都来自佩戴者亲眼、亲手、
+  没有把照片变成成熟度结论的链路——本 Agent 不把照片
+  送 LLM、不使用 LLM（产品选择；平台本身支持照片经
+  data: URL 送入模型），也没有图像分类。所以每一分
+  都来自佩戴者亲眼、亲手、
   亲耳、亲鼻报的观察，Agent 只做「结构化清单 + 计分 +
   点名弱项」。界面全程标注 「every score comes from
   YOUR observations」。
@@ -134,11 +136,11 @@ cd ~/workspace/rokid/fresh-pick
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 19.2 KB（本地打包 `dist/fresh-pick.aix`） |
+| AIX Package Size | 约 19.5 KB（本地打包 `dist/fresh-pick.aix`） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -216,6 +218,20 @@ Pick a fruit with **FRUIT**, hold one in your hand, **LOOK** for a record photo,
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### Build 1.0.1
+
+**Features added**
+
+- None (documentation-accuracy fix only).
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Corrected a capability premise in the docs: README/AGENTS.md previously stated photos "cannot be sent to an LLM" as a platform fact. Per the official capability dossier (LanguageModel image input accepts image_url, including data: URLs), photos CAN be sent to the model. Fresh Pick still sends no photo and uses no LLM — that is a product choice, now stated as such (capability-boundary audit 2026-10-24).
 
 #### Build 1.0.0
 
