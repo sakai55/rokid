@@ -20,8 +20,10 @@ Rokid 眼镜菜场雷达智能体（AIUI Agent）。
   海鲜 / 干货调料）；NOTE 用一次性 SpeechRecognition（zh-CN）记
   备注——先按文档方式用 `getUserMedia({audio:{captureSource:
   'microphone', microphoneMode:'wearer'}})` 做佩戴者模式麦克风
-  检查（4 麦优先收你自己的声音，压过菜场噪声，检查完立即停
-  轨道），识别结果**原样**显示在 NOTE 行等你核对，确认后点
+  可用性检查（只验证模式可用：读回设置后立即停轨道；识别由
+  宿主 SpeechRecognition 以其自有麦克风完成，检查用的佩戴者
+  模式不会给识别降噪），识别结果**原样**显示在 NOTE 行等你
+  核对，确认后点
   REG（或头部稳定时点头、Enter）把 {品类， 备注， 朝向°， 时间
   HH:MM} 存入 wx 同步存储（key `marketStalls`，最多 8 条，
   onLoad 载入、onUnload 落盘）。**同一品类可以登记两次**——

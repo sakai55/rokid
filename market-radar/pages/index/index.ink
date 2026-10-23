@@ -322,12 +322,14 @@ export default {
 
   async _noteListen() {
     var self = this;
-    this.setData({ busy: true, noteLine: 'NOTE: checking wearer mic...' });
-    // Wearer-mode mic check (documented getUserMedia audio constraints,
-    // same pattern as cook-along #11): the 4-mic array in 'wearer' mode
-    // prioritises YOUR voice over market noise. The stream only verifies
-    // the mode opens; recognition uses the benchmark SpeechRecognition.
-    var micNote = 'wearer mic not checked';
+    this.setData({ busy: true, noteLine: 'NOTE: checking wearer mic mode...' });
+    // Wearer-mode mic AVAILABILITY check (documented getUserMedia audio
+    // constraints, same pattern as cook-along #11): the stream only
+    // verifies the wearer mode opens and reads back its settings, then
+    // stops at once. Recognition itself runs on the host
+    // SpeechRecognition with its OWN microphone - the checked wearer
+    // mode does NOT denoise or otherwise shape the recognition audio.
+    var micNote = 'MIC CHECK: wearer not run';
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
         var ms = await this._withTimeout(navigator.mediaDevices.getUserMedia({
@@ -338,10 +340,10 @@ export default {
           var tr = ms.getAudioTracks()[0];
           if (tr && tr.getSettings) settings = tr.getSettings();
         } catch (e) {}
-        micNote = 'wearer mic OK' + (settings.microphoneMode ? ' (' + settings.microphoneMode + ')' : '');
+        micNote = 'MIC CHECK: wearer OK' + (settings.microphoneMode ? ' (' + settings.microphoneMode + ')' : '');
         ms.getTracks().forEach(function (t) { t.stop(); });
       } catch (e) {
-        micNote = 'wearer mic check FAIL - ' + this._err(e);
+        micNote = 'MIC CHECK: wearer FAIL - ' + this._err(e);
       }
     }
     try {
@@ -361,7 +363,7 @@ export default {
           self.setData({
             noteLine: 'NOTE: "' + txt.slice(0, 22) + '" - check it, then REG',
             status: 'NOTE heard - eyeball the price, then REG',
-            lastEvent: 'EVT: note heard (' + micNote + ') - verify before REG'
+            lastEvent: 'EVT: note heard (host ASR) - verify before REG; ' + micNote
           });
           self._recompute();
         } catch (e) {}
@@ -380,8 +382,8 @@ export default {
       rec.start();
       this.setData({
         noteLine: 'NOTE: listening - say item + price...',
-        status: 'NOTE listening (' + micNote + ')',
-        lastEvent: 'EVT: NOTE listening, ' + micNote
+        status: 'NOTE listening (host ASR)',
+        lastEvent: 'EVT: NOTE listening (host ASR); ' + micNote
       });
     } catch (e) {
       this.setData({

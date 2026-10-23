@@ -45,8 +45,10 @@ FACING 亮起来的就是它。
   决定回哪家。
 - **备注靠嘴、核对靠眼（诚实设计）**：NOTE 用一次性
   SpeechRecognition（zh-CN）记价格——动手前先按文档方式做
-  佩戴者模式（`microphoneMode:'wearer'`）麦克风检查，4 麦
-  优先收你自己的声音压过市场噪声。识别结果**原样**显示在
+  佩戴者模式（`microphoneMode:'wearer'`）麦克风可用性检查：
+  那条检查流只读回设置、验证模式可用，随即停掉；识别由
+  宿主 SpeechRecognition 用它自己的麦克风完成，检查用的
+  佩戴者模式不会给识别降噪。识别结果**原样**显示在
   NOTE 行：价格数字正是 ASR 最容易听错的东西，所以必须
   你亲眼核对后才按 REG 存入，眼镜不偷偷「纠正」。
   主机没有识别能力时 NOTE 如实显示 SKIP，改走三个预置
@@ -76,7 +78,7 @@ FACING 亮起来的就是它。
 
 | 权限 | 用途 |
 |---|---|
-| RECORD_AUDIO | NOTE 一次性语音记价格：先做佩戴者模式（wearer）麦克风可用性检查，识别由系统 SpeechRecognition 完成；只保存你确认过的备注文本，不录音、不保存音频 |
+| RECORD_AUDIO | NOTE 一次性语音记价格：先做佩戴者模式（wearer）麦克风可用性检查（检查流读回设置后立即停掉），识别由宿主 SpeechRecognition 以其自有麦克风完成；只保存你确认过的备注文本，不录音、不保存音频 |
 
 朝向传感器不需要额外权限声明；本 Agent 不用相机、不用定位。
 
@@ -116,11 +118,11 @@ RADAR 后再点 DEMO 把朝向步进到 45° 进入 FACING 态；按钮 canvas
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 18.1 KB（本地打包 `dist/market-radar.aix`，含本 README；打包时间戳使字节数有 ±0.01 KB 抖动） |
+| AIX Package Size | 约 18.6 KB（本地打包 `dist/market-radar.aix`，含本 README；打包时间戳使字节数有 ±0.01 KB 抖动） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -189,11 +191,25 @@ Face a stall, pick its **CAT**, tap **NOTE** and say the item and price — then
 提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
 - Image 1：`artifacts/preview-market-radar-index.png`（aix preview REG 态：DEMO 登记 3 个摊位（60° / 180° / 300°），列表与计数 3/8 完整渲染，本地文件，提交时从本地上传）
-- Image 2：`artifacts/preview-market-radar-radar.png`（RADAR 态：朝向步进到 45°，箭头 ↑ 与高亮「FACING: 蔬菜 · 西红柿3块一斤 · 22:22」，登记详情行「reg 60° · rel +15° · FRONT · DEMO」，本地文件）
+- Image 2：`artifacts/preview-market-radar-radar.png`（RADAR 态：朝向步进到 45°，箭头 ↑ 与高亮「FACING: 蔬菜 · 西红柿3块一斤 · 01:16」，登记详情行「reg 60° · rel +15° · FRONT · DEMO」，本地文件）
 - Video：待真机补 — 真机录制「摊位前 CAT + NOTE 说价 + REG 登记 → 回到登记区域转头 FACING 亮起 + SPEAK 朗读」全过程（MP4），录好后放 `artifacts/` 并更新此处
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- NOTE microphone copy corrected (capability-boundary audit 2026-10-24): the wearer-mode getUserMedia step is an availability check only — its stream reads back settings and stops at once; price notes are then dictated by the host SpeechRecognition on its own microphone. Earlier copy wrongly implied the wearer mode suppressed market noise during recognition; the NOTE listening status now reads "NOTE listening (host ASR)" and the check result is shown separately as "MIC CHECK: wearer OK".
 
 #### Build 1.0.0
 
