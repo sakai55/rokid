@@ -18,11 +18,13 @@ Rokid 眼镜过敏守卫智能体（AIUI Agent）。
   切换、TOGGLE 开关，只需设置一次，存入 wx 同步存储
   （key `allergenProfile`），下次打开自动载入。出厂默认
   花生 + 牛奶为 ON（界面标注 default），请按自己的情况改。
-- 长焦拍照（只作记录）：LOOK 用 `getUserMedia` 取流后以
+- 长焦拍照（只作当场记录提示）：LOOK 用 `getUserMedia` 取流后以
   `ImageCapture.takePhoto({mode:'telephoto'})` 拍下配料表面板
-  留作日后参考（不可用时回退 wx.media CameraContext），
-  界面只显示字节数并标注 record only。照片不被读取、不能
-  在本界面放大回看，更不会被识别。
+  （不可用时回退 wx.media CameraContext），界面只显示字节数
+  并标注 record only。照片本身不保存：拍完只取字节数，Blob
+  随即丢弃，日后无法翻看；照片不被读取，更不会被识别。
+  真正持久保存的只有忌口档案；本次结论与逐项答案只在
+  结论页当场显示，不存档。
 - 逐项核对（CHECK）：NEXT 开始核对，只走你打开的忌口，
   一次一个，大字问「含『花生』吗？看配料表再答」。你用
   FOUND（含）/ CLEAR（未见）/ UNSURE（看不清）三键先选

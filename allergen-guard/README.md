@@ -27,8 +27,11 @@
 
 - **凝视即指向（GAZE）+ 长焦（telephoto）**：看着配料表面板
   点 LOOK，用 `ImageCapture.takePhoto({mode:'telephoto'})`
-  拍下留档，日后可翻这张记录复核是哪件商品——你看着的那件
-  就是正在核对的那件，不用报商品名。
+  拍一张当场的记录提示照——照片本身不保存（只显示字节数，
+  Blob 拍完即丢弃），日后无法翻看；它只帮你确认「正在核对
+  的就是你看着的这一件」，不用报商品名。真正留下的记录
+  只有忌口档案（本机持久化）；本次结论与逐项答案只在
+  结论页当场显示并朗读，不存档。
 - **头部稳定 = 凝视确认，点头只确认不作答**：
   `enableWorldAwareness()` 后 `onOrientationStabilityChange`
   报告头部稳定（HEAD STEADY）；点头（`onHeadGesture` 的
@@ -55,7 +58,8 @@
    默认花生 + 牛奶为 ON（界面标注 default），请按自己
    情况修改
 2. 拿起一件商品，看着配料表面板稳住头 → 点头，或点 LOOK，
-   或按 Enter → telephoto 拍照（只作记录），显示字节数
+   或按 Enter → telephoto 拍照（只作当场记录提示，照片
+   本身不保存），显示字节数
 3. 点 NEXT 开始核对：只走你打开的忌口，一次一个，大字
    问「含『花生』吗？看配料表再答」；先用
    FOUND（含）/ CLEAR（未见）/ UNSURE（看不清）选答案，
@@ -125,11 +129,11 @@ cd ~/workspace/rokid/allergen-guard
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 17.9 KB（本地打包 `dist/allergen-guard.aix`） |
+| AIX Package Size | 约 18.6 KB（本地打包 `dist/allergen-guard.aix`） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -152,6 +156,11 @@ cd ~/workspace/rokid/allergen-guard
 - 打包：`aix pack` 成功；`aix list` 核对包内含 README.md、AGENTS.md、
   app.js、app.json、package.json、pages/index/index.ink
   （artifacts/ 已被 .aixignore 排除）。
+- Build 1.0.1（2026-10-24 能力边界审计修正后复验）：照片留存
+  文案已按代码事实订正——README / AGENTS.md / 界面状态行
+  不再声称照片留档可日后翻看（只显示字节数，图像不保存）；
+  静态检查（JSON 解析、node --check、grep）与预览双截图
+  重新生成均通过，代码逻辑未改动。
 - 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见下方
   Preview Media）：首页初始态完整渲染（档案行显示默认
   花生、牛奶 + 照片行、LOOK/PROFILE/TOGGLE、
@@ -169,8 +178,9 @@ cd ~/workspace/rokid/allergen-guard
 - 真机 wx 存储中忌口档案的持久化（重启眼镜后是否保留，
   待测）。
 - **识别方式的产品边界**：本 Agent 不做 OCR、不读标签——
-  成分由用户亲眼读配料表后逐项回答，照片只作记录且不能在
-  本界面放大回看；这是已知边界，不是待补的验证项。
+  成分由用户亲眼读配料表后逐项回答，照片只作当场记录提示、
+  本身不保存（只显示字节数），不能回看；这是已知边界，
+  不是待补的验证项。
 - **档案覆盖边界**：内置过敏原表只有 8 种常见项；不在表内
   的忌口（如特定添加剂）暂无法逐项核对，只能靠佩戴者
   自行留意。
@@ -202,6 +212,20 @@ Set your profile once with **PROFILE** / **TOGGLE**. For each product: **LOOK** 
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Corrected photo-retention wording (README, AGENTS.md and the on-screen status line): the LOOK photo is a moment-of-use record cue only — only its byte size is shown, the image itself is not saved and cannot be reviewed later; the earlier "kept for later reference" phrasing overstated what the agent stores. The only data persisted on-device remains the allergen profile; a check's verdict and per-allergen answers are shown on the verdict screen for that check only and are not archived. (Capability-boundary audit, 2026-10-24.)
 
 #### Build 1.0.0
 

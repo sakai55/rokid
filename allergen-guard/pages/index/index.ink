@@ -512,8 +512,8 @@ export default {
         throw new Error('ImageCapture n/a');
       }
       this.setData({
-        photoLine: 'PHOTO: ' + photoBytes + 'B - telephoto - record only; YOU read the label, then NEXT',
-        status: 'PHOTO SAVED as record - now read the label and tap NEXT',
+        photoLine: 'PHOTO: ' + photoBytes + 'B - telephoto - record cue only, image not saved; YOU read the label, then NEXT',
+        status: 'PHOTO TAKEN (image not saved) - now read the label and tap NEXT',
         lastEvent: 'EVT: photo taken ' + photoBytes + 'B (record only)'
       });
     } catch (e) {
@@ -530,8 +530,8 @@ export default {
         var size = res && res.data ? res.data.byteLength : 0;
         if (!size) throw firstErr;
         this.setData({
-          photoLine: 'PHOTO: wx ' + size + 'B (ImageCapture fallback) - record only; YOU read the label',
-          status: 'PHOTO SAVED as record - now read the label and tap NEXT',
+          photoLine: 'PHOTO: wx ' + size + 'B (ImageCapture fallback) - record cue only, image not saved; YOU read the label',
+          status: 'PHOTO TAKEN (image not saved) - now read the label and tap NEXT',
           lastEvent: 'EVT: wx photo ' + size + 'B (record only)'
         });
       } catch (e2) {
