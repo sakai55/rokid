@@ -1,148 +1,200 @@
-# rokid — Rokid AIUI Agents（海外版 / Global）
+# parcel-sort — 快递分拣（Rokid 眼镜 AIUI Agent）
 
-Rokid AI 眼镜的 **AIUI 智能体** 仓库。我们只开发 Agent，不开发 App。
-组织方式：**一个 Agent 一个目录**，每个目录是一套完整的 AIUI 项目
-（`app.json` + `AGENTS.md` + `app.js` + `pages/`）。仓库根目录另放两个打包好的
-`.aix` 文件（备选导入用，见「备选方案」）。往 Studio 导入单个 Agent 走
-**专属分支**（见「Studio 导入方法」），不要直接导 main 的子目录。
+50 个「指向性生活问题」Agent 的第 29 个。快递一多就堆在门口一地：
+这件是谁的？那件是不是生鲜、得先拆？拆错顺序，生鲜在普通堆里
+放坏，文件被压在最底下。本 Agent 的分法很眼镜化：一件一件地
+看着来——扫一眼面单条码留个记录号，用你自己的眼睛读出收件人、
+选好类别和急不急，点 SORT，它就出声指挥你放哪一堆：急件放
+左边先拆，普通件放右边。分了几件、每人几件，汇总一直摆在眼前。
 
-## Agents
+> ⚠️ **诚实定位（先读）**：条码只是一个**记录号**，不是查询。
+> 运行时没有快递公司的数据库可以查，一个条码字符串变不出
+> 收件人姓名和物品内容；眼镜也没有 OCR，**面单是佩戴者亲眼
+> 读的**，收件人由佩戴者读完后申报（WHO）。解不出条码时如实
+> 走序号标签，绝不编造一个码出来。
 
-| 目录 | 说明 | 导入分支 | 真机测试状态 |
-|---|---|---|---|
-| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | `agent-my-agent` | 尚未正式导入（分支导入已实测成功） |
-| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | `agent-glasses-benchmark` | Studio 名 `12345`，Build `1.0.19`，Debug version ready |
-| `gaze-translate/` | 50 个指向性 Agent 之 #01 凝视翻译：看文字、稳头、长焦拍、翻译朗读 | `agent-gaze-translate` | 尚未导入 Studio |
+## 预览截图
 
-每个 Agent 的真机测试信息（Studio 里的名称、Build 版本、App 分类、描述、Agent ID、状态）
-完整记录在该 Agent 目录自己的 README 里，以那里为准。
+截图统一存放于仓库根目录 `screenshots/parcel-sort/`。
 
-## 截图目录
+![SORT 初始态：一件未分，当前件待扫码，堆汇总为 0](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/parcel-sort/preview-parcel-sort-index.png)
 
-所有 Agent 的预览截图集中存放在仓库根目录的 `screenshots/` 下，一个 Agent 一个
-子目录（`screenshots/<agent>/`）。每个 Agent 的 README 都有「预览截图」一节，
-直接嵌入这些图片，在 GitHub 上打开 README 即可看图。
+![DEMO 后落在 LIST：3 件已分（急件优先），堆汇总 急件 2 · 普通 1](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/parcel-sort/preview-parcel-sort-list.png)
 
-## 开发环境与工具链
+## 解决的问题
+
+一堆快递的分拣难点不在搬，在「逐件判断 + 记住结论」：每件都要
+读面单、定归属、判急缓，再决定放哪——判断完三件，第一件放哪
+又忘了。手机记事本要逐件打字，对着一地箱子根本不现实。眼镜的
+串行视角正好对上这个流程：你的视线落在哪件，就处理哪件；
+每件的结论（放左还是放右）当场出声、不用记；整批的账
+（急件几件、每人几件）一直挂在眼前，拆错、漏拆一眼可见。
+
+## 指向性设计（为什么必须用眼镜）
+
+- **凝视即流水线（核心）**：分拣是天然的串行凝视任务——看向
+  哪件就处理哪件。SCAN 对着正看的这件面单广角拍照
+  （`ImageCapture.takePhoto({mode:'wide'})`，同 #02 的大视场
+  条码路）并尝试 `BarcodeDetector` 解码；头部稳定时点头即
+  SORT，手里抱着箱子也不用腾手点屏。
+- **结论用耳朵交接**：每件分完立即 TTS 朗读放堆指令
+  （「急件：你的文件。放左边急件堆，先拆。」）——你的眼睛
+  已经去看下一件了，放哪由耳朵确认，不用回头看屏幕记结论。
+- **汇总常驻眼前**：急件/普通件数与每位收件人的件数一直
+  显示在视线内；LIST 模式急件优先重排，SPEAK 一口气念完整
+  批汇总。分拣是体力活，账要自己长在眼前，不能靠脑子记。
+
+## 功能流程
+
+1. 拿起一件，看着它的面单点 SCAN：广角拍照 + 条码解码，
+   解出的字符串原样成为这件的记录号；主机无解码器 / 照片
+   里没码 / 相机不可用时如实提示，这件在 SORT 时自动得到
+   序号标签（#1、#2……），照片本身即记录
+2. WHO 轮换收件人（我 / 配偶 / 孩子 / 父母 / 全家）——
+   你亲眼读面单后的申报；KIND 轮换类别（日用品 / 食品
+   生鲜 / 文件 / 衣物 / 电子产品 / 其他），选到食品生鲜时
+   急件自动打开（仍可手动翻回）；URG 手动切 急 / 常
+3. SORT（或头部稳定点头、Enter）入账并朗读放堆指令：
+   急件 → 左堆先拆，普通件 → 右堆。下一件自动保留收件人，
+   记录号 / 类别 / 急常重置
+4. 随时切 LIST 看整批（急件优先）+ SPEAK 听汇总；
+   一批拆完点 CLEAR 清空，开下一批（分拣按批进行，
+   一批存本机 wx 同步存储 `parcelSort`，最多 30 件）
+5. DEMO 仿真：用一次时钟快照分好 3 件标注 DEMO 的快递
+   （我的文件·急 / 孩子的食品生鲜·急 / 配偶的衣物·常），
+   直接落在 LIST 视图与堆汇总上；重入 DEMO 先清旧 DEMO 件
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| CAMERA | SCAN 时对面单广角拍照并尝试条码解码（照片只在解码瞬间使用，不保存） |
+
+只声明 CAMERA；世界感知/头部手势在 AIUI 里不需要单独的
+权限声明。本 Agent 不用麦克风、不用定位。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <name>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（终端起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/parcel-sort
+~/tools/bin/aix pack . -o ../dist/parcel-sort.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-打包注意：项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-`skills-lock.json`、`node_modules/`，否则开发文件会进包（实测 2.3 KB 会涨到 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线
+（`shot-parcel.js`；Shot A = 初始 SORT 态无点击；Shot B = 点
+DEMO 一次（canvas 坐标 239,320，经视觉定位确认）落到 LIST 堆汇总态）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-1. **本地开发**：在对应 Agent 目录里开发、改页面。
-2. **预览**：开发完成后用 `aix preview` 出该 Agent **所有页面**的预览图确认效果。
-3. **推 GitHub**：代码推到本仓库对应 Agent 目录，同时把同一套文件同步到该
-   Agent 的专属分支 `agent-<名字>` 的**根目录**（分支根 = Agent 根）。
-4. **Studio 导入**：Global AIUI Studio → New Agent → **Import from GitHub** →
-   粘贴分支地址导入（见下面「Studio 导入方法」），一个分支导一个 Agent。
-5. **真机测试（云端下发）**：见下面专门章节。
-6. **提交审核**：真机测试通过并确认后，在 Studio 的 **Submit** 页签填写
-   Review Information（Feature Description、Opening Message、Preview Media、Change Log）
-   并 Submit for Review。
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用
+   分支导入：`https://github.com/sakai55/rokid/tree/agent-parcel-sort`
+   （该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging
+   点 **Repackage and Save**，确认顶部出现绿色
+   **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版
+   Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，
+   等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 parcel-sort」，攒一批真实快递逐件测：
+   带清晰条码的看解码是否成功、无码/小票件看是否如实走序号
+   标签；生鲜件验证自动标急；整批听 LIST + SPEAK 汇总是否
+   与实际堆数一致
 
-## Studio 导入方法（2026-10-24 实测结论，只用这一条）
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-导入对话框（IMPORT PROJECT / "GitHub Subdirectory Import"）**只有 URL 一个
-输入框**，没有分支/路径选择。Studio 把 `/tree/` 后面的**整段当作一个 ref**，
-不会拆成「ref + 路径」。由此实测：
+| 项目 | 值 |
+|---|---|
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 约 16.9 KB（本地打包 `dist/parcel-sort.aix`，含本 README） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-- ✅ **分支地址（唯一可用）**：`https://github.com/sakai55/rokid/tree/agent-my-agent`
-  （换成目标 Agent 的分支名）。分支名是单段，能被正确解析为分支，
-  导入的就是**该分支根目录**——所以每个 Agent 有一个专属分支，
-  分支根目录放该 Agent 的全套文件。导入后生成名为 `sakai55/rokid` 的 Draft，
-  进 Studio 后改名。两个现有分支均已实测导入成功、文件树完整。
-- ❌ 子目录地址 `…/tree/main/my-agent`：报 `GitHub ref not found: main/my-agent`
-  （官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败，不是本仓库的问题）。
-- ❌ commit 号地址 `…/tree/<完整SHA>/my-agent`：同样报 ref not found。
-- ❌ 仓库根地址 `https://github.com/sakai55/rokid`：能导入，但生成的是
-  **空心 Agent**（Code 文件树为空），不能用。
-- ❌ blob 文件地址 `…/blob/main/my-agent/app.json`：能过导入，但 Run 报
-  「请先创建Agent的项目文件」，列表里也不会留下可用 Agent。
+## 验证情况
 
-改代码后要重新导入新版本：先把新文件同步到该 Agent 的分支根目录，再在
-Studio 里重新粘贴分支地址导入（或在已有草稿里更新），然后走真机测试流程。
+**已验证**
 
-## Studio 导入方法二：AIX 导入（备选保底）
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
+  解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
+  全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留。
+- 分拣与汇总逻辑：用 Node 加载页面对象（wx 打桩、speechSynthesis
+  记录朗读文本）跑 74 条断言全过——收件人/类别轮换、食品生鲜
+  自动标急且可手动翻回、无相机时 SCAN 如实走无码路径并给出
+  序号标签、解码条码原样入账、三件分拣的放堆朗读原文逐字
+  核对（左急/右常）、分拣后保留收件人且重置类别/急常/记录号、
+  堆汇总计数（总数/急/常/每人件数）与汇总朗读原文、LIST
+  急件优先且同组稳定、存储往返、上限 30 件丢最旧、CLEAR
+  清批并落盘。
+- DEMO 确定性：同一套断言验证 DEMO 落点——3 件种子
+  （我·文件·急 / 孩子·食品生鲜·急 / 配偶·衣物·常）的
+  日期与时间字符串全部来自一次时钟快照、逐字相同，落在
+  LIST 且堆汇总为 急件 2 · 普通 1，重入 DEMO 不堆积。
+- 打包：`aix pack` 成功（大小见上表）；`aix list` 核对包内含
+  AGENTS.md、app.js、app.json、package.json、README.md、
+  pages/index/index.ink（artifacts/ 已被 .aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见下方
+  Preview Media）：初始 SORT 态完整渲染（当前件待扫码、
+  堆汇总 0/30）；DEMO 态渲染出 LIST 急件优先的三行与堆汇总，
+  与 Node 断言的落点一致。预览主机无相机，真实 SCAN 的
+  解码/失败路径由 Node 与静态检查覆盖，预览里只走 DEMO 路径
+  （与兄弟 Agent 一致）。
 
-仓库根目录放着打包好的 `.aix`（代码变更后用 `aix pack` 重打并更新根目录文件）：
+**未验证**
 
-- `my-agent.aix`
-- `glasses-benchmark.aix`
-- `gaze-translate.aix`
+- 真机上广角拍照 + `BarcodeDetector` 对真实快递面单条码的
+  解码成功率（面单褶皱、反光、小条码都会影响）——这是本
+  Agent 第一号真机未知数；解不出时走序号标签是设计内回退，
+  不是故障。
+- 真机头部稳定与点头 SORT 的触发灵敏度、抱箱子时误触发率。
+- TTS 放堆指令与整批汇总在真机上的朗读效果（语速、断句）。
+- wx 同步存储在眼镜重启后恢复本批记录的情况——未实测；
+  本批若跨重启丢失，按批分拣的设计下损失仅限当前一批。
 
-步骤：
+---
 
-1. 在 GitHub 仓库根目录点开要导入的 `.aix` 文件，点下载按钮存到本地。
-2. 打开 Global AIUI Studio（en-US）→ New Agent → **Import from AIX**。
-3. 选择刚下载的 `.aix` 上传，导入后生成 Draft，文件树即包内完整工程。
-4. 后续同样走 Device Debug 打包保存 → 真机测试（见下文）。
+## 提审资料（Review Submission）
 
-这条路不依赖 GitHub 地址解析，GitHub 导入出问题或赶时间时用它保底；
-日常首选仍是方法一（分支地址导入），因为它直接对应仓库里的最新代码。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
 
-## ⚠️ 海外版本注意事项（必须全链路海外，缺一不可）
+### Feature Description
 
-1. **Studio 必须是 Global 站 + 英文**：只用
-   [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US)，
-   地址是 global、语言参数必须是 `en-US`。不要用国内站（aiui.rokid.com），
-   两站账号和项目不互通。
-2. **账号必须是海外版注册**：在 [account-web.rokid.com](https://account-web.rokid.com/)
-   的**英文版**注册/登录 Rokid 账号（本项目账号地区：Japan）。
-   用国内版注册的账号不算海外开发账号。
-3. **下发走云端，不走数据线**：在 Studio 里打包保存后由云端下发到眼镜，
-   不用 ADB、不用数据线直装。
-4. **手机 App 必须是海外版 Hi Rokid**：Google Play 的
-   **Hi Rokid - Rokid Glasses**（包名 `com.rokid.sprite.global.aiapp`，
-   发行方 Rokid International），**不是国内版 Rokid Ai App**。
-   眼镜资源包的更新入口在 Hi Rokid 里。
-5. 以上四点（Global 账号 + en-US Studio + 云端下发 + Hi Rokid）齐全，
-   才算海外版开发；任何一环用了国内版，链路就不通。
+Parcel Sort turns a doorstep pile of deliveries into two spoken piles. Look at each parcel in turn: scan its label barcode (kept only as a record ID — there is no carrier lookup), declare whose it is and what kind of thing it is, flag it urgent or normal — fresh food flags itself — and the glasses speak the instruction: urgent goes to the left pile, opened first; normal to the right. A running summary always shows urgent count, normal count and parcels per person.
 
-## 真机测试（云端下发）详细步骤
+### Opening Message
 
-在 Global AIUI Studio（en-US）里打开该 Agent：
+Hi, I'm **Parcel Sort** — let's clear that pile by the door.
 
-1. 进 **Device Debug** 页签，先填 **Basic Information**：
-   - Agent Icon（建议 1:1 图片）
-   - **Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清 AI 助手应在什么场景、
-     什么前提下、被什么样的用户请求唤起这个 Agent
-   - Version 和 Agent ID 由系统生成，不可手改；**Version 是 Build 号，
-     每次重新打包保存自动递增**（如 1.0.19）
-2. 在 **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功的标志**：页面顶部出现绿色状态
-   **● Debug version ready — Ready for device debugging**。
-   没出现这个状态，说明这一版还没有保存成功，App 端拉不到，不要去 App 里白等。
-4. 手机打开 **Hi Rokid**（海外版），确认已连接眼镜，进
-   「设置 → 开发者选项 → AIUI」→ 点「更新眼镜资源包」，等眼镜端下载完成，
-   看到「智能体资源包下载成功」。
-5. 对眼镜语音打开该 Agent（如「乐奇，打开 xxx」）开始真机测试。
-6. 改代码后循环：改 → 推 GitHub → Studio 更新导入 → Repackage and Save
-   （Build 号递增，重新出现 Debug version ready）→ Hi Rokid 更新眼镜资源包 → 再测。
-   **只改代码不重新 Repackage and Save，App 拉到的还是旧版。**
+Take the parcels **one at a time**. **Look** at each label and tap **SCAN** — I keep its barcode as a record ID only; I can't read names, so tap **WHO** and **KIND** for what *you* read, and **URG** if it's urgent (fresh food flags itself). Tap **SORT** and I'll tell you the pile: **urgent left, open first — normal right**. **LIST** shows the batch, urgent first; **SPEAK** reads the totals aloud.
 
-## 提交审核
+### Preview Media
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-1. 在 Studio 的 **Submit** 页签填 Review Information：
-   Feature Description、Opening Message、Preview Media、Change Log。
-   **这四项的成稿统一放在各 Agent 自己 README 的「提审资料（Review Submission）」
-   章节里，分段写好，提交时整段复制**（Feature Description ≤500 字、
-   Opening Message ≤500 字且支持 Markdown；Preview Media 需 3–5 个
-   JPG/PNG/MP4 且至少 1 图 1 视频，每次提交前重新确认）。
-2. 确认权限声明与代码实际用到的能力一致（如定位 GEOLOCATION、相机 CAMERA、
-   录音 RECORD_AUDIO 必须在 `app.json.permissions` 里声明）。
-3. 点 **Submit for Review** 提交，等待审核结果；被拒按原因修改后
-   重新打包保存、重新提交。
+- Image 1：`artifacts/preview-parcel-sort-index.png`（aix preview 初始 SORT 态：当前件待扫码、收件人/类别/急常选择行、堆汇总 0，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-parcel-sort-list.png`（DEMO 后 LIST 态：3 件已分、急件优先排序、堆汇总 急件 2 · 普通 1 与每人件数，本地文件）
+- Video：待真机补 — 真机录制「逐件 SCAN 一批真实快递 → SORT 朗读放堆 → LIST + SPEAK 念汇总」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
+
+### Change Log
+
+#### Build 1.0.0
+
+**Features added**
+
+- Gaze-serial parcel sorting: one parcel at a time, looking at it — SCAN takes a wide-mode photo of its label and tries BarcodeDetector exactly like the shelf-compare agent; a decoded string becomes the parcel's record ID, shown and stored verbatim. Honest fallbacks throughout: no detector, no barcode in frame, or no camera all land on a sequential batch label (#1, #2, ...) with the reason on screen — a decode is never faked.
+- Recipient and content declared by the wearer (the agent cannot read the label — no OCR, no carrier database): WHO cycles 我 / 配偶 / 孩子 / 父母 / 全家， KIND cycles 日用品 / 食品生鲜 / 文件 / 衣物 / 电子产品 / 其他， URG flips 急 / 常； landing KIND on fresh food auto-flags urgency (still manually reversible).
+- SORT commits {record ID, recipient, kind, urgent, date, time} to on-device wx storage (key parcelSort, cap 30, oldest dropped) and immediately speaks the pile instruction — urgent to the left pile, opened first; normal to the right; the recipient is kept for the next parcel while code/kind/urgency reset. A piles summary (urgent / normal / total plus per-recipient counts) stays on screen; LIST mode regroups the batch urgent-first and SPEAK reads the whole summary aloud; CLEAR empties the batch (sorting is per delivery batch); DEMO seeds three parcels from a single clock snapshot and lands on the LIST summary.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
