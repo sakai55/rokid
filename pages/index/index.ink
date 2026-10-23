@@ -15,7 +15,7 @@ export default {
     stepBody: '备料：番茄 2 个切块，鸡蛋 3 个打散，盐、糖、葱花备齐。',
     timerLine: 'TIMER: -- (untimed step)',
     panLine: 'PAN: not checked - LOOK at the pan, then tap PAN',
-    asrLine: 'ASR: tap LISTEN - say 下一步 (wearer mic)',
+    asrLine: 'ASR: tap LISTEN - say 下一步 (host mic)',
     lastEvent: 'EVT: nod / Enter = START or NEXT while cooking',
     busy: false
   },
@@ -335,7 +335,7 @@ export default {
     // the 4-mic array in 'wearer' mode prioritizes YOUR voice over the
     // range-hood noise. The stream only verifies the mode opens; the
     // recognition itself uses the benchmark SpeechRecognition pattern.
-    var micNote = 'wearer mic not checked';
+    var micNote = 'MIC CHECK: not run';
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
         var ms = await this._withTimeout(navigator.mediaDevices.getUserMedia({
@@ -346,10 +346,10 @@ export default {
           var tr = ms.getAudioTracks()[0];
           if (tr && tr.getSettings) settings = tr.getSettings();
         } catch (e) {}
-        micNote = 'wearer mic OK' + (settings.microphoneMode ? ' (' + settings.microphoneMode + ')' : '');
+        micNote = 'MIC CHECK: wearer OK' + (settings.microphoneMode ? ' (' + settings.microphoneMode + ')' : '');
         ms.getTracks().forEach(function (t) { t.stop(); });
       } catch (e) {
-        micNote = 'wearer mic check FAIL - ' + this._err(e);
+        micNote = 'MIC CHECK: wearer FAIL - ' + this._err(e);
       }
     }
     try {
@@ -387,9 +387,9 @@ export default {
       };
       rec.start();
       this.setData({
-        asrLine: 'ASR: listening (' + micNote + ')',
-        status: 'LISTENING - say 下一步 / 好了',
-        lastEvent: 'EVT: ASR listening, ' + micNote
+        asrLine: 'ASR: listening (host mic) - say 下一步',
+        status: 'LISTENING (host mic) - say 下一步 / 好了',
+        lastEvent: 'EVT: ASR listening (host mic); ' + micNote
       });
     } catch (e) {
       this.setData({

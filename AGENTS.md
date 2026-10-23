@@ -24,13 +24,14 @@ Rokid 眼镜做饭跟做智能体（AIUI Agent）。
   烧水 5 分钟）可点 TIMER 启动倒计时，剩余时间（mm:ss）显示在
   步骤框里，再点 TIMER 停止；推进到下一步自动清掉旧计时；归零时
   状态变「TIME UP」并用 TTS 朗读「时间到」+ 当前步骤。
-- 语音翻页（wearer 模式）：LISTEN 先按文档方式用
-  getUserMedia({audio:{captureSource:'microphone',
-  microphoneMode:'wearer'}}) 做佩戴者模式麦克风检查（4 麦阵列
-  优先收佩戴者人声，压过抽油烟机噪音，读 track.getSettings()
-  确认，检查完立即停轨道），再按基准 Agent 的 SpeechRecognition
-  模式启动 zh-CN 识别；听到「下一步」或「好了」自动推进，其它
-  内容如实显示为「听到了，但不是口令」。
+- 语音翻页（wearer 模式可用性检查 + 宿主识别）：LISTEN 先按
+  文档方式用 getUserMedia({audio:{captureSource:'microphone',
+  microphoneMode:'wearer'}}) 做佩戴者模式麦克风可用性检查
+  （读 track.getSettings() 确认模式，检查完立即停轨道）。
+  注意：wearer 模式只作用于这条检查流本身；口令识别由宿主
+  SpeechRecognition 在其自有麦克风通路上完成，检查的模式
+  不影响识别。听到「下一步」或「好了」自动推进，其它内容
+  如实显示为「听到了，但不是口令」。
 - 看锅记录（诚实边界）：LOOK 看着锅用 ImageCapture
   takePhoto({mode:'default'}) 拍一张（只作记录，显示字节数；
   不可用时回退 wx.media CameraContext）；火候由你亲眼判断：
@@ -51,8 +52,9 @@ Rokid 眼镜做饭跟做智能体（AIUI Agent）。
 - 不发明唤醒词 API：语音翻页只有点 LISTEN 后的一次性
   SpeechRecognition 识别，没有常驻唤醒；识别不到或主机不支持
   时如实显示 SKIP / FAIL，回退点头 / 按键 / 按钮。
-- wearer 模式在真实厨房噪音（抽油烟机、沸水声）下的识别率
-  未在真机验证，README 如实标注为未验证项。
+- 宿主 SpeechRecognition 在真实厨房噪音（抽油烟机、沸水
+  声）下的口令识别率未在真机验证（wearer 模式检查只验证
+  可用性，不参与识别），README 如实标注为未验证项。
 - 菜谱全部为内置 3 道家常菜，不支持导入外部菜谱，也不联网
   搜菜谱；计时为本机 setInterval 倒计时，页面隐藏/卸载时
   清除计时、abort 识别器、停掉全部媒体轨道。
