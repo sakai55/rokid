@@ -1,6 +1,14 @@
 # glasses-benchmark — Rokid 眼镜全功能 Benchmark（AIUI Agent）
 
-第一个开发测试智能体：一键跑完 Rokid 眼镜在 AIUI 下的全部功能，共 21 项。
+第一个开发测试智能体：一键跑完 Rokid 眼镜在 AIUI 下的全部功能，共 23 项（21 项实测 + 2 项平台边界声明）。
+
+## 预览截图
+
+截图统一存放于仓库根目录 `screenshots/glasses-benchmark/`。
+
+![首页（READY 状态）](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/glasses-benchmark/preview-glasses-benchmark-index.png)
+
+![RUN ALL 跑完后的结果页](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/glasses-benchmark/preview-index-runall.png)
 
 ## 真机测试信息（Global AIUI Studio · Device Debug）
 
@@ -31,8 +39,8 @@
 | 07 | Net Fetch | HTTPS 请求 example.com 往返 |
 | 08 | Canvas 2D | 渐变 / 图形 / 文字 / flush（画布直接可见） |
 | 09 | Audio Out | Web Audio 880Hz 振荡器（扬声器） |
-| 10 | Microphone | 设备枚举 + 0.9 秒录音字节数 |
-| 11 | Camera | 取流 + 拍照字节数（回退 wx CameraContext） |
+| 10 | Microphone | 设备枚举 + 四种官方麦克风模式逐个探测（wearer / far-field / near-field / omnidirectional）+ wearer 模式 0.9 秒录音 |
+| 11 | Camera | 取流 + 三种官方模式各拍一张并解码实际像素（wide 2016×2688 / telephoto 2016×1512 / default 3024×4032，回退 wx CameraContext 无模式参数） |
 | 12 | Accel | 加速度计读数 |
 | 13 | Gyro/Ori | 陀螺仪 + 绝对方向四元数 |
 | 14 | Geolocation | 单次定位 + 精度 |
@@ -42,10 +50,12 @@
 | 18 | ASR Caps | 识别能力查询；LISTEN 按钮做实时识别 |
 | 19 | LLM | LanguageModel 可用性 + 一次短推理 |
 | 20 | Barcode | BarcodeDetector 支持格式 |
-| 21 | Interaction | 按键 / 点头手势 / 语音唤醒（被动监听，触发即 PASS） |
+| 21 | Interaction | 按键 / 点头手势 / 头稳 / 语音唤醒（被动监听，触发即 PASS） |
+| 22 | EyeTrack（边界） | 平台无眼动追踪 API——恒为 SKIP 并注明：「凝视」=头部朝向+头稳+点头（见 13/21），永不报 PASS |
+| 23 | OCR（边界） | 平台无 OCR API——恒为 SKIP 并注明：读文字走 telephoto 拍照 + LLM 图片输入（见 11/19），永不报 PASS |
 
-状态：PASS / FAIL / SKIP（硬件或主机不支持）/ MANUAL（需人触发）。
-点任意一行可单独重跑该项；RUN ALL 顺序跑完 01–20。
+状态：PASS / FAIL / SKIP（硬件或主机不支持、或平台无此 API）/ MANUAL（需人触发）。
+点任意一行可单独重跑该项；RUN ALL 顺序跑完 01–20 与 22–23。
 
 ## 打包
 
@@ -75,13 +85,13 @@
 
 ### Feature Description
 
-Glasses Benchmark is a full self-check for Rokid Glasses under AIUI. Tap RUN ALL to run 21 tests in sequence: device, display, CPU, crypto, storage, network, Canvas 2D, audio, microphone, camera, sensors, geolocation, Bluetooth, battery, TTS, ASR, LLM, barcode and interaction events. Each item reports PASS, FAIL, SKIP or MANUAL with a reason, and can be re-run individually. Built for developers validating real glasses hardware and runtime capabilities.
+Glasses Benchmark is a full self-check for Rokid Glasses under AIUI. Tap RUN ALL to run 23 checks: device, display, CPU, crypto, storage, network, Canvas 2D, audio, microphone (all 4 official modes), camera (wide / telephoto / default), sensors, geolocation, Bluetooth, battery, TTS, ASR, LLM, barcode and interaction. Two boundary items state what the platform has no API for — eye tracking and OCR — and always report SKIP, never PASS. Every item shows PASS, FAIL, SKIP or MANUAL with a reason.
 
 ### Opening Message
 
 Hi, I'm **Glasses Benchmark** — your on-glasses self-check.
 
-Tap **RUN ALL** and I'll test 21 capabilities one by one, from display and CPU to camera, sensors, TTS and the built-in LLM. Items marked **MANUAL** need a quick tap or your ears to confirm. You can also tap any single row to re-run just that test.
+Tap **RUN ALL** and I'll test 23 items one by one, from display and CPU to camera, sensors, TTS and the built-in LLM. Two items are platform boundaries (no eye-tracking or OCR API exists) and will always show **SKIP** — that's the honest answer, not a failure. Items marked **MANUAL** need a quick tap or your ears to confirm. You can also tap any single row to re-run just that test.
 
 ### Preview Media
 
@@ -93,6 +103,22 @@ Tap **RUN ALL** and I'll test 21 capabilities one by one, from display and CPU t
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### v1.1.0（本地包版本；Studio Build 号待重新打包后生成）
+
+**Features added**
+
+- Two platform-boundary items (22 EyeTrack, 23 OCR): the official AIUI API has no eye-tracking and no OCR API, so these always report SKIP with the reason and the official alternative path — they can never report PASS.
+- Microphone test now probes all four official microphone modes (wearer / far-field / near-field / omnidirectional) and reports how many the host accepts.
+
+**Improvements**
+
+- Camera test now takes one photo in each official mode (wide / telephoto / default) and decodes each photo to report its real pixel size, instead of a single modeless photo.
+- Capability-boundary audit against the official Rokid capability dossier (2026-10-24): permissions, sensor set, canvas size (480×352) and monochrome-green styling re-verified.
+
+**Fixes**
+
+- None.
 
 #### Build 1.0.19
 
