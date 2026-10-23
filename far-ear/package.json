@@ -1,1 +1,0 @@
-{"dependencies":{},"description":"Rokid Glasses AIUI Agent - hear far-away speech a second time: face the source to aim the 4-mic array in far-field mode, watch the live level, caption what was heard (labelled may-be-wrong), and replay it by TTS through the speaker at your ear","main":"app.js","name":"far-ear","version":"1.0.0"}
