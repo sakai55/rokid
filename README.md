@@ -1,148 +1,202 @@
-# rokid — Rokid AIUI Agents（海外版 / Global）
+# cook-along — 做饭跟做（Rokid 眼镜 AIUI Agent）
 
-Rokid AI 眼镜的 **AIUI 智能体** 仓库。我们只开发 Agent，不开发 App。
-组织方式：**一个 Agent 一个目录**，每个目录是一套完整的 AIUI 项目
-（`app.json` + `AGENTS.md` + `app.js` + `pages/`）。仓库根目录另放两个打包好的
-`.aix` 文件（备选导入用，见「备选方案」）。往 Studio 导入单个 Agent 走
-**专属分支**（见「Studio 导入方法」），不要直接导 main 的子目录。
+50 个「指向性生活问题」Agent 的第 11 个。做饭时手上全是油和水，
+翻不了手机菜谱，步骤还总做到一半就忘：菜谱就悬在你的视线里，
+你看着锅做，点头或喊一声「下一步」就翻页，定时步骤在眼前倒计时、
+到点出声提醒——全程不用腾手碰任何屏幕。
 
-## Agents
+## 预览截图
 
-| 目录 | 说明 | 导入分支 | 真机测试状态 |
-|---|---|---|---|
-| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | `agent-my-agent` | 尚未正式导入（分支导入已实测成功） |
-| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | `agent-glasses-benchmark` | Studio 名 `12345`，Build `1.0.19`，Debug version ready |
-| `gaze-translate/` | 50 个指向性 Agent 之 #01 凝视翻译：看文字、稳头、长焦拍、翻译朗读 | `agent-gaze-translate` | 尚未导入 Studio |
+截图统一存放于仓库根目录 `screenshots/cook-along/`。
 
-每个 Agent 的真机测试信息（Studio 里的名称、Build 版本、App 分类、描述、Agent ID、状态）
-完整记录在该 Agent 目录自己的 README 里，以那里为准。
+![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/cook-along/preview-cook-along-index.png)
 
-## 截图目录
+![DEMO 跳到番茄炒蛋第 3 步、倒计时运行中的步骤视图](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/cook-along/preview-cook-along-step.png)
 
-所有 Agent 的预览截图集中存放在仓库根目录的 `screenshots/` 下，一个 Agent 一个
-子目录（`screenshots/<agent>/`）。每个 Agent 的 README 都有「预览截图」一节，
-直接嵌入这些图片，在 GitHub 上打开 README 即可看图。
+## 解决的问题
 
-## 开发环境与工具链
+手机菜谱在厨房里根本用不了：手脏手湿不能划屏，手机放远了看不清，
+放近了溅上油；做到一半去洗手翻页，回来已经忘了刚才到哪一步。
+本 Agent 把菜谱搬进视线：步骤大字就显示在你看锅的余光里，
+翻页靠点头和声音，计时靠眼前的倒计时和到点朗读，做饭的手
+从头到尾不用离开锅和案板。
+
+## 指向性设计（为什么必须用眼镜）
+
+- **菜谱在视线内（GAZE）**：当前步骤大字显示在视线里，你看着
+  锅就等于看着菜谱，不用在锅和手机之间来回低头找步骤；
+  LOOK 也是看着锅拍——视线指到哪，记录的就是哪口锅。
+- **头部稳定 = 凝视确认**：`enableWorldAwareness()` 开启世界
+  感知后，`onOrientationStabilityChange` 报告头部稳定时才
+  响应点头（`onHeadGesture` 的 `nod`）：未开火时点头 = START，
+  进行中点头 = NEXT。炒菜时身体晃动不会误触发，稳住头的一点
+  才是确认。
+- **4 麦 wearer 模式听你说话（MIC4）**：LISTEN 先按文档方式
+  用 `getUserMedia({audio:{captureSource:'microphone',
+  microphoneMode:'wearer', echoCancellation:true}})` 打开
+  佩戴者模式麦克风——4 麦阵列优先收**你自己**的声音，压过
+  抽油烟机和沸水的噪音（读 `track.getSettings()` 确认实际
+  模式，检查完立即停轨道），再按基准 Agent 的
+  `SpeechRecognition`（zh-CN）模式识别口令：听到「下一步」
+  或「好了」自动翻页，其它话如实显示「听到了，但不是口令」。
+- **倒计时在眼前**：带分钟的步骤（腌肉 10 分钟、烧水 5 分钟、
+  炒番茄 2 分钟等）点 TIMER 启动倒计时，剩余 mm:ss 就显示在
+  步骤框里，余光扫一眼就知道还剩多久；归零变「TIME UP」并用
+  TTS 朗读「时间到」+ 当前步骤，推进下一步自动清掉旧计时。
+- **看锅判断在你（诚实边界）**：LOOK 用
+  `ImageCapture.takePhoto({mode:'default'})` 给眼前的锅拍一张
+  只作记录（显示字节数）；火候由你亲眼判断——PAN 轮换你看到
+  的状态（还生 / 刚好 / 有点糊），每个状态配一句调整建议
+  （有点糊 → 关小火，加两勺水快翻匀）。照片不判断熟度，
+  界面全程标注「record only; YOU judge doneness」。
+
+## 功能流程
+
+1. RECIPE 选菜：番茄炒蛋（6 步）/ 青椒肉丝（7 步）/
+   清水煮面（6 步），选中即回到第 0 步备料清单；
+   ArrowUp / ArrowDown 在未开火时同样换菜
+2. START（或稳住头点头 / Enter）开始第 1 步，步骤大字显示
+3. NEXT / 点头 / 语音「下一步」「好了」逐步推进；做菜进行中
+   RECIPE 锁定防误触；最后一步后再 NEXT 进入
+   「DONE - 上菜」状态
+4. 当前步带分钟数时点 TIMER 启动倒计时（再点停止），
+   剩余时间显示在步骤框；归零 TTS 喊「时间到」
+5. LISTEN 语音翻页：wearer 模式麦克风检查 + zh-CN 识别，
+   识别结果如实显示；不可用时显示 SKIP，回退点头/按钮
+6. LOOK 看着锅拍照留档（只作记录）；PAN 轮换锅况
+   （还生 / 刚好 / 有点糊）显示对应调整建议
+7. SPEAK 朗读当前步骤（备料步朗读备料清单）
+8. DEMO 按钮：载入番茄炒蛋并跳到第 3 步（炒番茄 2 分钟）
+   且启动倒计时，预览即可看到步骤视图 + 实时计时行
+
+> 诚实说明：菜谱是内置 3 道家常菜，不支持导入外部菜谱；
+> 照片只作记录、熟度靠佩戴者亲眼判断；语音翻页是点 LISTEN
+> 后的一次性识别，不是常驻唤醒词。
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| CAMERA | 取流并以 default 模式拍摄眼前的锅（只作影像记录，不参与火候判断） |
+| RECORD_AUDIO | LISTEN 语音翻页：wearer 模式麦克风检查 + SpeechRecognition 识别「下一步 / 好了」口令 |
+
+相机/麦克风只在用户点 LOOK / LISTEN 时启动：麦克风检查完
+立即停轨道，相机拍完立即停掉全部媒体轨道；计时器、识别器
+在页面隐藏/卸载时一律清除/abort。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <name>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（终端起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/cook-along
+~/tools/bin/aix pack . -o ../dist/cook-along.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-打包注意：项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-`skills-lock.json`、`node_modules/`，否则开发文件会进包（实测 2.3 KB 会涨到 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线
+（`shot-cook.js`；步骤截图的点击序列为 canvas 内 DEMO (395, 242) 一次点击，
+DEMO 自带跳步 + 启动倒计时）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-1. **本地开发**：在对应 Agent 目录里开发、改页面。
-2. **预览**：开发完成后用 `aix preview` 出该 Agent **所有页面**的预览图确认效果。
-3. **推 GitHub**：代码推到本仓库对应 Agent 目录，同时把同一套文件同步到该
-   Agent 的专属分支 `agent-<名字>` 的**根目录**（分支根 = Agent 根）。
-4. **Studio 导入**：Global AIUI Studio → New Agent → **Import from GitHub** →
-   粘贴分支地址导入（见下面「Studio 导入方法」），一个分支导一个 Agent。
-5. **真机测试（云端下发）**：见下面专门章节。
-6. **提交审核**：真机测试通过并确认后，在 Studio 的 **Submit** 页签填写
-   Review Information（Feature Description、Opening Message、Preview Media、Change Log）
-   并 Submit for Review。
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用
+   分支导入：`https://github.com/sakai55/rokid/tree/agent-cook-along`
+   （该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging
+   点 **Repackage and Save**，确认顶部出现绿色
+   **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版
+   Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，
+   等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 cook-along」，站在灶台前选好菜点 START，
+   看着锅做：点头/喊「下一步」翻页，定时步开 TIMER，
+   看锅况点 PAN
 
-## Studio 导入方法（2026-10-24 实测结论，只用这一条）
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-导入对话框（IMPORT PROJECT / "GitHub Subdirectory Import"）**只有 URL 一个
-输入框**，没有分支/路径选择。Studio 把 `/tree/` 后面的**整段当作一个 ref**，
-不会拆成「ref + 路径」。由此实测：
+| 项目 | 值 |
+|---|---|
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 15.7 KB（本地打包 `dist/cook-along.aix`） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-- ✅ **分支地址（唯一可用）**：`https://github.com/sakai55/rokid/tree/agent-my-agent`
-  （换成目标 Agent 的分支名）。分支名是单段，能被正确解析为分支，
-  导入的就是**该分支根目录**——所以每个 Agent 有一个专属分支，
-  分支根目录放该 Agent 的全套文件。导入后生成名为 `sakai55/rokid` 的 Draft，
-  进 Studio 后改名。两个现有分支均已实测导入成功、文件树完整。
-- ❌ 子目录地址 `…/tree/main/my-agent`：报 `GitHub ref not found: main/my-agent`
-  （官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败，不是本仓库的问题）。
-- ❌ commit 号地址 `…/tree/<完整SHA>/my-agent`：同样报 ref not found。
-- ❌ 仓库根地址 `https://github.com/sakai55/rokid`：能导入，但生成的是
-  **空心 Agent**（Code 文件树为空），不能用。
-- ❌ blob 文件地址 `…/blob/main/my-agent/app.json`：能过导入，但 Run 报
-  「请先创建Agent的项目文件」，列表里也不会留下可用 Agent。
+## 验证情况
 
-改代码后要重新导入新版本：先把新文件同步到该 Agent 的分支根目录，再在
-Studio 里重新粘贴分支地址导入（或在已有草稿里更新），然后走真机测试流程。
+**已验证**
 
-## Studio 导入方法二：AIX 导入（备选保底）
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
+  解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
+  全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留；
+  模板里 9 个 bindtap 处理函数在逻辑对象中均有定义。
+- 打包：`aix pack` 成功；`aix list` 核对包内含 README.md、AGENTS.md、
+  app.js、app.json、package.json、pages/index/index.ink
+  （artifacts/ 已被 .aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见下方
+  Preview Media）：首页初始态完整渲染（番茄炒蛋备料步、
+  TIMER/PAN/ASR 三行状态、RECIPE/START/NEXT、TIMER/LISTEN/SPEAK、
+  LOOK/PAN/DEMO 三排按钮）；点 DEMO 后跳到番茄炒蛋第 3 步，
+  步骤大字（炒番茄出红汁）与倒计时运行行（TIMER 1:5x left）
+  正确显示。
 
-仓库根目录放着打包好的 `.aix`（代码变更后用 `aix pack` 重打并更新根目录文件）：
+**未验证**
 
-- `my-agent.aix`
-- `glasses-benchmark.aix`
-- `gaze-translate.aix`
+- 真机头部稳定检测与点头翻页在炒菜动作中的实际灵敏度。
+- **ASR 口令识别 + wearer 模式在真实厨房噪音**（抽油烟机、
+  沸水声）下能否稳定听到「下一步」（预览主机无
+  SpeechRecognition，LISTEN 的 SKIP 路径已如实显示，真机待测）。
+- 真机相机取流与 default 模式拍锅的效果（预览主机无相机，
+  LOOK 的 FAIL 路径已如实写明原因，真机待测）。
+- 真机 TTS 朗读当前步与计时归零「时间到」提醒的效果。
+- **已知产品边界**：菜谱为内置 3 道，不支持导入；照片只作
+  记录、不判断熟度——这是设计边界，不是待补验证项。
 
-步骤：
+---
 
-1. 在 GitHub 仓库根目录点开要导入的 `.aix` 文件，点下载按钮存到本地。
-2. 打开 Global AIUI Studio（en-US）→ New Agent → **Import from AIX**。
-3. 选择刚下载的 `.aix` 上传，导入后生成 Draft，文件树即包内完整工程。
-4. 后续同样走 Device Debug 打包保存 → 真机测试（见下文）。
+## 提审资料（Review Submission）
 
-这条路不依赖 GitHub 地址解析，GitHub 导入出问题或赶时间时用它保底；
-日常首选仍是方法一（分支地址导入），因为它直接对应仓库里的最新代码。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
 
-## ⚠️ 海外版本注意事项（必须全链路海外，缺一不可）
+### Feature Description
 
-1. **Studio 必须是 Global 站 + 英文**：只用
-   [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US)，
-   地址是 global、语言参数必须是 `en-US`。不要用国内站（aiui.rokid.com），
-   两站账号和项目不互通。
-2. **账号必须是海外版注册**：在 [account-web.rokid.com](https://account-web.rokid.com/)
-   的**英文版**注册/登录 Rokid 账号（本项目账号地区：Japan）。
-   用国内版注册的账号不算海外开发账号。
-3. **下发走云端，不走数据线**：在 Studio 里打包保存后由云端下发到眼镜，
-   不用 ADB、不用数据线直装。
-4. **手机 App 必须是海外版 Hi Rokid**：Google Play 的
-   **Hi Rokid - Rokid Glasses**（包名 `com.rokid.sprite.global.aiapp`，
-   发行方 Rokid International），**不是国内版 Rokid Ai App**。
-   眼镜资源包的更新入口在 Hi Rokid 里。
-5. 以上四点（Global 账号 + en-US Studio + 云端下发 + Hi Rokid）齐全，
-   才算海外版开发；任何一环用了国内版，链路就不通。
+Cook Along is a hands-free cooking companion for Rokid Glasses. Pick one of three built-in recipes and the steps stay in your line of sight while you watch the pan: nod or say "next" to advance, start an in-view countdown on timed steps and hear a spoken alert when time is up. The wearer-mode microphone hears your voice over the range hood, and a pan check lets you log what you see — still raw, just right, or starting to burn — with a one-line fix for each.
 
-## 真机测试（云端下发）详细步骤
+### Opening Message
 
-在 Global AIUI Studio（en-US）里打开该 Agent：
+Hi, I'm **Cook Along** — your recipe, right where you're already looking.
 
-1. 进 **Device Debug** 页签，先填 **Basic Information**：
-   - Agent Icon（建议 1:1 图片）
-   - **Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清 AI 助手应在什么场景、
-     什么前提下、被什么样的用户请求唤起这个 Agent
-   - Version 和 Agent ID 由系统生成，不可手改；**Version 是 Build 号，
-     每次重新打包保存自动递增**（如 1.0.19）
-2. 在 **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功的标志**：页面顶部出现绿色状态
-   **● Debug version ready — Ready for device debugging**。
-   没出现这个状态，说明这一版还没有保存成功，App 端拉不到，不要去 App 里白等。
-4. 手机打开 **Hi Rokid**（海外版），确认已连接眼镜，进
-   「设置 → 开发者选项 → AIUI」→ 点「更新眼镜资源包」，等眼镜端下载完成，
-   看到「智能体资源包下载成功」。
-5. 对眼镜语音打开该 Agent（如「乐奇，打开 xxx」）开始真机测试。
-6. 改代码后循环：改 → 推 GitHub → Studio 更新导入 → Repackage and Save
-   （Build 号递增，重新出现 Debug version ready）→ Hi Rokid 更新眼镜资源包 → 再测。
-   **只改代码不重新 Repackage and Save，App 拉到的还是旧版。**
+Tap **RECIPE** to pick a dish (tomato eggs, pepper pork, or plain noodles), then **START**. I'll show one big step at a time: nod or tap **NEXT**, or tap **LISTEN** and say "下一步" to move on with oily hands. Steps with minutes get a **TIMER** countdown in view and a spoken "时间到" alert. Tap **LOOK** to photograph the pan (record only — you judge doneness) and **PAN** to log what you see.
 
-## 提交审核
+### Preview Media
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-1. 在 Studio 的 **Submit** 页签填 Review Information：
-   Feature Description、Opening Message、Preview Media、Change Log。
-   **这四项的成稿统一放在各 Agent 自己 README 的「提审资料（Review Submission）」
-   章节里，分段写好，提交时整段复制**（Feature Description ≤500 字、
-   Opening Message ≤500 字且支持 Markdown；Preview Media 需 3–5 个
-   JPG/PNG/MP4 且至少 1 图 1 视频，每次提交前重新确认）。
-2. 确认权限声明与代码实际用到的能力一致（如定位 GEOLOCATION、相机 CAMERA、
-   录音 RECORD_AUDIO 必须在 `app.json.permissions` 里声明）。
-3. 点 **Submit for Review** 提交，等待审核结果；被拒按原因修改后
-   重新打包保存、重新提交。
+- Image 1：`artifacts/preview-cook-along-index.png`（aix preview 首页：COOK ALONG 初始态，番茄炒蛋备料步 + TIMER/PAN/ASR 状态行 + 三排按钮，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-cook-along-step.png`（DEMO 跳到番茄炒蛋第 3 步的运行态：步骤大字 + 倒计时运行行 TIMER 1:5x left，本地文件）
+- Video：待真机补 — 真机录制「选菜 → 开火做第 1 步 → 点头/语音翻页 → 定时步倒计时到点提醒 → 看锅 PAN」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
+
+### Change Log
+
+#### Build 1.0.0
+
+**Features added**
+
+- Line-of-sight recipes: 3 built-in dishes （番茄炒蛋 6 steps, 青椒肉丝 7 steps, 清水煮面 6 steps), each opening on an ingredients step 0; RECIPE cycles dishes and resets, START begins step 1, NEXT / nod (head steady) / voice command advances, with a DONE — 上菜 finish state.
+- In-view step timer: timed steps show a ready countdown, TIMER starts/stops a 1-second mm:ss countdown inside the step box, advancing clears it, and at zero the line shows TIME UP with a spoken "时间到" alert.
+- Voice step control: LISTEN runs a documented wearer-mode microphone check (getUserMedia captureSource microphone, microphoneMode wearer — the 4-mic array prioritising your voice over range-hood noise) and then SpeechRecognition (zh-CN); hearing 下一步 or 好了 advances the step, anything else is shown honestly as heard-but-not-a-command; ASR unavailable shows SKIP.
+- Gaze-anchored pan check: LOOK photographs the pan you are looking at (default mode, record only, byte size shown, wx camera fallback); PAN cycles what YOU see （还生 / 刚好 / 有点糊） with a one-line adjustment tip per state. The photo never judges doneness.
+- SPEAK reads the current step aloud; DEMO jumps mid-recipe into step 3 with the timer running so the step view and live countdown are visible without camera or microphone.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
