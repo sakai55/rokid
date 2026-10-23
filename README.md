@@ -61,17 +61,11 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 ## 标准工作流
 
-```mermaid
-flowchart LR
-    A[本地开发<br/>slug 目录] --> B[aix preview<br/>全部页面预览图]
-    B --> C[推 GitHub<br/>main 目录 + 根 .aix + 截图]
-    C --> D[同步分支<br/>agent-slug 根目录]
-    D --> E[Studio 导入<br/>tree/agent-slug]
-    E --> F[Device Debug<br/>Repackage and Save]
-    F --> G[Hi Rokid<br/>更新眼镜资源包]
-    G --> H[眼镜语音打开<br/>真机测试]
-    H --> I[Submit<br/>提交审核]
-```
+<div align="center">
+
+<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
+
+</div>
 
 1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
 2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
