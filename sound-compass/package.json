@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - find which direction a sound came from with a turn-head level scan: the microphone samples loudness while you slowly turn, buckets it by head heading, and points you back to the loudest direction","main":"app.js","name":"sound-compass","version":"1.0.0"}
