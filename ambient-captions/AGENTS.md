@@ -16,10 +16,13 @@ Rokid 眼镜环境字幕智能体（AIUI Agent）。
   `getUserMedia({audio:{captureSource:'microphone',
   microphoneMode:'near-field'}})` 做一次近场模式可用性检查
   （读回 `track.getSettings()`，查完立即停轨道）。选
-  near-field 的理由：交谈对象坐在你对面 1–2 米处，按媒体
-  文档的定义这是「附近的声音」；`wearer` 模式优先收佩戴者
-  自己的声音，会把你自己的话顶上来、压掉对方；`far-field`
-  是给房间那头的远距离声源用的，对面交谈用不上。模式被
+  near-field 做检查的理由：交谈对象坐在你对面 1–2 米处，
+  按媒体文档的定义这是「附近的声音」，near-field 正是
+  文档里与这个距离对应的模式 — 检查通过即确认这台
+  设备上存在这条近距离交谈拾音路径。如实边界：检查流
+  查完即停，不是识别的输入；字幕识别由宿主
+  `SpeechRecognition` 在它自己的麦克风通路上完成，
+  检查时选的模式不会改变识别听到的声音。模式被
   设备拒绝（OverconstrainedError）时回退默认麦克风并如实
   提示，不假装模式生效。
 - 滚动字幕（一轮接一轮识别）：随后以基准 Agent 的
@@ -28,9 +31,11 @@ Rokid 眼镜环境字幕智能体（AIUI Agent）。
   （HH:MM）排在上面，再往前的自动滚出。字幕栈最多 30 句，
   **只存内存**：不落盘、不写存储、不上传 — 一场对话不是
   一份录音，页面关掉字幕就没了，CLEAR 立即清空。
-- 对准说话人：界面常驻提示「Face the speaker - your head
-  aims the array」— 4 麦阵列跟着你的头朝向收音，你正对
-  说话人时字幕最准；东张西望时字幕质量会跟着掉。
+- 对准说话人：界面常驻提示「Face the speaker - captions
+  sit under their face」— 正对说话人时字幕就落在他的
+  脸下方、你的视线正中央，你也看得清他的口型。识别
+  质量由宿主识别管线决定；本 Agent 不声称头部朝向会
+  改变识别输入或字幕质量（朝向的影响未验证）。
 - 重读（REPEAT）：最新一句闪得太快没看清时，点 REPEAT 或
   头部稳定时点头（`enableWorldAwareness` +
   `onOrientationStabilityChange` + `onHeadGesture` nod），

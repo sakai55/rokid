@@ -12,7 +12,7 @@ export default {
     status: 'Tap START - captions for the person facing you',
     steadyText: 'HEAD: moving - hold still',
     micLine: 'MIC: idle · near-field check on START',
-    guideLine: 'Face the speaker - your head aims the array',
+    guideLine: 'Face the speaker - captions sit under their face',
     capOld2: ' ',
     capOld1: ' ',
     capLatest: 'No captions yet - START, then face the speaker',
@@ -31,7 +31,7 @@ export default {
     this._quietErrs = 0;
     this._errStreak = 0;
     this._fatalError = null;
-    this._micLabel = 'near-field';
+    this._micLabel = 'not run';
     this._recog = null;
     this._roundTimer = null;
     this._demo = false;
@@ -145,12 +145,14 @@ export default {
     this.setData({ busy: true, status: 'START: checking near-field mic...' });
     // Near-field availability check (documented getUserMedia audio
     // constraints, same pattern as far-ear / name-call): the person
-    // you are talking with sits 1-2 m away - that is a NEARBY sound
-    // source for the 4-mic array. 'wearer' would prioritise YOUR
-    // own voice and drown your partner out; 'far-field' is tuned
-    // for distant sources across a room. So captions ask for
-    // 'near-field'. The stream only verifies the mode; it is
-    // stopped at once and the rounds use SpeechRecognition.
+    // you are talking with sits 1-2 m away - per the media docs
+    // that is a NEARBY sound source, so 'near-field' is the mode
+    // whose documented purpose matches this conversation distance.
+    // The check only verifies that mode exists on this device: the
+    // stream is stopped at once and is NOT the recognition input.
+    // The caption rounds use the host SpeechRecognition, which
+    // listens on its own microphone - no mic mode chosen here
+    // shapes what the recogniser hears.
     var micLabel = 'check n/a';
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       var stream = null;
@@ -187,7 +189,7 @@ export default {
     this.setData({
       busy: false,
       status: 'CAPTIONING - face the speaker, one at a time',
-      lastEvent: 'EVT: captions live · mic ' + micLabel + ' · ASR rounds on'
+      lastEvent: 'EVT: captions live · mic check ' + micLabel + ' · host ASR rounds on'
     });
     this._startRound();
     this._recompute();
@@ -379,11 +381,11 @@ export default {
     if (this._demo) {
       patch.micLine = 'MIC: DEMO · synthetic lines, no mic used';
     } else if (this._listening) {
-      patch.micLine = 'MIC: ' + this._micLabel + ' · round ' + this._round + ' · listening';
+      patch.micLine = 'MIC CHECK: ' + this._micLabel + ' · round ' + this._round + ' · listening (host ASR)';
     } else {
-      patch.micLine = 'MIC: idle · rounds ' + this._round + ' · near-field on START';
+      patch.micLine = 'MIC: idle · rounds ' + this._round + ' · near-field check on START';
     }
-    patch.guideLine = 'Face the speaker - your head aims the array';
+    patch.guideLine = 'Face the speaker - captions sit under their face';
     var latest = n ? caps[n - 1] : null;
     var prev1 = n > 1 ? caps[n - 2] : null;
     var prev2 = n > 2 ? caps[n - 3] : null;
