@@ -65,16 +65,22 @@ aix preview .                               # 本地预览（终端起服务 / -
 改代码后要重新导入新版本：先把新文件同步到该 Agent 的分支根目录，再在
 Studio 里重新粘贴分支地址导入（或在已有草稿里更新），然后走真机测试流程。
 
-## 备选方案：.aix 直接导入
+## Studio 导入方法二：AIX 导入（备选保底）
 
-仓库根目录放着打包好的 `.aix`（代码变更后用 `aix pack` 重打并更新）：
+仓库根目录放着打包好的 `.aix`（代码变更后用 `aix pack` 重打并更新根目录文件）：
 
 - `my-agent.aix`
 - `glasses-benchmark.aix`
 
-用法：在 GitHub 上点开对应 `.aix` 下载到本地 → Global AIUI Studio →
-New Agent → **Import from AIX** → 上传该文件。不依赖 GitHub 地址导入，
-GitHub 导入出问题时用这条保底。
+步骤：
+
+1. 在 GitHub 仓库根目录点开要导入的 `.aix` 文件，点下载按钮存到本地。
+2. 打开 Global AIUI Studio（en-US）→ New Agent → **Import from AIX**。
+3. 选择刚下载的 `.aix` 上传，导入后生成 Draft，文件树即包内完整工程。
+4. 后续同样走 Device Debug 打包保存 → 真机测试（见下文）。
+
+这条路不依赖 GitHub 地址解析，GitHub 导入出问题或赶时间时用它保底；
+日常首选仍是方法一（分支地址导入），因为它直接对应仓库里的最新代码。
 
 ## ⚠️ 海外版本注意事项（必须全链路海外，缺一不可）
 
