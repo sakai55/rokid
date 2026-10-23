@@ -9,7 +9,7 @@ import wx from 'wx';
 
 export default {
   data: {
-    summary: 'READY · 0/21 PASS',
+    summary: 'READY · 0/23 PASS',
     deviceLine: '-',
     lastEvent: 'EVT: tap RUN ALL, or tap a row to run one test',
     renderTick: 0,
@@ -24,8 +24,8 @@ export default {
       { id: 'fetch', name: '07 Net Fetch', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'HTTPS round-trip to example.com' },
       { id: 'canvas', name: '08 Canvas 2D', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'gradient / shapes / text / flush' },
       { id: 'audio', name: '09 Audio Out', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'Web Audio oscillator via speaker' },
-      { id: 'mic', name: '10 Microphone', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'enumerate + 0.9s recording' },
-      { id: 'camera', name: '11 Camera', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'video stream + take photo' },
+      { id: 'mic', name: '10 Microphone', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'enumerate + 4 mic modes + 0.9s rec' },
+      { id: 'camera', name: '11 Camera', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'photo: wide / telephoto / default' },
       { id: 'accel', name: '12 Accel', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'accelerometer reading' },
       { id: 'gyro', name: '13 Gyro/Ori', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'gyroscope + absolute orientation' },
       { id: 'geo', name: '14 Geolocation', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'single position fix' },
@@ -35,7 +35,9 @@ export default {
       { id: 'asr', name: '18 ASR Caps', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'recognition capabilities (LISTEN = live)' },
       { id: 'llm', name: '19 LLM', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'LanguageModel availability + prompt' },
       { id: 'barcode', name: '20 Barcode', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'BarcodeDetector formats' },
-      { id: 'interaction', name: '21 Interaction', status: 'MANUAL', cls: 'st st-manual', msText: '-', detail: 'press a key / nod head / voice wakeup' }
+      { id: 'interaction', name: '21 Interaction', status: 'MANUAL', cls: 'st st-manual', msText: '-', detail: 'press a key / nod head / voice wakeup' },
+      { id: 'eyetrack', name: '22 EyeTrack', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'boundary: platform has NO eye-tracking API' },
+      { id: 'ocr', name: '23 OCR', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'boundary: platform has NO OCR API' }
     ]
   },
 
@@ -110,7 +112,7 @@ export default {
     this.setData({ running: true, lastEvent: 'EVT: benchmark running...' });
     var ids = ['device', 'display', 'cpu', 'crypto', 'storage', 'netinfo', 'fetch',
       'canvas', 'audio', 'mic', 'camera', 'accel', 'gyro', 'geo', 'ble', 'battery',
-      'tts', 'asr', 'llm', 'barcode'];
+      'tts', 'asr', 'llm', 'barcode', 'eyetrack', 'ocr'];
     for (var i = 0; i !== ids.length; i++) {
       await this._runOne(ids[i]);
     }
@@ -167,6 +169,8 @@ export default {
       case 'asr': return this._tAsr();
       case 'llm': return this._tLlm();
       case 'barcode': return this._tBarcode();
+      case 'eyetrack': return this._tNoApi('eye');
+      case 'ocr': return this._tNoApi('ocr');
       default: return Promise.resolve({ status: 'SKIP', detail: 'no test' });
     }
   },
@@ -271,8 +275,24 @@ export default {
   async _tMic() {
     if (!navigator.mediaDevices) throw new Error('mediaDevices n/a');
     var devices = await navigator.mediaDevices.enumerateDevices();
-    var stream = await this._withTimeout(
-      navigator.mediaDevices.getUserMedia({ audio: true }), 8000, 'mic');
+    // Official mic modes (AIUI media API): wearer / far-field / near-field /
+    // omnidirectional. Probe each; an unsupported mode rejects with
+    // OverconstrainedError and is reported as not-supported, not a failure.
+    var modes = ['wearer', 'far-field', 'near-field', 'omnidirectional'];
+    var okModes = [];
+    for (var i = 0; i !== modes.length; i++) {
+      var probe = null;
+      try {
+        probe = await this._withTimeout(navigator.mediaDevices.getUserMedia(
+          { audio: { captureSource: 'microphone', microphoneMode: modes[i] } }), 4000, 'mode');
+        var tr = probe.getAudioTracks()[0];
+        var actual = tr && tr.getSettings ? tr.getSettings().microphoneMode : null;
+        okModes.push(actual || modes[i]);
+      } catch (e) { /* mode not supported on this host */ }
+      if (probe) probe.getTracks().forEach(function (t) { t.stop(); });
+    }
+    var stream = await this._withTimeout(navigator.mediaDevices.getUserMedia(
+      { audio: { captureSource: 'microphone', microphoneMode: 'wearer' } }), 8000, 'mic');
     try {
       var mime = (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported('audio/wav'))
         ? 'audio/wav' : '';
@@ -287,7 +307,8 @@ export default {
       var settings = stream.getAudioTracks()[0] ? stream.getAudioTracks()[0].getSettings() : {};
       return {
         status: bytes > 0 ? 'PASS' : 'FAIL',
-        detail: devices.length + ' dev · rec ' + bytes + 'B · ' + (settings.sampleRate || '?') + 'Hz'
+        detail: (devices.length + ' dev · modes ' + okModes.length + '/4 ok · rec ' +
+          bytes + 'B · ' + (settings.sampleRate || '?') + 'Hz').slice(0, 72)
       };
     } finally {
       stream.getTracks().forEach(function (t) { t.stop(); });
@@ -302,11 +323,31 @@ export default {
         navigator.mediaDevices.getUserMedia({ video: true }), 9000, 'camera');
       var track = stream.getVideoTracks()[0];
       if (!track) throw new Error('no video track');
-      var s = track.getSettings();
       if (typeof ImageCapture !== 'undefined') {
         var cap = new ImageCapture(track);
-        var blob = await this._withTimeout(cap.takePhoto(), 9000, 'photo');
-        return { status: 'PASS', detail: 'photo ' + blob.size + 'B · stream ' + (s.width || '?') + 'x' + (s.height || '?') };
+        // Official photo modes: wide (scanning) / telephoto (distant text) /
+        // default. Decode each blob to report its real pixel size.
+        var modes = ['wide', 'telephoto', 'default'];
+        var labels = { wide: 'wide', telephoto: 'tele', default: 'def' };
+        var parts = [];
+        var okCount = 0;
+        for (var i = 0; i !== modes.length; i++) {
+          try {
+            var blob = await this._withTimeout(cap.takePhoto({ mode: modes[i] }), 9000, 'photo');
+            var dims = '?';
+            if (typeof createImageBitmap !== 'undefined') {
+              var bmp = await createImageBitmap(blob);
+              dims = bmp.width + 'x' + bmp.height;
+              try { bmp.close(); } catch (e) {}
+            }
+            parts.push(labels[modes[i]] + ' ' + Math.round(blob.size / 1024) + 'KB ' + dims);
+            okCount++;
+          } catch (e) {
+            parts.push(labels[modes[i]] + ' err');
+          }
+        }
+        if (!okCount) throw new Error('all photo modes failed');
+        return { status: 'PASS', detail: parts.join(' · ').slice(0, 72) };
       }
       throw new Error('ImageCapture n/a');
     } catch (e) {
@@ -484,6 +525,22 @@ export default {
     return {
       status: 'PASS',
       detail: formats.length + ' formats · ' + formats.slice(0, 3).join(',')
+    };
+  },
+
+  // Platform boundary items: these capabilities do NOT exist in the official
+  // AIUI API surface, so they can never PASS. They are listed so the report
+  // states the boundary explicitly instead of implying coverage.
+  async _tNoApi(kind) {
+    if (kind === 'eye') {
+      return {
+        status: 'SKIP',
+        detail: 'NO eye-tracking API · gaze = head orientation (13/21)'
+      };
+    }
+    return {
+      status: 'SKIP',
+      detail: 'NO OCR API · read text = telephoto photo + LLM (11/19)'
     };
   }
 };
