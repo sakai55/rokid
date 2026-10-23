@@ -14,6 +14,7 @@ export default {
     alertCls: 'alert',
     nameLine: 'NAME: 五郎 · preset',
     watchLine: 'WATCH: idle · rounds 0',
+    micLine: 'MIC CHECK: not run yet',
     heardLine: 'heard: --- (each round shows here)',
     honestLine: 'ASR keyword watch - NOT voiceprint',
     logHead: 'CALL LOG (matched only): 0/20',
@@ -35,7 +36,7 @@ export default {
     this._quietErrs = 0;
     this._errStreak = 0;
     this._fatalError = null;
-    this._micLabel = 'far-field';
+    this._micLabel = '';
     this._recog = null;
     this._setRec = null;
     this._setting = false;
@@ -321,7 +322,7 @@ export default {
     this._setting = false;
   },
 
-  // ---------- WATCH (far-field check + recognition round loop) ----------
+  // ---------- WATCH (far-field availability check + host ASR round loop) ----------
 
   async watchTap() {
     if (this._watching || this._demo) {
@@ -338,12 +339,13 @@ export default {
       });
       return;
     }
-    this.setData({ busy: true, status: 'WATCH: checking far-field mic...' });
-    // Far-field availability check (documented getUserMedia audio
-    // constraints, same pattern as cook-along / far-ear): far-field
-    // mode aims the 4-mic array at the room, not at the wearer.
-    // The stream only verifies the mode; it is stopped at once and
-    // the recognition rounds use the benchmark SpeechRecognition.
+    this.setData({ busy: true, status: 'WATCH: checking far-field mic-mode availability...' });
+    // Far-field AVAILABILITY CHECK ONLY (documented getUserMedia
+    // audio constraints): the stream only verifies that the
+    // far-field microphoneMode can be opened and what
+    // track.getSettings() reports; it is stopped at once. The
+    // mode has NO effect on recognition - the rounds below use
+    // host SpeechRecognition on the host's own microphone path.
     var micLabel = 'check n/a';
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       var stream = null;
@@ -380,8 +382,8 @@ export default {
     this._fatalError = null;
     this.setData({
       busy: false,
-      status: 'WATCHING for "' + this._target + '" - rounds run back to back',
-      lastEvent: 'EVT: watch live · mic ' + micLabel + ' · ASR rounds on'
+      status: 'WATCHING for "' + this._target + '" - host ASR rounds run back to back',
+      lastEvent: 'EVT: watch live · mic check: ' + micLabel + ' · host ASR rounds on'
     });
     this._startRound();
     this._recompute();
@@ -566,11 +568,24 @@ export default {
     if (this._demo) {
       patch.watchLine = 'WATCH: DEMO · round ' + this._round + ' · synthetic';
     } else if (this._watching) {
-      patch.watchLine = 'WATCH: listening · round ' + this._round + ' · ' + this._micLabel;
+      patch.watchLine = 'WATCH: listening · round ' + this._round + ' (host ASR)';
     } else if (this._setting) {
       patch.watchLine = 'WATCH: SET listening · say your name';
     } else {
       patch.watchLine = 'WATCH: idle · rounds ' + this._round;
+    }
+    if (!this._micLabel) {
+      patch.micLine = 'MIC CHECK: not run yet';
+    } else if (this._micLabel === 'far-field') {
+      patch.micLine = 'MIC CHECK: far-field OK';
+    } else if (this._micLabel === 'default mic') {
+      patch.micLine = 'MIC CHECK: default mic (far-field rejected)';
+    } else if (this._micLabel === 'check FAIL') {
+      patch.micLine = 'MIC CHECK: FAIL (host ASR still runs)';
+    } else if (this._micLabel === 'check n/a') {
+      patch.micLine = 'MIC CHECK: n/a (host ASR still runs)';
+    } else {
+      patch.micLine = 'MIC CHECK: ' + this._micLabel + ' OK';
     }
     patch.honestLine = 'ASR keyword watch - NOT voiceprint';
     var entries = this._logEntries || [];
@@ -595,6 +610,7 @@ export default {
     <view class="box">
       <text class="watch">{{nameLine}}</text>
       <text class="level">{{watchLine}}</text>
+      <text class="level">{{micLine}}</text>
       <text class="rule">{{heardLine}}</text>
       <text class="note">{{honestLine}}</text>
     </view>

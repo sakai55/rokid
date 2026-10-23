@@ -20,13 +20,18 @@ Rokid 眼镜喊名提醒智能体（AIUI Agent）。
   （key `nameCallTarget`），下次打开自动载入。
 - 守望（WATCH）：先按文档方式用 `getUserMedia({audio:
   {captureSource:'microphone', microphoneMode:'far-field'}})`
-  做一次远场模式可用性检查（读回 `track.getSettings()`，
-  检查完立即停轨道 — 远场模式让 4 麦阵列去收房间那头
-  的声音，而不是佩戴者自己）；然后以基准 Agent 的
-  `SpeechRecognition` 模式（zh-CN）一轮接一轮地识别：
-  每轮把听到的整句短暂显示为「heard: …」，界面显示当前
-  轮次（round n）。`SpeechRecognition` 不可用时如实
-  FAIL / SKIP，绝不假装在听。
+  做一次远场模式**可用性检查**（读回 `track.getSettings()`，
+  检查完立即停轨道）。这次检查只证明该模式在这台眼镜上
+  能打开，不为后面的识别供音，检查流停掉之后模式便
+  不再起任何作用；真正的识别由宿主 `SpeechRecognition`
+  （zh-CN）用它自己的麦克风路径一轮接一轮地完成
+  （档案 §2.4/§2.8：`microphoneMode` 只作用于
+  `getUserMedia` 自己的流）。每轮把听到的整句短暂显示
+  为「heard: …」，界面分行显示当前轮次
+  （`WATCH: listening · round n (host ASR)`）与检查
+  结果（`MIC CHECK: far-field OK`），互不冒充。
+  `SpeechRecognition` 不可用时如实 FAIL / SKIP，
+  绝不假装在听。
 - 匹配与报警：每轮识别文本做**子串匹配** — 含有目标
   名字即触发：眼前亮起大字「有人喊你: <整句原文>」，
   TTS 朗读「有人喊你」，报警时间与命中的整句记入日志
@@ -59,7 +64,7 @@ Rokid 眼镜喊名提醒智能体（AIUI Agent）。
   不上传音频；未命中的轮次文本不落盘，只有命中的那句
   连同时间存进本机日志（为的是你回头能看「几点、喊的
   是什么」），CLEAR LOG 一键清空。
-- 远场 ASR 的错误率在真机上未验证：距离、混响、多人
+- 宿主 ASR 的错误率在真机上未验证：距离、混响、多人
   同时说话都会让它错得更多 — 这也是为什么 SET 录进来
   的名字要原样显示给你确认：目标一旦听错，守望就守
   错了人。
