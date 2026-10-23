@@ -31,15 +31,21 @@
 - **看向即定位（GAZE 页记录）**：LOOK 用
   `ImageCapture.takePhoto({mode:'default'})` 拍下绘本这一
   页，只作记录——锚定「讲到哪一页」，界面只显示字节数。
-  它永远不会被读：AIUI 运行时没有 OCR，大模型只收文本
-  （图片输入需要 URL，现拍的照片给不了），所以眼镜看不见
-  这一页（同 #01 / #36 的结论），这一页的内容 100% 来自
-  你说的话。
-- **你说一页，它记一页（MIC4 wearer + 逐字纪律）**：SAY 先
-  做佩戴者模式麦克风检查（4 麦优先收讲故事的人，孩子在
-  旁边插话不会被当成这一页的描述），再一次性识别。你
-  说的话**原样**保存显示——整个故事建立在这些话上，提示
-  词送出去的就是你看到的这句话，一字不改。
+  它不会被读：运行时没有 OCR；而把照片发给大模型是本
+  Agent 刻意不走的路——平台其实支持照片经 data: URL 作为
+  图片输入送入大模型（档案 §2.9 的官方读字路径），本
+  Agent 只把文字发给模型，这是产品选择，不是平台限制。
+  所以这一页的内容 100% 来自你说的话。
+- **你说一页，它记一页（MIC4 wearer 检查 + 逐字纪律）**：SAY
+  先做佩戴者模式麦克风可用性检查（开 wearer 模式流、读
+  回 settings 后立即停流），再用宿主 SpeechRecognition 在
+  它自己的麦克风上一次性识别。说明白：wearer 模式只作
+  用于那条检查流，管不到宿主识别器（档案 §2.4 / §2.8）——
+  本 Agent 不承诺「优先收家长、孩子插话不会被当成描
+  述」；孩子在旁边说话可能被听进来，防线是你核对屏幕上
+  原样显示的那句话。你说的话**原样**保存显示——整个故事
+  建立在这些话上，提示词送出去的就是你看到的这句话，
+  一字不改。
 - **上下文是故事的记忆（HEAD 页序）**：TELL 时，前面所有
   页的描述按顺序一并以纯文本发给大模型，所以第 5 页的
   讲解记得第 1 页的小兔子为什么哭——连贯性来自页序，
@@ -61,8 +67,8 @@
    OFFLINE ECHO——讲解就是你的描述原样，问题从内置题库
    按页轮换（标注 OFFLINE ECHO）
 4. 预览：讲解词和问题先摆在屏幕上，**不自动朗读**；你
-   看完点 READ，合成语音以 0.85 倍速读出讲解词，问题由
-   你亲口问孩子
+   看完点 READ，合成语音以 0.85 倍速（主机是否采纳未验
+   证）读出讲解词，问题由你亲口问孩子
 5. NEXT / 点头：把 {页码， 描述， 讲解词， 问题， 来源}
    存入 `storyLook`（只保留最近一个故事，最多 20 页）
 6. READ ALL：按顺序把存好的讲解词整篇重播——睡前再听
@@ -92,7 +98,7 @@
 
 | 权限 | 用途 |
 |---|---|
-| CAMERA | LOOK 拍下绘本这一页留档（只取字节数显示，不保存、不读取——运行时没有 OCR，照片进不了大模型） |
+| CAMERA | LOOK 拍下绘本这一页留档（只取字节数显示，不保存、不读取——运行时没有 OCR；照片经 data: URL 送大模型平台是支持的，本 Agent 选择不送，只发文字） |
 | RECORD_AUDIO | SAY 录入这一页的描述：佩戴者模式麦克风检查 + 一次性语音识别（zh-CN）；READ / READ ALL 朗读走系统 TTS 不占麦克风 |
 
 相机/麦克风只在用户点 LOOK / SAY 时启动，用完立即停掉
@@ -124,7 +130,7 @@ cd ~/workspace/rokid/story-look
    等「智能体资源包下载成功」
 4. 对眼镜说「乐奇，打开 story-look」，拿一本孩子最喜欢的绘本
    实测：LOOK 拍页是否成功、SAY 对家长描述的识别率（孩子在
-   旁边插话时 wearer 模式是否只收家长）、大模型讲解是否只用
+   旁边插话时宿主识别器会不会把孩子的话听成描述）、大模型讲解是否只用
    你描述过的内容（故意漏说一个角色，看它会不会自己发明）、
    断网时 OFFLINE ECHO 是否接得上（讲解应等于你的原话）、
    READ 的语速孩子是否跟得上、讲满几页后 READ ALL 整篇重播
@@ -134,11 +140,11 @@ cd ~/workspace/rokid/story-look
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 20.7 KB（本地打包 `dist/story-look.aix`） |
+| AIX Package Size | 约 22.3 KB（本地打包 `dist/story-look.aix`） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -165,6 +171,10 @@ cd ~/workspace/rokid/story-look
   两页播种（第 1 页小兔子迷路已存档、第 2 页遇猫头鹰已讲好并落在
   问题视图、来源标注 OFFLINE ECHO、演示全程不写真实存储、DEMO 内
   NEXT 仍不落盘、CLEAR 退出后真实故事原样恢复）。
+- 1.0.1 文档订正后复验（2026-10-24，能力边界审计）：静态检查重跑
+  全过；页面逻辑 Node 打桩抽查——LLM 与 OFFLINE ECHO 两条路径下
+  TELL 之后自动朗读次数均为 0、READ 点按后恰好朗读 1 次且内容为
+  讲解词本身、ECHO 讲解与家长描述逐字相同（先预览后朗读未被破坏）。
 - 打包：`aix pack` 成功；`aix list` 核对包内含 README.md、AGENTS.md、
   app.js、app.json、package.json、pages/index/index.ink
   （artifacts/ 已被 .aixignore 排除）。
@@ -181,7 +191,8 @@ cd ~/workspace/rokid/story-look
   3–6 岁孩子的适配度，都要拿真绘本实测；格式跑偏时解析按行
   salvage，讲解与问题可能分错段。
 - 真机 SAY 在亲子场景的识别率：孩子在旁边说话、电视开着时，
-  wearer 模式对家长声音的优先程度；描述被听错时家长是否真会
+  宿主识别器把谁的话听成描述（wearer 检查流不参与识别，
+  无从「优先」家长）；描述被听错时家长是否真会
   核对（逐字显示是防线，防线本身无法本地验证）。
 - READ 的 0.85 倍速在真机 TTS 上是否生效（部分主机忽略 rate）、
   合成语音读中文故事的自然度；点头存档在抱着孩子/拿着书时的
@@ -201,7 +212,7 @@ cd ~/workspace/rokid/story-look
 
 ### Feature Description
 
-Story Look turns picture-book reading into a conversation. You hold the book - the glasses never see it: there is no OCR, and the page photo is only a record. Describe each page in one sentence; your words, plus the pages before, go as text to the on-device AI, which drafts a warm 2-3 sentence telling for a 3-6 year old and one question to ask your child. With no AI, a labelled offline echo reads your own words back with a built-in question. Nothing is spoken until you preview and tap READ.
+Story Look makes picture-book reading a conversation. The glasses never see your book: no OCR, and the page photo is a record only, never sent (text-only input is this agent's choice). Describe each page in a sentence; your words and earlier pages go as text to the on-device AI, which drafts a warm 2-3 sentence telling for a 3-6 year old, plus one question for your child. No AI? A labelled offline echo reads them back with a built-in question. Nothing is spoken until you preview and tap READ.
 
 ### Opening Message
 
@@ -220,13 +231,28 @@ Hi, I'm **Story Look** - I can't see your picture book, so you describe each pag
 
 ### Change Log
 
+#### Build 1.0.1
+
+**Features added**
+
+- None (documentation-accuracy fix only; no behaviour change).
+
+**Improvements**
+
+- Wording aligned with the capability dossier: the 0.85 TTS rate is now described as "whether the host honours the rate is unverified" everywhere it appears, matching the unverified list.
+
+**Fixes**
+
+- Corrected a false platform claim (capability-boundary audit 2026-10-24): earlier copy said "the language model takes text only" and that a freshly captured photo cannot be sent to the model. Per dossier section 2.9, the host language model does accept image input, including photos encoded as data: URLs - the official read-text path. Story Look's text-only design is a product choice: this agent deliberately sends text only and does not use the photo-input path; the docs now say exactly that instead of claiming a platform limit.
+- Corrected the wearer-mode mic claim (same audit): earlier copy said the 4-mic array "prioritises the storytelling parent over the child beside them". The wearer-mode getUserMedia stream is an availability check only - opened, settings read back, stopped - and the page description is recognised by the host SpeechRecognition on its own microphone (dossier sections 2.4 / 2.8), which the wearer mode cannot shape. The docs no longer promise that a child's interjections are filtered out; the verbatim on-screen description remains the check.
+
 #### Build 1.0.0
 
 **Features added**
 
-- Page-by-page co-reading: LOOK photographs the picture-book page in default mode as a record only (byte size shown; the runtime has no OCR and the language model takes text only, so the photo is never read and the glasses never see the page), SAY hears the parent describe the page in one sentence - wearer-mode mic check first (the 4-mic array prioritises the storytelling parent over the child beside them), the heard sentence kept verbatim and shown for checking, with an honest SKIP preset cycle when no recogniser exists.
+- Page-by-page co-reading: LOOK photographs the picture-book page in default mode as a record only (byte size shown; the runtime has no OCR, and this agent sends text only to the language model by design - the platform does accept photos as data: URL image input, a path this agent chooses not to use - so the photo is never read and the glasses never see the page), SAY hears the parent describe the page in one sentence - wearer-mode mic availability check first (the wearer-mode stream is opened, its settings read back and stopped; recognition itself runs on the host recogniser's own microphone, so no claim is made that a child beside you is filtered out), the heard sentence kept verbatim and shown for checking, with an honest SKIP preset cycle when no recogniser exists.
 - TELL sends the current description plus every previous page's description, in story order, as text only to the host language model, which returns a warm 2-3 sentence narration suitable for reading aloud to a 3-6 year old and one question to ask the child (reply parsed in that two-part format with a line salvage fallback), labelled LLM; the prompt instructs the model to stay with what the parent described and invent no new characters or events. When the model is unavailable, an OFFLINE ECHO fallback answers instead: the narration is the parent's own description read back unchanged - never dressed up as a generated story - and the question rotates through a built-in bank of 10 gentle open questions by page, labelled OFFLINE ECHO.
-- Preview-before-voice is a hard rule, not a setting: generated text appears on screen first and is never auto-spoken; READ speaks the narration (synthetic TTS at a slowed rate) only on the parent's explicit tap, and the question is shown big for the parent to ask in their own voice. NEXT (or a steady-head nod) files {page number, parent description, narration, question, source} into the last story on device (key storyLook, max 20 pages), and READ ALL replays the saved narrations in order as one bedtime re-listen.
+- Preview-before-voice is a hard rule, not a setting: generated text appears on screen first and is never auto-spoken; READ speaks the narration (synthetic TTS at 0.85 rate - whether the host honours the rate is unverified) only on the parent's explicit tap, and the question is shown big for the parent to ask in their own voice. NEXT (or a steady-head nod) files {page number, parent description, narration, question, source} into the last story on device (key storyLook, max 20 pages), and READ ALL replays the saved narrations in order as one bedtime re-listen.
 - DEMO seeds a two-page bunny story through the offline echo path - page 1 filed, page 2 told and waiting on its question view - entirely in memory; leaving DEMO restores the real story untouched.
 
 **Improvements**

@@ -433,10 +433,12 @@ export default {
   async _sayListen() {
     var self = this;
     this.setData({ busy: true, descNote: 'DESC: checking wearer mic...' });
-    // Wearer-mode mic check (same documented pattern as #21/#36): the
-    // 4-mic array in 'wearer' mode prioritises the parent's voice -
-    // the child sits beside you, not in front of the mic array. The
-    // stream only verifies the mode opens; recognition does the listening.
+    // Wearer-mode mic AVAILABILITY check (same documented pattern as
+    // #21/#36): the stream only verifies the mode opens and reads back
+    // its settings, then stops. It does NOT feed recognition - the host
+    // SpeechRecognition below listens on its own microphone, and no
+    // documented path lets the wearer mode shape what it hears
+    // (dossier sections 2.4 / 2.8). No parent-priority claim is made.
     var micNote = 'wearer mic not checked';
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
