@@ -1,210 +1,255 @@
-<div align="center">
+# board-capture — 板书捕获（Rokid 眼镜 AIUI Agent）
 
-# `rokid` — Rokid AIUI Agents
+50 个「指向性生活问题」Agent 的第 39 个，H 组（学习记忆）第三个。
+上课、开会时，黑板白板上的字又远又多，老师讲完一擦就没，手抄
+根本跟不上。本 Agent 让你看向板书拍一张长焦照片，眼镜把照片
+作为图片发给主机大模型读出来——转写全文 + 一句提纲——你核对
+无误后存进提纲清单，散会时按拍摄顺序把所有提纲朗读一遍。
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
+## 预览截图
 
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
+截图统一存放于仓库根目录 `screenshots/board-capture/`。
 
-</div>
+![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/board-capture/preview-board-capture-index.png)
 
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：根目录的 `<slug>.aix` 下载后走 **Import from AIX**。
+![DEMO 态：2 条记录已存档，第 3 块板的 LLM READ (DEMO) 读数待核对存档](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/board-capture/preview-board-capture-demo.png)
 
-## 目录
+![KEEP 后：3 条提纲按拍摄顺序排好，OUTLINE 3/8](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/board-capture/preview-board-capture-kept.png)
 
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
+## 解决的问题
 
-## 仓库结构
+板书的价值密度很高、寿命却最短：一黑板推导写完就擦，坐在后排
+连看清都难，更别说抄全。手机拍照要举起来对焦、还打断听课，而
+且拍完只是一张图，回去还得自己整理。本 Agent 把「拍下 → 读出
+→ 成提纲」压成眼镜上的三步：看向板书 SNAP，READ 让大模型把
+照片读成文字，你瞄一眼对不对，KEEP 存下；一节课拍几块板，
+OUTLINE 按顺序读出来就是一份提纲。
 
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── <slug>.aix                 # 每个 Agent 打包好的 AIX（根目录，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
-```
+## 指向性设计（为什么必须用眼镜）
 
-## 快速开始
+- **看向即取景（GAZE 长焦）**：板书远而小，SNAP 用
+`ImageCapture.takePhoto({mode:'telephoto'})` 长焦取景——
+你看向哪块板，拍的就是哪块，头朝向同时记进这条记录
+（`AbsoluteOrientationSensor` 四元数算 yaw；无传感器时
+如实记 `---`）。手机举起来拍，视线和课堂就断了。
+- **读字走官方路径（telephoto + LLM 图片输入）**：**PLAN 原案
+写的是「拍照 → OCR 成笔记」，而运行时根本没有 OCR API**
+（档案 §4.3）。审计后的改法：照片 Blob 经
+`FileReader.readAsDataURL` 编码为 data: URL，作为 user 消
+息的 `{type:'image_url'}` 内容连同文字指令发给主机
+`LanguageModel`——这是档案 §2.9 / §4.3 给出的官方读字路
+径，本 Agent 是本系列第一个真正落地的照片读字设计。提示词
+要求逐行忠实转写、看不清标 `[?]`、不许发明照片里没有的
+内容，返回 `SUMMARY:` + `TEXT:` 两段。
+- **机器读数先过你的眼睛（核对即产品）**：大模型读板书会读
+错——公式、数字、生僻字都是高危区。READ 的结果摆在屏幕上
+并标注「LLM READ - may misread, verify against the
+board」，**从不自动保存**；你看过、点了 KEEP（或头部稳定
+时点头）才进提纲。不信机器的那句提纲？DICT 用你自己的话
+替换，KEEP 时你的提纲优先于机器的。
+- **照片永不落盘（诚实边界常驻界面）**：照片 Blob 只活在
+内存里，wx 存储里只存文字（提纲、转写、时间、朝向、来
+源）。界面常驻行写明「photos NOT saved」——这条记录的
+「图」在你 KEEP 完就已经不存在了，剩下的是你核对过的
+文字。
+
+## 功能流程
+
+1. SNAP：看向板书拍长焦照片（记录朝向 + 时间；照片只在
+内存，无相机主机如实 FAIL，并提示改走 DICT）
+2. READ：照片 → data: URL → 主机大模型图片输入，返回转写
+全文 + 一句中文提纲（标注 LLM READ，提示核对）；模型
+不可用 / 转换不可用 / 模型报错 / wx 回退照片无 Blob，
+全部如实落到对应状态，照片仍作记录，并转入 DICT 兜底
+3. DICT（可选/兜底）：wearer 麦克风可用性检查（结果单独
+一行 `MIC CHECK:`）后，用宿主 SpeechRecognition
+（zh-CN）在它自己的麦克风上口述你的一句提纲，原样显示；
+你口述的提纲在 KEEP 时优先于机器提纲；无识别主机走预置
+提纲轮换并标注 SKIP
+4. KEEP / 点头：把 {序号， 时间， 朝向， 提纲， 转写，
+来源} 存入 `boardCaptures`（按拍摄顺序，最多 8 条，
+超限丢最旧一条并明说）；没有任何待存内容时 KEEP 拒绝
+5. OUTLINE：按拍摄顺序把全部提纲拼起来朗读一遍——一节课
+的提纲就此成型
+6. DEMO：内存播入 2 条标注 DEMO 的记录 + 1 条标注
+「LLM READ (DEMO)」的待存读数（照片字节 0、标注
+DEMO），不写真实存储；CLEAR 退出后恢复真实提纲
+
+> 诚实边界：**没有 OCR**，读字靠「照片 → 大模型图片输入」
+> 这条官方路径，而宿主真机是否真的接受 image_url /
+> data: URL、FileReader 是否可用，**都未经真机验证**（见
+> 「未验证」第一条）——所以每条失败路径都留了一条能用的记
+> 录，DICT 口述在任何情况下都能把这一课记下来。大模型的转
+> 写是机器读数，可能读错，核对这一步不是礼貌，是防线。
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| CAMERA | SNAP 长焦拍板书（照片只在内存中转、供 READ 转 data: URL，从不落盘保存） |
+| RECORD_AUDIO | DICT 的佩戴者模式麦克风可用性检查（getUserMedia，检查流立即停轨）+ 宿主 SpeechRecognition 口述提纲（zh-CN） |
+
+相机/麦克风只在用户点 SNAP / DICT 时启动，用完立即停掉全部
+媒体轨道。不录音；照片不写入任何存储，只随 READ 的那一次请
+求经宿主通道发给大模型。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/board-capture
+~/tools/bin/aix pack. -o../dist/board-capture.aix
+~/tools/bin/aix preview. --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线
+（`shot-board.js`，独立页面副本 `preview-board.html`；点击序列为
+canvas 内坐标 DEMO (122, 287) → KEEP (119, 200)，坐标经视觉
+定位确认）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-<div align="center">
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用
+分支导入：`https://github.com/sakai55/rokid/tree/agent-board-capture`
+（该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging
+点 **Repackage and Save**，确认顶部出现绿色
+**● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版
+Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，
+等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 board-capture」，在真实课堂/会议里实测：
+**第一优先验证 READ 的图片通路**——SNAP 一块写满公式的板书，
+READ 是否真的返回转写（验证宿主接受 image_url / data: URL、
+FileReader 可用）、转写对公式/数字的准确率、看不清处是否老实
+标 `[?]`；图片通路若不通，READ 是否如实落到失败状态且 DICT
+兜底可用；再测长焦在最后一排的取景清晰度、DICT 口述提纲的
+识别率、连拍 8 块板后 OUTLINE 朗读顺序
 
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-</div>
-
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放根目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
-
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 项目 | 值 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 约 23.6 KB（本地打包 `dist/board-capture.aix`） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-**分支法要点**
+## 验证情况
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+**已验证**
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
+解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
+全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留。
+- 板书逻辑（Node 实测）：把页面对象以 wx / LanguageModel /
+FileReader / SpeechRecognition / speechSynthesis 全部打桩加载进
+Node，共 61 条断言全过——含提示词组装（content 数组恰两段、
+text 段含 SUMMARY/TEXT 格式要求、image_url 段携带 data: 前缀
+URL、system 只经 initialPrompts 首条、prompt 后 session 被
+destroy）；Blob → data: URL 转换成功与 FileReader 缺失时如实
+拒绝、转换结果非 data: 时如实拒绝；大模型回复解析（标准两段、
+全角冒号、无标签 salvage、仅转写、空回复返回 null）；READ
+成功后**不落盘**（KEEP-only 纪律在断言里卡死）、KEEP 后条目
+字段完整（序号/时间/朝向/提纲/转写/来源）且写入
+`boardCaptures`；失败迁移全覆盖（无大模型 → unavailable 态
+且待存记录保留、availability 非 available、FileReader 缺
+失 → conversion 态、模型抛错 → 状态提供 DICT 且 KEEP 裸存
+为 `(no summary)`/NONE、wx 照片无 Blob → READ 如实 n/a）；
+DICT 通路（检查流轨道在识别开始前已全部停掉、检查结果独立
+`MIC CHECK:` 行、聆听标注 `(host ASR)`、识别原文 verbatim
+成为提纲、口述提纲在 KEEP 时压过大模型提纲）；8 条封顶丢最
+旧并在 EVT 明说；OUTLINE 按拍摄顺序拼接朗读、空提纲不发
+声、TTS 从不设置 utterance.lang；点头纪律（不稳不动、稳且
+有读数才 KEEP、裸照片待存时点头被拒、点头永不触发拍照）；
+存储加载校验（垃圾条目丢弃、朝向取模、无朝向记 null、序号
+续接）；DEMO 播种（2 条记录 + 1 条待存 DEMO 读数、照片字
+节 0 且标注、演示全程不写真实存储、CLEAR 后真实提纲恢
+复）；无识别主机时 DICT 走预置轮换并标注 SKIP/预置。
+- 打包：`aix pack` 成功；`aix list` 核对包内含 README.md、AGENTS.md、
+app.js、app.json、package.json、pages/index/index.ink
+（artifacts/ 已被.aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图三张（见下方
+Preview Media）：首页初始态完整渲染（当前板书框含 CAP/READ/
+SUMMARY/转写/MIC CHECK 五行、SNAP/READ/DICT 与 KEEP/OUTLINE
+按钮、空提纲行与常驻诚实行）；点 DEMO 到达播种态：第 1、2
+条记录（序号/时间/朝向/提纲/DEMO 标记）与第 3 块板的
+「LLM READ (DEMO)」待存读数（提纲 + 转写全文）均正确渲染，
+三处时间由一次时钟快照推导（间隔 6 分钟自洽）；再点 KEEP
+到达存档态：「KEPT #3 (DEMO) - outline 3/8」、三条记录按序
+排列、EVT 明示「TEXT saved, photo already gone」。
 
-1. 在仓库根目录点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+**未验证**
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+- **真机 READ 图片通路**：宿主 `LanguageModel` 是否
+真的接受 user 消息里的 `{type:'image_url'}` content、data:
+URL 是否被接受、Blob → `FileReader.readAsDataURL` 在眼镜运
+行时里是否可用——档案 §2.9 只保证文档层面成立，三者都要真
+机实测。若图片通路在真机不通，READ 会如实落到失败状态，
+本 Agent 靠 DICT 口述提纲仍可完整使用（这正是兜底存在的
+理由），但「拍照读板书」这个核心卖点要等真机结论。
+- 真机大模型读板书的质量：公式/上下标/连笔字的转写准确率、
+`[?]` 诚实标注的遵从度、两段格式的稳定性；格式跑偏时解析
+按行 salvage，提纲与转写可能分错段。
+- 真机长焦拍板书的清晰度与成功率（最后一排、反光白板、弱
+光教室）；wx 回退照片在真机上的形态（回退照片没有 Blob，
+READ 对它是如实 n/a、只能 DICT——真机上回退触发频率待测）。
+- 真机 DICT 识别率（课堂环境噪声下宿主识别器听提纲的准确
+度，wearer 检查流不参与识别）；头部朝向读数的精度与零点
+参考（宿主定义）；点头 KEEP 在听课场景的误触率。
+- wx 存储在眼镜重启后 8 条提纲的持久性；OUTLINE 合成语音
+朗读长提纲的自然度。
 
-</details>
+---
 
-## 海外链路（全链路海外，缺一不可）
+## 提审资料（Review Submission）
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Feature Description
 
-## 真机测试（云端下发）
+Board Capture freezes a blackboard before it is wiped. Aim at the board and tap SNAP for a telephoto photo, then READ: the photo goes to the host AI as an image - the official read-text path, there is no OCR - and comes back as a transcription plus a one-line summary, labelled a machine read for you to verify. KEEP files what checks out, DICT lets you dictate your own summary instead, and OUTLINE reads every summary in capture order. Photos are never saved; only the text is kept, on device.
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+（495 字符）
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
+### Opening Message
 
-</details>
+Hi, I'm **Board Capture** - boards get wiped, your outline won't.
 
-## 提交审核
+**SNAP** takes a telephoto photo of the board (memory only, never saved). **READ** sends it to the host AI as an image and shows a transcription plus a one-line summary - a machine read that **may misread**, so check it against the board. **KEEP** files it only when you say so; **DICT** replaces the summary with your own spoken line. **OUTLINE** reads all summaries in order. Up to 8 boards, text only, on device.
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+（482 字符）
 
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+### Preview Media
 
-## 维护约定
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库根目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+- Image 1：`artifacts/preview-board-capture-index.png`（aix preview 首页：BOARD CAPTURE 初始态，含当前板书框、SNAP/READ/DICT 与 KEEP/OUTLINE 按钮、空提纲行及「photos NOT saved」常驻诚实行，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-board-capture-demo.png`（DEMO 播种态：2 条记录已存档，第 3 块板的 LLM READ (DEMO) 读数——提纲 + 转写全文——待核对存档，本地文件）
+- Image 3：`artifacts/preview-board-capture-kept.png`（KEEP 后：3 条提纲按拍摄顺序排好，OUTLINE 3/8，EVT 明示文字已存、照片已不存在，本地文件）
+- Video：待真机补 — 真机录制「看向板书 SNAP → READ 读出转写与提纲 → 核对后 KEEP → 连拍几块板 → OUTLINE 按顺序朗读提纲」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 3 张图；还需至少 1 个视频，总数保持在 3–5 个后才可提交）
 
-## Agent 清单
+### Change Log
 
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
+#### Build 1.0.0
 
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
+**Features added**
+
+- Telephoto board capture with the official read-text path: SNAP photographs the board with ImageCapture in telephoto mode (wx camera-context fallback), records the head heading and a single-snapshot timestamp, and holds the photo Blob in memory only - photos are never written to any storage. READ encodes the Blob to a data: URL and sends it to the host LanguageModel as an image_url part of one user message (multimodal content in the user role only, system prompt via initialPrompts, availability checked first, session destroyed after), asking for a faithful line-by-line transcription - unreadable spots marked [?], nothing invented - plus a one-line Chinese summary in a two-part SUMMARY/TEXT format, parsed with a line-salvage fallback.
+- Verify-then-file discipline: the machine read is shown labelled "LLM READ - may misread, verify against the board" and is never auto-saved; KEEP (or a steady-head nod, only while a read or dictated line is pending - a nod never takes a photo or starts a read) files {sequence, date, time, heading, summary, transcription, source} into on-device wx storage (key boardCaptures, capture order, max 8, oldest dropped with an on-screen note when full).
+- DICT fallback everywhere: a wearer-mode microphone availability check first (stream opened, settings read back, tracks stopped at once - the check does not feed or shape recognition), then the host SpeechRecognition (zh-CN) on its own microphone hears your own one-line summary verbatim; your dictated line beats the machine summary at KEEP, DICT works with no photo at all, and an honest preset cycle covers hosts with no recogniser. Every READ failure state (no model, model unavailable, conversion unavailable, model error, wx-fallback photo with no Blob) keeps a usable capture and points at DICT, and a bare KEEP with no line files "(no summary)" honestly.
+- OUTLINE readback: SPEAK plays all filed summaries in capture order via system TTS (utterance.lang never set), so a whole lecture becomes a spoken outline. DEMO seeds two labelled captures plus one labelled "LLM READ (DEMO)" pending read (photo bytes 0) entirely in memory, with seed times derived from a single clock snapshot; leaving DEMO restores the real outline untouched.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
