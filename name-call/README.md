@@ -11,7 +11,7 @@
 
 截图统一存放于仓库根目录 `screenshots/name-call/`。
 
-![首页待机态（目标名字 五郎/预设、WATCH 待机、heard 占位行与「ASR 关键词、非声纹」诚实说明常驻、日志为空）](../screenshots/name-call/preview-name-call-index.png)
+![首页待机态（目标名字 五郎/预设、WATCH 待机、MIC CHECK 未运行行、heard 占位行与「ASR 关键词、非声纹」诚实说明常驻、日志为空）](../screenshots/name-call/preview-name-call-index.png)
 
 ![DEMO 报警态（两轮合成文本走同一套匹配路径：第 2 轮命中，有人喊你 大字高亮、整句原文与时间记入带 DEMO 标记的日志）](../screenshots/name-call/preview-name-call-alert.png)
 
@@ -28,16 +28,19 @@
 
 ## 指向性设计（为什么必须用眼镜）
 
-- **头戴守望（MIC4 远场模式 + ASR 轮次）**：WATCH 先按
+- **头戴守望（远场可用性检查 + 宿主 ASR 轮次）**：WATCH 先按
   文档方式用 `getUserMedia` 的 `captureSource:
   'microphone'` + `microphoneMode: 'far-field'` 做一次
-  远场可用性检查（读回 `track.getSettings()`，查完立即
-  停轨道）— 远场模式让 4 麦阵列去收房间那头的声音，
-  而不是佩戴者自己的呼吸和说话；随后以基准 Agent 的
-  `SpeechRecognition`（zh-CN）模式一轮接一轮地识别，
-  每轮听到的整句短暂显示为「heard: …」，轮次号常驻
-  界面。模式被设备拒绝（OverconstrainedError）时
-  回退默认麦克风并如实提示。
+  远场模式**可用性检查**（读回 `track.getSettings()`，
+  查完立即停轨道）— 这次检查只证明眼镜上存在房间侧的
+  远场麦克风模式，不为后面的识别供音：检查流停掉之后，
+  真正的守望聆听由宿主 `SpeechRecognition`（zh-CN）用
+  它自己的麦克风路径一轮接一轮地完成，远场模式对这些
+  识别轮次没有任何作用（档案 §2.4/§2.8）。每轮听到的
+  整句短暂显示为「heard: …」，轮次号与单独一行的
+  `MIC CHECK` 结果常驻界面，互不冒充。检查时模式被
+  设备拒绝（OverconstrainedError）时检查流回退默认
+  麦克风并如实提示 — 那同样只影响检查结果的标注。
 - **名字是你确认过的（NAME / SET）**：NAME 在预设
   （五郎 / 小明 / 小红 / 老王）间轮换；SET 让你自己
   说一次 — 听到的字符串**原样**成为目标并显示在
@@ -67,7 +70,8 @@ not-allowed 等持续性错误、或连续 5 轮出错，会停掉
 2. NAME / SET：换预设名字，或自己说一次录下目标
    （听到的原样显示，错了重说）
 3. WATCH：点 WATCH（或 Enter）→ 查 `SpeechRecognition`，
-   不可用 FAIL 写明 → 远场检查 → 一轮接一轮识别，
+   不可用 FAIL 写明 → 远场可用性检查（仅检查，识别
+   走宿主麦克风）→ 宿主 ASR 一轮接一轮识别，
    每轮整句短暂上屏，轮次计数实时更新
 4. 命中：满足子串匹配 → 大字高亮 + 整句原文 →
    TTS 朗读「有人喊你」→ 时间与整句记入日志
@@ -93,7 +97,7 @@ not-allowed 等持续性错误、或连续 5 轮出错，会停掉
 
 | 权限 | 用途 |
 |---|---|
-| RECORD_AUDIO | WATCH 时开麦听房间：`getUserMedia` 远场模式可用性检查 + `SpeechRecognition` 逐轮识别找你的名字；不录音、不保存音频、不上传。唯一持久化的是目标名字与命中日志（时间 + 命中整句，本机 wx 存储） |
+| RECORD_AUDIO | WATCH 时开麦听房间：`getUserMedia` 远场模式可用性检查（独立的检查流，停后不参与识别）+ 宿主 `SpeechRecognition`（用它自己的麦克风路径）逐轮识别找你的名字；不录音、不保存音频、不上传。唯一持久化的是目标名字与命中日志（时间 + 命中整句，本机 wx 存储） |
 
 ## 打包与预览
 
@@ -104,8 +108,9 @@ cd ~/workspace/rokid/name-call
 ```
 
 本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线
-（`shot-name.js`；报警截图的点击序列为 canvas 内 DEMO (83, 254)
-点 1 次后等约 4 秒待两轮合成文本走完、第 2 轮命中点火：
+（`shot-name.js`；报警截图的点击序列为 canvas 内 DEMO (83, 270)
+点 1 次后等约 4 秒待两轮合成文本走完、第 2 轮命中点火 —
+1.0.1 加了 MIC CHECK 独立行后按钮行下移，旧坐标 (83, 254) 会误点 NAME：
 注意 artifacts/preview.html 需先把 importmap 的 jspm 地址
 换成本地 `/ink/index.js` 再复制到 preview-tools/www/）。
 
@@ -133,11 +138,11 @@ cd ~/workspace/rokid/name-call
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 16.6 KB（本地打包 `dist/name-call.aix`，分次打包有 ±0.01 KB 级抖动） |
+| AIX Package Size | 约 17.7 KB（本地打包 `dist/name-call.aix`，分次打包有 ±0.01 KB 级抖动） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -155,7 +160,7 @@ cd ~/workspace/rokid/name-call
   `SpeechRecognition` 加载进 Node，共 27 项断言全过 —
   `_matches` 子串匹配（命中/不命中/空目标/空文本）；
   SET 把听到的字符串原样设为目标并持久化、NAME 轮换
-  预设；WATCH 远场检查读回 `far-field`、第 1 轮启动；
+  预设；WATCH 远场可用性检查读回 `far-field`（仅检查）、第 1 轮宿主 ASR 启动；
   无命中轮次只上屏不存日志、onend 衔接下一轮；
   no-speech 安静计数且循环继续；命中后日志记时间 +
   整句并持久化、报警行点亮、循环继续守望；
@@ -174,12 +179,19 @@ cd ~/workspace/rokid/name-call
   五郎，你的快递到了」高亮、日志记入带 DEMO 标记的
   时间与整句。预览主机无 `SpeechRecognition`，
   WATCH / SET 的 FAIL/SKIP 路径为代码完备、已由 Node
-  打桩测试覆盖，未在此环境触发截图。
+  打桩测试覆盖，未在此环境触发截图。1.0.1 修复后已
+  重截两张：首页新增独立的 `MIC CHECK: not run yet`
+  行、守望行不再带模式名；另以 Node 打桩验算
+  `_recompute` 四种检查结果（far-field OK / default mic /
+  FAIL / n/a）下 MIC CHECK 行与 `(host ASR)` 守望行
+  文案全对、守望行不含 far-field 字样。
 
 **未验证**
 
-- 真机 4 麦 `far-field` 模式是否被接受、实际拾音距离；
-  远场检查的回退路径未在真机触发过。
+- 真机 4 麦 `far-field` 模式在检查流上是否被接受（这只
+  决定 `MIC CHECK` 一行的标注，不决定识别效果）；
+  远场检查的回退路径未在真机触发过；真正决定守望
+  效果的是宿主 ASR 在房间距离上的实际识别表现。
 - 真实环境里的命中率与误报率 — 本 Agent 最大的未知数：
   隔房喊名（不同距离、隔门/隔墙）的漏喊率，电视/广播
   里出现同名或近音词的误报率，多人同时说话时的表现，
@@ -198,24 +210,38 @@ cd ~/workspace/rokid/name-call
 
 ### Feature Description
 
-Name Call listens for your name, so a call across a noisy room reaches your eyes. Pick a preset name, or say your own once to set it. Tap WATCH and the glasses run speech-recognition rounds in far-field mic mode, showing each heard sentence; when a round contains your name, a big alert lights up, the glasses speak, and the time and sentence are logged. It is ASR keyword spotting, not a voiceprint - it can miss a call and can false-fire.
+Name Call listens for your name, so a call across a noisy room reaches your eyes. Pick a preset name, or say your own once to set it. Tap WATCH: the glasses pass a far-field mic-mode availability check (that check does not power recognition), then run host speech-recognition rounds, showing each heard sentence. When a round contains your name, a big alert lights up, the glasses speak, and the time and sentence are logged. ASR keyword spotting, not a voiceprint - it can miss and false-fire.
 
 ### Opening Message
 
 Hi, I'm **Name Call** - I listen to the room and light up when someone calls your name.
 
-Set your name with **NAME** (presets) or **SET** (say it once - I keep exactly what I hear, so check the screen). Tap **WATCH** and I run recognition rounds back to back, showing what I hear; a round containing your name fires the alert, speaks, and is logged with its time. I match recognised words, not voices: in noise I can miss, and similar words can fool me. **DEMO** plays both rounds.
+Set your name with **NAME** (presets) or **SET** (say it once - I keep exactly what I hear, so check the screen). Tap **WATCH**: after a far-field mic-mode check, I run host recognition rounds, showing what I hear; a round with your name fires the alert, speaks, and is logged. I match words, not voices: in noise I can miss, and similar words can fool me. **DEMO** plays both rounds.
 
 ### Preview Media
 
 提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-- Image 1：`artifacts/preview-name-call-index.png`（aix preview 首页待机态：目标名字 五郎/预设、WATCH 待机、诚实说明行、空日志，本地文件，提交时从本地上传）
+- Image 1：`artifacts/preview-name-call-index.png`（aix preview 首页待机态：目标名字 五郎/预设、WATCH 待机、MIC CHECK 独立行、诚实说明行、空日志，本地文件，提交时从本地上传）
 - Image 2：`artifacts/preview-name-call-alert.png`（DEMO 报警态：有人喊你 大字高亮、整句原文、DEMO 时间与整句入日志，本地文件）
 - Video：待真机补 — 真机录制「点 WATCH → 家人在房间另一头喊名字 → 眼前亮起 有人喊你 → 日志记时记句」全过程（MP4），录好后放 `artifacts/` 并更新此处
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### Build 1.0.1
+
+**Features added**
+
+- None (honesty fix only).
+
+**Improvements**
+
+- The watch screen now shows the microphone check on its own line (`MIC CHECK: far-field OK`) and labels the listening line as host ASR (`WATCH: listening · round N (host ASR)`), so the check result and the recognition state no longer share a line.
+
+**Fixes**
+
+- Far-field claims corrected (capability-boundary audit 2026-10-24): the far-field stream is a microphone-mode availability check only - it is stopped before recognition starts and has no effect on the recognition rounds, which use host SpeechRecognition on its own microphone. The Feature Description no longer says the rounds run "in far-field mic mode", and the README/AGENTS.md design text no longer says the far-field mode picks up the room for the watch.
 
 #### Build 1.0.0
 
