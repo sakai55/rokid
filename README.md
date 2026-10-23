@@ -27,21 +27,29 @@
 
 ## 指向性设计（为什么必须用眼镜）
 
-- **头就是阵列的瞄准器（HEAD + MIC4）**：4 麦阵列跟
-  着你的头朝向收音，你正对说话人时拾音最好、字幕
-  最准。界面常驻引导行「Face the speaker - your head
-  aims the array」，提醒你用脸对准对方 — 这是手机
-  平放在桌上永远做不到的：它不知道谁在你对面。
-- **为什么选 near-field（MIC4 近场模式）**：START 先
-  按文档方式用 `getUserMedia` 的 `captureSource:
+- **字幕长在对方脸上（HEAD + 显示）**：你正对说话人
+  时，字幕就出现在他的脸下方、你的视线正中央 — 界面
+  常驻引导行「Face the speaker - captions sit under
+  their face」。这是手机平放在桌上永远做不到的：
+  它不知道谁在你对面。诚实边界：识别由宿主
+  SpeechRecognition 在它自己的麦克风通路上完成，
+  字幕准不准由宿主识别管线决定，本 Agent 不声称
+  头部朝向能改变识别输入或字幕质量（朝向对质量的
+  影响未验证，见「未验证」）。
+- **为什么检查 near-field（MIC4 近场模式）**：START
+  先按文档方式用 `getUserMedia` 的 `captureSource:
   'microphone'` + `microphoneMode: 'near-field'` 做
   一次可用性检查（读回 `track.getSettings()`，查完
   立即停轨道）。按媒体文档定义：交谈对象坐在对面
-  1–2 米，是「附近的声音」= near-field；`wearer`
-  优先收佩戴者自己的声音 — 用它你自己的话会顶上来
-  压掉对方，恰好反了；`far-field` 是给房间那头的远
-  距离声源的，对面交谈用不上。模式被设备拒绝
-  （OverconstrainedError）时回退默认麦克风并如实提示。
+  1–2 米，是「附近的声音」= near-field — 检查这个
+  模式就是确认这台设备上存在与面对面交谈距离对应
+  的近距离拾音模式（近距离交谈路径可用）。如实
+  说明：这次检查只验证模式存在，检查流随即停掉、
+  不是识别的输入；真正的字幕识别由宿主
+  SpeechRecognition 在它自己的麦克风通路上完成，
+  检查选哪个模式不会改变识别听到的声音。模式被
+  设备拒绝（OverconstrainedError）时回退默认麦克
+  风并如实提示。
 - **字幕在视线正中（HANDS-FREE 显示）**：单色绿滚动
   字幕栈 — 最新一句 16px 大字，前两句小字各带时间
   （HH:MM）。不用腾手、不用低头看表看手机，眼睛
@@ -81,7 +89,7 @@
 
 | 权限 | 用途 |
 |---|---|
-| RECORD_AUDIO | START 后开麦听对面的人：`getUserMedia` 近场模式可用性检查 + `SpeechRecognition` 逐轮识别生成字幕；不录音、不保存音频、不上传。字幕只存内存（最多 30 句），无任何持久化 |
+| RECORD_AUDIO | START 后：`getUserMedia` 近场模式可用性检查（仅验证模式存在，检查流随即停掉）+ 宿主 `SpeechRecognition`（自有麦克风通路）逐轮识别生成字幕；不录音、不保存音频、不上传。字幕只存内存（最多 30 句），无任何持久化 |
 
 ## 打包与预览
 
@@ -111,8 +119,9 @@ preview-tools/www/）。
 4. 对眼镜说「乐奇，打开 ambient-captions」：请家人坐在对面
    1–2 米处正常聊天，点 START 后正对对方，逐句核对字幕
    与原话的出入（重点记人名、数字的错误率）；然后侧过头
-   45° 再聊几句，比较字幕质量是否明显变差（验证「脸对准
-   = 阵列对准」）；试一次两人同时说话看字幕是否如实地
+   45° 再聊几句，记录字幕质量是否有可观察的变化（识别
+   走宿主管线，本 Agent 不预设朝向会影响质量 — 这是
+   观察项，不是验证项）；试一次两人同时说话看字幕是否如实地
    乱；最后点 REPEAT 与点头重读各试一次 — 这几项就是
    本 Agent 真机可用性的真实边界
 
@@ -121,11 +130,11 @@ preview-tools/www/）。
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 15.4 KB（本地打包 `dist/ambient-captions.aix`，分次打包有 ±0.01 KB 级抖动） |
+| AIX Package Size | 约 16.3 KB（本地打包 `dist/ambient-captions.aix`，分次打包有 ±0.01 KB 级抖动） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -162,16 +171,27 @@ preview-tools/www/）。
   预览主机无 `SpeechRecognition`，START 的 FAIL/SKIP
   路径为代码完备、已由 Node 打桩测试覆盖，未在此环境
   触发截图。
+- 1.0.1 审计修复复验（2026-10-24，能力边界审计）：静态
+  检查重跑通过（app.json / package.json / `<script def>`
+  JSON 解析、`<script setup>` 与 app.js `node --check`、
+  grep 无残留）；页面对象 Node 打桩复验 21 项断言全过 —
+  重点核对新界面行：待机行 `MIC: idle · rounds 0 ·
+  near-field check on START`、识别中行 `MIC CHECK:
+  near-field · round N · listening (host ASR)`（模式只
+  出现在 MIC CHECK 检查结果段、识别明确标注宿主
+  ASR）、检查流读回 settings 后立即停轨、无识别器时
+  START 如实 FAIL、字幕栈 30 句上限与 CLEAR 清空
+  不变；预览截图两张已按新文案重拍。
 
 **未验证**
 
-- 真机 4 麦 `near-field` 模式是否被接受、1–2 米面对面
-  的实际拾音与识别质量；近场检查的回退路径未在真机
-  触发过。
+- 真机 `near-field` 模式检查是否被接受、宿主识别在
+  1–2 米面对面距离的实际质量；近场检查的回退路径
+  未在真机触发过。
 - 真实对话里的字幕错误率 — 本 Agent 最大的未知数：
   人名/数字/地址的错误率、口音与语速的影响、多人同时
-  说话时的混乱程度、侧头 45° 时质量下降多少，只能
-  真机多场景实测。
+  说话时的混乱程度、侧头 45° 时字幕质量是否有可观察
+  变化（本 Agent 不预设结论），只能真机多场景实测。
 - 真机头部稳定/点头触发 REPEAT 的灵敏度；TTS 重读
   在嘈杂环境里能否听清；字幕刷新延迟（每轮识别的
   间隔）是否跟得上正常语速。
@@ -189,9 +209,9 @@ Ambient Captions puts live subtitles under the face of the person talking to you
 
 ### Opening Message
 
-Hi, I'm **Ambient Captions** - I subtitle the person sitting across from you, live, right under their face.
+Hi, I'm **Ambient Captions** - I subtitle the person across from you, live, under their face.
 
-Tap **START** and face the speaker: I caption sentence by sentence - newest line big, the last two above it with times. Missed one? **REPEAT** (or a steady head nod) and I'll say it again at your ear. Near-field mic mode fits a partner 1-2 m away. My captions WILL have errors, especially names and numbers - treat me as an aid, never a record. **DEMO** shows three sample lines.
+Tap **START** and face the speaker: I first check the near-field mic mode (partner 1-2 m away), then caption sentence by sentence with the host recognizer - newest line big, last two above with times. Missed one? **REPEAT** (or a steady head nod) repeats it at your ear. Captions WILL have errors, especially names and numbers - an aid, never a record. **DEMO** shows the flow.
 
 ### Preview Media
 
@@ -204,11 +224,25 @@ Tap **START** and face the speaker: I caption sentence by sentence - newest line
 
 ### Change Log
 
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Corrected a mode/recognition conflation (capability-boundary audit 2026-10-24): the UI listening line and the design notes presented the near-field mic mode as if it shaped the recognition input, and claimed facing the speaker makes captions more accurate. The near-field getUserMedia stream is an availability check only - it is stopped before recognition, and captions are produced by the host SpeechRecognition on its own microphone. The listening line now reads "MIC CHECK: <mode> · round N · listening (host ASR)", the separate mic-check result is shown as history, and the head-orientation caption-quality claim was removed (orientation effect unverified).
+
 #### Build 1.0.0
 
 **Features added**
 
-- Rolling conversation captions: START first runs the documented near-field microphone availability check (a partner 1-2 m away is a nearby source - not the wearer mode, which would favour your own voice, and not far-field, which is tuned for distant sources; labeled fallback to the default microphone when the device rejects that mode), then runs back-to-back zh-CN speech-recognition rounds with a live round counter.
+- Rolling conversation captions: START first runs the documented near-field microphone availability check (a partner 1-2 m away is a nearby source per the media docs - near-field is the mode documented for that distance; the check only verifies the mode is available and its stream is stopped at once, with a labeled fallback to the default microphone when the device rejects that mode), then runs back-to-back zh-CN speech-recognition rounds with a live round counter.
 - A caption stack under the speaker's face: each recognised sentence is appended - the latest line in large type, the previous two lines above it in smaller type with their HH:MM times - capped at 30 lines, held in memory only, never persisted or uploaded, wiped by CLEAR.
 - REPEAT by button or by a head-steady nod, re-speaking the latest caption at your ear through TTS (or the how-to hint when there is no caption yet).
 - A stated error policy: no-speech rounds are counted quietly; persistent recognition errors (not-allowed, service-not-allowed, audio-capture) or five errors in a row stop the captions with the reason on screen instead of spinning forever.
