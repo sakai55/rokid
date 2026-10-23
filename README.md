@@ -1,148 +1,158 @@
-# rokid — Rokid AIUI Agents（海外版 / Global）
+# gaze-translate — 凝视翻译（Rokid 眼镜 AIUI Agent）
 
-Rokid AI 眼镜的 **AIUI 智能体** 仓库。我们只开发 Agent，不开发 App。
-组织方式：**一个 Agent 一个目录**，每个目录是一套完整的 AIUI 项目
-（`app.json` + `AGENTS.md` + `app.js` + `pages/`）。仓库根目录另放两个打包好的
-`.aix` 文件（备选导入用，见「备选方案」）。往 Studio 导入单个 Agent 走
-**专属分支**（见「Studio 导入方法」），不要直接导 main 的子目录。
+50 个「指向性生活问题」Agent 的第 01 个。在国外看不懂菜单、路牌、说明书时，
+不用掏手机（慢、还遮挡视线）：看着文字，把头稳住，眼镜用长焦拍下、翻译，
+并直接朗读出来。
 
-## Agents
+## 预览截图
 
-| 目录 | 说明 | 导入分支 | 真机测试状态 |
-|---|---|---|---|
-| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | `agent-my-agent` | 尚未正式导入（分支导入已实测成功） |
-| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | `agent-glasses-benchmark` | Studio 名 `12345`，Build `1.0.19`，Debug version ready |
-| `gaze-translate/` | 50 个指向性 Agent 之 #01 凝视翻译：看文字、稳头、长焦拍、翻译朗读 | `agent-gaze-translate` | 尚未导入 Studio |
+截图统一存放于仓库根目录 `screenshots/gaze-translate/`。
 
-每个 Agent 的真机测试信息（Studio 里的名称、Build 版本、App 分类、描述、Agent ID、状态）
-完整记录在该 Agent 目录自己的 README 里，以那里为准。
+![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/gaze-translate/preview-gaze-translate-index.png)
 
-## 截图目录
+![点 DEMO 后的翻译结果状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/gaze-translate/preview-gaze-translate-demo.png)
 
-所有 Agent 的预览截图集中存放在仓库根目录的 `screenshots/` 下，一个 Agent 一个
-子目录（`screenshots/<agent>/`）。每个 Agent 的 README 都有「预览截图」一节，
-直接嵌入这些图片，在 GitHub 上打开 README 即可看图。
+## 解决的问题
 
-## 开发环境与工具链
+出国时菜单/路牌/说明书看不懂；手机翻译要掏手机、对焦、举着挡视线。
+本 Agent 把「视线方向」本身当成取词工具：你看哪里，就翻哪里。
+
+## 指向性设计（为什么必须用眼镜）
+
+- **凝视即指针（GAZE）**：视线对准文字即完成选词，没有光标、不用手。
+- **头部稳定 = 凝视确认**：`enableWorldAwareness()` 开启世界感知后，
+  `onOrientationStabilityChange` 报告头部稳定时才进入可拍状态，界面显示
+  「HEAD STEADY — ready」；点头（`onHeadGesture` 的 `nod`）在稳定时触发
+  拍摄，晃动时点头会被忽略并提示先稳住头——用方位感代替按键确认。
+- **长焦拍摄远处小字**：`getUserMedia({video:true})` 取流后用
+  `ImageCapture.takePhoto({mode:'telephoto'})` 拍远处的菜单/路牌小字；
+  ImageCapture 不可用时回退 `wx.media` CameraContext。
+- **耳朵收结果**：译文用 `speechSynthesis.speak` 朗读（SPEAK 按钮），
+  视线不用离开眼前的文字。
+
+## 功能流程
+
+1. 看着文字，稳住头 → 状态变 `HEAD STEADY — ready`
+2. 点头，或点 CAPTURE，或按 Enter / GlobalHook → 长焦拍照，显示照片字节数
+3. 翻译：优先 LanguageModel 大模型；不可用时回退内置离线词典
+   （常见菜单/路牌短语），界面如实标注来源 `LLM / offline dictionary / none`
+4. 点 SPEAK 朗读译文
+5. 目标语言 EN / 日本語 / 中文：点 LANG 按钮或 ArrowUp / ArrowDown 切换，
+   Enter / GlobalHook 确认；Backspace 返回（宿主处理）
+6. DEMO 按钮：对内置日文菜单样例跑完整翻译管线，预览即可看到结果态
+
+> 诚实说明：当前 AIUI 运行时没有 OCR 接口。拍摄成功后进入翻译的是代码中
+> 明确标注的 OCR 占位/样例文本，界面与代码注释都如实标注，绝不声称已完成
+> 文字识别。主机没有相机时 CAPTURE 显示 FAIL 并写明原因。
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| CAMERA | 取流并用长焦模式拍摄所凝视的文字 |
+
+仅此一项。相机只在用户触发时启动，拍完立即停掉全部媒体轨道。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <name>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（终端起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/gaze-translate
+~/tools/bin/aix pack . -o ../dist/gaze-translate.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-打包注意：项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-`skills-lock.json`、`node_modules/`，否则开发文件会进包（实测 2.3 KB 会涨到 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线
+（`shot-gaze.js`，DEMO 点击坐标为 canvas 内 (358, 187)）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-1. **本地开发**：在对应 Agent 目录里开发、改页面。
-2. **预览**：开发完成后用 `aix preview` 出该 Agent **所有页面**的预览图确认效果。
-3. **推 GitHub**：代码推到本仓库对应 Agent 目录，同时把同一套文件同步到该
-   Agent 的专属分支 `agent-<名字>` 的**根目录**（分支根 = Agent 根）。
-4. **Studio 导入**：Global AIUI Studio → New Agent → **Import from GitHub** →
-   粘贴分支地址导入（见下面「Studio 导入方法」），一个分支导一个 Agent。
-5. **真机测试（云端下发）**：见下面专门章节。
-6. **提交审核**：真机测试通过并确认后，在 Studio 的 **Submit** 页签填写
-   Review Information（Feature Description、Opening Message、Preview Media、Change Log）
-   并 Submit for Review。
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用
+   分支导入：`https://github.com/sakai55/rokid/tree/agent-gaze-translate`
+   （该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging
+   点 **Repackage and Save**，确认顶部出现绿色
+   **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版
+   Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，
+   等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 gaze-translate」，看着外文稳住头、点头拍摄
 
-## Studio 导入方法（2026-10-24 实测结论，只用这一条）
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-导入对话框（IMPORT PROJECT / "GitHub Subdirectory Import"）**只有 URL 一个
-输入框**，没有分支/路径选择。Studio 把 `/tree/` 后面的**整段当作一个 ref**，
-不会拆成「ref + 路径」。由此实测：
+| 项目 | 值 |
+|---|---|
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 11.42 KB（本地打包 `dist/gaze-translate.aix`） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-- ✅ **分支地址（唯一可用）**：`https://github.com/sakai55/rokid/tree/agent-my-agent`
-  （换成目标 Agent 的分支名）。分支名是单段，能被正确解析为分支，
-  导入的就是**该分支根目录**——所以每个 Agent 有一个专属分支，
-  分支根目录放该 Agent 的全套文件。导入后生成名为 `sakai55/rokid` 的 Draft，
-  进 Studio 后改名。两个现有分支均已实测导入成功、文件树完整。
-- ❌ 子目录地址 `…/tree/main/my-agent`：报 `GitHub ref not found: main/my-agent`
-  （官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败，不是本仓库的问题）。
-- ❌ commit 号地址 `…/tree/<完整SHA>/my-agent`：同样报 ref not found。
-- ❌ 仓库根地址 `https://github.com/sakai55/rokid`：能导入，但生成的是
-  **空心 Agent**（Code 文件树为空），不能用。
-- ❌ blob 文件地址 `…/blob/main/my-agent/app.json`：能过导入，但 Run 报
-  「请先创建Agent的项目文件」，列表里也不会留下可用 Agent。
+## 验证情况
 
-改代码后要重新导入新版本：先把新文件同步到该 Agent 的分支根目录，再在
-Studio 里重新粘贴分支地址导入（或在已有草稿里更新），然后走真机测试流程。
+**已验证**
 
-## Studio 导入方法二：AIX 导入（备选保底）
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
+  解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
+  全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留。
+- 打包：`aix pack` 成功，`dist/gaze-translate.aix` 11.42 KB，包内含
+  AGENTS.md、app.js、app.json、package.json、pages/index/index.ink
+  （artifacts/ 已被 .aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见下方
+  Preview Media）：首页初始态完整渲染；点击 DEMO 后显示真实翻译结果
+  「Today's special: charcoal-grilled yakitori platter - 1,280 yen」，
+  来源如实标注 `offline dictionary`（预览主机上 LLM 未走通时自动回退）。
 
-仓库根目录放着打包好的 `.aix`（代码变更后用 `aix pack` 重打并更新根目录文件）：
+**未验证**
 
-- `my-agent.aix`
-- `glasses-benchmark.aix`
-- `gaze-translate.aix`
+- 真机相机取流与 telephoto 长焦拍照（预览主机无相机，CAPTURE 的 FAIL
+  路径逻辑已写明原因，真机待测）。
+- 真机头部稳定检测、点头手势触发、LanguageModel 翻译、TTS 朗读效果。
+- OCR：运行时无此接口，未实现、未声称。
 
-步骤：
+---
 
-1. 在 GitHub 仓库根目录点开要导入的 `.aix` 文件，点下载按钮存到本地。
-2. 打开 Global AIUI Studio（en-US）→ New Agent → **Import from AIX**。
-3. 选择刚下载的 `.aix` 上传，导入后生成 Draft，文件树即包内完整工程。
-4. 后续同样走 Device Debug 打包保存 → 真机测试（见下文）。
+## 提审资料（Review Submission）
 
-这条路不依赖 GitHub 地址解析，GitHub 导入出问题或赶时间时用它保底；
-日常首选仍是方法一（分支地址导入），因为它直接对应仓库里的最新代码。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
 
-## ⚠️ 海外版本注意事项（必须全链路海外，缺一不可）
+### Feature Description
 
-1. **Studio 必须是 Global 站 + 英文**：只用
-   [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US)，
-   地址是 global、语言参数必须是 `en-US`。不要用国内站（aiui.rokid.com），
-   两站账号和项目不互通。
-2. **账号必须是海外版注册**：在 [account-web.rokid.com](https://account-web.rokid.com/)
-   的**英文版**注册/登录 Rokid 账号（本项目账号地区：Japan）。
-   用国内版注册的账号不算海外开发账号。
-3. **下发走云端，不走数据线**：在 Studio 里打包保存后由云端下发到眼镜，
-   不用 ADB、不用数据线直装。
-4. **手机 App 必须是海外版 Hi Rokid**：Google Play 的
-   **Hi Rokid - Rokid Glasses**（包名 `com.rokid.sprite.global.aiapp`，
-   发行方 Rokid International），**不是国内版 Rokid Ai App**。
-   眼镜资源包的更新入口在 Hi Rokid 里。
-5. 以上四点（Global 账号 + en-US Studio + 云端下发 + Hi Rokid）齐全，
-   才算海外版开发；任何一环用了国内版，链路就不通。
+Gaze Translate lets you read foreign menus, signs and manuals without taking out your phone. Look at the text and hold your head steady: the glasses confirm your gaze, capture it with a telephoto photo, translate it into English, Japanese or Chinese, and read it aloud. Translation uses the on-device language model, with a built-in offline dictionary for common menu and sign phrases when the model is unavailable.
 
-## 真机测试（云端下发）详细步骤
+### Opening Message
 
-在 Global AIUI Studio（en-US）里打开该 Agent：
+Hi, I'm **Gaze Translate** — look, hold still, understand.
 
-1. 进 **Device Debug** 页签，先填 **Basic Information**：
-   - Agent Icon（建议 1:1 图片）
-   - **Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清 AI 助手应在什么场景、
-     什么前提下、被什么样的用户请求唤起这个 Agent
-   - Version 和 Agent ID 由系统生成，不可手改；**Version 是 Build 号，
-     每次重新打包保存自动递增**（如 1.0.19）
-2. 在 **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功的标志**：页面顶部出现绿色状态
-   **● Debug version ready — Ready for device debugging**。
-   没出现这个状态，说明这一版还没有保存成功，App 端拉不到，不要去 App 里白等。
-4. 手机打开 **Hi Rokid**（海外版），确认已连接眼镜，进
-   「设置 → 开发者选项 → AIUI」→ 点「更新眼镜资源包」，等眼镜端下载完成，
-   看到「智能体资源包下载成功」。
-5. 对眼镜语音打开该 Agent（如「乐奇，打开 xxx」）开始真机测试。
-6. 改代码后循环：改 → 推 GitHub → Studio 更新导入 → Repackage and Save
-   （Build 号递增，重新出现 Debug version ready）→ Hi Rokid 更新眼镜资源包 → 再测。
-   **只改代码不重新 Repackage and Save，App 拉到的还是旧版。**
+Point your gaze at a menu, sign or manual and keep your head steady. When you see **HEAD STEADY**, nod or tap **CAPTURE**: I'll photograph it with the telephoto camera, translate it, and read it aloud via **SPEAK**. Switch the target language with **LANG** (EN / 日本語 / 中文）, or tap **DEMO** to try a sample menu line first.
 
-## 提交审核
+### Preview Media
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-1. 在 Studio 的 **Submit** 页签填 Review Information：
-   Feature Description、Opening Message、Preview Media、Change Log。
-   **这四项的成稿统一放在各 Agent 自己 README 的「提审资料（Review Submission）」
-   章节里，分段写好，提交时整段复制**（Feature Description ≤500 字、
-   Opening Message ≤500 字且支持 Markdown；Preview Media 需 3–5 个
-   JPG/PNG/MP4 且至少 1 图 1 视频，每次提交前重新确认）。
-2. 确认权限声明与代码实际用到的能力一致（如定位 GEOLOCATION、相机 CAMERA、
-   录音 RECORD_AUDIO 必须在 `app.json.permissions` 里声明）。
-3. 点 **Submit for Review** 提交，等待审核结果；被拒按原因修改后
-   重新打包保存、重新提交。
+- Image 1：`artifacts/preview-gaze-translate-index.png`（aix preview 首页：GAZE TRANSLATE 初始态，含凝视框、日文菜单样例与 CAPTURE/DEMO/LANG/SPEAK 按钮，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-gaze-translate-demo.png`（点 DEMO 后的结果态：译文 + 来源标注 offline dictionary，本地文件）
+- Video：待真机补 — 真机录制「稳头 → 点头拍摄 → 朗读」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
+
+### Change Log
+
+#### Build 1.0.0
+
+**Features added**
+
+- Gaze-confirmed telephoto translation: head-stability gaze confirmation (HEAD STEADY), nod-to-capture, ImageCapture telephoto photo with wx camera fallback.
+- Translation via LanguageModel with an offline dictionary fallback for common menu/sign phrases; the result source (LLM / offline dictionary / none) is always shown.
+- Target language EN / 日本語 / 中文， switched by the LANG button or ArrowUp/ArrowDown keys; SPEAK reads the translation aloud; DEMO runs the full pipeline on a sample Japanese menu line.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
