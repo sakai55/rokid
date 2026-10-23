@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - register where you put things down by binding item + room + your head heading + time; later turn your head until your heading matches the stored one to walk back to the spot","main":"app.js","name":"find-my-thing","version":"1.0.0"}

@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - park: store GPS fix + car-nose heading + zone in one tap; return: head-relative arrow and distance to your car, NEAR mode with zone/heading cues and a telephoto plate-area photo record","main":"app.js","name":"parking-return","version":"1.0.0"}

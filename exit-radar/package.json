@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - on arrival, look at each exit sign and MARK it: the sign is stored bound to your head heading; GUIDE later points to the angularly nearest registered exit relative to where your head faces now, with an arrow and Chinese TTS","main":"app.js","name":"exit-radar","version":"1.0.0"}
