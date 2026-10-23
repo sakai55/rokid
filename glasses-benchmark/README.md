@@ -87,9 +87,10 @@ Tap **RUN ALL** and I'll test 21 capabilities one by one, from display and CPU t
 
 提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-- Image 1：`artifacts/preview-glasses-benchmark-index.png`（aix preview 生成的首页预览图，本地文件，提交时从本地上传）
+- Image 1：`artifacts/preview-glasses-benchmark-index.png`（aix preview 首页预览图：READY 状态，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-index-runall.png`（RUN ALL 跑完后的结果页预览图，本地文件）
 - Video：待补 — 真机录制 RUN ALL 运行过程（MP4），录好后放 `artifacts/` 并更新此处
-- 状态：未齐（目前只有 1 张图；补齐到 3–5 个且含视频后才可提交）
+- 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
 
