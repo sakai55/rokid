@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - receipt ledger: photograph the receipt as a record copy (never read, no OCR), dictate the total, eyeball the parsed amount, then SAVE it under a category; the MONTH view totals this month per category and SPEAK reads the summary aloud","main":"app.js","name":"receipt-keeper","version":"1.0.0"}

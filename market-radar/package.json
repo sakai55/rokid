@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - pin market stalls to your head heading with a spoken price note: face a stall, pick a category, say the price, REG stores it; RADAR later lights up the stall you are facing again with its note, and SPEAK reads the faced stall or all notes for comparison","main":"app.js","name":"market-radar","version":"1.0.0"}
