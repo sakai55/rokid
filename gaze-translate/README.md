@@ -15,11 +15,11 @@
 ## 解决的问题
 
 出国时菜单/路牌/说明书看不懂；手机翻译要掏手机、对焦、举着挡视线。
-本 Agent 把「视线方向」本身当成取词工具：你看哪里，就翻哪里。
+本 Agent 把「头部朝向」本身当成取词工具：头对着哪里，就翻哪里。
 
 ## 指向性设计（为什么必须用眼镜）
 
-- **凝视即指针（GAZE）**：视线对准文字即完成选词，没有光标、不用手。
+- **凝视即指针（GAZE）**：头部对准文字（以头部朝向作指针）即完成选定，没有光标、不用手。
 - **头部稳定 = 凝视确认**：`enableWorldAwareness()` 开启世界感知后，
   `onOrientationStabilityChange` 报告头部稳定时才进入可拍状态，界面显示
   「HEAD STEADY — ready」；点头（`onHeadGesture` 的 `nod`）在稳定时触发
@@ -82,11 +82,11 @@ cd ~/workspace/rokid/gaze-translate
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 11.42 KB（本地打包 `dist/gaze-translate.aix`） |
+| AIX Package Size | 约 11.9 KB（本地打包 `dist/gaze-translate.aix`） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -98,7 +98,7 @@ cd ~/workspace/rokid/gaze-translate
 - 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
   解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
   全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留。
-- 打包：`aix pack` 成功，`dist/gaze-translate.aix` 11.42 KB，包内含
+- 打包：`aix pack` 成功，`dist/gaze-translate.aix` 约 11.9 KB，包内含
   AGENTS.md、app.js、app.json、package.json、pages/index/index.ink
   （artifacts/ 已被 .aixignore 排除）。
 - 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见下方
@@ -122,13 +122,13 @@ cd ~/workspace/rokid/gaze-translate
 
 ### Feature Description
 
-Gaze Translate lets you read foreign menus, signs and manuals without taking out your phone. Look at the text and hold your head steady: the glasses confirm your gaze, capture it with a telephoto photo, translate it into English, Japanese or Chinese, and read it aloud. Translation uses the on-device language model, with a built-in offline dictionary for common menu and sign phrases when the model is unavailable.
+Gaze Translate is a hands-free translation flow for menus, signs and manuals abroad. Point your head at the text, hold steady or nod, and the glasses take a telephoto photo of it as a record. It then translates the sample line on screen via the host language model or a built-in offline dictionary (source always labeled) and reads it aloud in English, Japanese or Chinese. Status: the runtime has no OCR, so the photographed text itself is not read yet — live text input is the pending link.
 
 ### Opening Message
 
-Hi, I'm **Gaze Translate** — look, hold still, understand.
+Hi, I'm **Gaze Translate** — point, hold steady, understand.
 
-Point your gaze at a menu, sign or manual and keep your head steady. When you see **HEAD STEADY**, nod or tap **CAPTURE**: I'll photograph it with the telephoto camera, translate it, and read it aloud via **SPEAK**. Switch the target language with **LANG** (EN / 日本語 / 中文）, or tap **DEMO** to try a sample menu line first.
+Aim at a menu or sign, head held still. At **HEAD STEADY**, nod or tap **CAPTURE**: I take a telephoto photo of the text as a record, then translate the on-screen sample line (host LLM or built-in offline dictionary, source labeled) and read it aloud via **SPEAK**. Honest note: no OCR in this runtime — the photo's words aren't read yet; live text input is the pending link. **LANG** switches EN / 日本語 / 中文; **DEMO** runs the flow.
 
 ### Preview Media
 
@@ -140,6 +140,20 @@ Point your gaze at a menu, sign or manual and keep your head steady. When you se
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### Build 1.0.1
+
+**Features added**
+
+- None (documentation and submission-copy correction only; no behavior change).
+
+**Improvements**
+
+- Directional-design wording aligned to the platform reality: pointing is head orientation, not eye tracking (README「指向性设计」与「解决的问题」）。
+
+**Fixes**
+
+- Submission copy corrected (capability-boundary audit, 2026-10-24): the Feature Description and Opening Message now state plainly that the telephoto photo is kept as a record and that translation runs on the labeled on-screen sample text — the AIUI runtime has no OCR, so photographed text is not read yet. The previous copy described a photo-to-translate pipeline the current build does not perform.
 
 #### Build 1.0.0
 
