@@ -22,13 +22,15 @@
 
 ## 解决的问题
 
-颈椎的账是按「连续低头时长」算的，但人对低头时长完全没
-有感觉：刷手机「就看五分钟」，抬头时一个小时没了。手机
-的屏幕使用时间统计管的是 App，管不了你的头低了多久；
-定个番茄钟又太粗——中间你明明抬头活动过，它照样响。
-眼镜的独特之处在于：它就戴在你的头上，头部俯仰角是它的
-原生读数。把「这一段低头」做成一个有暂停、有清零规则的
-状态机，提醒才贴合真实的脖子，而不是贴合钟表。
+人对低头时长完全没有感觉：刷手机「就看五分钟」，抬头时
+一个小时没了。本 Agent 能测到、能拿来提醒的，只有「这一
+段连续低头持续了多久」——它测不到颈椎受力，也不承诺任何
+颈部结果，提醒的依据就是这段时长本身。手机的屏幕使用
+时间统计管的是 App，管不了你的头低了多久；定个番茄钟
+又太粗——中间你明明抬头活动过，它照样响。眼镜的独特
+之处在于：它就戴在你的头上，头部俯仰角是它的原生读数。
+把「这一段低头」做成一个有暂停、有清零规则的状态机，
+提醒才贴合你真实低头的节奏，而不是贴合钟表。
 
 ## 指向性设计（为什么必须用眼镜）
 
@@ -116,11 +118,11 @@ DEMO 一次（canvas 坐标 238,316，视觉定位确认）等待约 4 秒，
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 17.5 KB（本地打包 `dist/posture-guard.aix`，含本 README） |
+| AIX Package Size | 约 18.1 KB（本地打包 `dist/posture-guard.aix`，含本 README） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -163,6 +165,10 @@ DEMO 一次（canvas 坐标 238,316，视觉定位确认）等待约 4 秒，
   一致）；DEMO 态渲染出低头 34°、STRETCH 跨过上限后
   的提醒态（大字「抬头休息一下」），与 Node 断言的演示
   时钟行为一致。
+- Build 1.0.1 复验（2026-10-24 能力边界审计修复）：仅文案
+  修正（Feature Description 与「解决的问题」段的疗效暗示
+  措辞软化），无代码/UI 文案变更；静态检查与打包重新
+  通过，包内 package.json 版本为 1.0.1。
 
 **未验证**
 
@@ -186,7 +192,7 @@ DEMO 一次（canvas 坐标 238,316，视觉定位确认）等待约 4 秒，
 
 ### Feature Description
 
-Posture Guard watches your head pitch so long phone-and-laptop sessions stop ending in a stiff neck. Calibrate once by looking straight ahead; from then on the glasses measure how far your head droops below that neutral. Droop past 25 degrees for the limit you pick (5, 10 or 20 minutes - brief lifts under 10 seconds only pause the clock) and it speaks one gentle reminder to look up and roll your neck. Session totals, longest stretch and reminder count stay on screen.
+Posture Guard watches your head pitch on long phone-and-laptop sessions and reminds you to take a break when you've been looking down too long. Calibrate once by looking straight ahead; the glasses then measure how far your head droops below that neutral. Droop past 25 degrees for your limit (5, 10 or 20 minutes - brief lifts under 10 seconds only pause the clock) and it speaks a gentle reminder to look up and roll your neck. Session totals, longest stretch and reminder count stay on screen.
 
 ### Opening Message
 
@@ -204,6 +210,20 @@ Look **straight ahead** and tap **CAL** once. After that I time every head-down 
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### Build 1.0.1
+
+**Features added**
+
+- None (documentation-accuracy fix only; no behavior change).
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Efficacy wording softened (capability-boundary audit 2026-10-24): the Feature Description no longer implies that sessions "stop ending in a stiff neck" - it now says the agent reminds you to take a break when you have been looking down too long. The README problem text no longer presents continuous head-down duration as a cervical-spine mechanism ("the neck's bill is charged by continuous head-down time"); it now states plainly that this duration is only what the agent can measure and remind about, that it cannot measure cervical load, and that it promises no neck outcome - consistent with the agent's own "head pitch only, not medical advice" positioning throughout.
 
 #### Build 1.0.0
 
