@@ -32,9 +32,12 @@
   `ImageCapture.takePhoto({mode:'default'})` 拍下留档
   ——你看着的那件就是正在检查的那件。照片只作记录，
   不参与任何判断。
-- **描述代替识别（诚实边界）**：AIUI 运行时没有把
-  照片变成搭配结论的链路——照片不能送 LLM，也没有
-  图像分类。所以单品由佩戴者亲眼看后用选择器描述
+- **描述代替识别（诚实边界）**：AIUI 运行时没有
+  OCR / 图像分类把照片变成搭配结论的链路。本
+  Agent 只送文字描述（产品选择）——平台其实支持
+  把照片以 data: URL 图片输入送进大模型，本
+  Agent 不用这条路径。所以单品由佩戴者亲眼看后
+  用选择器描述
   （类型/颜色/花纹/版型），结论来自规则表对描述的
   打分；ASK AI 收到的是同一段**文字描述**（文本进、
   文本出），永远不发照片。界面全程标注
@@ -136,11 +139,11 @@ DEMO 按钮坐标见 shot 脚本注释；坐标经视觉定位确认）。
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 20.1 KB（本地打包 `dist/outfit-check.aix`） |
+| AIX Package Size | 约 20.5 KB（本地打包 `dist/outfit-check.aix`） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -193,7 +196,7 @@ DEMO 按钮坐标见 shot 脚本注释；坐标经视觉定位确认）。
 
 ### Feature Description
 
-Outfit Check answers 'does this match, and does it suit the occasion?' while you shop. Describe the piece with selectors - type, colour, pattern, fit - plus what you will pair it with and the occasion. A built-in rule table scores colour pairing, pattern clash and occasion fit, and gives a verdict - matches, so-so or no match - with two concrete fix suggestions, spoken aloud. Optionally, the on-device AI reads your text description (never a photo) and adds two styling tips.
+Outfit Check answers 'does this match, and does it suit the occasion?' while you shop. Describe the piece with selectors - type, colour, pattern, fit - plus what you will pair it with and the occasion. A built-in rule table scores colour pairing, pattern clash and occasion fit, and gives a verdict - matches, so-so or no match - with two concrete fix suggestions, spoken aloud. Optionally, the host AI reads your text description (never a photo) and adds two styling tips.
 
 ### Opening Message
 
@@ -212,13 +215,28 @@ Use **FIELD** and **VALUE** to describe the piece (type, colour, pattern, fit), 
 
 ### Change Log
 
+#### Build 1.0.1
+
+**Features added**
+
+- None (documentation-accuracy fix only).
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Submission copy corrected (capability-boundary audit 2026-10-24): the optional AI tips were described as coming from an "on-device AI". The host LanguageModel does not expose its provider, model or endpoint, so where inference runs is unknowable from the agent - the copy now says "the host AI" and makes no deployment claim.
+- Photo/LLM boundary restated (audit 2026-10-24): earlier copy claimed a photo "cannot be sent to the LLM" as a platform fact. The platform does accept photo input (image_url, including data: URLs); this agent sends the text description only by product choice, and the copy now says so.
+
 #### Build 1.0.0
 
 **Features added**
 
 - Selector-driven outfit description: 8 fields - piece type (top, trousers, skirt, coat, shoes), colour (10-colour palette), pattern (plain, stripes, check, floral), fit (slim, regular, loose), pair type, pair colour, pair pattern, and occasion (work, date, sport, formal, daily). FIELD picks the field, VALUE or the arrow keys cycle it; the full description is always in view.
 - Built-in rule verdict, spoken aloud: colour pairing (neutrals pair safely and carry brights; red+green and red+pink clash score 0; blue+yellow scores 2), pattern clash (two non-plain patterns score 0), and occasion fit per piece type (skirt for sport and shoes at a formal event score 0). Verdict is strict by design - all three components at full marks (6/6) means "matches"; any discounted component means "so-so"; a wrong occasion or a total of 2 or less means "no match". Every verdict shows the three scored reasons plus two concrete fix suggestions, and changing any field afterwards voids the old verdict honestly.
-- Optional AI tips from text only: ASK AI sends the selector-built text description to the on-device LanguageModel for two short styling tips, labelled with their source; when the model is unavailable it says SKIP and the rules verdict stands alone. The record photo is never sent anywhere and never judged.
+- Optional AI tips from text only: ASK AI sends the selector-built text description to the host LanguageModel for two short styling tips, labelled with their source; when the model is unavailable it says SKIP and the rules verdict stands alone. The record photo is never sent anywhere and never judged.
 - Mirror re-check: after a verdict, stand at a mirror and cycle what you see (not checked, fits well, looks bulky, looks slimming) for one closing line - the rules judge the combination, the mirror judges how it wears.
 - Gaze-directed record photo: head-stability gaze confirmation (HEAD STEADY), nod or LOOK photographs the garment or yourself in the mirror in default mode (record only); DEMO loads a navy top with beige trousers for work and lands on the 6/6 "matches" verdict, no camera needed.
 
