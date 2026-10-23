@@ -30,10 +30,14 @@ Rokid 眼镜远听助手智能体（AIUI Agent）。
   不假装模式生效。麦克风 / Web Audio 不可用时 FAIL 写明
   原因。STOP 立即停轨道、关 AudioContext。
 - 远处字幕（CAPTION）：按基准 Agent 的 `SpeechRecognition`
-  模式（zh-CN）对麦克风听到的内容做一次识别尝试，结果行
-  永远带前缀「HEARD (far - may be wrong):」— 远场语音
-  识别很容易出错，界面每次都如实标注；识别不可用时显示
-  SKIP 并写明，识别失败显示 FAIL 与原因。
+  模式（zh-CN）做一次识别尝试，结果行永远带前缀
+  「HEARD (far - may be wrong):」— 识别远处语音很
+  容易出错，界面每次都如实标注；识别不可用时显示
+  SKIP 并写明，识别失败显示 FAIL 与原因。**管线如实
+  拆分**：CAPTION 的识别由宿主 SpeechRecognition 用它
+  自己的麦克风完成，far-field 模式只作用于 LISTEN 的
+  电平流（getUserMedia），不作用于识别 — LISTEN 的
+  远场流只喂 `AnalyserNode` 算电平，从不喂给识别器。
 - 近耳重播（REPEAT，本 Agent 的核心把戏）：把最近一条
   字幕用 `speechSynthesis` 朗读出来。眼镜的扬声器就贴在
   你耳边 — 一句在房间那头没听清的话，被拾音、转成文字、
@@ -51,9 +55,9 @@ Rokid 眼镜远听助手智能体（AIUI Agent）。
   房间声音放大送进耳朵。它做的只有四件事：远场拾音、
   电平引导瞄准、字幕转写、近耳 TTS 重播。界面页脚、README
   都常驻如实说明。
-- 远场 ASR 的错误率在真机上未验证：距离、混响、口音都会
-  让它错得更多；字幕只能当「大概听到了什么」的参考，
-  重要场合请走近确认，不要把字幕当记录。
+- 宿主 ASR 识别远处语音的错误率在真机上未验证：距离、
+  混响、口音都会让它错得更多；字幕只能当「大概听到了
+  什么」的参考，重要场合请走近确认，不要把字幕当记录。
 - 麦克风只在用户点 LISTEN / CAPTION 后开启：LISTEN 停止
   （STOP / 页面隐藏 / 卸载）立即停掉全部媒体轨道并关闭
   AudioContext；识别器在停止与卸载时 abort。电平是实时
