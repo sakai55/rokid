@@ -2,14 +2,16 @@
 
 Rokid AI 眼镜的 **AIUI 智能体** 仓库。我们只开发 Agent，不开发 App。
 组织方式：**一个 Agent 一个目录**，每个目录是一套完整的 AIUI 项目
-（`app.json` + `AGENTS.md` + `app.js` + `pages/`），仓库根目录只放本 README 和各 Agent 目录。
+（`app.json` + `AGENTS.md` + `app.js` + `pages/`）。仓库根目录另放两个打包好的
+`.aix` 文件（备选导入用，见「备选方案」）。往 Studio 导入单个 Agent 走
+**专属分支**（见「Studio 导入方法」），不要直接导 main 的子目录。
 
 ## Agents
 
-| 目录 | 说明 | 真机测试状态 |
-|---|---|---|
-| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | 尚未导入 Studio |
-| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | Studio 名 `12345`，Build `1.0.19`，Debug version ready |
+| 目录 | 说明 | 导入分支 | 真机测试状态 |
+|---|---|---|---|
+| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | `agent-my-agent` | 尚未正式导入（分支导入已实测成功） |
+| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | `agent-glasses-benchmark` | Studio 名 `12345`，Build `1.0.19`，Debug version ready |
 
 每个 Agent 的真机测试信息（Studio 里的名称、Build 版本、App 分类、描述、Agent ID、状态）
 完整记录在该 Agent 目录自己的 README 里，以那里为准。
@@ -32,13 +34,47 @@ aix preview .                               # 本地预览（终端起服务 / -
 
 1. **本地开发**：在对应 Agent 目录里开发、改页面。
 2. **预览**：开发完成后用 `aix preview` 出该 Agent **所有页面**的预览图确认效果。
-3. **推 GitHub**：代码推到本仓库对应 Agent 目录。
-4. **Studio 导入**：Global AIUI Studio → New Agent → **Import from GitHub** → 选本仓库 →
-   指定 Agent 子目录导入（一个目录导一个 Agent）。
+3. **推 GitHub**：代码推到本仓库对应 Agent 目录，同时把同一套文件同步到该
+   Agent 的专属分支 `agent-<名字>` 的**根目录**（分支根 = Agent 根）。
+4. **Studio 导入**：Global AIUI Studio → New Agent → **Import from GitHub** →
+   粘贴分支地址导入（见下面「Studio 导入方法」），一个分支导一个 Agent。
 5. **真机测试（云端下发）**：见下面专门章节。
 6. **提交审核**：真机测试通过并确认后，在 Studio 的 **Submit** 页签填写
    Review Information（Feature Description、Opening Message、Preview Media、Change Log）
    并 Submit for Review。
+
+## Studio 导入方法（2026-10-24 实测结论，只用这一条）
+
+导入对话框（IMPORT PROJECT / "GitHub Subdirectory Import"）**只有 URL 一个
+输入框**，没有分支/路径选择。Studio 把 `/tree/` 后面的**整段当作一个 ref**，
+不会拆成「ref + 路径」。由此实测：
+
+- ✅ **分支地址（唯一可用）**：`https://github.com/sakai55/rokid/tree/agent-my-agent`
+  （换成目标 Agent 的分支名）。分支名是单段，能被正确解析为分支，
+  导入的就是**该分支根目录**——所以每个 Agent 有一个专属分支，
+  分支根目录放该 Agent 的全套文件。导入后生成名为 `sakai55/rokid` 的 Draft，
+  进 Studio 后改名。两个现有分支均已实测导入成功、文件树完整。
+- ❌ 子目录地址 `…/tree/main/my-agent`：报 `GitHub ref not found: main/my-agent`
+  （官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败，不是本仓库的问题）。
+- ❌ commit 号地址 `…/tree/<完整SHA>/my-agent`：同样报 ref not found。
+- ❌ 仓库根地址 `https://github.com/sakai55/rokid`：能导入，但生成的是
+  **空心 Agent**（Code 文件树为空），不能用。
+- ❌ blob 文件地址 `…/blob/main/my-agent/app.json`：能过导入，但 Run 报
+  「请先创建Agent的项目文件」，列表里也不会留下可用 Agent。
+
+改代码后要重新导入新版本：先把新文件同步到该 Agent 的分支根目录，再在
+Studio 里重新粘贴分支地址导入（或在已有草稿里更新），然后走真机测试流程。
+
+## 备选方案：.aix 直接导入
+
+仓库根目录放着打包好的 `.aix`（代码变更后用 `aix pack` 重打并更新）：
+
+- `my-agent.aix`
+- `glasses-benchmark.aix`
+
+用法：在 GitHub 上点开对应 `.aix` 下载到本地 → Global AIUI Studio →
+New Agent → **Import from AIX** → 上传该文件。不依赖 GitHub 地址导入，
+GitHub 导入出问题时用这条保底。
 
 ## ⚠️ 海外版本注意事项（必须全链路海外，缺一不可）
 
