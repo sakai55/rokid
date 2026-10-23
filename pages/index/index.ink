@@ -64,8 +64,6 @@ export default {
       } else {
         this.setData({ status: 'NOD IGNORED - hold head steady first' });
       }
-    } else if (g.indexOf('shake') !== -1) {
-      this.clearTable();
     }
   },
 

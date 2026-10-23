@@ -13,7 +13,7 @@ Rokid 眼镜看货比价智能体（AIUI Agent）。
 - 凝视确认：开启世界感知（enableWorldAwareness），头部稳定
   （onOrientationStabilityChange stable）后才进入可扫状态，显示
   「HEAD STEADY」；点头（onHeadGesture nod）在没有待确认项时触发扫码，
-  有待确认项时确认加入对比表；摇头（shake，若宿主上报）清空表格。
+  有待确认项时确认加入对比表；清空表格用 CLEAR 按钮。
 - 宽幅扫码：getUserMedia({video:true}) 取流后用
   ImageCapture.takePhoto({mode:'wide'}) 拍货架商品条码（media 文档注明
   wide 模式用于条码扫描），再用 BarcodeDetector.detect 解出码值；
