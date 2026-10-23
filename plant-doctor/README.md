@@ -31,9 +31,10 @@
   （HEAD STEADY）；点头（`onHeadGesture` 的 `nod`）：没有计划时
   触发 LOOK 拍照，计划进行中则推进一步 — 浇水时用点头代替腾手
   点按钮。
-- **症状由你亲眼选（诚实边界）**：AIUI 运行时的大模型图片输入
-  只接受 URL（`image_url`），眼镜现拍的照片没有 URL、无法提交
-  给大模型识别。所以照片只作记录，诊断按你选的可见症状走：
+- **症状由你亲眼选（诚实边界）**：本 Agent 按症状问诊、不把照片
+  送模型（产品选择）；平台其实支持把现拍照片编码为 data: URL
+  以 `image_url` 图片输入送入大模型，本 Agent 不用这条路径。
+  所以照片只作记录，诊断按你选的可见症状走：
   CHECK 先试 LanguageModel 生成计划（标注 LLM），不可用时用
   内置专家表（标注 built-in guide），界面全程标注
   「symptom-based guidance, NOT identification」，
@@ -101,11 +102,11 @@ cd ~/workspace/rokid/plant-doctor
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 14.94 KB（本地打包 `dist/plant-doctor.aix`） |
+| AIX Package Size | 约 15.2 KB（本地打包 `dist/plant-doctor.aix`） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -134,9 +135,10 @@ cd ~/workspace/rokid/plant-doctor
   内置专家表路径，真机待测）。
 - 真机头部稳定检测、点头推进步骤、TTS 朗读当前步的效果。
 - **诊断方式的产品边界**：本 Agent 的诊断是「按用户所选症状给
-  护理建议」，不是照片识别 — 运行时大模型图片输入只接受 URL，
-  眼镜现拍照片无法提交，所以不做、也不声称做照片认种/认病；
-  这是已知边界，不是待补的验证项。
+  护理建议」，不是照片识别 — 这是产品选择：平台支持把现拍照片
+  以 data: URL 图片输入送入大模型，本 Agent 不用这条路径，所以
+  不做、也不声称做照片认种/认病；这是已定的设计取舍，不是
+  待补的验证项。
 
 ---
 
@@ -165,6 +167,20 @@ Look at your plant, hold your head steady, then nod or tap **LOOK** for a record
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### Build 1.0.1
+
+**Features added**
+
+- None (documentation-accuracy fix only).
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Corrected the documented reason photos are not sent to the model: earlier text claimed the runtime's model image input accepts URLs only and a freshly captured photo could not be submitted. The platform in fact accepts a captured photo as a data: URL `image_url` input; this agent's symptom-based, text-only design is a product choice, and the docs (README + AGENTS.md) now say so (capability-boundary audit 2026-10-24).
 
 #### Build 1.0.0
 

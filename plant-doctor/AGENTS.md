@@ -35,9 +35,9 @@ Rokid 眼镜植物医生智能体（AIUI Agent）。
 
 ## 行为边界
 
-- 诊断是「按症状给护理建议」，不是照片识别：运行时
-  LanguageModel 的图片输入只接受 URL（image_url），眼镜现拍的
-  照片没有 URL、无法提交给大模型，所以本 Agent 绝不声称从照片
+- 诊断是「按症状给护理建议」，不是照片识别：本 Agent 不把照片
+  送模型（产品选择；平台支持照片经 data: URL 以 image_url 送入
+  大模型，本 Agent 不用这条路径），所以本 Agent 绝不声称从照片
   认出了植物种类或病害；界面、代码注释与 README 都如实标注
   「symptom-based guidance, not photo identification」。
 - 相机只在用户点 LOOK、点头或按 Enter 时启动，拍完立即停掉
