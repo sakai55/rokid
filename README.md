@@ -8,9 +8,9 @@
 
 截图统一存放于仓库根目录 `screenshots/gaze-translate/`。
 
-![首页初始状态](../screenshots/gaze-translate/preview-gaze-translate-index.png)
+![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/gaze-translate/preview-gaze-translate-index.png)
 
-![点 DEMO 后的翻译结果状态](../screenshots/gaze-translate/preview-gaze-translate-demo.png)
+![点 DEMO 后的翻译结果状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/gaze-translate/preview-gaze-translate-demo.png)
 
 ## 解决的问题
 
