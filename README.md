@@ -1,148 +1,135 @@
-# rokid — Rokid AIUI Agents（海外版 / Global）
+# fall-guard — 跌倒守望（Rokid 眼镜 AIUI Agent）
 
-Rokid AI 眼镜的 **AIUI 智能体** 仓库。我们只开发 Agent，不开发 App。
-组织方式：**一个 Agent 一个目录**，每个目录是一套完整的 AIUI 项目
-（`app.json` + `AGENTS.md` + `app.js` + `pages/`）。仓库根目录另放两个打包好的
-`.aix` 文件（备选导入用，见「备选方案」）。往 Studio 导入单个 Agent 走
-**专属分支**（见「Studio 导入方法」），不要直接导 main 的子目录。
+50 个「指向性生活问题」Agent 的第 33 个。独居的人跌倒了没人知道——本 Agent 在打开期间盯着头部朝向流里的一个动作模式：猛烈翻转之后长时间一动不动。模式命中就出声问「你还好吗？」，有应答就取消；没人应答，就把预设的求助联系人大字显示、反复朗读，让本人或身边的人照着行动。
 
-## Agents
+> ⚠️ **诚实定位（先读）**：它识别的是**动作模式**，不是跌倒；它**不能给任何人打电话或发消息**——AIUI 里没有这种 API，ALERT 只能显示和朗读你预设的联系人。它是尽力而为的出声确认层，不是医疗报警器，不能替代紧急呼叫按钮或个人报警服务；而且**只在 Agent 打开时工作**，没有任何后台监测。
 
-| 目录 | 说明 | 导入分支 | 真机测试状态 |
-|---|---|---|---|
-| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | `agent-my-agent` | 尚未正式导入（分支导入已实测成功） |
-| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | `agent-glasses-benchmark` | Studio 名 `12345`，Build `1.0.19`，Debug version ready |
-| `gaze-translate/` | 50 个指向性 Agent 之 #01 凝视翻译：看文字、稳头、长焦拍、翻译朗读 | `agent-gaze-translate` | 尚未导入 Studio |
+## 预览截图
 
-每个 Agent 的真机测试信息（Studio 里的名称、Build 版本、App 分类、描述、Agent ID、状态）
-完整记录在该 Agent 目录自己的 README 里，以那里为准。
+截图统一存放于仓库根目录 `screenshots/fall-guard/`。
 
-## 截图目录
+![监测初始态：预览主机无传感器如实显示 SRC: NONE，判据常驻界面](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/fall-guard/preview-fall-guard-index.png)
 
-所有 Agent 的预览截图集中存放在仓库根目录的 `screenshots/` 下，一个 Agent 一个
-子目录（`screenshots/<agent>/`）。每个 Agent 的 README 都有「预览截图」一节，
-直接嵌入这些图片，在 GitHub 上打开 README 即可看图。
+![DEMO 确认态：模拟剧烈翻转 + 静止后状态机自动走进 CHECK，大字「你还好吗？」并显示应答倒计时](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/fall-guard/preview-fall-guard-check.png)
 
-## 开发环境与工具链
+## 解决的问题
+
+独居跌倒的风险不在摔的那一下，而在摔完之后：躺在地上、喊不出声、够不到手机，一躺几个小时。市面上的解法是胸前挂一个报警按钮——但按钮要记得戴、摔的时候要够得着、按得动。眼镜不一样：它就在头上，而「头」恰好是跌倒时动作最剧烈、跌倒后最静止的部位。把头部朝向流当成信号源，做一层「出声确认」：先问，人答了就没事；没人答，把求助信息喊出来给身边的人听。
+
+## 指向性设计（为什么必须用眼镜）
+
+- **头部运动流（HEAD）**：`AbsoluteOrientationSensor` 四元数流是唯一的信号源（AIUI 没有跌倒 API）。相邻四元数夹角 ÷ 时间 = 头部角速度；任意 3 秒窗口内的姿势变化量 = 翻转增益。界面如实标注来源 `SENSOR / DEMO / NONE`。
+- **两段判据（防误报的核心）**：正常回头、扭头和摔倒翻转一样快，单看速度必然天天误报——判据在第二段：翻转（3 秒内 ≥ 60°）**之后**连续 15 秒彻底静止（转速 < 15°/s 且不离开停止姿势的 3° 锥形区）。能自己动起来的人，观察立刻取消。两段缺一不可，这是写进状态机的，不是宣传话术。
+- **冻流不算静止**：传感器流中断超过 3 秒，静止观察立即取消——冻住的数据和一动不动的头长得一模一样，宁可漏观察，不拿假数据凑数。
+- **耳朵确认（MIC + TTS）**：CHECK 期间麦克风听**任意**声音（不设关键词、不做声纹——摔伤的人可能说不出完整的话），点头和点按同样有效；ALERT 的朗读是说给**附近的人**听的，这是眼镜扬声器在这个场景里真正的用途。
+
+## 功能流程
+
+1. 设置联系人（一次性）：REL 轮换关系（子女 / 配偶 / 邻居 / 护工）→ NAME 点后说一遍姓名，识别结果**原样**保存显示（听错了重说，Agent 绝不悄悄改名），存 wx 同步存储 `fallGuardContact`
+2. 监测（MONITOR）：打开即守望；快速转头、走动、躺下翻身都不会触发——除非先有 ≥ 60° 的翻转、紧接着 15 秒彻底静止
+3. 确认（CHECK）：大字 + 朗读「你还好吗？」每 15 秒重复；出声（任意内容）、点头、点 OK 或按 Enter 任一应答 → 记 `responded-ok` 回到监测；60 秒无应答 → ALERT
+4. 求助卡（ALERT）：大字联系人 + 每 20 秒朗读求助句；卡面明示「我不能替你打电话」；手动 HELP 任意状态直达 ALERT；点 BACK 解除并记日志
+5. 日志：`fallGuardLog` 只存 {时间，结果}（最多 30 条）：check-pattern / responded-ok / alert-no-response / alert-manual / alert-dismissed；DEMO 事件不入真实日志
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| RECORD_AUDIO | CHECK 期间的一次性语音应答识别；NAME 设置联系人姓名 |
+
+不用相机、不用定位；头部朝向传感器在 AIUI 里不需要单独的权限声明。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <name>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（终端起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/fall-guard
+~/tools/bin/aix pack . -o ../dist/fall-guard.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-打包注意：项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-`skills-lock.json`、`node_modules/`，否则开发文件会进包（实测 2.3 KB 会涨到 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线（`shot-fall.js`；Shot A = 初始监测态无点击；Shot B = 点 DEMO 一次后等待约 9 秒，状态机自行从 STILL 走进 CHECK，「你还好吗？」确认态入镜）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-1. **本地开发**：在对应 Agent 目录里开发、改页面。
-2. **预览**：开发完成后用 `aix preview` 出该 Agent **所有页面**的预览图确认效果。
-3. **推 GitHub**：代码推到本仓库对应 Agent 目录，同时把同一套文件同步到该
-   Agent 的专属分支 `agent-<名字>` 的**根目录**（分支根 = Agent 根）。
-4. **Studio 导入**：Global AIUI Studio → New Agent → **Import from GitHub** →
-   粘贴分支地址导入（见下面「Studio 导入方法」），一个分支导一个 Agent。
-5. **真机测试（云端下发）**：见下面专门章节。
-6. **提交审核**：真机测试通过并确认后，在 Studio 的 **Submit** 页签填写
-   Review Information（Feature Description、Opening Message、Preview Media、Change Log）
-   并 Submit for Review。
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用分支导入：`https://github.com/sakai55/rokid/tree/agent-fall-guard`（该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging 点 **Repackage and Save**，确认顶部出现绿色 **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版 Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 fall-guard」，先 REL + NAME 设好真实联系人；安全验证法（**不要真摔**）：把眼镜拿在手里快速翻转 90° 后平放在桌上保持不动，应在约 15 秒后听到「你还好吗？」，出声应答验证取消；再放一次不理它，验证 60 秒后亮出联系人卡；另验证快速转头、正常走动、躺下翻身不触发
 
-## Studio 导入方法（2026-10-24 实测结论，只用这一条）
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-导入对话框（IMPORT PROJECT / "GitHub Subdirectory Import"）**只有 URL 一个
-输入框**，没有分支/路径选择。Studio 把 `/tree/` 后面的**整段当作一个 ref**，
-不会拆成「ref + 路径」。由此实测：
+| 项目 | 值 |
+|---|---|
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 约 20.8 KB（本地打包 `dist/fall-guard.aix`，含本 README） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-- ✅ **分支地址（唯一可用）**：`https://github.com/sakai55/rokid/tree/agent-my-agent`
-  （换成目标 Agent 的分支名）。分支名是单段，能被正确解析为分支，
-  导入的就是**该分支根目录**——所以每个 Agent 有一个专属分支，
-  分支根目录放该 Agent 的全套文件。导入后生成名为 `sakai55/rokid` 的 Draft，
-  进 Studio 后改名。两个现有分支均已实测导入成功、文件树完整。
-- ❌ 子目录地址 `…/tree/main/my-agent`：报 `GitHub ref not found: main/my-agent`
-  （官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败，不是本仓库的问题）。
-- ❌ commit 号地址 `…/tree/<完整SHA>/my-agent`：同样报 ref not found。
-- ❌ 仓库根地址 `https://github.com/sakai55/rokid`：能导入，但生成的是
-  **空心 Agent**（Code 文件树为空），不能用。
-- ❌ blob 文件地址 `…/blob/main/my-agent/app.json`：能过导入，但 Run 报
-  「请先创建Agent的项目文件」，列表里也不会留下可用 Agent。
+## 验证情况
 
-改代码后要重新导入新版本：先把新文件同步到该 Agent 的分支根目录，再在
-Studio 里重新粘贴分支地址导入（或在已有草稿里更新），然后走真机测试流程。
+**已验证**
 
-## Studio 导入方法二：AIX 导入（备选保底）
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON 解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留；app.json 权限恰为 `["RECORD_AUDIO"]`，与设计一致。
+- 四元数夹角数学：Node 加载页面对象验证——单位四元数自夹角 0、与 rotX(90°) 夹角 90、rotX(30°) 与 rotX(80°) 夹角 50、q 与 −q 夹角 0（同一姿势）；null 与零范数输入返回 null。
+- 状态机：Node 加载页面对象（wx 打桩）跑 40 条断言全过——无翻转的 30 秒静止不触发；翻转后持续运动 20 秒不触发；翻转 + 15 秒静止进入 CHECK 并记 `check-pattern`，点按应答回 MONITOR 并记 `responded-ok`；静止观察中途动一下立刻取消且计时清零；传感器流中断使观察取消（冻流不算静止）；45° 转头 + 静止不触发（未达 60° 增益）；CHECK 静默 60 秒升级 ALERT 并记 `alert-no-response`，求助朗读文案含联系人姓名且断言全文不含「已联系 / 已呼叫」；BACK 解除记 `alert-dismissed`；手动 HELP 直达 ALERT 并记 `alert-manual`；日志上限 30 条保最新；联系人存储往返恢复。
+- DEMO 确定性：联系人为虚构「子女 · 小明」，落点为 STILL 9.0s / 15s（纯种子，无 Date 依赖）；约 6 秒后状态机自行走进 CHECK；DEMO 期间联系人不落盘、演示事件不入真实日志，CLEAR 退出后真实联系人恢复——均由断言覆盖。
+- 打包：`aix pack` 成功，20.81 KB（21,306 B）；`aix list` 核对包内含 AGENTS.md、app.js、app.json、package.json、README.md、pages/index/index.ink（artifacts/ 已被 .aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见下方 Preview Media）：初始监测态完整渲染（预览主机无可用方向传感器，如实显示 `SRC: NONE`）；DEMO 态渲染出 STILL 种子后状态机自行升级的 CHECK 确认态（大字「你还好吗？」+ 应答倒计时），与 Node 断言行为一致。
 
-仓库根目录放着打包好的 `.aix`（代码变更后用 `aix pack` 重打并更新根目录文件）：
+**未验证**
 
-- `my-agent.aix`
-- `glasses-benchmark.aix`
-- `gaze-translate.aix`
+- 真机 AbsoluteOrientationSensor 在 5Hz 下对真实跌倒翻转的采样质量：翻转可能快于采样间隔，增益窗口的实际表现要真机（手持模拟、安全垫）才有结论；阈值 60° / 15 秒 / 60 秒届时可能需要按实测调整。
+- 真机上摘眼镜放桌、躺下睡觉、乘车颠簸等日常场景的误报率——这是本设计最大的未知数，需长时佩戴记录。
+- CHECK 期间 SpeechRecognition 对老人语音、方言、微弱呼救声的识别率（识别不到时仍有 60 秒升级 ALERT 兜底，但应答取消会失效，只能靠点头/点按）与真机 TTS 效果。
+- 本 Agent 不能打电话/发消息、只在打开时工作、识别的是模式不是跌倒——这些是能力边界而非缺陷，见文首诚实定位。
 
-步骤：
+---
 
-1. 在 GitHub 仓库根目录点开要导入的 `.aix` 文件，点下载按钮存到本地。
-2. 打开 Global AIUI Studio（en-US）→ New Agent → **Import from AIX**。
-3. 选择刚下载的 `.aix` 上传，导入后生成 Draft，文件树即包内完整工程。
-4. 后续同样走 Device Debug 打包保存 → 真机测试（见下文）。
+## 提审资料（Review Submission）
 
-这条路不依赖 GitHub 地址解析，GitHub 导入出问题或赶时间时用它保底；
-日常首选仍是方法一（分支地址导入），因为它直接对应仓库里的最新代码。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，提交时整段复制。每次提交前重新确认 Preview Media。
 
-## ⚠️ 海外版本注意事项（必须全链路海外，缺一不可）
+### Feature Description
 
-1. **Studio 必须是 Global 站 + 英文**：只用
-   [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US)，
-   地址是 global、语言参数必须是 `en-US`。不要用国内站（aiui.rokid.com），
-   两站账号和项目不互通。
-2. **账号必须是海外版注册**：在 [account-web.rokid.com](https://account-web.rokid.com/)
-   的**英文版**注册/登录 Rokid 账号（本项目账号地区：Japan）。
-   用国内版注册的账号不算海外开发账号。
-3. **下发走云端，不走数据线**：在 Studio 里打包保存后由云端下发到眼镜，
-   不用 ADB、不用数据线直装。
-4. **手机 App 必须是海外版 Hi Rokid**：Google Play 的
-   **Hi Rokid - Rokid Glasses**（包名 `com.rokid.sprite.global.aiapp`，
-   发行方 Rokid International），**不是国内版 Rokid Ai App**。
-   眼镜资源包的更新入口在 Hi Rokid 里。
-5. 以上四点（Global 账号 + en-US Studio + 云端下发 + Hi Rokid）齐全，
-   才算海外版开发；任何一环用了国内版，链路就不通。
+Fall Guard keeps watch while it is open on your glasses. It reads the head-orientation stream for one pattern: a violent turn (60 degrees or more in 3 seconds) followed by 15 seconds of complete stillness. A fast turn alone never triggers - only the motionless head after it. On a match it asks aloud, 'Are you OK?' Any reply, nod or OK tap cancels. No answer in 60 seconds and it shows your pre-set emergency contact in big type and reads it aloud on repeat, so you or someone nearby can act.
 
-## 真机测试（云端下发）详细步骤
+### Opening Message
 
-在 Global AIUI Studio（en-US）里打开该 Agent：
+Hi, I'm **Fall Guard**. While I'm open I watch your head-orientation stream for one pattern: a **hard jolt** (60° in 3 s) then **15 s still**. A fast turn alone never triggers - only the stillness after it.
 
-1. 进 **Device Debug** 页签，先填 **Basic Information**：
-   - Agent Icon（建议 1:1 图片）
-   - **Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清 AI 助手应在什么场景、
-     什么前提下、被什么样的用户请求唤起这个 Agent
-   - Version 和 Agent ID 由系统生成，不可手改；**Version 是 Build 号，
-     每次重新打包保存自动递增**（如 1.0.19）
-2. 在 **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功的标志**：页面顶部出现绿色状态
-   **● Debug version ready — Ready for device debugging**。
-   没出现这个状态，说明这一版还没有保存成功，App 端拉不到，不要去 App 里白等。
-4. 手机打开 **Hi Rokid**（海外版），确认已连接眼镜，进
-   「设置 → 开发者选项 → AIUI」→ 点「更新眼镜资源包」，等眼镜端下载完成，
-   看到「智能体资源包下载成功」。
-5. 对眼镜语音打开该 Agent（如「乐奇，打开 xxx」）开始真机测试。
-6. 改代码后循环：改 → 推 GitHub → Studio 更新导入 → Repackage and Save
-   （Build 号递增，重新出现 Debug version ready）→ Hi Rokid 更新眼镜资源包 → 再测。
-   **只改代码不重新 Repackage and Save，App 拉到的还是旧版。**
+On a match I ask aloud: **are you OK?** Say anything, **nod**, or tap **OK**. No reply in **60 s** and I show and read aloud the **emergency contact** you set via **REL + NAME**.
 
-## 提交审核
+Honest limit: **I cannot call anyone** - only show and speak the contact. I detect a pattern, not falls.
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+### Preview Media
 
-1. 在 Studio 的 **Submit** 页签填 Review Information：
-   Feature Description、Opening Message、Preview Media、Change Log。
-   **这四项的成稿统一放在各 Agent 自己 README 的「提审资料（Review Submission）」
-   章节里，分段写好，提交时整段复制**（Feature Description ≤500 字、
-   Opening Message ≤500 字且支持 Markdown；Preview Media 需 3–5 个
-   JPG/PNG/MP4 且至少 1 图 1 视频，每次提交前重新确认）。
-2. 确认权限声明与代码实际用到的能力一致（如定位 GEOLOCATION、相机 CAMERA、
-   录音 RECORD_AUDIO 必须在 `app.json.permissions` 里声明）。
-3. 点 **Submit for Review** 提交，等待审核结果；被拒按原因修改后
-   重新打包保存、重新提交。
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
+
+- Image 1：`artifacts/preview-fall-guard-index.png`（aix preview 初始监测态：SRC: NONE、判据常驻、联系人未设置，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-fall-guard-check.png`（DEMO 确认态：模拟翻转 + 静止后进入 CHECK，大字「你还好吗？」+ 应答倒计时，联系人卡为虚构 DEMO 联系人，本地文件）
+- Video：待真机补 — 真机录制「手持眼镜快速翻转后平放桌面 → 约 15 秒后出声询问 → 出声应答取消；再放一次不理 → 60 秒后联系人卡亮起并朗读」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
+
+### Change Log
+
+#### Build 1.0.0
+
+**Features added**
+
+- Fall-pattern state machine on the documented AbsoluteOrientationSensor quaternion stream (the only motion basis in the AIUI runtime - there is no fall-detection API): angular speed from successive quaternions, a jolt is 60 degrees or more of reorientation inside any 3-second window, and the CHECK state requires a further 15 continuous seconds of stillness (speed under 15 deg/s, inside a 3-degree cone of the stopped pose). Either half alone - a fast turn, or a motionless head - can never trigger, which is what keeps normal head turns, walking and lying down from raising false checks all day.
+- Spoken check with open response: on a match the glasses ask 'are you OK?' immediately and every 15 seconds, listen for ANY recognized speech (deliberately no keyword and no voiceprint - a hurt person may only manage a groan), and accept a head nod, an OK tap or the Enter key as the same answer; a response logs 'responded-ok' and returns to monitoring. Movement during the stillness watch, and any break in the sensor stream (a frozen stream would otherwise fake stillness), cancels the watch outright.
+- Pre-set emergency contact card: relation cycled with REL (child / spouse / neighbor / caregiver), the name dictated once with NAME and stored verbatim on-device (wx key fallGuardContact - a name is never silently 'corrected'); 60 seconds without a response, or a manual HELP tap in any state, raises the ALERT card, which shows the contact in big type and reads the help sentence aloud every 20 seconds (with a dial-120 fallback line when no contact is set). An on-device event log (times and outcome categories only, capped at 30, wx key fallGuardLog) supports family review.
+- DEMO simulation, memory only: a synthetic 95-degree jolt followed by stillness lands in the STILL watch at 9.0 of 15 seconds and escalates into CHECK on its own seconds later; the demo contact is fictional and labeled DEMO, is never persisted, and demo events never enter the real log.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
