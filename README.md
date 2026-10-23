@@ -1,98 +1,110 @@
-# rokid — Rokid AIUI Agents（海外版 / Global）
+# glasses-benchmark — Rokid 眼镜全功能 Benchmark（AIUI Agent）
 
-Rokid AI 眼镜的 **AIUI 智能体** 仓库。我们只开发 Agent，不开发 App。
-组织方式：**一个 Agent 一个目录**，每个目录是一套完整的 AIUI 项目
-（`app.json` + `AGENTS.md` + `app.js` + `pages/`），仓库根目录只放本 README 和各 Agent 目录。
+第一个开发测试智能体：一键跑完 Rokid 眼镜在 AIUI 下的全部功能，共 21 项。
 
-## Agents
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-| 目录 | 说明 | 真机测试状态 |
-|---|---|---|
-| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | 尚未导入 Studio |
-| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | Studio 名 `12345`，Build `1.0.19`，Debug version ready |
+| 项目 | 值 |
+|---|---|
+| Agent Name（Studio） | 12345 |
+| Version（Build） | 1.0.19 |
+| App Category | Life |
+| Intent Description | full |
+| Agent ID | ca29aef525bd42db377edba9021656 |
+| AIX Package Size | 7.93 KB |
+| 状态 | ● Debug version ready — Ready for device debugging |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-每个 Agent 的真机测试信息（Studio 里的名称、Build 版本、App 分类、描述、Agent ID、状态）
-完整记录在该 Agent 目录自己的 README 里，以那里为准。
+> 每次在 Studio 里 Repackage and Save 后，Build 号会递增，上表同步更新。
 
-## 开发环境与工具链
+## 测试项
+
+| # | 项目 | 测什么 |
+|---|------|--------|
+| 01 | Device | navigator 身份 / Ink·Skia 版本 / 语言 / 地区 |
+| 02 | Display | 视口尺寸 / 渲染开关 / 12 次连续重绘 |
+| 03 | CPU | 30 万次数学循环吞吐 (ops/s) |
+| 04 | Crypto | getRandomValues + SHA-256 + randomUUID |
+| 05 | Storage | localStorage + wx 同步存储读写 |
+| 06 | Net Info | 在线状态 / 连接类型 / RTT / 下行估算 |
+| 07 | Net Fetch | HTTPS 请求 example.com 往返 |
+| 08 | Canvas 2D | 渐变 / 图形 / 文字 / flush（画布直接可见） |
+| 09 | Audio Out | Web Audio 880Hz 振荡器（扬声器） |
+| 10 | Microphone | 设备枚举 + 0.9 秒录音字节数 |
+| 11 | Camera | 取流 + 拍照字节数（回退 wx CameraContext） |
+| 12 | Accel | 加速度计读数 |
+| 13 | Gyro/Ori | 陀螺仪 + 绝对方向四元数 |
+| 14 | Geolocation | 单次定位 + 精度 |
+| 15 | Bluetooth | BLE 可用性 + 已知设备数 |
+| 16 | Battery | 电量 + 充电状态（不支持时 SKIP） |
+| 17 | TTS Synth | speechSynthesis.synthesize；SPEAK 按钮做真人耳确认 |
+| 18 | ASR Caps | 识别能力查询；LISTEN 按钮做实时识别 |
+| 19 | LLM | LanguageModel 可用性 + 一次短推理 |
+| 20 | Barcode | BarcodeDetector 支持格式 |
+| 21 | Interaction | 按键 / 点头手势 / 语音唤醒（被动监听，触发即 PASS） |
+
+状态：PASS / FAIL / SKIP（硬件或主机不支持）/ MANUAL（需人触发）。
+点任意一行可单独重跑该项；RUN ALL 顺序跑完 01–20。
+
+## 打包
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <name>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（终端起服务 / --html-out 导出 HTML）
+~/tools/bin/aix pack . -o ../dist/glasses-benchmark.aix
+~/tools/bin/aix preview .
 ```
 
-打包注意：项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-`skills-lock.json`、`node_modules/`，否则开发文件会进包（实测 2.3 KB 会涨到 107 KB）。
+## 真机测试（海外版 · 云端下发）
 
-## 标准工作流
+1. 推到 GitHub → Global AIUI Studio（en-US）从 GitHub 导入（子目录 `glasses-benchmark`）
+2. Studio 的 **Device Debug** 页签填 Basic Information（Name / Category / Intent Description），
+   在 AIX Packaging 点 **Repackage and Save**，确认顶部出现绿色
+   **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版，不是国内版 Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包
+4. 对眼镜说「乐奇，打开 glasses-benchmark」，点 RUN ALL
 
-1. **本地开发**：在对应 Agent 目录里开发、改页面。
-2. **预览**：开发完成后用 `aix preview` 出该 Agent **所有页面**的预览图确认效果。
-3. **推 GitHub**：代码推到本仓库对应 Agent 目录。
-4. **Studio 导入**：Global AIUI Studio → New Agent → **Import from GitHub** → 选本仓库 →
-   指定 Agent 子目录导入（一个目录导一个 Agent）。
-5. **真机测试（云端下发）**：见下面专门章节。
-6. **提交审核**：真机测试通过并确认后，在 Studio 的 **Submit** 页签填写
-   Review Information（Feature Description、Opening Message、Preview Media、Change Log）
-   并 Submit for Review。
+注意：07 Fetch 需要眼镜联网（经手机蓝牙/Wi-Fi）；14 定位、10/11 麦克风/相机
+第一次会弹系统授权，拒绝会记 FAIL 并写明原因——这正是要测的。
 
-## ⚠️ 海外版本注意事项（必须全链路海外，缺一不可）
+---
 
-1. **Studio 必须是 Global 站 + 英文**：只用
-   [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US)，
-   地址是 global、语言参数必须是 `en-US`。不要用国内站（aiui.rokid.com），
-   两站账号和项目不互通。
-2. **账号必须是海外版注册**：在 [account-web.rokid.com](https://account-web.rokid.com/)
-   的**英文版**注册/登录 Rokid 账号（本项目账号地区：Japan）。
-   用国内版注册的账号不算海外开发账号。
-3. **下发走云端，不走数据线**：在 Studio 里打包保存后由云端下发到眼镜，
-   不用 ADB、不用数据线直装。
-4. **手机 App 必须是海外版 Hi Rokid**：Google Play 的
-   **Hi Rokid - Rokid Glasses**（包名 `com.rokid.sprite.global.aiapp`，
-   发行方 Rokid International），**不是国内版 Rokid Ai App**。
-   眼镜资源包的更新入口在 Hi Rokid 里。
-5. 以上四点（Global 账号 + en-US Studio + 云端下发 + Hi Rokid）齐全，
-   才算海外版开发；任何一环用了国内版，链路就不通。
+## 提审资料（Review Submission）
 
-## 真机测试（云端下发）详细步骤
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
 
-在 Global AIUI Studio（en-US）里打开该 Agent：
+### Feature Description
 
-1. 进 **Device Debug** 页签，先填 **Basic Information**：
-   - Agent Icon（建议 1:1 图片）
-   - **Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清 AI 助手应在什么场景、
-     什么前提下、被什么样的用户请求唤起这个 Agent
-   - Version 和 Agent ID 由系统生成，不可手改；**Version 是 Build 号，
-     每次重新打包保存自动递增**（如 1.0.19）
-2. 在 **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功的标志**：页面顶部出现绿色状态
-   **● Debug version ready — Ready for device debugging**。
-   没出现这个状态，说明这一版还没有保存成功，App 端拉不到，不要去 App 里白等。
-4. 手机打开 **Hi Rokid**（海外版），确认已连接眼镜，进
-   「设置 → 开发者选项 → AIUI」→ 点「更新眼镜资源包」，等眼镜端下载完成，
-   看到「智能体资源包下载成功」。
-5. 对眼镜语音打开该 Agent（如「乐奇，打开 xxx」）开始真机测试。
-6. 改代码后循环：改 → 推 GitHub → Studio 更新导入 → Repackage and Save
-   （Build 号递增，重新出现 Debug version ready）→ Hi Rokid 更新眼镜资源包 → 再测。
-   **只改代码不重新 Repackage and Save，App 拉到的还是旧版。**
+Glasses Benchmark is a full self-check for Rokid Glasses under AIUI. Tap RUN ALL to run 21 tests in sequence: device, display, CPU, crypto, storage, network, Canvas 2D, audio, microphone, camera, sensors, geolocation, Bluetooth, battery, TTS, ASR, LLM, barcode and interaction events. Each item reports PASS, FAIL, SKIP or MANUAL with a reason, and can be re-run individually. Built for developers validating real glasses hardware and runtime capabilities.
 
-## 提交审核
+### Opening Message
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+Hi, I'm **Glasses Benchmark** — your on-glasses self-check.
 
-1. 在 Studio 的 **Submit** 页签填 Review Information：
-   Feature Description、Opening Message、Preview Media、Change Log。
-   **这四项的成稿统一放在各 Agent 自己 README 的「提审资料（Review Submission）」
-   章节里，分段写好，提交时整段复制**（Feature Description ≤500 字、
-   Opening Message ≤500 字且支持 Markdown；Preview Media 需 3–5 个
-   JPG/PNG/MP4 且至少 1 图 1 视频，每次提交前重新确认）。
-2. 确认权限声明与代码实际用到的能力一致（如定位 GEOLOCATION、相机 CAMERA、
-   录音 RECORD_AUDIO 必须在 `app.json.permissions` 里声明）。
-3. 点 **Submit for Review** 提交，等待审核结果；被拒按原因修改后
-   重新打包保存、重新提交。
+Tap **RUN ALL** and I'll test 21 capabilities one by one, from display and CPU to camera, sensors, TTS and the built-in LLM. Items marked **MANUAL** need a quick tap or your ears to confirm. You can also tap any single row to re-run just that test.
+
+### Preview Media
+
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
+
+- Image 1：`artifacts/preview-glasses-benchmark-index.png`（aix preview 首页预览图：READY 状态，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-index-runall.png`（RUN ALL 跑完后的结果页预览图，本地文件）
+- Video：待补 — 真机录制 RUN ALL 运行过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
+
+### Change Log
+
+#### Build 1.0.19
+
+**Features added**
+
+- Initial release: 21-item full-function benchmark — device, display, CPU, crypto, storage, network info/fetch, Canvas 2D, audio out, microphone, camera, accelerometer, gyroscope/orientation, geolocation, Bluetooth, battery, TTS, ASR, LLM, barcode detection and interaction events.
+- Result states PASS / FAIL / SKIP / MANUAL with a reason per item; tap any row to re-run a single test.
+
+**Improvements**
+
+- First build packaged and saved in Global AIUI Studio for device debugging (Debug version ready).
+
+**Fixes**
+
+- None (initial release).
