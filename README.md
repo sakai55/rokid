@@ -46,8 +46,10 @@
   推进你正在走的流程——核对完的词 DEFINE、查完的结果
   SAVE——它从不替你编词、改词（同 #22/#23 先报后确认）。
 - **释义两条来源、全程标注**：DEFINE 只把核对过的词以
-  **纯文本**发给主机大模型（照片进不了大模型，同 #01），
-  要三行：中文释义 / 简单英文解释 / 短例句，标注 LLM；
+  **纯文本**发给主机大模型——这是本 Agent 的产品选择：
+  平台支持长焦照片经 data: URL 送入模型读字，本 Agent
+  不用这条路径，词必须由你说出并核对。要三行：中文
+  释义 / 简单英文解释 / 短例句，标注 LLM；
   大模型不可用就回退内置离线小词典（24 个常见词），标注
   OFFLINE；两边都没有，如实显示 none，绝不编造释义。
 
@@ -140,7 +142,7 @@ cd ~/workspace/rokid/word-look
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 23.4 KB（本地打包 `dist/word-look.aix`） |
+| AIX Package Size | 约 23.9 KB（本地打包 `dist/word-look.aix`） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -231,6 +233,20 @@ Hi, I'm **Word Look** - I can't read the page for you, but I can define the word
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### Build 1.0.1
+
+**Features added**
+
+- None (documentation-accuracy fix only).
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Corrected a false capability premise in the docs (capability-boundary audit 2026-10-24): the README and AGENTS.md previously claimed the captured photo "cannot reach the language model" and that the model is text-only. Per the official capability dossier (§2.9), the host language model accepts image input as `{type:'image_url'}` including data: URLs, and telephoto photo + LLM image input is the platform's official read-text path (§4.3). This agent still sends text only — that is a product choice that keeps the wearer's spoken-and-checked word as the only input; the docs now state it as a choice, not a platform limit.
 
 #### Build 1.0.0
 
