@@ -31,14 +31,15 @@
   响应点头（`onHeadGesture` 的 `nod`）：未开火时点头 = START，
   进行中点头 = NEXT。炒菜时身体晃动不会误触发，稳住头的一点
   才是确认。
-- **4 麦 wearer 模式听你说话（MIC4）**：LISTEN 先按文档方式
+- **4 麦 wearer 模式可用性检查（MIC4）**：LISTEN 先按文档方式
   用 `getUserMedia({audio:{captureSource:'microphone',
   microphoneMode:'wearer', echoCancellation:true}})` 打开
-  佩戴者模式麦克风——4 麦阵列优先收**你自己**的声音，压过
-  抽油烟机和沸水的噪音（读 `track.getSettings()` 确认实际
-  模式，检查完立即停轨道），再按基准 Agent 的
-  `SpeechRecognition`（zh-CN）模式识别口令：听到「下一步」
-  或「好了」自动翻页，其它话如实显示「听到了，但不是口令」。
+  佩戴者模式麦克风流——这只是一次**可用性检查**：读
+  `track.getSettings()` 确认实际模式后，检查完立即停轨道。
+  **口令识别由宿主 `SpeechRecognition`（zh-CN）在它自己的
+  麦克风通路上完成**；wearer 模式只作用于那条随即停掉的
+  检查流，对宿主识别没有任何影响。听到「下一步」或
+  「好了」自动翻页，其它话如实显示「听到了，但不是口令」。
 - **倒计时在眼前**：带分钟的步骤（腌肉 10 分钟、烧水 5 分钟、
   炒番茄 2 分钟等）点 TIMER 启动倒计时，剩余 mm:ss 就显示在
   步骤框里，余光扫一眼就知道还剩多久；归零变「TIME UP」并用
@@ -61,8 +62,10 @@
    「DONE - 上菜」状态
 4. 当前步带分钟数时点 TIMER 启动倒计时（再点停止），
    剩余时间显示在步骤框；归零 TTS 喊「时间到」
-5. LISTEN 语音翻页：wearer 模式麦克风检查 + zh-CN 识别，
-   识别结果如实显示；不可用时显示 SKIP，回退点头/按钮
+5. LISTEN 语音翻页：wearer 模式麦克风可用性检查（读回设置
+   后即停流）+ 宿主 SpeechRecognition（zh-CN，走其自有
+   麦克风通路）识别，两步相互独立；识别结果如实显示；
+   不可用时显示 SKIP，回退点头/按钮
 6. LOOK 看着锅拍照留档（只作记录）；PAN 轮换锅况
    （还生 / 刚好 / 有点糊）显示对应调整建议
 7. SPEAK 朗读当前步骤（备料步朗读备料清单）
@@ -78,7 +81,7 @@
 | 权限 | 用途 |
 |---|---|
 | CAMERA | 取流并以 default 模式拍摄眼前的锅（只作影像记录，不参与火候判断） |
-| RECORD_AUDIO | LISTEN 语音翻页：wearer 模式麦克风检查 + SpeechRecognition 识别「下一步 / 好了」口令 |
+| RECORD_AUDIO | LISTEN 语音翻页：wearer 模式麦克风可用性检查 + 宿主 SpeechRecognition（自有麦克风通路）识别「下一步 / 好了」口令 |
 
 相机/麦克风只在用户点 LOOK / LISTEN 时启动：麦克风检查完
 立即停轨道，相机拍完立即停掉全部媒体轨道；计时器、识别器
@@ -116,11 +119,11 @@ DEMO 自带跳步 + 启动倒计时）。
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 15.7 KB（本地打包 `dist/cook-along.aix`） |
+| AIX Package Size | 约 16.2 KB（本地打包 `dist/cook-along.aix`） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -146,8 +149,9 @@ DEMO 自带跳步 + 启动倒计时）。
 **未验证**
 
 - 真机头部稳定检测与点头翻页在炒菜动作中的实际灵敏度。
-- **ASR 口令识别 + wearer 模式在真实厨房噪音**（抽油烟机、
-  沸水声）下能否稳定听到「下一步」（预览主机无
+- **宿主 ASR 口令识别在真实厨房噪音**（抽油烟机、沸水声）
+  下能否稳定听到「下一步」（wearer 模式检查只验证模式可
+  打开、读得到设置，不参与识别；预览主机无
   SpeechRecognition，LISTEN 的 SKIP 路径已如实显示，真机待测）。
 - 真机相机取流与 default 模式拍锅的效果（预览主机无相机，
   LOOK 的 FAIL 路径已如实写明原因，真机待测）。
@@ -164,7 +168,7 @@ DEMO 自带跳步 + 启动倒计时）。
 
 ### Feature Description
 
-Cook Along is a hands-free cooking companion for Rokid Glasses. Pick one of three built-in recipes and the steps stay in your line of sight while you watch the pan: nod or say "next" to advance, start an in-view countdown on timed steps and hear a spoken alert when time is up. The wearer-mode microphone hears your voice over the range hood, and a pan check lets you log what you see — still raw, just right, or starting to burn — with a one-line fix for each.
+Cook Along is a hands-free cooking companion for Rokid Glasses. Pick one of three built-in recipes; steps stay in your line of sight while you watch the pan: nod or say "next" to advance, timed steps get an in-view countdown and a spoken alert at zero. The host speech recognizer hears voice commands on its own microphone (after a wearer-mode mic availability check), and PAN logs what you see — still raw, just right, or starting to burn — with a one-line fix for each.
 
 ### Opening Message
 
@@ -183,13 +187,27 @@ Tap **RECIPE** to pick a dish (tomato eggs, pepper pork, or plain noodles), then
 
 ### Change Log
 
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Mic-mode copy corrected (capability-boundary audit 2026-10-24): wearer mode is an availability check only — the getUserMedia stream is opened in wearer mode, its settings are read back, and it is stopped at once. Voice commands are recognized by the host SpeechRecognition on its own microphone, which the checked mode does not affect. The UI listening line, this README and AGENTS.md now say exactly that, instead of implying recognition runs through the wearer-mode array.
+
 #### Build 1.0.0
 
 **Features added**
 
 - Line-of-sight recipes: 3 built-in dishes （番茄炒蛋 6 steps, 青椒肉丝 7 steps, 清水煮面 6 steps), each opening on an ingredients step 0; RECIPE cycles dishes and resets, START begins step 1, NEXT / nod (head steady) / voice command advances, with a DONE — 上菜 finish state.
 - In-view step timer: timed steps show a ready countdown, TIMER starts/stops a 1-second mm:ss countdown inside the step box, advancing clears it, and at zero the line shows TIME UP with a spoken "时间到" alert.
-- Voice step control: LISTEN runs a documented wearer-mode microphone check (getUserMedia captureSource microphone, microphoneMode wearer — the 4-mic array prioritising your voice over range-hood noise) and then SpeechRecognition (zh-CN); hearing 下一步 or 好了 advances the step, anything else is shown honestly as heard-but-not-a-command; ASR unavailable shows SKIP.
+- Voice step control: LISTEN runs a documented wearer-mode microphone availability check (getUserMedia captureSource microphone, microphoneMode wearer; settings read back, stream stopped at once) and then the host SpeechRecognition (zh-CN, on its own microphone — the checked wearer mode does not affect recognition); hearing 下一步 or 好了 advances the step, anything else is shown honestly as heard-but-not-a-command; ASR unavailable shows SKIP.
 - Gaze-anchored pan check: LOOK photographs the pan you are looking at (default mode, record only, byte size shown, wx camera fallback); PAN cycles what YOU see （还生 / 刚好 / 有点糊） with a one-line adjustment tip per state. The photo never judges doneness.
 - SPEAK reads the current step aloud; DEMO jumps mid-recipe into step 3 with the timer running so the step view and live countdown are visible without camera or microphone.
 
