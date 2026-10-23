@@ -1,148 +1,171 @@
-# rokid — Rokid AIUI Agents（海外版 / Global）
+# shelf-compare — 看货比价（Rokid 眼镜 AIUI Agent）
 
-Rokid AI 眼镜的 **AIUI 智能体** 仓库。我们只开发 Agent，不开发 App。
-组织方式：**一个 Agent 一个目录**，每个目录是一套完整的 AIUI 项目
-（`app.json` + `AGENTS.md` + `app.js` + `pages/`）。仓库根目录另放两个打包好的
-`.aix` 文件（备选导入用，见「备选方案」）。往 Studio 导入单个 Agent 走
-**专属分支**（见「Studio 导入方法」），不要直接导 main 的子目录。
+50 个「指向性生活问题」Agent 的第 02 个。在超市里同类商品看花眼、价格和
+规格记不住没法比时：看着货架上的商品扫一下条码，一个个加进眼镜里的
+对比表，单位价自动算好、最划算的一件标出来，并朗读给你听。
 
-## Agents
+## 预览截图
 
-| 目录 | 说明 | 导入分支 | 真机测试状态 |
-|---|---|---|---|
-| `my-agent/` | 官方脚手架示例（Hello AIUI），验证全流程用 | `agent-my-agent` | 尚未正式导入（分支导入已实测成功） |
-| `glasses-benchmark/` | 眼镜全功能 Benchmark，21 项一键跑完 | `agent-glasses-benchmark` | Studio 名 `12345`，Build `1.0.19`，Debug version ready |
-| `gaze-translate/` | 50 个指向性 Agent 之 #01 凝视翻译：看文字、稳头、长焦拍、翻译朗读 | `agent-gaze-translate` | 尚未导入 Studio |
+截图统一存放于仓库根目录 `screenshots/shelf-compare/`。
 
-每个 Agent 的真机测试信息（Studio 里的名称、Build 版本、App 分类、描述、Agent ID、状态）
-完整记录在该 Agent 目录自己的 README 里，以那里为准。
+![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/shelf-compare/preview-shelf-compare-index.png)
 
-## 截图目录
+![DEMO 加满 4 件牛奶后的对比表（BEST 与结论）](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/shelf-compare/preview-shelf-compare-table.png)
 
-所有 Agent 的预览截图集中存放在仓库根目录的 `screenshots/` 下，一个 Agent 一个
-子目录（`screenshots/<agent>/`）。每个 Agent 的 README 都有「预览截图」一节，
-直接嵌入这些图片，在 GitHub 上打开 README 即可看图。
+## 解决的问题
 
-## 开发环境与工具链
+超市里同类商品摆满一整面货架：价格、净含量各不相同，单位价要心算，
+看完第三件就忘了第一件。手机比价要一件件拿起来扫、再切应用记录，
+手推购物车根本腾不出手。本 Agent 让「看向哪件、就扫哪件」：视线即
+选择器，对比表就在视线里，结论用耳朵收。
+
+## 指向性设计（为什么必须用眼镜）
+
+- **凝视即指向（GAZE）+ 宽幅扫码**：看着商品，用
+  `ImageCapture.takePhoto({mode:'wide'})` 拍条码（media 文档注明 wide
+  模式用于条码扫描），再用 `BarcodeDetector.detect` 解码 — 看哪件，
+  扫哪件，不用把商品拿下来对手机。
+- **头部稳定 = 凝视确认**：`enableWorldAwareness()` 开启世界感知后，
+  `onOrientationStabilityChange` 报告头部稳定时才进入可扫状态
+  （HEAD STEADY）；点头（`onHeadGesture` 的 `nod`）在无待确认项时
+  触发扫码、有待确认项时确认加入对比表 — 用点头代替腾手点按钮；
+  摇头（shake，若宿主上报）清空表格。
+- **对比表在视线内**：最多 4 件商品的价格、规格、单位价
+  （每 100g / 100ml）同屏对照，单位价最低的一行高亮标 BEST，
+  一行结论（VERDICT）始终可见。
+- **耳朵收结论**：SPEAK 用 `speechSynthesis.speak` 朗读
+  「Best value: …」，眼睛不用离开货架。
+
+## 功能流程
+
+1. 看着商品，稳住头 → 状态变 `HEAD STEADY`
+2. 点头，或点 SCAN，或按 Enter / GlobalHook → wide 拍照 +
+   BarcodeDetector 解码，显示格式与码值
+3. 码值查内置演示目录：命中 → 显示名称/价格/规格/单位价；
+   未命中 → 以「Unknown item + 原始码值」待确认（如实标注，
+   无价格不参与单位价比较）
+4. 点头或点 ADD 确认加入对比表（最多 4 件，重复码会提示已在表中）
+5. 表格自动重算单位价并标 BEST、更新结论；REMOVE 删最后一行，
+   CLEAR（或摇头）清空
+6. 点 SPEAK 朗读结论
+7. DEMO 按钮：依次取内置四种牛奶作为待确认项，预览即可看到
+   装满的对比表
+
+> 诚实说明：内置目录是演示数据（约 10 件常见商品，价格/规格为
+> 示例值），不是实时商超数据；条码解码只在真机链路生效，预览主机
+> 没有相机，SCAN 会如实显示 FAIL 并写明原因，绝不假装扫到。
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| CAMERA | 取流并用 wide 模式拍摄所看商品的条码 |
+
+仅此一项。相机只在用户触发时启动，拍完立即停掉全部媒体轨道。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <name>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（终端起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/shelf-compare
+~/tools/bin/aix pack . -o ../dist/shelf-compare.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-打包注意：项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-`skills-lock.json`、`node_modules/`，否则开发文件会进包（实测 2.3 KB 会涨到 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线
+（`shot-shelf.js`；填表截图的点击序列为 canvas 内 DEMO (240, 154) 与
+ADD (390, 154) 交替各 4 次）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-1. **本地开发**：在对应 Agent 目录里开发、改页面。
-2. **预览**：开发完成后用 `aix preview` 出该 Agent **所有页面**的预览图确认效果。
-3. **推 GitHub**：代码推到本仓库对应 Agent 目录，同时把同一套文件同步到该
-   Agent 的专属分支 `agent-<名字>` 的**根目录**（分支根 = Agent 根）。
-4. **Studio 导入**：Global AIUI Studio → New Agent → **Import from GitHub** →
-   粘贴分支地址导入（见下面「Studio 导入方法」），一个分支导一个 Agent。
-5. **真机测试（云端下发）**：见下面专门章节。
-6. **提交审核**：真机测试通过并确认后，在 Studio 的 **Submit** 页签填写
-   Review Information（Feature Description、Opening Message、Preview Media、Change Log）
-   并 Submit for Review。
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用
+   分支导入：`https://github.com/sakai55/rokid/tree/agent-shelf-compare`
+   （该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging
+   点 **Repackage and Save**，确认顶部出现绿色
+   **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版
+   Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，
+   等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 shelf-compare」，在超市看着商品稳住头、点头扫码
 
-## Studio 导入方法（2026-10-24 实测结论，只用这一条）
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-导入对话框（IMPORT PROJECT / "GitHub Subdirectory Import"）**只有 URL 一个
-输入框**，没有分支/路径选择。Studio 把 `/tree/` 后面的**整段当作一个 ref**，
-不会拆成「ref + 路径」。由此实测：
+| 项目 | 值 |
+|---|---|
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 12.81 KB（本地打包 `dist/shelf-compare.aix`） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-- ✅ **分支地址（唯一可用）**：`https://github.com/sakai55/rokid/tree/agent-my-agent`
-  （换成目标 Agent 的分支名）。分支名是单段，能被正确解析为分支，
-  导入的就是**该分支根目录**——所以每个 Agent 有一个专属分支，
-  分支根目录放该 Agent 的全套文件。导入后生成名为 `sakai55/rokid` 的 Draft，
-  进 Studio 后改名。两个现有分支均已实测导入成功、文件树完整。
-- ❌ 子目录地址 `…/tree/main/my-agent`：报 `GitHub ref not found: main/my-agent`
-  （官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败，不是本仓库的问题）。
-- ❌ commit 号地址 `…/tree/<完整SHA>/my-agent`：同样报 ref not found。
-- ❌ 仓库根地址 `https://github.com/sakai55/rokid`：能导入，但生成的是
-  **空心 Agent**（Code 文件树为空），不能用。
-- ❌ blob 文件地址 `…/blob/main/my-agent/app.json`：能过导入，但 Run 报
-  「请先创建Agent的项目文件」，列表里也不会留下可用 Agent。
+## 验证情况
 
-改代码后要重新导入新版本：先把新文件同步到该 Agent 的分支根目录，再在
-Studio 里重新粘贴分支地址导入（或在已有草稿里更新），然后走真机测试流程。
+**已验证**
 
-## Studio 导入方法二：AIX 导入（备选保底）
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
+  解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
+  全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留。
+- 打包：`aix pack` 成功，`dist/shelf-compare.aix` 12.81 KB；`aix list`
+  核对包内含 AGENTS.md、app.js、app.json、package.json、
+  pages/index/index.ink（artifacts/ 已被 .aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图两张（见下方
+  Preview Media）：首页初始态完整渲染；DEMO→ADD 交替 4 次后对比表
+  装满 4 种牛奶，单位价 ¥1.59 / ¥1.39 / ¥2.62 / ¥1.25 每 100ml
+  计算正确，最低的脱脂牛奶行高亮标 BEST，结论行显示
+  「VERDICT: BEST VALUE - 脱脂牛奶 ¥1.25/100ml」。
 
-仓库根目录放着打包好的 `.aix`（代码变更后用 `aix pack` 重打并更新根目录文件）：
+**未验证**
 
-- `my-agent.aix`
-- `glasses-benchmark.aix`
-- `gaze-translate.aix`
+- 真机相机取流、wide 模式拍照与 BarcodeDetector 条码解码
+  （预览主机无相机，SCAN 的 FAIL 路径已如实写明原因，真机待测）。
+- 真机头部稳定检测、点头/摇头手势、TTS 朗读结论的效果。
+- 内置目录为演示数据（约 10 件商品的示例价格/规格），未接任何
+  实时商超数据源；未知条码只能以 Unknown item 加入、无单位价。
 
-步骤：
+---
 
-1. 在 GitHub 仓库根目录点开要导入的 `.aix` 文件，点下载按钮存到本地。
-2. 打开 Global AIUI Studio（en-US）→ New Agent → **Import from AIX**。
-3. 选择刚下载的 `.aix` 上传，导入后生成 Draft，文件树即包内完整工程。
-4. 后续同样走 Device Debug 打包保存 → 真机测试（见下文）。
+## 提审资料（Review Submission）
 
-这条路不依赖 GitHub 地址解析，GitHub 导入出问题或赶时间时用它保底；
-日常首选仍是方法一（分支地址导入），因为它直接对应仓库里的最新代码。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
 
-## ⚠️ 海外版本注意事项（必须全链路海外，缺一不可）
+### Feature Description
 
-1. **Studio 必须是 Global 站 + 英文**：只用
-   [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US)，
-   地址是 global、语言参数必须是 `en-US`。不要用国内站（aiui.rokid.com），
-   两站账号和项目不互通。
-2. **账号必须是海外版注册**：在 [account-web.rokid.com](https://account-web.rokid.com/)
-   的**英文版**注册/登录 Rokid 账号（本项目账号地区：Japan）。
-   用国内版注册的账号不算海外开发账号。
-3. **下发走云端，不走数据线**：在 Studio 里打包保存后由云端下发到眼镜，
-   不用 ADB、不用数据线直装。
-4. **手机 App 必须是海外版 Hi Rokid**：Google Play 的
-   **Hi Rokid - Rokid Glasses**（包名 `com.rokid.sprite.global.aiapp`，
-   发行方 Rokid International），**不是国内版 Rokid Ai App**。
-   眼镜资源包的更新入口在 Hi Rokid 里。
-5. 以上四点（Global 账号 + en-US Studio + 云端下发 + Hi Rokid）齐全，
-   才算海外版开发；任何一环用了国内版，链路就不通。
+Shelf Compare turns your gaze into a price-comparison tool. Look at a product on the shelf and scan its barcode with the wide camera: each scanned item joins a comparison table of up to four products, with unit prices per 100g or 100ml computed automatically and the best value flagged. Nod to confirm each item, and hear the verdict read aloud. A built-in sample catalog covers common products for the prototype.
 
-## 真机测试（云端下发）详细步骤
+### Opening Message
 
-在 Global AIUI Studio（en-US）里打开该 Agent：
+Hi, I'm **Shelf Compare** — look, scan, and buy the best value.
 
-1. 进 **Device Debug** 页签，先填 **Basic Information**：
-   - Agent Icon（建议 1:1 图片）
-   - **Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清 AI 助手应在什么场景、
-     什么前提下、被什么样的用户请求唤起这个 Agent
-   - Version 和 Agent ID 由系统生成，不可手改；**Version 是 Build 号，
-     每次重新打包保存自动递增**（如 1.0.19）
-2. 在 **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功的标志**：页面顶部出现绿色状态
-   **● Debug version ready — Ready for device debugging**。
-   没出现这个状态，说明这一版还没有保存成功，App 端拉不到，不要去 App 里白等。
-4. 手机打开 **Hi Rokid**（海外版），确认已连接眼镜，进
-   「设置 → 开发者选项 → AIUI」→ 点「更新眼镜资源包」，等眼镜端下载完成，
-   看到「智能体资源包下载成功」。
-5. 对眼镜语音打开该 Agent（如「乐奇，打开 xxx」）开始真机测试。
-6. 改代码后循环：改 → 推 GitHub → Studio 更新导入 → Repackage and Save
-   （Build 号递增，重新出现 Debug version ready）→ Hi Rokid 更新眼镜资源包 → 再测。
-   **只改代码不重新 Repackage and Save，App 拉到的还是旧版。**
+Aim at a product on the shelf, hold your head steady, then nod or tap **SCAN** to read its barcode. Nod again (or tap **ADD**) to put it in the table — up to 4 items, unit prices compared automatically, the best one flagged **BEST**. Tap **SPEAK** to hear the verdict, **REMOVE** to drop the last item, **CLEAR** to start over, or **DEMO** to try sample products.
 
-## 提交审核
+### Preview Media
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-1. 在 Studio 的 **Submit** 页签填 Review Information：
-   Feature Description、Opening Message、Preview Media、Change Log。
-   **这四项的成稿统一放在各 Agent 自己 README 的「提审资料（Review Submission）」
-   章节里，分段写好，提交时整段复制**（Feature Description ≤500 字、
-   Opening Message ≤500 字且支持 Markdown；Preview Media 需 3–5 个
-   JPG/PNG/MP4 且至少 1 图 1 视频，每次提交前重新确认）。
-2. 确认权限声明与代码实际用到的能力一致（如定位 GEOLOCATION、相机 CAMERA、
-   录音 RECORD_AUDIO 必须在 `app.json.permissions` 里声明）。
-3. 点 **Submit for Review** 提交，等待审核结果；被拒按原因修改后
-   重新打包保存、重新提交。
+- Image 1：`artifacts/preview-shelf-compare-index.png`（aix preview 首页：SHELF COMPARE 初始态，含待确认框、SCAN/DEMO/ADD 按钮与空对比表，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-shelf-compare-table.png`（DEMO 填表后的结果态：4 种牛奶单位价对照、脱脂牛奶标 BEST、结论行，本地文件）
+- Video：待真机补 — 真机录制「看商品 → 点头扫码 → 加入对比表 → 朗读结论」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
+
+### Change Log
+
+#### Build 1.0.0
+
+**Features added**
+
+- Gaze-directed barcode comparison: head-stability gaze confirmation (HEAD STEADY), nod to scan and nod to confirm, ImageCapture wide-mode photo plus BarcodeDetector decoding, with wx camera fallback (wx photo bytes wrapped with mimeType before detection).
+- Comparison table for up to 4 items with automatic unit prices per 100g/100ml, BEST flag on the lowest unit price and a one-line verdict; unknown barcodes join honestly as Unknown item and are excluded from unit-price comparison.
+- Built-in sample catalog of about 10 common products keyed by EAN-13; DEMO cycles four milks into the pending slot; SPEAK reads the verdict aloud; REMOVE/CLEAR manage the table.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
