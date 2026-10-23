@@ -88,6 +88,10 @@ aix preview .                               # 本地预览（终端起服务 / -
 
 1. 在 Studio 的 **Submit** 页签填 Review Information：
    Feature Description、Opening Message、Preview Media、Change Log。
+   **这四项的成稿统一放在各 Agent 自己 README 的「提审资料（Review Submission）」
+   章节里，分段写好，提交时整段复制**（Feature Description ≤500 字、
+   Opening Message ≤500 字且支持 Markdown；Preview Media 需 3–5 个
+   JPG/PNG/MP4 且至少 1 图 1 视频，每次提交前重新确认）。
 2. 确认权限声明与代码实际用到的能力一致（如定位 GEOLOCATION、相机 CAMERA、
    录音 RECORD_AUDIO 必须在 `app.json.permissions` 里声明）。
 3. 点 **Submit for Review** 提交，等待审核结果；被拒按原因修改后

@@ -65,3 +65,45 @@
 
 注意：07 Fetch 需要眼镜联网（经手机蓝牙/Wi-Fi）；14 定位、10/11 麦克风/相机
 第一次会弹系统授权，拒绝会记 FAIL 并写明原因——这正是要测的。
+
+---
+
+## 提审资料（Review Submission）
+
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
+
+### Feature Description
+
+Glasses Benchmark is a full self-check for Rokid Glasses under AIUI. Tap RUN ALL to run 21 tests in sequence: device, display, CPU, crypto, storage, network, Canvas 2D, audio, microphone, camera, sensors, geolocation, Bluetooth, battery, TTS, ASR, LLM, barcode and interaction events. Each item reports PASS, FAIL, SKIP or MANUAL with a reason, and can be re-run individually. Built for developers validating real glasses hardware and runtime capabilities.
+
+### Opening Message
+
+Hi, I'm **Glasses Benchmark** — your on-glasses self-check.
+
+Tap **RUN ALL** and I'll test 21 capabilities one by one, from display and CPU to camera, sensors, TTS and the built-in LLM. Items marked **MANUAL** need a quick tap or your ears to confirm. You can also tap any single row to re-run just that test.
+
+### Preview Media
+
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
+
+- Image 1：`artifacts/preview-glasses-benchmark-index.png`（aix preview 生成的首页预览图，本地文件，提交时从本地上传）
+- Video：待补 — 真机录制 RUN ALL 运行过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（目前只有 1 张图；补齐到 3–5 个且含视频后才可提交）
+
+### Change Log
+
+#### Build 1.0.19
+
+**Features added**
+
+- Initial release: 21-item full-function benchmark — device, display, CPU, crypto, storage, network info/fetch, Canvas 2D, audio out, microphone, camera, accelerometer, gyroscope/orientation, geolocation, Bluetooth, battery, TTS, ASR, LLM, barcode detection and interaction events.
+- Result states PASS / FAIL / SKIP / MANUAL with a reason per item; tap any row to re-run a single test.
+
+**Improvements**
+
+- First build packaged and saved in Global AIUI Studio for device debugging (Debug version ready).
+
+**Fixes**
+
+- None (initial release).
