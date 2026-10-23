@@ -49,7 +49,8 @@
 1. 拿起一件，看着它的面单点 SCAN：广角拍照 + 条码解码，
    解出的字符串原样成为这件的记录号；主机无解码器 / 照片
    里没码 / 相机不可用时如实提示，这件在 SORT 时自动得到
-   序号标签（#1、#2……），照片本身即记录
+   序号标签（#1、#2……）；照片只在解码瞬间使用、本身不保存，
+   落盘的记录只有记录号（或序号标签）与申报的收件人/类别/急常
 2. WHO 轮换收件人（我 / 配偶 / 孩子 / 父母 / 全家）——
    你亲眼读面单后的申报；KIND 轮换类别（日用品 / 食品
    生鲜 / 文件 / 衣物 / 电子产品 / 其他），选到食品生鲜时
@@ -106,11 +107,11 @@ DEMO 一次（canvas 坐标 239,320，经视觉定位确认）落到 LIST 堆汇
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 约 16.9 KB（本地打包 `dist/parcel-sort.aix`，含本 README） |
+| AIX Package Size | 约 17.2 KB（本地打包 `dist/parcel-sort.aix`，含本 README） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -182,6 +183,20 @@ Take the parcels **one at a time**. **Look** at each label and tap **SCAN** — 
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Documentation accuracy (capability-boundary audit 2026-10-24): corrected wording that called the SCAN photo itself "the record". The photo is used only at the decode moment and is not retained; the durable record is the committed entry — the decoded barcode string (or the sequential batch label when no code decodes) plus the wearer-declared recipient, kind, urgency and timestamp. Docs and code now agree on this everywhere.
 
 #### Build 1.0.0
 
