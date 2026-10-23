@@ -15,10 +15,11 @@ Rokid 眼镜跌倒守望智能体（AIUI Agent）。
 
 ## 能力
 
-- 动作模式检测（本 Agent 的核心）：只有文档化的
+- 动作模式检测（本 Agent 的核心）：本 Agent 只用
   `AbsoluteOrientationSensor` 四元数流（约 5Hz）加宿主的
-  `onOrientationStabilityChange` 稳定事件——AIUI 里没有
-  「跌倒检测」这种 API。相邻四元数之间的夹角给出头部角
+  `onOrientationStabilityChange` 稳定事件（运行时另有
+  Accelerometer/Gyroscope，本 Agent 未使用）——AIUI 里
+  没有「跌倒检测」这种 API。相邻四元数之间的夹角给出头部角
   速度；任意 3 秒窗口内姿势变化 ≥ 60° 记为一次「剧烈
   翻转」（jolt）；翻转结束后头部转速降下来，进入静止
   观察：接下来连续 15 秒，头部必须慢于 15°/s、且不离开
