@@ -31,10 +31,11 @@
 - **到达判定**：距离 < 25 米时 GPS 误差已经大过方向的意义，不再
   硬报角度，直接大字 **ARRIVED — look up and find them**——最后
   一步靠眼睛找人，这正是眼镜该做的收尾。
-- **坐标朗读交换（诚实的通道）**：点 SHARE 定位后，自己的
+- **坐标朗读出示（诚实的通道）**：点 SHARE 定位后，自己的
   经纬度（5 位小数）大字显示，界面明示「把这组坐标念给对方」。
-  双方用语音/消息互读坐标，就是位置交换的全部通道——运行时
-  没有服务器，**不存在自动好友同步，本 Agent 不假装有**。
+  这是单向的坐标出示——运行时没有服务器，**不存在自动好友
+  同步，本 Agent 不假装有**；本 build 也没有把对方坐标填进来
+  的输入口，对方位置由 4 个内置演示预设代表。
 - **耳朵收指引**：SPEAK 用 TTS 念「对方在你右前方 60 度，约
   180 米」，由实时计算值生成；走路时不用低头看屏。
 - **凝视确认**：`enableWorldAwareness()` 显示头部稳定状态
@@ -48,8 +49,9 @@
    （+0.0016, +0.0004，约 182 米）、车站西门（−0.0005, +0.0022，
    约 206 米）、咖啡店门口（+0.0002, −0.0011，约 102 米）、
    近处样例（约 18 米）；预设以「相对我定位的经纬度小偏移」表达，
-   界面全程标注 `(demo partner position)`。真实使用时，把预设
-   换成对方报给你的坐标，计算方式完全相同
+   界面全程标注 `(demo partner position)`。本 build 没有坐标
+   输入口：对方位置只能在这 4 个预设间切换，无法填入对方报来
+   的真实坐标
 3. 转头跟箭头走：箭头朝上 + ON COURSE = 方向对了；走一段点
    SHARE/UPDATE 重新定位重算；SPEAK 听相对方位播报
 4. 距离 < 25 米 → ARRIVED 大字出现，抬头找人
@@ -57,9 +59,10 @@
    （35.68120, 139.76710），朝向从 0° 起每点一次 DEMO +45°；
    PARTNER 切到近处样例即进入 ARRIVED 态，预览可完整演示两态
 
-> 诚实说明：运行时**没有好友实时同步服务**，对方位置来自双方
-> 读坐标交换；预设是演示值并如实标注。箭头指直线方向，不是
-> 逐向道路导航，实际道路请自行绕行。
+> 诚实说明：运行时**没有好友实时同步服务**，本 build 也没有
+> 对方坐标输入口；对方位置来自内置演示预设并如实标注，SHARE
+> 只出示你自己的坐标供朗读。箭头指直线方向，不是逐向道路
+> 导航，实际道路请自行绕行。
 
 ## 权限
 
@@ -93,19 +96,20 @@ PARTNER (352,248)、DEMO (120,282)）。
 3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版
    Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，
    等「智能体资源包下载成功」
-4. 对眼镜说「乐奇，打开 meet-point」，和朋友各站一处点 SHARE，
-   互读坐标后跟着箭头汇合
+4. 对眼镜说「乐奇，打开 meet-point」，点 SHARE 验证自己的坐标
+   大字显示，PARTNER 切演示预设跟着箭头走（本 build 无法填入
+   对方真实坐标，汇合演练以预设位置为准）
 
 ## 真机测试信息（Global AIUI Studio · Device Debug）
 
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
-| AIX Package Size | 13.69 KB（本地打包 `dist/meet-point.aix`） |
+| AIX Package Size | 14.04 KB（本地打包 `dist/meet-point.aix`） |
 | 状态 | 本地完成，待导入 Studio |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
@@ -134,11 +138,12 @@ PARTNER (352,248)、DEMO (120,282)）。
 **未验证**
 
 - 真机 AbsoluteOrientationSensor 朝向精度/零点、GEOLOCATION 精度
-  与授权流程——预览主机都没有，未测；两人真机互读坐标汇合的
-  全流程未实测。
+  与授权流程——预览主机都没有，未测；两人真机汇合全流程
+  未实测，且本 build 没有对方坐标输入口，真机演练也只能指向
+  演示预设。
 - 真机头部稳定检测、点头重新定位、TTS 播报效果。
-- **没有好友实时同步服务**：对方位置靠双方读坐标交换（预设为
-  演示值）；运行时无地图/路径规划，箭头只指直线方向。
+- **没有好友实时同步服务，也没有对方坐标输入口**：对方位置只
+  来自内置演示预设；运行时无地图/路径规划，箭头只指直线方向。
 
 ---
 
@@ -149,13 +154,13 @@ PARTNER (352,248)、DEMO (120,282)）。
 
 ### Feature Description
 
-Meet Point finds your friend, not just their dot on a map. Share your coordinates by reading them aloud, enter your partner's, and the glasses convert their position into a direction relative to your head: a big arrow plus "your partner is at your right-front, 60 degrees, about 180 metres." Turn until the arrow points up and walk. Within about 25 metres it switches to ARRIVED — look up and find them. No cardinal points, no staring at a phone.
+Meet Point turns a meeting spot into a direction relative to your head: a big arrow plus “your partner is at your right-front, 60 degrees, about 180 metres.” SHARE shows your own GPS coordinates big, to read aloud or message to your partner. In this build the partner is one of four built-in DEMO presets around your fix (plaza gate, station gate, coffee shop, near sample) — there is no way to enter a partner's real coordinates, and no live sync. Inside 25 metres: ARRIVED — look up and find them.
 
 ### Opening Message
 
-Hi, I'm **Meet Point** — I'll point you at your friend.
+Hi, I'm **Meet Point** — I'll point you at the meeting spot.
 
-Tap **SHARE** and read your coordinates to your partner (they do the same). Then follow the **arrow**: it shows where your partner is *relative to your head*. Turn until it points up and **ON COURSE** lights up, then walk. Get within ~25 m and I'll say **ARRIVED — look up and find them**. Tap **SPEAK** anytime to hear it. No GPS? **DEMO** simulates the whole meeting.
+Tap **SHARE** to see your own coordinates big and read them to your partner. In this build the partner is one of four built-in **DEMO presets** around you — tap **PARTNER** to switch; a partner's real coordinates can't be entered, and nothing syncs live. Follow the **arrow** (relative to your head), keep **ON COURSE** lit, and within ~25 m I'll say **ARRIVED — look up and find them**. No GPS? **DEMO** simulates the whole flow.
 
 ### Preview Media
 
@@ -167,6 +172,20 @@ Tap **SHARE** and read your coordinates to your partner (they do the same). Then
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### Build 1.0.1
+
+**Features added**
+
+- None (copy-accuracy fix only).
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Submission copy corrected: the Feature Description and Opening Message no longer say you can "enter your partner's" coordinates — this build has no coordinate input path and no live sync; the partner position is one of four built-in DEMO presets around your fix, and SHARE only displays your own coordinates to read aloud (capability-boundary audit 2026-10-24). README body and AGENTS.md aligned to the same wording.
 
 #### Build 1.0.0
 

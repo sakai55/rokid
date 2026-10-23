@@ -99,9 +99,9 @@ export default {
 
   _partners() {
     // Partner positions as small lat/lon offsets around MY fix (or the
-    // labeled DEMO origin). In real use these presets are replaced by the
-    // coordinates the partner reads aloud / messages to you — there is no
-    // live sync service in this runtime, and the UI labels these DEMO.
+    // labeled DEMO origin). This build has NO coordinate input path and
+    // no live sync service: the partner position can only be one of
+    // these presets, and the UI labels them DEMO.
     return [
       { name: '广场北口', en: 'Plaza N gate', dLat: 0.0016, dLon: 0.0004 },
       { name: '车站西门', en: 'Station W gate', dLat: -0.0005, dLon: 0.0022 },
@@ -230,8 +230,9 @@ export default {
   },
 
   // SHARE: fix my position and show the coordinates BIG — I read them to
-  // my partner by voice/message; they do the same on their side. That
-  // read-aloud exchange is the real channel; nothing syncs by itself.
+  // my partner by voice/message. Nothing syncs by itself, and this build
+  // cannot take a partner's coordinates in: partner positions are the
+  // built-in demo presets above.
   async startTap() {
     if (this.data.busy) return;
     this.setData({ busy: true, status: 'LOCATING...' });
