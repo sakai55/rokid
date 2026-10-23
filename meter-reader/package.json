@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - meter reader: photograph the dial as a record copy (never read, no OCR), dictate the reading digit by digit, eyeball the parsed value, then SAVE it per meter; the USAGE view compares this period with the last and flags swings over 50 percent","main":"app.js","name":"meter-reader","version":"1.0.0"}
