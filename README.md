@@ -41,6 +41,9 @@ rokid/
 │   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
 ├── <slug>.aix                 # 每个 Agent 打包好的 AIX（根目录，备选导入用）
 ├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
+├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
+├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
+├── assets/                    # README 素材（如工作流图 workflow.svg）
 └── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
 ```
 
