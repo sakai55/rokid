@@ -1,5 +1,12 @@
 # assemble-guide — 组装向导（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-assemble-guide
+```
+
+
 50 个「指向性生活问题」Agent 的第 13 个。组装平板家具时，零件
 几十个都长得差不多，纸质说明书放下就找不到读到哪一步，双手
 还扶着板子腾不出来。本 Agent 把说明书挂在视线上，还加了一道
