@@ -1,5 +1,12 @@
 # teleprompter-gaze — 凝视提词（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-teleprompter-gaze
+```
+
+
 50 个「指向性生活问题」Agent 的第 48 个。演讲、录视频、上台发言
 最怕的不是讲错，是**忘词后低头找稿**：眼神一离开听众，气势就散
 了。本 Agent 把稿子放在你的视线正中央——当前段大字、下一段小字
