@@ -1,5 +1,12 @@
 # far-ear — 远听助手（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-far-ear
+```
+
+
 50 个「指向性生活问题」Agent 的第 17 个。看得见说话的人，
 却听不清他说什么 — 会议室前排的发言、隔着客厅的电视、
 另一个房间喊你的话。本 Agent 的解法不是放大房间声音
