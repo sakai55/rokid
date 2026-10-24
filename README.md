@@ -1,220 +1,256 @@
-<div align="center">
+# teleprompter-gaze — 凝视提词（Rokid 眼镜 AIUI Agent）
 
-# `rokid` — Rokid AIUI Agents
+50 个「指向性生活问题」Agent 的第 48 个。演讲、录视频、上台发言
+最怕的不是讲错，是**忘词后低头找稿**：眼神一离开听众，气势就散
+了。本 Agent 把稿子放在你的视线正中央——当前段大字、下一段小字
+预览，你抬着头讲，点头就翻段；可选的自动跟随听着你讲，听到你的
+话和后面的段落字面对上了，就替你翻过去。
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
+> 诚实改造（PLAN 原案与实现的两处出入，先说清）：一、**没有文件
+> 导入**——运行时没有把外部稿件读进来的通道，稿子只有两个来源：
+> 内置的一篇示例演讲（标注 SAMPLE）和你亲口口述的段落（原样存
+> 本机）。二、**「语速自动跟随」是尽力而为的字面匹配**——它把宿
+> 主识别到的话归一化后，在当前段与后面两段里找逐字对得上的尾巴，
+> 对上了才翻段；不是语义理解，不保证跟得上，跟丢了手动翻段永远
+> 有效。下面各节同口径。
 
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
+## 预览截图
 
-</div>
+截图统一存放于仓库根目录 `screenshots/teleprompter-gaze/`。
 
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：`aix/` 目录里的 `<slug>.aix` 下载后走 **Import from AIX**。
+![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/teleprompter-gaze/preview-teleprompter-gaze-index.png)
 
-## 目录
+![DEMO 态：种子句经真实匹配路径跟随到第 3 段](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/teleprompter-gaze/preview-teleprompter-gaze-demo.png)
 
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
+![讲完终态：THE END，用时冻结标 (final)](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/teleprompter-gaze/preview-teleprompter-gaze-done.png)
 
-## 仓库结构
+## 解决的问题
 
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── aix/<slug>.aix             # 全部 Agent 打包好的 AIX（集中存放，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
-```
+提词器早就有了，但都长在别处：纸在讲台上、手机在手里、提词屏在
+镜头后——看哪一个都得把视线从人身上移开。眼镜的提词不一样：稿
+子就浮在你正看着的方向，你看着听众，就等于看着稿子。翻段靠头部
+动作和镜腿触控，不用腾手、不用低头。忘词的那两秒，你只需要停
+顿一下，眼前就是下一句。
 
-## 快速开始
+## 指向性设计（为什么必须用眼镜）
+
+- **视线即提词板（GAZE）**：段落显示在视场正中央，当前段大字、
+  下一段小字预览——你的注视点就是提词位置，讲到哪里，眼神都不
+  离开前方的人。
+- **点头翻段（HEAD）**：头部稳定时点头 = 前进一段，这是演讲中
+  最不打断仪态的翻页方式；头没稳住的点头会被忽略并如实提示，
+  免得你正常点头致意就把稿子翻飞了。
+- **听着你讲（MIC4/宿主 ASR）**：AUTO 跟随每一轮先做佩戴者模式
+  麦克风可用性检查（wearer 流只查可用性、停轨后宿主识别才开
+  始），再用宿主 SpeechRecognition 听你这一轮说了什么——4 麦
+  的佩戴者拾音路径在设备上存在，是检查确认的事；识别本身走
+  宿主自己的麦克风，模式不塑造识别（审计口径）。
+- **手势优先（档案 §3.2.1）**：全部主流程只用触控板手势 + 头稳
+  + 点头就能走完（见下方「手势映射」）；屏幕只保留 NEXT /
+  BACK / AUTO / DICT / SPEAK / DEMO 六个与手势等效或手势不代
+  办的按钮。
+
+## 手势映射
+
+本 Agent 的全部主流程（读稿 → 翻段 → AUTO 跟随 → 讲完听总结）
+都可以只用眼镜腿触控板手势 + 头部动作完成，不必点屏幕按钮。
+手势与键码的对应来自官方文档档案 §3.2.1。
+
+| 手势 | 键码 | 在本 Agent 中的动作 |
+|---|---|---|
+| 单击触控板 | Enter | 情景主操作：AUTO 开着但无轮次在跑 = 开一轮聆听；已讲完 = 朗读总结；其余时候 = 前进一段 |
+| 下滑动触控板 | ArrowDown | 前进一段（与 NEXT 等效） |
+| 上滑动触控板 | ArrowUp | 回上一段（与 BACK 等效；讲完时 = 回最后一段复习） |
+| 双击触控板 | Backspace | 返回 / 关闭（由宿主处理，本 Agent 只记录事件） |
+| 长按触控板 | —（系统级） | 唤醒 AI 助手（系统功能，不经过本 Agent） |
+| 头部稳定时点头 | onHeadGesture `nod` | 前进一段；点头从不开 AUTO、从不口述、从不朗读 |
+| 屏幕按钮 | — | 只保留 6 个：NEXT（前进一段）、BACK（回一段）、AUTO（自动跟随开关——手势不代办「开关聆听」这件事，留明确入口）、DICT（口述录入一段——要开麦，必须显式点）、SPEAK（朗读当前段练习 / 讲完时朗读总结）、DEMO（示例稿 + 一次种子跟随演示），其余动作与手势一一等效 |
+
+## 功能流程
+
+1. 打开就是内置 SAMPLE 稿第 1 段，先试手感：点头 / 单击 / 下滑
+   动翻段，上滑动回退，当前段大字、下一段小字预览，进度「段
+   1/4」随时可见
+2. 录自己的稿：点 DICT，一次口述一段（先做 wearer 麦克风检查，
+   界面单独一行 `MIC CHECK:`），听到的话原样进稿——第一段口述
+   会开启「你的稿子」并存到本机（key `prompterScript`，最多 12
+   段），以后打开自动载入；SAMPLE 不会被当成你的稿子存下
+3. 开讲：点 AUTO 打开自动跟随（或全程手动翻段）——你讲的话被
+   宿主识别后，与当前段及后面两段逐字比对，尾巴对上就跳到那一
+   段，事件行写明「AUTO matched → 段 N (literal match)」；对不
+   上原地不动并写明原因，你点头随时接管
+4. 讲的时候界面给你两个读数：ELAPSED 本场用时（tick 计时）、
+   PACE 约 X 字/分（由 AUTO 命中算出，标明样本数，只是读数）
+5. 最后一段翻过去进入「讲完了」：SPEAK 朗读总结（一共几段、
+   用时几分几秒），用时冻结不再走字；BACK 可回最后一段复习
+6. DEMO 按钮：载入 SAMPLE 并用一句原样摘自第 3 段的种子文本走
+   一遍真实匹配路径，当场跟随到第 3 段；再点一次退出，你的稿
+   子与进度原样恢复，演示不写任何存储
+
+> 诚实说明：AUTO 是**逐字匹配**，不是听懂——你改词、跳段超过
+> 两段、现场太吵、识别听错，都会跟丢；跟丢不报错装懂，只如实
+> 停在原地。宿主识别报致命错误时 AUTO 会自己关掉并写明原因。
+> 稿子没有导入通道：要么用示例，要么口述录入（原样保存，讲之
+> 前请在屏幕上核对一遍——识别听错的字会原样进稿）。
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| RECORD_AUDIO | 佩戴者模式麦克风可用性检查（DICT / AUTO 每轮前）+ 段落口述与 AUTO 跟随的宿主语音识别 |
+
+只申请录音一个权限：没有拍照、没有定位；朗读走宿主 TTS。麦克
+风检查流查完即停轨、不参与识别；本 Agent 不录音、不保存音频，
+稿子只以文本存本机 wx 同步存储，不上传。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/teleprompter-gaze
+~/tools/bin/aix pack . -o ../dist/teleprompter-gaze.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线
+（`shot-prompt.js`，独立页面副本 `preview-prompt.html`；DEMO / NEXT
+按钮点击坐标在 shot 脚本运行日志中按 canvas 坐标记录）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-<div align="center">
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用
+   分支导入：`https://github.com/sakai55/rokid/tree/agent-teleprompter-gaze`
+   （该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging
+   点 **Repackage and Save**，确认顶部出现绿色
+   **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版
+   Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，
+   等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 teleprompter-gaze」：先用 SAMPLE 稿点头
+   翻完 4 段，确认讲完总结的用时；再 DICT 口述两段自己的稿（核
+   对屏幕上的字是否原样），关掉重开确认稿子还在；开 AUTO 照着
+   SAMPLE 念，故意把一句念错说法，验证它如实不跟（事件行 no
+   literal match）、点头能接管；再正常念一句第 3 段的话，验证
+   跳段跟随与 PACE 读数出现
 
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-</div>
-
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
-
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 项目 | 值 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 约 22.8 KB（本地打包 `dist/teleprompter-gaze.aix`） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-**分支法要点**
+## 验证情况
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+**已验证**
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
+  解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
+  全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留；
+  屏幕按钮为 NEXT / BACK / AUTO / DICT / SPEAK / DEMO 六个 bindtap。
+- 状态机测试：Node 里以 wx / SpeechRecognition / getUserMedia /
+  speechSynthesis 存根加载页面对象、页面计时器由手动 tick 驱动，跑
+  **99 条断言全过**——覆盖：SAMPLE 默认载入且从不落盘（显式调用
+  保存也零写入）、DICT 原样追加（只去首尾空白、标点保留）并开启
+  自己的稿子、存储里只有口述文本无一字 SAMPLE、12 段上限与拒绝
+  提示、重载恢复自己的稿子、无识别器时 DICT 如实 FAIL 且不加段、
+  前进/回退边界（末段 → 讲完 → 再前进不动 → BACK 回末段 → 回到
+  首段停住）、点头纪律（头不稳不翻段、头稳才翻、非 nod 手势忽
+  略）、纯手势全程走完（Enter/下滑/上滑/点头到终点、终点 Enter
+  朗读含段数的总结、Backspace 无副作用）、tick 用时（150 tick =
+  75 秒，总结念「1 分 15 秒」，讲完冻结不走字、(final) 后缀同秒
+  内也切换、BACK 离开终态恢复 ticking）、SPEAK 练习朗读当前段原
+  文、匹配引擎（当前段子串 → 不动、下一段 → 进 1、下下段 → 进
+  2、乱码 → 不匹配、<4 字尾巴 → 永不匹配、标点归一化后不足 4 字
+  → 不匹配、中间位置往后两段可达、已讲过的段落永不回搜）、命中
+  EVT 原文案、语速数学（两次命中推进 18 + 29 字、间隔 30 秒 →
+  94 字/分，样本数入界面）、AUTO 集成（照稿念 → 跟随到第 2 段、
+  每轮 mic-stop 必在 asr-start 之前、无关话不挪稿且 EVT 如实、
+  致命 ASR 错误 → AUTO 自关且原因上屏、自关后不再开轮、手动翻
+  段不受影响、AUTO 与 DICT 互斥）、DEMO（种子句跟随到第 3 段且
+  EVT 标注 DEMO、零存储写入、退出恢复真实稿子与自有标记）、
+  TTS 从不设置 lang。
+- 打包：`aix pack` 成功；`aix list` 核对包内含 README.md、AGENTS.md、
+  app.js、app.json、package.json、pages/index/index.ink
+  （artifacts/ 已被 .aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图三张（见
+  Preview Media）：首页初始态完整渲染（SAMPLE 第 1 段大字 + 下
+  一段预览 + 全部诚实行）；DEMO 态经真实匹配路径停在第 3 段；
+  讲完终态 THE END 且 ELAPSED 标 (final) 冻结。
 
-1. 在仓库 `aix/` 目录里点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+**未验证**
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+- **宿主 SpeechRecognition 的轮次行为（第一优先核对）**：AUTO 靠
+  「一轮识别结束 → 自动开下一轮」续接；若宿主只支持单次识别且
+  轮次间隙长，跟随会有可感知的断档；若宿主识别对中文长句的断
+  句与返回时机不同，尾巴匹配的命中率也会变。真机需实测：照稿
+  念、跳段念、改词念三种情况的跟随表现。
+- **wearer 模式在真机上的检查结果**：`microphoneMode: 'wearer'`
+  是否被真机接受、getSettings 读回的模式名是什么，未验证（被
+  拒时回退默认麦克风并如实标注，识别不受影响——识别本来就不
+  靠检查流）。
+- 真机头部稳定检测与点头手势的触发手感（演讲时自然点头致意会
+  不会被判成翻页 nod——本 Agent 只认「头稳 + nod」组合，自然
+  点头多半伴随头动，理论上安全，真机需验）；触控板单击/滑动
+  在本 Agent 键位映射下的实际触发情况。
+- 宿主 TTS 朗读总结与练习朗读的实际效果；SPEAK 的语速语调未
+  做任何设置（lang 从不设置，rate 用宿主默认）。
 
-</details>
+---
 
-## 海外链路（全链路海外，缺一不可）
+## 提审资料（Review Submission）
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Feature Description
 
-## 真机测试（云端下发）
+Teleprompter Gaze keeps your script in your line of sight. Paragraphs show big on the glasses display with the next one previewed below; nod, tap or swipe to advance - no looking down at paper. Dictate your own paragraphs by voice (a built-in sample is included; there is no file import, and your words are kept verbatim on the device). An optional AUTO follow listens and advances when your spoken words literally match a coming paragraph - best-effort only, and manual advance always works.
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+（492 字符）
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
+### Opening Message
 
-</details>
+Hi, I'm **Teleprompter Gaze** — your script, right in your line of sight.
 
-## 提交审核
+I open with a short built-in **sample** speech. **Nod**, tap, or swipe down to advance a paragraph; swipe up goes back. Tap **DICT** and speak to build your own script — saved verbatim on this device (no file import). **AUTO** listens and tries to follow you by matching your words against the coming paragraphs — best-effort only; manual advance always works. **SPEAK** reads the current paragraph aloud for practice.
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+（493 字符）
 
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+### Preview Media
 
-## 维护约定
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+- Image 1：`artifacts/preview-teleprompter-gaze-index.png`（aix preview 首页：TELEPROMPTER 初始态，SAMPLE 第 1 段大字 + 下一段预览、五项状态行与六个按钮齐全，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-teleprompter-gaze-demo.png`（DEMO 态：种子句经真实字面匹配路径跟随到第 3 段，EVT 行标注 literal match，PACE 进入 measuring，本地文件）
+- Image 3：`artifacts/preview-teleprompter-gaze-done.png`（讲完终态：THE END 大字、ELAPSED 冻结标 (final)、EVT 行给出段数与用时，本地文件）
+- Video：待真机补 — 真机录制「点头翻完 SAMPLE 四段 → DICT 口述一段自己的稿并核对 → 开 AUTO 照稿念并跳段跟随 → 故意改词验证不跟、点头接管」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 3 张图；还需至少 1 个视频，总数保持在 3–5 个后才可提交）
 
-## Agent 清单
+### Change Log
 
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
+#### Build 1.0.0
 
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
+**Features added**
+
+- In-view prompter: the current paragraph renders big in the centre of the glasses display with the next paragraph previewed below it and an always-visible 段 N/M progress line. Advance by steady-head nod, temple-touchpad single tap (Enter) or swipe down; swipe up goes back. Reaching the end lands on a finished state whose SPEAK summary reports the paragraph count and the total time, with the elapsed clock frozen from that moment.
+- Your own script by dictation: DICT records one paragraph at a time through the host recogniser after a wearer-mode microphone availability check (check stream stopped before recognition starts; the result is shown on its own MIC CHECK line). Dictated words are stored verbatim - trimmed only, never rewritten - up to 12 paragraphs, persisted as text in on-device storage and reloaded on the next open. The built-in 4-paragraph sample speech is clearly labelled SAMPLE and is never persisted as the wearer's own. There is deliberately no file import: the script sources are the sample and your dictation, stated on screen.
+- AUTO follow (best-effort, literal): while AUTO is on, each recognition round is matched literally - after stripping whitespace and punctuation - against the current and next two paragraphs. If the tail of what you said (at least 4 normalised characters) appears verbatim in a later paragraph, the prompter advances there and the event line says so; if nothing matches it stays put and says that instead. Fatal recogniser errors turn AUTO off by themselves with the reason shown. A pace readout (characters per minute, with its match count) is computed from matched advances and labelled readout-only - it controls nothing.
+- Tick-based timing: the talk clock accumulates 500 ms timer ticks instead of sampling the wall clock, so elapsed time and pace stay consistent; the finished state freezes the total.
+- Gesture-first operation (temple touchpad, dossier §3.2.1): single tap = contextual primary action (start an AUTO round when idle / speak the summary when finished / advance otherwise), swipe down = next, swipe up = back, double-tap = host back, steady-head nod = advance. Six on-screen buttons (NEXT / BACK / AUTO / DICT / SPEAK / DEMO) mirror the gestures or cover actions gestures must not trigger implicitly (opening the microphone, toggling listening).
+- DEMO: loads the sample script in memory and feeds a verbatim line from paragraph 3 through the real matching path, so the follow to paragraph 3 previews end-to-end; leaving DEMO restores the wearer's real script and position, and DEMO never writes storage.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
