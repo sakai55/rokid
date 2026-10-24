@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - elder ear: listen to chats with elders, save only reminder/request sentences to a list by keyword gate, replay them aloud with TTS after the chat for confirmation; no speaker identification, no semantic understanding, session memory only.","main":"app.js","name":"elder-ear","version":"1.0.0"}
