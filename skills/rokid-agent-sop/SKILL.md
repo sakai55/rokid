@@ -23,6 +23,8 @@ Full dossier: `~/memory/rokid-glasses-capabilities.md` in Muse's memory (repo su
 
 If a feature cannot be wired to a real API, label it honestly in UI + README as sample/placeholder with the pending link named (see gaze-translate). Never fake a capability.
 
+- **Current phase = MVP (GO, 2026-10-24)**: ship functionally correct agents; do not polish UI or invent interaction refinements now. The interaction model and UI unification get designed only after GO's real-device testing of the MVP fleet, because testing is what defines how interaction should work.
+
 ## Steps
 
 1. **Design** — one life problem; name the directionality core (GAZE / HEAD / MIC4 / GEO-H / SCAN) and the exact APIs used. Check the red lines first.
