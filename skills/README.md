@@ -6,7 +6,7 @@
 | 目录 | 内容 | 来源 |
 |---|---|---|
 | [`aiui-dev/`](aiui-dev/) | 官方 AIUI 开发技能：框架、.ink 页面、组件、WXSS、运行时 API 契约、单色绿设计规范、打包检查清单 | 官方仓库 [yodaos-project/AIUI](https://github.com/yodaos-project/AIUI/tree/main/skills/aiui-dev) 的 vendored 副本（2026-10-24 同步）；上游更新后在此覆盖同步 |
-| [`rokid-agent-sop/`](rokid-agent-sop/) | 本项目生产 SOP：能力红线 → 开发 → 静态检查 → 打包 → 预览 → README（含提审资料）→ GitHub 同步（main + 根 .aix + 截图 + `agent-<slug>` 分支）→ 登记 | 本项目自有 |
+| [`rokid-agent-sop/`](rokid-agent-sop/) | 本项目生产 SOP：能力红线 → 开发 → 静态检查 → 打包 → 预览 → README（含提审资料）→ GitHub 同步（main + aix/ 包 + 截图 + `agent-<slug>` 分支）→ 登记 | 本项目自有 |
 | [`rokid-preview-screenshots/`](rokid-preview-screenshots/) | 本地预览截图管线：`aix preview` 导出 HTML → 本地 Ink 运行时 → headless Chrome 截 480×352 画布 | 本项目自有 |
 
 ## 用法

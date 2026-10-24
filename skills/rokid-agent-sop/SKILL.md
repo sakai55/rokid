@@ -1,6 +1,6 @@
 ---
 name: "rokid-agent-sop"
-description: "Produce one Rokid AIUI Agent end-to-end for the sakai55/rokid repo: design within official capability limits, develop, static-check, pack (.aix), preview screenshots, README with review-submission section, and GitHub sync (main dir + root .aix + screenshots + agent-<slug> branch). Use for every new agent in the 50-agent production line."
+description: "Produce one Rokid AIUI Agent end-to-end for the sakai55/rokid repo: design within official capability limits, develop, static-check, pack (.aix), preview screenshots, README with review-submission section, and GitHub sync (main dir + aix/ package + screenshots + agent-<slug> branch). Use for every new agent in the 50-agent production line."
 ---
 
 # Rokid Agent Production SOP
@@ -33,6 +33,6 @@ If a feature cannot be wired to a real API, label it honestly in UI + README as 
 4. **Pack** — `aix pack . -o <slug>.aix`; record the size. A pack that suddenly balloons means `.aixignore` is broken.
 5. **Preview** — screenshots of ALL pages via the local preview pipeline (skill `rokid-preview-screenshots`); save to repo-root `screenshots/<slug>/`.
 6. **README** — the agent's own README must contain: features, directionality usage, permissions, pack/preview commands, device-test info table (Studio name / Version / Category / Intent / Agent ID / status — backfilled after Studio import), a 「预览截图」 section embedding `../screenshots/<slug>/*.png`, and the segmented 「提审资料 (Review Submission)」: Feature Description (≤500 chars), Opening Message (≤500, Markdown), Preview Media (3–5 files, ≥1 image + ≥1 video; video backfilled at device stage), Change Log split into Features added / Improvements / Fixes per Build.
-7. **GitHub sync** — via terminal `git`/`gh` (logged in as sakai55; GitHub ops are pre-approved): push `<slug>/` to main, `<slug>.aix` to repo root, screenshots to `screenshots/<slug>/`, and mirror the same file set to branch `agent-<slug>` **at branch root** (branch root = project root; keep it clean — no subdirectory copies, no stray .aix).
+7. **GitHub sync** — via terminal `git`/`gh` (logged in as sakai55; GitHub ops are pre-approved): push `<slug>/` to main, `aix/<slug>.aix` in the repo, screenshots to `screenshots/<slug>/`, and mirror the same file set to branch `agent-<slug>` **at branch root** (branch root = project root; keep it clean — no subdirectory copies, no stray .aix).
 8. **Register** — mark the agent ✅ in the 50-agent PLAN progress table with AIX size, screenshot count, branch name. The root README agent list is auto-appended by the `rokid-agent-list-sync` cron — do not edit it by hand.
 9. **Device test & submission (GO-triggered only)** — GO imports in Global Studio via `tree/agent-<slug>`, Device Debug → Package and Save, Hi Rokid updates the glasses resource package, voice-opens the agent. Only when GO says 「真机测试完成了」 may Muse submit for review in Studio, pasting the README's 提审资料 verbatim, then backfill the device-test table.

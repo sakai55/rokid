@@ -16,7 +16,7 @@
 > **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
 > `https://github.com/sakai55/rokid/tree/agent-<slug>`。
 > 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：根目录的 `<slug>.aix` 下载后走 **Import from AIX**。
+> 保底路线：`aix/` 目录里的 `<slug>.aix` 下载后走 **Import from AIX**。
 
 ## 目录
 
@@ -39,7 +39,7 @@ rokid/
 │   ├── app.json  AGENTS.md  app.js  package.json
 │   ├── pages/                 # .ink 页面
 │   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── <slug>.aix                 # 每个 Agent 打包好的 AIX（根目录，备选导入用）
+├── aix/<slug>.aix             # 全部 Agent 打包好的 AIX（集中存放，备选导入用）
 ├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
 ├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
 ├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
@@ -72,7 +72,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
 2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放根目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
+3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
 4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
 5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
 6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
@@ -100,7 +100,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 <details>
 <summary><b>备选：AIX 导入（保底路线）</b></summary>
 
-1. 在仓库根目录点开 `<slug>.aix`，下载到本地。
+1. 在仓库 `aix/` 目录里点开 `<slug>.aix`，下载到本地。
 2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
 3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
 
@@ -159,7 +159,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 - **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
 - 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库根目录，并与代码同步更新。
+- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
 - GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
 
 ## Agent 清单
