@@ -1,5 +1,12 @@
 # 浴缸守望 bath-watch
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-bath-watch
+```
+
+
 注意力外挂系列 **W02**（守望型 WATCH）· Rokid 眼镜 AIUI Agent
 
 站在浴缸边看一眼登记，倒计时在你视线里走着，你尽管去收
