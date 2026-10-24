@@ -1,5 +1,12 @@
 # elder-day — 老人全天（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-elder-day
+```
+
+
 50 个「指向性生活问题」Agent 的第 50 个。独居老人一天的难处不是
 哪一件大事，是**一串小事全靠记性**：早晨的药吃没吃、上午水喝
 没喝、傍晚门窗关没关——漏一件，家人不放心，老人自己也不踏实。
