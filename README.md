@@ -244,3 +244,6 @@ aix preview .                               # 本地预览（起服务 / --html-
 | F05 | [lecture-filter](lecture-filter/) | 守听课堂，信号句命中即存笔记 | `agent-lecture-filter` |
 | D01 | [play-watch](play-watch/) | 游乐场副线定时提醒回看，未确认逐级升级 | `agent-play-watch` |
 | D02 | [bag-watch](bag-watch/) | 行李副线定时提醒回看，离开门未确认喊停 | `agent-bag-watch` |
+| D03 | [dog-walk](dog-walk/) | 遛狗副线狗停当场定性，回家门逐项核对才放行 | `agent-dog-walk` |
+| D04 | [tour-watch](tour-watch/) | 跟团副线只捞集合句，快到点按朝向提醒归队 | `agent-tour-watch` |
+| D05 | [queue-roam](queue-roam/) | 取号副线守听叫号，距5号内叫你回去等着 | `agent-queue-roam` |
