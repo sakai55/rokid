@@ -232,3 +232,6 @@ aix preview .                               # 本地预览（起服务 / --html-
 | H04 | [route-hold](route-hold/) | 复述问路线路存步骤，走时只显示当前一步点头前进 | `agent-route-hold` |
 | H05 | [seat-catch](seat-catch/) | 拍票根存座位号，逐排逐座只报相对差 | `agent-seat-catch` |
 | C01 | [drop-search](drop-search/) | 掉落小物脚边 6 区逐区手摸，查完才报没找到 | `agent-drop-search` |
+| C01 | [last-glance](last-glance/) | 离开前环视存档最后画面，焦虑时按区回放 | `agent-last-glance` |
+| C02 | [room-sweep](room-sweep/) | 睡前逐项巡房确认打勾，漏项按方位提醒补看 | `agent-room-sweep` |
+| C03 | [proof-sweep](proof-sweep/) | 逐行指读记进度，跳行漏段当场提醒给覆盖率 | `agent-proof-sweep` |
