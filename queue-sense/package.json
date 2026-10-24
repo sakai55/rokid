@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - queue wait estimation: the wearer counts people ahead by tapping while looking along the queue, the agent measures the real service rate from served taps and compares up to 3 queues; photos are session records only and are never used for counting","main":"app.js","name":"queue-sense","version":"1.0.0"}
