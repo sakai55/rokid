@@ -91,7 +91,7 @@ cd ~/workspace/rokid/turn-count
 
 ### Feature Description
 
-> Slow alternating turn-count exercise for Rokid glasses, voice-guided. Sit or stand steady, head straight, then tap start: one calibration prompt asks you to turn left once so the agent learns which way is left, then it talks you through each rep — turn, hold, return to center — alternating left and right, five each, ten total. Motion is segmented only, never circling or sweeping from one extreme to the other, and a rep counts only as turn, hold, return. The screen shows just the instruction and the count; temple tap starts and replays, your head turn is the game action. Entertainment only, not medical advice.
+> Slow alternating turn-count exercise for Rokid glasses, voice-guided. Sit or stand steady, head straight, then tap start: one calibration prompt asks you to turn left once so the agent learns which way is left, then it talks you through each rep — turn, hold, return to center — alternating left and right, five each, ten total. Motion is segmented only, never circling or sweeping extreme to extreme; a rep counts only as turn, hold, return. Entertainment only, not medical advice.
 
 ### Opening Message
 
