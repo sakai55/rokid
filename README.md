@@ -255,3 +255,8 @@ aix preview .                               # 本地预览（起服务 / --html-
 | P01 | [cue-door](cue-door/) | 看向大门触发清单，逐项确认全过才放行 | `agent-cue-door` |
 | P02 | [cue-fridge](cue-fridge/) | 看向冰箱触发清单，拿一样勾一样关门报漏拿 | `agent-cue-fridge` |
 | P03 | [cue-desk](cue-desk/) | 看向书桌亮今日三件事，起身按未完成给续接句 | `agent-cue-desk` |
+| P04 | [cue-bag](cue-bag/) | 看向要背的包触发清单，逐项看向格层确认装入 | `agent-cue-bag` |
+| P05 | [cue-mirror](cue-mirror/) | 看向镜子亮三行，逐行确认已读，提前结束报未读 | `agent-cue-mirror` |
+| S01 | [chat-catchup](chat-catchup/) | 谈话走神摇头求助，眼前给最近15秒要点摘要 | `agent-chat-catchup` |
+| C02 | [my-bus-watch](my-bus-watch/) | 只守登记的一路公交，拍车头核线路号报上车与否 | `agent-my-bus-watch` |
+| S02 | [guest-watch](guest-watch/) | 客人逐位看向登记座位，定时提醒回看茶水位 | `agent-guest-watch` |
