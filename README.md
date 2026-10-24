@@ -275,3 +275,10 @@ aix preview .                               # 本地预览（起服务 / --html-
 | G06 | [chin-tuck](chin-tuck/) | 下巴小幅后收保持5秒，8次收下巴操 | `agent-chin-tuck` |
 | B05 | [snack-aware](snack-aware/) | 看向零食先亮今天第几次，吃不吃你决定 | `agent-snack-aware` |
 | G07 | [steady-hold](steady-hold/) | 头稳住不动满10秒胜，动了重计 | `agent-steady-hold` |
+| E01 | [light-change](light-change/) | 相机定时测光，光线暗了提醒开灯 | `agent-light-change` |
+| G08 | [nod-catch](nod-catch/) | 10 个球下落，点头踩线接住计分 | `agent-nod-catch` |
+| E02 | [sky-watch](sky-watch/) | 登记晾晒区，定时回看天空云变预警 | `agent-sky-watch` |
+| G09 | [turn-dodge](turn-dodge/) | 障碍在左向右躲，10 回合回正计分 | `agent-turn-dodge` |
+| G10 | [follow-dot](follow-dot/) | 光点跳到哪就跟到哪，停稳算中 | `agent-follow-dot` |
+| E03 | [noise-map](noise-map/) | 转头扫 8 方向，报最安静的朝向 | `agent-noise-map` |
+| G11 | [rhythm-nod](rhythm-nod/) | 16 拍固定节拍，拍点点头打中计分 | `agent-rhythm-nod` |
