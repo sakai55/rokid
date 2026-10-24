@@ -1,212 +1,233 @@
-<div align="center">
+# transit-direction — 出站定向（Rokid 眼镜 AIUI Agent）
 
-# `rokid` — Rokid AIUI Agents
+50 个「指向性生活问题」Agent 的第 42 个。出了地铁站最大的崩溃不是
+路远，是**方向感清零**：站内地图看懂了，一出地面就分不清自己面朝
+哪条街，手机导航的蓝点箭头转来转去，越看越晕。本 Agent 的办法是
+把「对准」这一步交给你的头：看完地图、朝你要走的方向转过头，
+点一下锁定，之后箭头和语音负责把你留在这个方向上。
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
+## 预览截图
 
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
+截图统一存放于仓库根目录 `screenshots/transit-direction/`。
 
-</div>
+![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/transit-direction/preview-transit-direction-index.png)
 
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：根目录的 `<slug>.aix` 下载后走 **Import from AIX**。
+![DEMO 进入预设指引态（模拟朝向 0°，公交站预设在右前方约 50°）](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/transit-direction/preview-transit-direction-guide.png)
 
-## 目录
+![DEMO walk-in 抵近至 40 米内，ARRIVED 态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/transit-direction/preview-transit-direction-arrived.png)
 
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
+## 解决的问题
 
-## 仓库结构
+手机导航默认你能把地图方向和现实方向对起来——出站口恰恰是这个
+假设崩掉的地方：地下转了三圈，罗盘又受钢结构干扰，箭头朝哪边都
+像对又都不像。本 Agent 不给你一张地图，只干一件事：**出发前用
+你的头校准一次方向，出发后持续守住它**。校准不需要知道目的地
+在哪——站内地图已经告诉你「出 3 号口往左手边那条街走」，你抬头
+找到那条街、面朝它，剩下的交给锁定。
 
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── <slug>.aix                 # 每个 Agent 打包好的 AIX（根目录，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
-```
+## 指向性设计（为什么必须用眼镜）
 
-## 快速开始
+- **头部朝向即航向（HEAD/ALIGN）**：ALIGN 把你点下锁定那一刻的
+  头部朝向定为航向，全程只比较「当前朝向 vs 锁定朝向」两个
+  相对量。传感器 yaw 的零点参考系由宿主定义、官方未文档化——
+  相对比较让这个问题根本不出现，这是 ALIGN 模式的设计根基。
+- **偏离纠正（DRIFT）**：走路时人会不自觉偏。偏离 > 30° 持续
+  3 秒（500 ms 一拍、拍数计时，不靠反复读时钟）→ 语音纠正
+  一次：「你偏向左边了，往右修正 X 度」——措辞与相对角符号
+  严格对应（相对角为正 = 目标在右手边 = 你往左偏了）；回到
+  ≤15° 才重新布防，同一次偏离绝不重复念。
+- **持续定位（GEO-H）**：START 单次定位后接 `watchPosition`
+  持续更新，PRESET 模式的距离随你走动实时变；watch 失效如实
+  标注并回退手动重定位，不假装在跟踪。
+- **手势优先（档案 §3.2.1）**：全部主流程只用触控板手势 +
+  头稳 + 点头就能走完（见下方「手势映射」）；屏幕只保留
+  START / ALIGN / SPEAK / DEMO 四个与手势等效的按钮。
+
+## 手势映射
+
+本 Agent 的全部主流程（取定位 → 锁定航向 → 跟随指引 / 选预设 →
+听状态）都可以只用眼镜腿触控板手势 + 头部动作完成，不必点屏幕
+按钮。手势与键码的对应来自官方文档档案 §3.2.1。
+
+| 手势 | 键码 | 在本 Agent 中的动作 |
+|---|---|---|
+| 单击触控板 | Enter | 情景主操作：无定位时 = START 取定位；ALIGN 模式 = 锁定当前朝向为航向；PRESET 模式且 watch 失效/不可用 = 手动 UPDATE 重定位；其余时候 = 朗读当前指引 |
+| 滑动触控板 | ArrowUp / ArrowDown | ALIGN 模式下 = 进入 PRESET 模式；PRESET 模式下 = 前后轮换预设目的地（公交站 / 便利店 / 公园入口，均为内置演示预设） |
+| 双击触控板 | Backspace | 返回 / 关闭（由宿主处理，本 Agent 只记录事件） |
+| 长按触控板 | —（系统级） | 唤醒 AI 助手（系统功能，不经过本 Agent） |
+| 头部稳定时点头 | onHeadGesture `nod` | 朗读当前指引（与 SPEAK 等效）；点头从不锁定航向、从不发起定位 |
+| 屏幕按钮 | — | 只保留 4 个：START（取定位并锚定原点）、ALIGN（锁定朝向）、SPEAK（朗读指引）、DEMO（无 GPS 时仿真：朝向 +45° 步进 + 向目的地走近），与手势一一等效 |
+
+## 功能流程
+
+1. 到了出站口，单击（或点 START）取一次 GPS 定位，大字显示
+   坐标与精度；随后 watchPosition 持续更新你的位置
+2. 看站内地图确认要走的街，转头面朝那个方向，单击（或点
+   ALIGN）锁定航向 → 大箭头相对你的头部实时指着锁定方向，
+   ON COURSE 就直走；偏离 > 30° 满 3 秒，语音纠正你往哪边修
+3. 每个路口街道拐弯时：停下来看路，重新面朝新方向，再锁一次
+4. 换个玩法：滑动触控板进入 PRESET 模式选内置演示目的地
+   （公交站 / 便利店 / 公园入口），跟着方位箭头走，距离实时
+   刷新，< 40 米显示 ARRIVED
+5. 任何时候头稳住点一下头（或点 SPEAK），朗读当前指引状态
+6. DEMO 按钮：登记 DEMO 原点与公交站预设，再点每次模拟朝向
+   +45° 并向目的地走近一段，可完整预览指引/抵近/到达三态
+
+> 诚实说明：ALIGN 守的是你锁定的**方向**，不是去目的地的
+> 路线——它不知道目的地在哪，街道拐弯必须重新锁定。PRESET
+> 的目的地是内置**演示**坐标（本 build 没有坐标输入口）；
+> PRESET 的绝对方位依赖传感器 yaw 的宿主参考系，真机首测请
+> 对已知方向核对一次左右（见「未验证」）。麦克风与相机本
+> Agent 都不用。
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| GEOLOCATION | START 单次定位、watchPosition 持续更新当前位置、PRESET 模式的距离/方位计算 |
+
+只申请定位一个权限：没有拍照、没有语音输入；朗读走宿主 TTS，
+朝向传感器在 AIUI 里不需要单独的权限声明。定位只在用户点
+START/单击后开启，页面隐藏/卸载即停 watch 与传感器。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/transit-direction
+~/tools/bin/aix pack . -o ../dist/transit-direction.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线
+（`shot-transit.js`，独立页面副本 `preview-transit.html`；DEMO 按钮
+点击坐标在 shot 脚本运行日志中按 canvas 坐标记录）。
 
-## 标准工作流
+## 真机测试（海外版 · 云端下发 · Path 1）
 
-<div align="center">
+1. 推到 GitHub 后，Global AIUI Studio（aiui-global.rokid.com，en-US）用
+   分支导入：`https://github.com/sakai55/rokid/tree/agent-transit-direction`
+   （该分支根目录即本 Agent 文件）
+2. Studio 的 **Device Debug** 页签填 Basic Information，在 AIX Packaging
+   点 **Repackage and Save**，确认顶部出现绿色
+   **● Debug version ready — Ready for device debugging**
+3. **Hi Rokid**（海外版 `com.rokid.sprite.global.aiapp`，不是国内版
+   Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包，
+   等「智能体资源包下载成功」
+4. 对眼镜说「乐奇，打开 transit-direction」，站在地铁站出站口：
+   单击取定位，看站内地图后转头面朝要走的街、单击锁定，直行
+   一段后故意往一侧偏 40° 以上保持 3 秒，验证语音纠正的左右
+   方向是否正确；到路口重新锁定一次；再滑动切到公交站预设，
+   对照已知方向核对 PRESET 箭头的左右是否镜像（见「未验证」
+   第一条），边走边看距离是否随 watchPosition 变小、40 米内
+   是否进入 ARRIVED
 
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
+## 真机测试信息（Global AIUI Studio · Device Debug）
 
-</div>
-
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放根目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
-
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 项目 | 值 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Agent Name（Studio） | 待导入后回填 |
+| Version（Build） | 1.0.0（待导入后回填） |
+| App Category | 待导入后回填 |
+| Intent Description | 待导入后回填 |
+| Agent ID | 待导入后回填 |
+| AIX Package Size | 约 20.0 KB（本地打包 `dist/transit-direction.aix`） |
+| 状态 | 本地完成，待导入 Studio |
+| Studio | aiui-global.rokid.com（en-US） |
+| 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-**分支法要点**
+## 验证情况
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+**已验证**
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+- 静态检查：app.json / package.json JSON 解析通过；`<script def>` JSON
+  解析通过；`<script setup>` 与 app.js 提取后 `node --check` 语法通过；
+  全目录 grep 无 `Page(` / `App(` / `Widget(` / `workers:` 残留；
+  屏幕按钮只剩 START / ALIGN / SPEAK / DEMO 四个 bindtap。
+- 状态机测试：Node 里以 wx/geolocation/传感器存根加载页面对象跑
+  **70 条断言全过**——覆盖：方位角/Haversine 对已知偏移的量值
+  （正北约 0°、0.01° 纬度约 1112 m、正东约 90°/904 m）、相对角
+  符号约定（+ 为右）、ON COURSE 带宽（±15° 内亮、16° 灭）、
+  偏离纠正（偏 40° 时 2.5 秒不念、满 3 秒只念一次、持续偏离
+  不重复、回正重新布防、左右措辞与相对角符号一致、被 ≤30°
+  打断后 3 秒累计清零）、ALIGN 无朝向时拒绝锁定、锁定后指引
+  数学、START 取定位后 watchPosition 真正接上并随推送更新
+  距离、抵近 < 40 米 ARRIVED 只念一次、离开重新布防、watch
+  报错标注 WATCH FAIL 并回退手动重定位、无 watchPosition 的
+  主机走 n/a + UPDATE 路径、onUnload 清 watch、点头纪律
+  （头动时不念、指引中头稳才念、非点头手势忽略、未指引时
+  点头不锁定不定位）、手势全流程（单击取定位→单击锁定→
+  滑动进 PRESET→滑动轮换预设→双击无副作用→PRESET+watch
+  存活时单击只朗读不重定位）、DEMO 原点锚定与 walk-in 距离
+  单调收缩直至 ARRIVED、TTS 从不设置 lang。
+- 打包：`aix pack` 成功；`aix list` 核对包内含 README.md、AGENTS.md、
+  app.js、app.json、package.json、pages/index/index.ink
+  （artifacts/ 已被 .aixignore 排除）。
+- 预览渲染：aix preview + 本地 Ink + puppeteer 截图三张（见
+  Preview Media）：首页初始态完整渲染；DEMO 进入预设指引态
+  箭头与相对角显示正确；DEMO walk-in 至 40 米内进入 ARRIVED。
 
-1. 在仓库根目录点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+**未验证**
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+- **传感器 yaw 的零点参考系（第一优先核对）**：官方档案只给
+  四元数、未文档化其参考系约定。ALIGN 模式全程相对比较，不受
+  影响；但 PRESET 模式把传感器 yaw 与地理方位角放在同一标尺
+  上算相对角——若宿主约定方向相反，指引将左右镜像。真机首测
+  必须对已知方位点核对左右方向后，PRESET 才可信。
+- 真机 watchPosition 的更新频率与稳定性（出站口高楼峡谷里
+  GPS 跳变会让距离读数抖动，40 米 ARRIVED 阈值可能需要按
+  真机表现调整）；watch 失败时手动 UPDATE 的实际手感。
+- 真机头部稳定检测、点头手势与触控板手势（单击/滑动/双击）
+  在本 Agent 键位映射下的实际触发情况；偏离纠正 TTS 的
+  播报效果与 3 秒/30° 阈值在真实步行中的合用性（走路时头部
+  自然摆动可能频繁穿越 30°，阈值真机后再调）。
 
-</details>
+---
 
-## 海外链路（全链路海外，缺一不可）
+## 提审资料（Review Submission）
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+> Global AIUI Studio → Submit 页签的 Review Information 逐项对应下面四段，
+> 提交时整段复制。每次提交前重新确认 Preview Media。
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Feature Description
 
-## 真机测试（云端下发）
+Just stepped out of the station and the map's arrow points everywhere? Transit Direction fixes your exit heading. Tap for a GPS fix, face the way you must walk and lock it with ALIGN: a big head-relative arrow holds that course, and a voice corrects you if you drift over 30 degrees for 3 seconds. Or swipe to a built-in demo preset destination and follow its arrow with live distance. ALIGN holds a direction, not a route - re-align at every corner.
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+（450 字符）
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
+### Opening Message
 
-</details>
+Hi, I'm **Transit Direction** — I point you the right way out of the station.
 
-## 提交审核
+Tap once (or **START**) for a GPS fix. Read the station map, face the street you must take, and tap again (or **ALIGN**) to lock your facing as the course; I'll keep the arrow on it and speak up if you drift. **Swipe** switches to a built-in demo destination. Hold your head steady and **nod** any time to hear the guidance. Streets bend — re-lock at every corner.
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+（443 字符）
 
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+### Preview Media
 
-## 维护约定
+提交要求：3–5 个 JPG/PNG 图片或 MP4 视频，至少含 1 张图和 1 个视频，每次提交前重新确认。
 
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库根目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+- Image 1：`artifacts/preview-transit-direction-index.png`（aix preview 首页：TRANSIT DIR 初始态，含定位/模式/航向行、箭头区与 START/ALIGN/SPEAK/DEMO 四个按钮，本地文件，提交时从本地上传）
+- Image 2：`artifacts/preview-transit-direction-guide.png`（DEMO 预设指引态：模拟原点 + 公交站预设，右前方约 50°、距离约 309 米，箭头与相对角行完整显示，本地文件）
+- Image 3：`artifacts/preview-transit-direction-arrived.png`（DEMO walk-in 抵近态：距离 < 40 米，ARRIVED 高亮行与 ◎ 标记，本地文件）
+- Video：待真机补 — 真机录制「出站口单击取定位 → 看地图转头单击锁定 → 直行 → 故意偏离触发语音纠正 → 路口重新锁定」全过程（MP4），录好后放 `artifacts/` 并更新此处
+- 状态：未齐（已有 3 张图；还需至少 1 个视频，总数保持在 3–5 个后才可提交）
 
-## Agent 清单
+### Change Log
 
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
+#### Build 1.0.0
 
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
+**Features added**
+
+- ALIGN course lock: at the station exit, face the way you must walk and tap (or press ALIGN) - the agent locks your current head heading as the course and keeps a big head-relative arrow on it. The comparison is purely relative (current vs locked heading), so the host-defined sensor zero never enters into it. The lock line shows the bearing and lock time and reminds you to re-align at corners: it holds a direction, not a route.
+- Spoken drift correction: drifting more than 30 degrees off the locked course (or off a preset bearing) for 3 continuous seconds triggers exactly one spoken correction per drift episode - "you drifted left, correct right by X degrees", with the wording tied to the relative-angle sign and covered by tests; returning within 15 degrees re-arms.
+- Live position watch: after the single START fix, watchPosition keeps the current position fresh so preset distances update as you walk; a failed or unavailable watch is labelled on screen and falls back to a manual re-fix (the single tap does this contextually). An arrival state under 40 m is spoken once per approach.
+- PRESET demo destinations: three built-in demo presets (bus stop, convenience store, park gate) expressed as small offsets anchored to the START origin - the origin never moves with you, so distance genuinely shrinks as you approach. Disclosed on screen and in copy as demo data; this build has no destination-coordinate input.
+- Gesture-first operation (temple touchpad, dossier §3.2.1): single tap = contextual primary action (fix / lock / manual re-fix / speak), swipe = enter PRESET mode and cycle presets, double-tap = host back, steady-head nod = speak the guidance. Only four on-screen buttons remain (START / ALIGN / SPEAK / DEMO), each mirroring a gesture.
+
+**Improvements**
+
+- None (initial release).
+
+**Fixes**
+
+- None (initial release).
