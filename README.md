@@ -1,237 +1,117 @@
-<div align="center">
+# Shelf Sweep（货架找货覆盖）
 
-# `rokid` — Rokid AIUI Agents
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
-
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
-
-</div>
-
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：`aix/` 目录里的 `<slug>.aix` 下载后走 **Import from AIX**。
-
-## 目录
-
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
-
-## 仓库结构
-
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── aix/<slug>.aix             # 全部 Agent 打包好的 AIX（集中存放，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
+```
+https://github.com/sakai55/rokid/tree/agent-shelf-sweep
 ```
 
-## 快速开始
+注意力外挂系列 C05（COVER 覆盖型，本组第五位）。在大货架找一样指定的东西最典型的翻车：同一排来回扫三遍，要找的明明在眼前却看不见，越找越乱。本 Agent 的做法：把货架变成一张看得见的覆盖图——3 层（上/中/下）× 3 段（左/中/右）共 9 格，你看向一格点 SCAN（或头稳点头、点中该行）记已扫；再扫已扫过的格，它会当场提醒「这段扫过了」且不重复计；结束前点 FIN，有未扫格时小结直接拒绝并且点名——还有没扫的：中中、中右、下左……；9 格全扫完还没找到，小结如实说「9 格都扫过了，没找到，建议问店员或换货架」；你自己看向目标物点 FOUND 确认，才报「找到了，在中右」。它不替你判断东西在不在货架上（它看不见货架上的商品），它只替你证明「这面货架的每一格，我都亲手扫过，而且漏的那几格没有被含糊掉」。
+
+## 解决的问题
+
+货架找货难的不是眼睛，是「无法证明都看过了」：扫到一半被打断、换个角度再看，回来就忘了刚才扫到哪；更糟的是同一格扫了三遍、另一格一次没扫，自己还以为全扫完了。本 Agent 把「都看过了」变成一张看得见的图：每格只有两种状态——未扫、已扫；结束前的小结有门：带窟窿的小结进不去，缺的格会被点名；只有 9 格全扫，小结才给 verdict——找到了（点名在哪格），或者没找到（建议问店员或换货架）。
+
+## 注意力外挂设计（COVER 覆盖型）
+
+- **覆盖图就是产品，结束小结是门**：货架图（9 格）是全部模型。看向一格点 SCAN（或头稳点头、点中该行）记已扫；FIN 时只要还有未扫格，小结直接被拒绝并点名未扫格；全部扫完才给 verdict。
+- **浏览不等于扫**：点中不是当前格的行只换焦点，不记已扫。扫必须是一次明确确认——在货架这件事上，「我看过地图」不等于「我看过那段货架」，两者绝不能混。
+- **重复扫会警告，绝不重复计**：再扫已扫过的格，当场提醒「这段扫过了」且计数不动。一张把同一格数两遍的图，比没有图更糟——它会认证根本没发生的覆盖。
+- **找到了以你的确认为准（诚实边界，第一位）**：本平台没有商品识别，本 Agent 永远不假装扫一眼就知道东西在不在货架上——「找到了」的意思是你看了那件东西并在那格点了 FOUND。界面、朗读、README 都明说这一点。点头只表示「这格已扫」，FOUND（点按）才表示「找到了」，一个手势绝不身兼两义。
+- **只记本次会话，关掉即清（诚实边界，第二位）**：全部内容只存本次会话内存，关掉 Agent 即清——适用窗口就是正在找的这次货架，零隐私残留；下个货架重新从空白图开始，正是正确用法。
+- **没有货架地图，没有室内定位（诚实边界，第三位）**：格与格的关系只来自你环视时的顺序，Agent 不知道任何一格在店里的位置，也不画店内地图；「找到了，在中右」说的是覆盖图里的格，不是导航指令。
+- **为什么胸前设备做不了**：逐格确认要求「当前格」与你眼前那段货架的对应（胸口设备不知道你正在看哪段）；覆盖图必须进视线（低头看胸口设备等于又一次离场）；结束小结要一眼看全（语音逐格报一遍等于重新占用注意力）。三条都只有头戴设备成立。
+
+## 与邻近 Agent 的分工
+
+- 指向性系列 `shelf-compare`：逐个看商品比价——比的是已经看得见的东西；本 Agent 不比价，只证明为找一样东西「每一格都看过了」。
+- C03 `proof-sweep`：同一覆盖表模式用于文档逐行 + 跳行检测——文档有行序，货架没有，故本 Agent 没有跳行检测、没有覆盖率百分比，它的 verdict 是三选一：被拦（点名未扫格）、找到了（点名格）、全扫完没找到。
+- C04 `pack-sweep`：同一模式用于行李（已装/未装 + 出门门）——本 Agent 是货架（已扫/未扫 + 结束门），并多出两样行李不需要的东西：重复扫警告和找到即停。
+- C01 `last-glance`：离开时按朝向拍照存档、路上回放——存的是「离开时看到的东西」，不判断货架扫没扫完。
+- 本 Agent：只做大货架单目标找货的覆盖地图 + 漏格点名拦截 + 找到即停 + 全扫完未找到的如实小结，四者都不重叠。
+
+## 功能流程
+
+1. **定目标（TARGET / DEMO）**：TARGET 只在未开始时换示例目标（某品牌酱油 → 某本书 → 折叠雨伞 → 洗发水 → 回到酱油）；DEMO 载入当前目标的货架图（全程标注 DEMO）；已有自己扫过的图时 DEMO 拒绝，绝不覆盖。
+2. **逐格扫（SCAN）**：看向一格点 SCAN（或头稳点头、点中该行）记已扫，焦点移到下一未扫格；NEXT/PREV 换格；点中不是当前格的行只换焦点。
+3. **重复扫警告**：再扫已扫过的格，当场提醒「这段扫过了」，计数不动。
+4. **纠错（DEL）**：点中已扫格按 DEL 取消已扫；点中未扫格会说明没什么可取消。
+5. **找到即停（FOUND）**：看向目标物所在格，点 FOUND，显示「找到了，在中右」。
+6. **结束拦截（FIN）**：点 FIN 时有未扫格 → 小结拒绝并点名未扫格，点 SCAN 回去接着扫；9 格全扫完 → 小结「9 格都扫过了，没找到，建议问店员或换货架」。
+7. **清空（DEL 两下）**：小结页 DEL 两下清空本次找货（6 秒内有效，其他动作取消），重新开始。
+8. **演示（DEMO）**：五段演示——货架图载入（0/9）→ 已扫 4 格 → 漏格小结（点名 5 格未扫）→ 全扫完未找到小结 → 找到小结（在中右）；第六下 DEMO 报演示完成。
+
+## 手势映射
+
+| 手势/按键 | 动作 |
+|---|---|
+| 点按（Enter） | 记当前格已扫（小结页：回去接着扫） |
+| 双击（Backspace） | 回到上一格 |
+| 上滑（ArrowUp） | 下一格 |
+| 下滑（ArrowDown） | 上一格 |
+| 头稳 + 点头 | 记当前格已扫（仅逐格扫页；其他状态下点头无效并说明原因；点头绝不表示「找到了」） |
+| 屏上按钮 | DEMO 演示 / SCAN ✓ 记已扫 / PREV 上一格 / NEXT 下一格 / FIN 小结 / FOUND 找到了 / SPEAK 朗读 / DEL 取消已扫、两下清空 / TARGET 换示例目标 |
+
+## 权限说明
+
+- 不申请任何权限（app.json 的 `permissions` 为空数组，静态校验明确断言这一点）。
+- 不申请 `CAMERA`（没有任何拍照环节）、不申请 `RECORD_AUDIO`（无口述环节，确认全靠点按、行名点选与点头）、不申请 `GEOLOCATION`（货架不需要定位）。
+
+## 打包与预览命令
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+~/tools/bin/aix pack . -o ../dist/shelf-sweep.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+本地预览截图管线见 `~/workspace/custom-skills/rokid-preview-screenshots/SKILL.md`（本地 Ink + puppeteer，480×352；本 Agent 的探针脚本在 `~/workspace/preview-tools/shot-shelf.js`、`probe-shelf.js`）。
 
-## 标准工作流
+## 真机测试信息表
 
-<div align="center">
-
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
-
-</div>
-
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
-
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 项目 | 内容 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Studio 名称 | （导入后回填） |
+| Version / Build | 1.0.0 / （导入后回填） |
+| App Category | （导入后回填） |
+| Intent Description | （导入后回填） |
+| Agent ID | （导入后回填） |
+| 状态 | 未导入（本地全流程完成，待 GO 在 Global Studio 导入 + 真机测试） |
 
-**分支法要点**
+## 预览截图
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+![定目标：货架图载入](../screenshots/shelf-sweep/preview-shelf-sweep-target.png)
+![逐格扫：已扫 4 格](../screenshots/shelf-sweep/preview-shelf-sweep-sweeping.png)
+![重复扫警告](../screenshots/shelf-sweep/preview-shelf-sweep-repeat.png)
+![找到小结：在中右](../screenshots/shelf-sweep/preview-shelf-sweep-found.png)
+![全扫完未找到小结](../screenshots/shelf-sweep/preview-shelf-sweep-notfound.png)
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+## 提审资料 (Review Submission)
 
-1. 在仓库 `aix/` 目录里点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+### Feature Description
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+货架找货覆盖外挂：在大货架找一样东西，同一排扫三遍、要找的在眼前都看不见。本 Agent 把货架变成一张看得见的覆盖图：3 层 × 3 段共 9 格，看向一格点 SCAN 记已扫；重复扫当场警告且不重复计；结束前点 FIN，有未扫格时小结拒绝并点名，9 格全扫完才给 verdict——找到了（点名在哪格）或没找到（建议问店员或换货架）。找到了以你的确认为准（本平台无商品识别，绝不假装看得见货架上的商品）；全部数据只存本次会话内存，关掉即清。零权限：不用相机、麦克风、定位。
 
-</details>
+### Opening Message
 
-## 海外链路（全链路海外，缺一不可）
+**扫过的格，才算扫过。**
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+- TARGET 换示例目标（酱油 → 书 → 雨伞 → 洗发水），DEMO 载入 9 格货架图
+- 看向一格点 SCAN（或头稳点头）记已扫，焦点移到下一未扫格
+- 点中不是当前格的行只换焦点——浏览不等于扫
+- 再扫已扫过的格会警告「这段扫过了」，计数不动
+- 看向目标物点 FOUND 即停，显示「找到了，在中右」
+- 点 FIN：有未扫格会被点名拒绝；9 格全扫完没找到会如实说，建议问店员或换货架
+- 小结页 DEL 两下清空本次找货，重新开始
+- 诚实边界：Agent 没有商品识别，「找到了」是你亲手确认的；数据只存本次会话，关掉即清
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Preview Media
 
-## 真机测试（云端下发）
+- 图片：上述 5 张预览截图（定目标、逐格扫、重复扫警告、找到小结、全扫完未找到小结）
+- 视频：真机阶段补（需眼镜实拍）
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+### Change Log
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
-
-</details>
-
-## 提交审核
-
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
-
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
-
-## 维护约定
-
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
-
-## Agent 清单
-
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
-
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
-| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
-| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
-| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 | `agent-elder-day` |
-| W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 | `agent-stove-watch` |
-| W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 | `agent-bath-watch` |
-| W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 | `agent-laundry-watch` |
-| W04 | [signal-watch](signal-watch/) | 医院/银行/取餐叫号，大屏节律提醒回看，差3号喊你准备 | `agent-signal-watch` |
-| W05 | [door-watch](door-watch/) | 里屋开会戴耳机，守听门铃敲门快递叫你回看 | `agent-door-watch` |
-| H01 | [number-catch](number-catch/) | 号码拍下放大核对，常驻视线内不用默念 | `agent-number-catch` |
-| H02 | [code-hold](code-hold/) | 临时码复述存住，要输入时逐段显示 | `agent-code-hold` |
-| H03 | [voice-list](voice-list/) | 复述成清单挂在视线里，看向货架逐项点头勾掉 | `agent-voice-list` |
-| H04 | [route-hold](route-hold/) | 复述问路线路存步骤，走时只显示当前一步点头前进 | `agent-route-hold` |
-| H05 | [seat-catch](seat-catch/) | 拍票根存座位号，逐排逐座只报相对差 | `agent-seat-catch` |
-| C01 | [drop-search](drop-search/) | 掉落小物脚边 6 区逐区手摸，查完才报没找到 | `agent-drop-search` |
-| C01 | [last-glance](last-glance/) | 离开前环视存档最后画面，焦虑时按区回放 | `agent-last-glance` |
-| C02 | [room-sweep](room-sweep/) | 睡前逐项巡房确认打勾，漏项按方位提醒补看 | `agent-room-sweep` |
-| C03 | [proof-sweep](proof-sweep/) | 逐行指读记进度，跳行漏段当场提醒给覆盖率 | `agent-proof-sweep` |
+**Build 1.0.0**
+- Features added：9 格货架覆盖图（3 层 × 3 段）；逐格确认（SCAN/点头/行名点选，浏览不记扫）；重复扫警告（不重复计）；FIN 漏格点名拦截与全扫完 verdict；FOUND 找到即停（点名格）；TARGET 示例目标轮换；DEMO 五段演示；DEL 取消已扫/小结页两下清空；会话内存零落盘；头稳点头纪律（1.2 秒锁）。
+- Improvements：无（首版）。
+- Fixes：无（首版）。
