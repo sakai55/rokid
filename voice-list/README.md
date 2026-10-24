@@ -1,5 +1,12 @@
 # Voice List（语音清单）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-voice-list
+```
+
+
 注意力外挂系列 H03（HOLD 默念型）。出门前家人连珠炮：牛奶、鸡蛋、钥匙、洗手液、苹果——五样东西一口气砸过来，走到门口就忘一半。本 Agent 的做法：家人说完，你自己复述一遍（麦克风只听你一个人），每项先落在核对片上，你确认了才进清单；清单以文字存在眼镜里，关掉 Agent 也不会丢。到店之后清单就挂在视线里：看向货架上的那一项，头稳住点一下头就勾掉；只剩最后一项时，它会被放大并朗读一次——就是出门前最容易漏的那一项。
 
 ![预览-首页](../screenshots/voice-list/preview-voice-list-index.png)
