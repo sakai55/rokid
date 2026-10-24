@@ -1,5 +1,12 @@
 # manual-lens — 说明书眼（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-manual-lens
+```
+
+
 50 个「指向性生活问题」Agent 的第 05 个。家电跳出一个故障代码，
 说明书早就丢了，你一只手还扶着机器、另一只手根本腾不出来翻
 手机：看着铭牌/显示屏用长焦拍一张（只作记录），亲手把电器和
