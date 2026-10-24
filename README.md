@@ -1,5 +1,12 @@
 # gaze-translate — 凝视翻译（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-gaze-translate
+```
+
+
 50 个「指向性生活问题」Agent 的第 01 个。在国外看不懂菜单、路牌、说明书时，
 不用掏手机（慢、还遮挡视线）：看着文字，把头稳住，眼镜用长焦拍下、翻译，
 并直接朗读出来。
