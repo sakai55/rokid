@@ -1,240 +1,115 @@
-<div align="center">
+# Sign Filter（找牌过滤）
 
-# `rokid` — Rokid AIUI Agents
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
-
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
-
-</div>
-
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：`aix/` 目录里的 `<slug>.aix` 下载后走 **Import from AIX**。
-
-## 目录
-
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
-
-## 仓库结构
-
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── aix/<slug>.aix             # 全部 Agent 打包好的 AIX（集中存放，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
+```
+https://github.com/sakai55/rokid/tree/agent-sign-filter
 ```
 
-## 快速开始
+注意力外挂系列 F02（FILTER 过滤型，本组第二位）。在陌生街区找一家店或一个门牌，最累的不是走路，而是满街牌子都在抢你的注意力：每块牌都得看一眼、读一遍、判断一次「是不是它」，找了三条街，脑子比腿还累。本 Agent 把这个判断外包出去：出发前先声明目标（示例目标：全家 / 星巴克 / 中山路128号 / 7-ELEVEN），然后只管转头扫街——每块看向的牌子停稳拍照，LLM 读出牌面文字；只有读出的文字包含目标时，它才亮起横幅并 TTS 报一次「找到了」和拍照时的面向；不匹配的牌，只在「已看过」计数里默默加一，不亮屏、不出声、不打断你。
+
+## 解决的问题
+
+找牌时的注意力税：目标明明只有一个，眼睛却要对每块牌都做一次「读 + 判断」。结果是注意力被迫全程在线，真正要找的那块牌出现时反而可能因为看花眼而错过。本 Agent 把「读 + 判断」外包：规则事先定好（目标是什么），扫街时你只管看；匹配时它负责叫你，不匹配时它只负责计数——结束时的小结告诉你：这趟看了几块、命中了哪块、在哪个面向，你可以回看，但不必当时被每块牌打断。
+
+## 注意力外挂设计（FILTER 过滤型）
+
+- **先声明目标，规则扫街中不改**：目标只能在待机时换（TGT 在示例目标间轮换）；扫街中改目标会被拒绝并说明原因——信任中的过滤器不能在你不注意时被改写规则。
+- **匹配规则只有一行，这是第一位的诚实边界**：归一化后的牌面文字（去空格、去连字符、转大写）必须**包含**归一化后的目标串。没有牌子数据库、没有模糊匹配、没有品牌识别——所以读错一个字就可能漏报或误报，界面、朗读、README 都明说：全家便利店含全家（命中），肯德基不含全家（只计），中山路129号不是中山路128号（不命中）。
+- **不匹配的牌只动计数器**：不匹配只让「已看过」加一、进列表，不弹横幅、不播报。过滤器如果每块牌都报一遍，过滤器本身就成了干扰源。拍照或读牌失败则**根本不计数**：你并没有真的看到一块牌的文字，计进去就是假覆盖。
+- **方位是拍照时的面向，不是定位**：命中横幅报的左/正前/右，是拍照前用 DIR 设定的你面向的方向——本 Agent 没有任何定位能力，绝不说「在你左手边多少米」，只说拍照时你面向哪边。
+- **拍照必须是 deliberate 的点按**：点按（Enter）拍牌；头稳点头只在待机开始扫街和小结确认时有效，扫街中点头无效——拍牌绝不能因为一次无意的点头就触发；不稳的点头不占 1.2 秒锁。
+- **纠错便宜，销毁需确认**：扫街中 DEL 只清命中横幅，绝不动已看过列表、不结束扫街；小结页返回键回到扫街（不删东西），确认（点按/点头）才清空本次记录。
+- **只记本次扫街，关掉即清（诚实边界，第二位）**：全部内容只存本次会话内存，关掉 Agent 即清——适用窗口就是正在找牌的这趟路，零隐私残留；下一趟重新从空白过滤器开始，正是正确用法。
+- **为什么胸前设备做不了**：过滤器的命中横幅必须进视线（低头看胸口设备等于又一次离场）；不匹配的牌必须静默计数（胸口设备出声报「不是这块」等于把过滤反过来变成打断）；结束小结要一眼扫全（语音逐条报一遍等于重新占用注意力）。三条都只有头戴设备成立。
+
+## 与邻近 Agent 的分工
+
+- 指向性系列 `sign-reader`：看向任意牌子就读出来——它是**阅读器**；本 Agent 先声明目标、只有匹配的牌才浮出水面——它是**过滤器**。同一只相机，相反的注意力契约。
+- `focus-shield`（F01）：声音的会话门禁——白名单词打断，其余只记。本 Agent 是它的视觉孪生：声明的目标打断，其余牌只计。待机时才能改规则、零落盘两条纪律是共用的。
+- `shelf-sweep`（C05）：证明你面对的货架都扫过了。本 Agent 不证明覆盖——它只回答「你要找的那块牌，在你已经看过的牌里有没有」。
+
+## 功能流程
+
+1. **定目标（TGT，待机时）**：在示例目标间轮换（全家 → 星巴克 → 中山路128号 → 7-ELEVEN）；DIR 设定拍照时的面向（左/正前/右轮换）；扫街中改目标会被拒绝。
+2. **开始扫街（START / 点按 / 头稳点头）**：状态行明说「只有含目标的牌才亮，其余牌只计不打断」。
+3. **拍牌读字（PHOTO / 点按）**：telephoto 拍照 → LLM 读牌面文字 → 包含比对；失败不计数，重拍一次。
+4. **命中才亮（匹配）**：读出文字含目标 → 视线内横幅 + TTS 报一次「找到了」和面向；DEL 只清横幅，不动已看过。
+5. **不匹配只计（不匹配）**：已看过加一、进列表，不亮屏、不出声。
+6. **结束与小结（END）**：小结列出看过几块、命中几块、命中牌面与面向；返回键回到扫街（不删东西），确认后清空本次记录。
+7. **演示（DEMO）**：四段演示——扫街开始（目标全家）→ 不匹配牌「肯德基」静默计数（看过 1 块，无横幅、无 TTS）→ 命中牌「全家便利店 · 右」横幅 + TTS → 扫街小结（看过 2 块，命中 1 块）；已有用户扫街时 DEMO 拒绝，绝不覆盖。
+
+## 手势映射
+
+| 手势/按键 | 动作 |
+|---|---|
+| 点按（Enter） | 待机：开始扫街；扫街中：拍牌读字；小结页：确认并清空 |
+| 双击（Backspace） | 小结页：回到扫街；扫街中：无动作并说明（END 结束扫街，DEL 清横幅）；待机：无动作并说明 |
+| 上滑（ArrowUp） | 已看过列表下一条 |
+| 下滑（ArrowDown） | 已看过列表上一条 |
+| 头稳 + 点头 | 待机：开始扫街；小结页：确认并清空；扫街中：无效并说明（点头绝不拍牌）；不稳的点头不计入 1.2 秒锁 |
+| 屏上按钮 | DEMO 演示 / START 开始 / PHOTO 拍牌 / TGT 换目标 / DIR 换面向 / SPEAK 朗读当前状态 / DEL 清横幅 / END 结束出小结 / BACK 返回 |
+
+## 权限说明
+
+- 只申请 `CAMERA`（app.json 的 `permissions` 为 `["CAMERA"]`，静态校验明确断言这一点）。
+- telephoto 拍照：ImageCapture `telephoto` + 宿主 LLM 图片输入读牌面文字，两者都包在 try/catch 里，预览环境不可用时软失败（不计数）。
+- 不申请 `RECORD_AUDIO`（没有任何语音输入环节：目标从示例池里选，面向用 DIR 点按，确认靠手势）、不申请 `GEOLOCATION`（找牌不需要定位）。
+
+## 打包与预览命令
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+~/tools/bin/aix pack . -o ../dist/sign-filter.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+本地预览截图管线见 `~/workspace/custom-skills/rokid-preview-screenshots/SKILL.md`（本地 Ink + puppeteer，480×352；本 Agent 的探针脚本在 `~/workspace/preview-tools/shot-sign-filter.js`、`probe-sign-filter*.js`）。
 
-## 标准工作流
+## 真机测试信息表
 
-<div align="center">
-
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
-
-</div>
-
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
-
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 项目 | 内容 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Studio 名称 | （导入后回填） |
+| Version / Build | 1.0.0 / （导入后回填） |
+| App Category | （导入后回填） |
+| Intent Description | （导入后回填） |
+| Agent ID | （导入后回填） |
+| 状态 | 未导入（本地全流程完成，待 GO 在 Global Studio 导入 + 真机测试） |
 
-**分支法要点**
+## 预览截图
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+![待机：目标全家](../screenshots/sign-filter/preview-sign-filter-idle.png)
+![扫街进行中：DEMO 第 1 段](../screenshots/sign-filter/preview-sign-filter-scanning.png)
+![不匹配静默计数：DEMO 第 2 段](../screenshots/sign-filter/preview-sign-filter-nonmatch.png)
+![命中横幅：DEMO 第 3 段](../screenshots/sign-filter/preview-sign-filter-hit.png)
+![扫街小结：DEMO 第 4 段](../screenshots/sign-filter/preview-sign-filter-summary.png)
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+## 提审资料 (Review Submission)
 
-1. 在仓库 `aix/` 目录里点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+### Feature Description
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+陌生街区找牌的过滤器：满街牌子都在抢注意力，找一家店或一个门牌时，眼睛要对每块牌都做一次读加判断。本 Agent 先声明目标（示例：全家 / 星巴克 / 中山路128号 / 7-ELEVEN），然后转头扫街——每块看向的牌子停稳拍照，LLM 读出牌面文字；只有读出的文字包含目标时，才亮起横幅并 TTS 报一次找到了和拍照时的面向；不匹配的牌只在已看过计数里默默加一，不亮屏、不出声。诚实边界：没有牌子数据库，匹配只是对读出文字的包含比对，读错字可能漏报或误报；没有定位，方位只是拍照时的面向；数据只存本次扫街内存，关掉即清。权限仅 CAMERA。
 
-</details>
+### Opening Message
 
-## 海外链路（全链路海外，缺一不可）
+**先定目标，再扫街——只有你要的那块牌才配打断你。**
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+- 待机时定目标：TGT 在示例目标间轮换，DIR 设定拍照时的面向（左/正前/右）
+- START 开始扫街：状态行明说只有含目标的牌才亮，其余牌只计不打断
+- PHOTO 拍牌读字：telephoto 拍照 → LLM 读牌面文字 → 包含比对；失败不计数，重拍一次
+- 命中：读出文字含目标 → 视线内横幅 + TTS 报一次找到了和面向；DEL 只清横幅，不动已看过
+- 不匹配：已看过加一、进列表，不亮屏、不出声
+- END 出扫街小结：看过几块、命中几块、命中牌面与面向；返回键回到扫街，确认后清空本次记录
+- 诚实边界：没有牌子数据库，读错字可能漏报或误报；没有定位，方位只是拍照时的面向；数据只存本次扫街，关掉即清
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Preview Media
 
-## 真机测试（云端下发）
+- 图片：上述 5 张预览截图（待机、扫街进行中、不匹配静默计数、命中横幅、扫街小结）
+- 视频：真机阶段补（需眼镜实拍）
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+### Change Log
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
-
-</details>
-
-## 提交审核
-
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
-
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
-
-## 维护约定
-
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
-
-## Agent 清单
-
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
-
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
-| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
-| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
-| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 | `agent-elder-day` |
-| W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 | `agent-stove-watch` |
-| W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 | `agent-bath-watch` |
-| W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 | `agent-laundry-watch` |
-| W04 | [signal-watch](signal-watch/) | 医院/银行/取餐叫号，大屏节律提醒回看，差3号喊你准备 | `agent-signal-watch` |
-| W05 | [door-watch](door-watch/) | 里屋开会戴耳机，守听门铃敲门快递叫你回看 | `agent-door-watch` |
-| H01 | [number-catch](number-catch/) | 号码拍下放大核对，常驻视线内不用默念 | `agent-number-catch` |
-| H02 | [code-hold](code-hold/) | 临时码复述存住，要输入时逐段显示 | `agent-code-hold` |
-| H03 | [voice-list](voice-list/) | 复述成清单挂在视线里，看向货架逐项点头勾掉 | `agent-voice-list` |
-| H04 | [route-hold](route-hold/) | 复述问路线路存步骤，走时只显示当前一步点头前进 | `agent-route-hold` |
-| H05 | [seat-catch](seat-catch/) | 拍票根存座位号，逐排逐座只报相对差 | `agent-seat-catch` |
-| C01 | [drop-search](drop-search/) | 掉落小物脚边 6 区逐区手摸，查完才报没找到 | `agent-drop-search` |
-| C01 | [last-glance](last-glance/) | 离开前环视存档最后画面，焦虑时按区回放 | `agent-last-glance` |
-| C02 | [room-sweep](room-sweep/) | 睡前逐项巡房确认打勾，漏项按方位提醒补看 | `agent-room-sweep` |
-| C03 | [proof-sweep](proof-sweep/) | 逐行指读记进度，跳行漏段当场提醒给覆盖率 | `agent-proof-sweep` |
-| C04 | [pack-sweep](pack-sweep/) | 清单逐件看向登记，出门前点名没装的那几件 | `agent-pack-sweep` |
-| C05 | [shelf-sweep](shelf-sweep/) | 货架分层分段记已扫格，没扫的格点名提醒 | `agent-shelf-sweep` |
-| F01 | [focus-shield](focus-shield/) | 只放行白名单声音，其余只记时间线休息时摘要 | `agent-focus-shield` |
+**Build 1.0.0**
+- Features added：目标声明（示例目标池，待机时可换）；扫街拍牌（telephoto + LLM 读字）；包含比对过滤（命中横幅 + 一次 TTS，不匹配只计）；拍照时面向申报（DIR）；扫街小结（看过/命中/命中牌面与面向）；DEMO 四段演示；DEL 清横幅/小结确认清空；本次扫街内存零落盘；头稳点头纪律（扫街中点头不拍牌，不稳点头不占锁）。
+- Improvements：无（首版）。
+- Fixes：无（首版）。
