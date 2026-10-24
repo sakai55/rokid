@@ -1,5 +1,12 @@
 # site-patrol — 工地巡检（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-site-patrol
+```
+
+
 50 个「指向性生活问题」Agent 的第 49 个。工地、仓库巡检最难的
 不是看，是**记**：六个点走一圈，双手拿着工具和材料，脑子里还
 要装着「消防器材看了、出口好像堵着、配电箱还没去」。本 Agent
