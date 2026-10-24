@@ -264,3 +264,14 @@ aix preview .                               # 本地预览（起服务 / --html-
 | S04 | [standup-echo](standup-echo/) | 守听站会只亮关联句，未命中默记摘要会后查 | `agent-standup-echo` |
 | S05 | [gift-clue](gift-clue/) | 日常聊天默记想要句成线索卡，按人回放 | `agent-gift-clue` |
 | B01 | [eye-rest](eye-rest/) | 头稳凝视近处满20分钟提醒远眺，抬头确认 | `agent-eye-rest` |
+| G01 | [nod-count](nod-count/) | 语音指导10次慢速点头，低头回正算一次 | `agent-nod-count` |
+| G02 | [turn-count](turn-count/) | 语音指导左右转头交替，各5次满10次 | `agent-turn-count` |
+| B02 | [water-watch](water-watch/) | 久未看向水杯亮屏提醒喝水，凝视确认 | `agent-water-watch` |
+| G03 | [ear-tilt](ear-tilt/) | 左右贴耳各3次，稳住5秒才算一次 | `agent-ear-tilt` |
+| G04 | [stretch-hold](stretch-hold/) | 仰头低头交替拉伸，各保持5秒各3次 | `agent-stretch-hold` |
+| B03 | [breath-pace](breath-pace/) | 视线内呼吸节拍光点，跟着看就行 | `agent-breath-pace` |
+| G05 | [neck-clock](neck-clock/) | 按报出的时钟点位转头，每点必回正 | `agent-neck-clock` |
+| B04 | [stand-move](stand-move/) | 久坐超阈值提醒起身，环视一圈作确认 | `agent-stand-move` |
+| G06 | [chin-tuck](chin-tuck/) | 下巴小幅后收保持5秒，8次收下巴操 | `agent-chin-tuck` |
+| B05 | [snack-aware](snack-aware/) | 看向零食先亮今天第几次，吃不吃你决定 | `agent-snack-aware` |
+| G07 | [steady-hold](steady-hold/) | 头稳住不动满10秒胜，动了重计 | `agent-steady-hold` |
