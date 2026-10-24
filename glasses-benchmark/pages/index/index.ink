@@ -10,7 +10,7 @@ import wx from 'wx';
 export default {
   data: {
     summary: 'READY · 0/23 PASS',
-    appVersion: 'v1.1.2',
+    appVersion: 'v1.1.3',
     deviceLine: '-',
     lastEvent: 'EVT: temple tap = run focused · swipe = move focus',
     renderTick: 0,

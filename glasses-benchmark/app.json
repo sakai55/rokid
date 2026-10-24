@@ -1,1 +1,1 @@
-{"pages":["pages/index/index"],"permissions":["GEOLOCATION","CAMERA","RECORD_AUDIO"],"window":{"navigationBarTitleText":"Glasses Benchmark"}}
+{"name":"Glasses Benchmark","description":"Rokid Glasses AIUI Agent benchmark - tests all glasses functions","pages":["pages/index/index"],"permissions":["GEOLOCATION","CAMERA","RECORD_AUDIO"],"window":{"navigationBarTitleText":"Glasses Benchmark"}}
