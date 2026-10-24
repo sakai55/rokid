@@ -235,3 +235,6 @@ aix preview .                               # 本地预览（起服务 / --html-
 | C01 | [last-glance](last-glance/) | 离开前环视存档最后画面，焦虑时按区回放 | `agent-last-glance` |
 | C02 | [room-sweep](room-sweep/) | 睡前逐项巡房确认打勾，漏项按方位提醒补看 | `agent-room-sweep` |
 | C03 | [proof-sweep](proof-sweep/) | 逐行指读记进度，跳行漏段当场提醒给覆盖率 | `agent-proof-sweep` |
+| C04 | [pack-sweep](pack-sweep/) | 清单逐件看向登记，出门前点名没装的那几件 | `agent-pack-sweep` |
+| C05 | [shelf-sweep](shelf-sweep/) | 货架分层分段记已扫格，没扫的格点名提醒 | `agent-shelf-sweep` |
+| F01 | [focus-shield](focus-shield/) | 只放行白名单声音，其余只记时间线休息时摘要 | `agent-focus-shield` |
