@@ -1,49 +1,50 @@
 <script def>
 {
-  "navigationBarTitleText": "Glasses Benchmark"
+  "navigationBarTitleText": "眼镜全功能自检"
 }
 </script>
 
 <script setup>
 import wx from 'wx';
 
+var PAGE_SIZE = 4;
+
 export default {
   data: {
-    summary: 'READY · 0/23 PASS',
-    appVersion: 'v1.1.3',
+    summary: '就绪 · 共 23 项',
+    appVersion: 'v2.0.0',
     deviceLine: '-',
-    lastEvent: 'EVT: temple tap = run focused · swipe = move focus',
+    lastEvent: '单击镜腿开始测试 · 滑动翻页看结果',
     renderTick: 0,
     running: false,
-    focusKey: 'runall',
-    scrollTarget: '',
-    runCls: 'btn btn-main btn-focus',
-    speakCls: 'btn',
-    listenCls: 'btn',
+    runLabel: '开始测试',
+    page: 0,
+    pageText: '第 1/6 页',
+    pageItems: [],
     tests: [
-      { id: 'device', name: '01 Device', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'navigator identity / versions / language', fcls: 'row' },
-      { id: 'display', name: '02 Display', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'viewport / rendering / redraw burst', fcls: 'row' },
-      { id: 'cpu', name: '03 CPU', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'JS math loop throughput', fcls: 'row' },
-      { id: 'crypto', name: '04 Crypto', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'random + SHA-256 digest', fcls: 'row' },
-      { id: 'storage', name: '05 Storage', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'localStorage + wx storage sync', fcls: 'row' },
-      { id: 'netinfo', name: '06 Net Info', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'online state + connection quality', fcls: 'row' },
-      { id: 'fetch', name: '07 Net Fetch', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'HTTPS round-trip to example.com', fcls: 'row' },
-      { id: 'canvas', name: '08 Canvas 2D', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'gradient / shapes / text / flush', fcls: 'row' },
-      { id: 'audio', name: '09 Audio Out', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'Web Audio oscillator via speaker', fcls: 'row' },
-      { id: 'mic', name: '10 Microphone', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'enumerate + 4 mic modes + 0.9s rec', fcls: 'row' },
-      { id: 'camera', name: '11 Camera', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'photo: wide / telephoto / default', fcls: 'row' },
-      { id: 'accel', name: '12 Accel', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'accelerometer reading', fcls: 'row' },
-      { id: 'gyro', name: '13 Gyro/Ori', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'gyroscope + absolute orientation', fcls: 'row' },
-      { id: 'geo', name: '14 Geolocation', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'single position fix', fcls: 'row' },
-      { id: 'ble', name: '15 Bluetooth', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'BLE availability + known devices', fcls: 'row' },
-      { id: 'battery', name: '16 Battery', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'level + charging state', fcls: 'row' },
-      { id: 'tts', name: '17 TTS Synth', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'synthesize pipeline (SPEAK = audible)', fcls: 'row' },
-      { id: 'asr', name: '18 ASR Caps', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'recognition capabilities (LISTEN = live)', fcls: 'row' },
-      { id: 'llm', name: '19 LLM', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'LanguageModel availability + prompt', fcls: 'row' },
-      { id: 'barcode', name: '20 Barcode', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'BarcodeDetector formats', fcls: 'row' },
-      { id: 'interaction', name: '21 Interaction', status: 'MANUAL', cls: 'st st-manual', msText: '-', detail: 'press a key / nod head / voice wakeup', fcls: 'row' },
-      { id: 'eyetrack', name: '22 EyeTrack', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'boundary: platform has NO eye-tracking API', fcls: 'row' },
-      { id: 'ocr', name: '23 OCR', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'boundary: platform has NO OCR API', fcls: 'row' }
+      { id: 'device', name: '01 设备信息', speak: '设备信息', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'navigator 身份 / 版本 / 语言 / 地区' },
+      { id: 'display', name: '02 显示', speak: '显示', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '视口 / 渲染开关 / 连续重绘' },
+      { id: 'cpu', name: '03 算力', speak: '算力', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'JS 数学循环吞吐' },
+      { id: 'crypto', name: '04 加密', speak: '加密', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '随机数 + SHA-256 摘要' },
+      { id: 'storage', name: '05 存储', speak: '存储', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'localStorage + wx 同步存储读写' },
+      { id: 'netinfo', name: '06 网络信息', speak: '网络信息', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '在线状态 / 连接类型与质量' },
+      { id: 'fetch', name: '07 网络请求', speak: '网络请求', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'HTTPS 请求往返（example.com）' },
+      { id: 'canvas', name: '08 画布', speak: '画布', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'Canvas 2D 绘制 + flush' },
+      { id: 'barcode', name: '09 条码', speak: '条码', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'BarcodeDetector 支持格式' },
+      { id: 'audio', name: '10 音频播放', speak: '音频播放', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'Web Audio 振荡器（扬声器）' },
+      { id: 'mic', name: '11 麦克风', speak: '麦克风', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '四种官方模式探测 + 0.9 秒录音' },
+      { id: 'camera', name: '12 相机', speak: '相机', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '三种官方模式拍照 + 实际像素' },
+      { id: 'accel', name: '13 加速度', speak: '加速度', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '加速度计读数' },
+      { id: 'gyro', name: '14 陀螺与方向', speak: '陀螺与方向', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '陀螺仪 + 绝对方向四元数' },
+      { id: 'geo', name: '15 定位', speak: '定位', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '单次定位 + 精度' },
+      { id: 'ble', name: '16 蓝牙', speak: '蓝牙', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'BLE 可用性 + 已知设备数' },
+      { id: 'battery', name: '17 电池', speak: '电池', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '电量 + 充电状态（不支持时跳过）' },
+      { id: 'tts', name: '18 语音合成', speak: '语音合成', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'synthesize 生成（每项结果都会语音播报）' },
+      { id: 'asr', name: '19 语音识别', speak: '语音识别', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '识别能力查询' },
+      { id: 'llm', name: '20 大模型', speak: '大模型', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'LanguageModel 可用性 + 短推理' },
+      { id: 'interaction', name: '21 交互', speak: '交互', status: 'MANUAL', cls: 'st st-manual', msText: '-', detail: '开始后按语音提示做 6 个动作' },
+      { id: 'eyetrack', name: '22 眼动追踪', speak: '眼动追踪', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '边界：平台无眼动追踪 API，恒跳过' },
+      { id: 'ocr', name: '23 文字识别', speak: '文字识别', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: '边界：平台无 OCR API，恒跳过' }
     ]
   },
 
@@ -56,101 +57,68 @@ export default {
     } catch (e) { line = 'navigator n/a'; }
     this.setData({ deviceLine: line });
     try { this.enableWorldAwareness(); } catch (e) { /* optional */ }
-    this._applyFocus();
+    this._syncPage();
   },
 
-  onUnload() {
-    if (this._recog) { try { this._recog.abort(); } catch (e) {} this._recog = null; }
-  },
-
+  // Temple input model (v2): one button only. Tap (Enter / GlobalHook) or a
+  // nod starts the run; swipes (ArrowUp/Down) flip result pages instead of
+  // scrolling. Double-tap (Backspace) stays with the host.
   onKeyDown(event) {
     var code = event && event.code;
-    this._noteEvent('keyDown ' + code);
-    // Temple touchpad arrives as key events (tap = Enter / GlobalHook,
-    // swipe = ArrowUp/ArrowDown). The host does not turn these into button
-    // taps, so the page maps them itself: swipe moves a focus highlight,
-    // tap (or a nod) activates whatever is focused. Default focus: RUN ALL.
-    if (code === 'ArrowDown') this._moveFocus(1);
-    else if (code === 'ArrowUp') this._moveFocus(-1);
-    else if (code === 'Enter' || code === 'GlobalHook') this._activateFocused();
-    // Backspace is left to the host (back / exit).
+    if (code === 'Enter' || code === 'GlobalHook') this._guideTap = true;
+    if (code === 'ArrowDown') this._setPage(1);
+    else if (code === 'ArrowUp') this._setPage(-1);
+    else if (code === 'Enter' || code === 'GlobalHook') this._primary();
   },
-  onVoiceWakeup(event) { this._noteEvent('wakeup ' + ((event && event.keyword) || '')); },
+  onVoiceWakeup(event) {
+    this.setData({ lastEvent: 'EVT: wakeup ' + ((event && event.keyword) || '') });
+  },
   onHeadGesture(event) {
-    this._noteEvent('gesture ' + ((event && event.gesture) || ''));
-    if (event && event.gesture === 'nod') this._activateFocused();
+    if (event && event.gesture === 'nod') {
+      this._guideNod = true;
+      this._primary();
+    }
   },
   onOrientationStabilityChange(event) {
-    if (event && event.stable) this._noteEvent('orientation stable');
+    if (event && event.stable) this.setData({ lastEvent: 'EVT: 头部已稳定' });
   },
 
-  _noteEvent(text) {
-    this.setData({ lastEvent: 'EVT: ' + text });
-    this._setTest('interaction', { status: 'PASS', detail: 'last: ' + text });
-  },
+  onPrimary() { this._primary(); },
 
-  _focusOrder() {
-    var order = ['runall', 'speak', 'listen'];
-    this.data.tests.forEach(function (t) { order.push(t.id); });
-    return order;
-  },
-
-  _applyFocus() {
-    var key = this.data.focusKey;
-    var isBtn = key === 'runall' || key === 'speak' || key === 'listen';
-    this.setData({
-      runCls: 'btn btn-main' + (key === 'runall' ? ' btn-focus' : ''),
-      speakCls: 'btn' + (key === 'speak' ? ' btn-focus' : ''),
-      listenCls: 'btn' + (key === 'listen' ? ' btn-focus' : ''),
-      scrollTarget: isBtn ? '' : 'row-' + key
-    });
-    var list = this.data.tests.map(function (t) {
-      return {
-        id: t.id, name: t.name, status: t.status, cls: t.cls,
-        msText: t.msText, detail: t.detail,
-        fcls: t.id === key ? 'row row-focus' : 'row'
-      };
-    });
-    this.setData({ tests: list });
-  },
-
-  _moveFocus(dir) {
-    var order = this._focusOrder();
-    var idx = order.indexOf(this.data.focusKey);
-    if (idx < 0) idx = 0;
-    idx = (idx + dir + order.length) % order.length;
-    var key = order[idx];
-    this.setData({ focusKey: key });
-    this._applyFocus();
-    var label = key;
-    if (key === 'runall') label = 'RUN ALL';
-    else if (key === 'speak') label = 'SPEAK';
-    else if (key === 'listen') label = 'LISTEN';
-    else {
-      for (var i = 0; i !== this.data.tests.length; i++) {
-        if (this.data.tests[i].id === key) { label = this.data.tests[i].name; break; }
-      }
-    }
-    this.setData({ lastEvent: 'EVT: focus → ' + label + ' (tap to run)' });
-  },
-
-  _activateFocused() {
-    var key = this.data.focusKey;
-    if (key === 'runall') { this.runAll(); return; }
-    if (key === 'speak') { this.speakTest(); return; }
-    if (key === 'listen') { this.listenTest(); return; }
+  _primary() {
     if (this.data.running) return;
-    if (key === 'interaction') {
-      this._setTest('interaction', { status: 'MANUAL', detail: 'listening: press key / nod / wakeup' });
-      return;
-    }
-    this._runOne(key);
+    this.runAll();
+  },
+
+  _pages() { return Math.ceil(this.data.tests.length / PAGE_SIZE); },
+
+  _syncPage(list) {
+    var tests = list || this.data.tests;
+    var pages = Math.ceil(tests.length / PAGE_SIZE);
+    var page = this.data.page;
+    if (page < 0) page = 0;
+    if (page > pages - 1) page = pages - 1;
+    this.setData({
+      page: page,
+      pageItems: tests.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE),
+      pageText: '第 ' + (page + 1) + '/' + pages + ' 页'
+    });
+  },
+
+  _setPage(dir) {
+    var page = this.data.page + dir;
+    if (page < 0) page = 0;
+    if (page > this._pages() - 1) page = this._pages() - 1;
+    if (page === this.data.page) return;
+    this.setData({ page: page });
+    this._syncPage();
+    this.setData({ lastEvent: '翻页：' + this.data.pageText + ' · 单击开始/重测' });
   },
 
   _setTest(id, patch) {
     var list = this.data.tests.map(function (t) {
       if (t.id !== id) return t;
-      var n = { id: t.id, name: t.name, status: t.status, cls: t.cls, msText: t.msText, detail: t.detail, fcls: t.fcls || 'row' };
+      var n = { id: t.id, name: t.name, speak: t.speak, status: t.status, cls: t.cls, msText: t.msText, detail: t.detail };
       if (patch.status) {
         n.status = patch.status;
         n.cls = 'st st-' + patch.status.toLowerCase();
@@ -167,9 +135,10 @@ export default {
       else if (t.status === 'SKIP') { skip++; done++; }
     });
     this.setData({
-      summary: (this.data.running ? 'RUNNING' : 'DONE ' + done + '/' + list.length) +
-        ' · PASS ' + pass + ' · FAIL ' + fail + ' · SKIP ' + skip
+      summary: (this.data.running ? '运行中 · 已完成 ' : '已完成 ') + done + '/' + list.length +
+        ' · 通过 ' + pass + ' · 失败 ' + fail + ' · 跳过 ' + skip
     });
+    this._syncPage(list);
   },
 
   _withTimeout(promise, ms, label) {
@@ -186,43 +155,77 @@ export default {
     return String(e.message || e.name || e).slice(0, 60);
   },
 
-  async runAll() {
-    if (this.data.running) return;
-    this.setData({ running: true, lastEvent: 'EVT: benchmark running...' });
-    var ids = ['device', 'display', 'cpu', 'crypto', 'storage', 'netinfo', 'fetch',
-      'canvas', 'audio', 'mic', 'camera', 'accel', 'gyro', 'geo', 'ble', 'battery',
-      'tts', 'asr', 'llm', 'barcode', 'eyetrack', 'ocr'];
-    for (var i = 0; i !== ids.length; i++) {
-      await this._runOne(ids[i]);
-    }
-    this.setData({ running: false, lastEvent: 'EVT: benchmark finished - see summary' });
-    this._setTest('barcode', {});
+  // Voice feedback: every finished item is announced once (queued TTS).
+  _announce(text) {
+    try {
+      if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return;
+      speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+    } catch (e) { /* announcements must never break the run */ }
   },
 
-  runOne(event) {
-    var ds = (event && event.currentTarget && event.currentTarget.dataset) ||
-      (event && event.target && event.target.dataset) || {};
-    var id = ds.id;
-    if (!id || this.data.running) return;
-    if (id === 'interaction') {
-      this._setTest('interaction', { status: 'MANUAL', detail: 'listening: press key / nod / wakeup' });
-      return;
+  _announceResult(id, status) {
+    var item = null;
+    for (var i = 0; i !== this.data.tests.length; i++) {
+      if (this.data.tests[i].id === id) { item = this.data.tests[i]; break; }
     }
-    this._runOne(id);
+    if (!item) return;
+    if (id === 'eyetrack') { this._announce('眼动追踪，平台没有这个 API，跳过'); return; }
+    if (id === 'ocr') { this._announce('文字识别，平台没有 OCR API，跳过'); return; }
+    var word = status === 'PASS' ? '通过' : (status === 'FAIL' ? '失败' : '跳过');
+    this._announce(item.speak + '，' + word);
+  },
+
+  async runAll() {
+    if (this.data.running) return;
+    this.setData({ running: true, runLabel: '测试中…', lastEvent: '开始测试…' });
+    this._announce('开始测试，共二十三项');
+    var ids = ['device', 'display', 'cpu', 'crypto', 'storage', 'netinfo', 'fetch',
+      'canvas', 'barcode', 'audio', 'mic', 'camera', 'accel', 'gyro', 'geo', 'ble',
+      'battery', 'tts', 'asr', 'llm', 'interaction', 'eyetrack', 'ocr'];
+    for (var i = 0; i !== ids.length; i++) {
+      var r = await this._runOne(ids[i]);
+      this._announceResult(ids[i], r.status);
+    }
+    this.setData({ running: false, runLabel: '重新测试', lastEvent: '全部完成 · 滑动镜腿翻页查看结果' });
+    this._setTest('ocr', {});
+    var pass = 0, fail = 0, skip = 0;
+    this.data.tests.forEach(function (t) {
+      if (t.status === 'PASS') pass++;
+      else if (t.status === 'FAIL') fail++;
+      else if (t.status === 'SKIP') skip++;
+    });
+    this._announce('全部完成。通过' + pass + '项，失败' + fail + '项，跳过' + skip + '项');
   },
 
   async _runOne(id) {
     var t0 = performance.now();
-    this._setTest(id, { status: 'RUN', msText: '...', detail: 'running...' });
+    this._setTest(id, { status: 'RUN', msText: '...', detail: '测试中…' });
     try {
       var r = await this._dispatch(id);
       var ms = Math.round(performance.now() - t0);
       this._setTest(id, { status: r.status, msText: ms + 'ms', detail: r.detail });
+      this._followItem(id);
+      this.setData({ lastEvent: '已完成：' + id + ' · ' + r.status });
       return r;
     } catch (e) {
       var ms2 = Math.round(performance.now() - t0);
-      this._setTest(id, { status: 'FAIL', msText: ms2 + 'ms', detail: this._err(e) });
-      return { status: 'FAIL', detail: this._err(e) };
+      var detail = this._err(e);
+      this._setTest(id, { status: 'FAIL', msText: ms2 + 'ms', detail: detail });
+      this._followItem(id);
+      this.setData({ lastEvent: '已完成：' + id + ' · FAIL' });
+      return { status: 'FAIL', detail: detail };
+    }
+  },
+
+  _followItem(id) {
+    // While running, the result pages auto-follow the newest finished item.
+    if (!this.data.running) return;
+    for (var i = 0; i !== this.data.tests.length; i++) {
+      if (this.data.tests[i].id === id) {
+        var page = Math.floor(i / PAGE_SIZE);
+        if (page !== this.data.page) { this.setData({ page: page }); this._syncPage(); }
+        return;
+      }
     }
   },
 
@@ -236,6 +239,7 @@ export default {
       case 'netinfo': return this._tNetInfo();
       case 'fetch': return this._tFetch();
       case 'canvas': return this._tCanvas();
+      case 'barcode': return this._tBarcode();
       case 'audio': return this._tAudio();
       case 'mic': return this._tMic();
       case 'camera': return this._tCamera();
@@ -247,7 +251,7 @@ export default {
       case 'tts': return this._tTts();
       case 'asr': return this._tAsr();
       case 'llm': return this._tLlm();
-      case 'barcode': return this._tBarcode();
+      case 'interaction': return this._tInteract();
       case 'eyetrack': return this._tNoApi('eye');
       case 'ocr': return this._tNoApi('ocr');
       default: return Promise.resolve({ status: 'SKIP', detail: 'no test' });
@@ -331,6 +335,15 @@ export default {
     var m = ctx.measureText('CANVAS OK');
     ctx.flush();
     return { status: 'PASS', detail: 'draw + flush ok · text w=' + Math.round(m.width) + 'px' };
+  },
+
+  async _tBarcode() {
+    if (typeof BarcodeDetector === 'undefined') return { status: 'SKIP', detail: 'BarcodeDetector n/a' };
+    var formats = await BarcodeDetector.getSupportedFormats();
+    return {
+      status: 'PASS',
+      detail: formats.length + ' formats · ' + formats.slice(0, 3).join(',')
+    };
   },
 
   async _tAudio() {
@@ -533,17 +546,6 @@ export default {
     return { status: 'PASS', detail: 'synth ok · dur ' + fin.duration + ' · ' + task.state };
   },
 
-  speakTest() {
-    try {
-      speechSynthesis.speak(
-        new SpeechSynthesisUtterance('眼镜基准测试，扬声器播放正常'), 'immediate');
-      this.setData({ lastEvent: 'EVT: TTS speak sent - listen for voice' });
-      this._setTest('tts', { status: 'PASS', detail: 'speak() sent (audible check by ear)' });
-    } catch (e) {
-      this._setTest('tts', { status: 'FAIL', detail: this._err(e) });
-    }
-  },
-
   async _tAsr() {
     var parts = [];
     if (typeof SpeechRecognitionSession !== 'undefined' && SpeechRecognitionSession.getCapabilities) {
@@ -554,32 +556,6 @@ export default {
     }
     parts.push('live ctor ' + (typeof SpeechRecognition !== 'undefined'));
     return { status: 'PASS', detail: parts.join(' · ').slice(0, 72) };
-  },
-
-  listenTest() {
-    var self = this;
-    try {
-      if (typeof SpeechRecognition === 'undefined') throw new Error('SpeechRecognition n/a');
-      if (this._recog) { try { this._recog.abort(); } catch (e) {} }
-      var rec = new SpeechRecognition();
-      this._recog = rec;
-      rec.lang = 'zh-CN';
-      rec.interimResults = false;
-      rec.onresult = function (ev) {
-        try {
-          var txt = ev.results[ev.resultIndex][0].transcript;
-          self.setData({ lastEvent: 'ASR: ' + txt });
-          self._setTest('asr', { status: 'PASS', detail: 'heard: ' + String(txt).slice(0, 44) });
-        } catch (e) {}
-      };
-      rec.onerror = function (ev) {
-        self._setTest('asr', { status: 'FAIL', detail: 'asr ' + self._err(ev.error || ev) });
-      };
-      rec.start();
-      this.setData({ lastEvent: 'EVT: listening... say something' });
-    } catch (e) {
-      this._setTest('asr', { status: 'FAIL', detail: this._err(e) });
-    }
   },
 
   async _tLlm() {
@@ -598,13 +574,117 @@ export default {
     }
   },
 
-  async _tBarcode() {
-    if (typeof BarcodeDetector === 'undefined') return { status: 'SKIP', detail: 'BarcodeDetector n/a' };
-    var formats = await BarcodeDetector.getSupportedFormats();
-    return {
-      status: 'PASS',
-      detail: formats.length + ' formats · ' + formats.slice(0, 3).join(',')
-    };
+  _sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); },
+
+  _angDiff(a, b) {
+    var d = a - b;
+    while (d > Math.PI) d -= Math.PI * 2;
+    while (d < -Math.PI) d += Math.PI * 2;
+    return d;
+  },
+
+  _waitStage(checkFn, timeoutMs) {
+    var t0 = Date.now();
+    var self = this;
+    return new Promise(function (resolve) {
+      var iv = setInterval(function () {
+        var ok = false;
+        try { ok = checkFn(); } catch (e) {}
+        if (ok) { clearInterval(iv); resolve(true); }
+        else if (Date.now() - t0 > timeoutMs) { clearInterval(iv); resolve(false); }
+      }, 150);
+      self._stageIv = iv;
+    });
+  },
+
+  // Guided interaction test: items that need the wearer cannot be checked
+  // passively, so the agent prompts by voice (and on screen) and verifies
+  // each action from the orientation sensor / gesture / key events:
+  // turn head left, turn right, look up, look down, nod, tap the temple.
+  // Directions are judged relative to each stage's start pose and the two
+  // turn stages must be in opposite directions, so no assumption is made
+  // about the sensor's yaw sign convention.
+  async _tInteract() {
+    var Ori = typeof AbsoluteOrientationSensor !== 'undefined' ? AbsoluteOrientationSensor : null;
+    if (!Ori) return { status: 'SKIP', detail: '方向传感器不可用，无法做引导交互测试' };
+    var self = this;
+    var state = { yaw: null, pitch: null };
+    var sensor = new Ori({ frequency: 30 });
+    sensor.addEventListener('reading', function () {
+      var q = sensor.quaternion;
+      if (!q) return;
+      var x = q[0], y = q[1], z = q[2], w = q[3];
+      state.yaw = Math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z));
+      var s = 2 * (w * x - y * z);
+      state.pitch = s >= 1 ? Math.PI / 2 : (s <= -1 ? -Math.PI / 2 : Math.asin(s));
+    });
+    sensor.addEventListener('error', function () {});
+    sensor.start();
+    try {
+      var t0 = Date.now();
+      while (state.yaw === null && Date.now() - t0 < 3000) await this._sleep(120);
+      if (state.yaw === null) return { status: 'SKIP', detail: '方向传感器无读数，无法做引导交互测试' };
+
+      var marks = [];
+      var prompt = async function (idx, text) {
+        self._setTest('interaction', { detail: '引导 ' + idx + '/6：' + text });
+        self.setData({ lastEvent: '请按语音提示操作：' + text });
+        self._announce(text);
+        await self._sleep(600);
+      };
+
+      // 1-2: turn head left, then right (opposite directions required)
+      var y0 = state.yaw, d1 = 0;
+      await prompt(1, '请向左转头');
+      var ok1 = await this._waitStage(function () {
+        d1 = self._angDiff(state.yaw, y0);
+        return Math.abs(d1) >= 0.35;
+      }, 12000);
+      marks.push('左转' + (ok1 ? '✓' : '✗'));
+      var y1 = state.yaw, dir1 = d1 >= 0 ? 1 : -1, d2 = 0;
+      await prompt(2, '请向右转头');
+      var ok2 = await this._waitStage(function () {
+        d2 = self._angDiff(state.yaw, y1);
+        return Math.abs(d2) >= 0.35 && (d2 >= 0 ? 1 : -1) === -dir1;
+      }, 12000);
+      marks.push('右转' + (ok2 ? '✓' : '✗'));
+
+      // 3-4: look up, then down (opposite pitch directions required)
+      var p0 = state.pitch, dp1 = 0;
+      await prompt(3, '请抬头');
+      var ok3 = await this._waitStage(function () {
+        dp1 = self._angDiff(state.pitch, p0);
+        return Math.abs(dp1) >= 0.22;
+      }, 12000);
+      marks.push('抬头' + (ok3 ? '✓' : '✗'));
+      var p1 = state.pitch, pdir = dp1 >= 0 ? 1 : -1, dp2 = 0;
+      await prompt(4, '请低头');
+      var ok4 = await this._waitStage(function () {
+        dp2 = self._angDiff(state.pitch, p1);
+        return Math.abs(dp2) >= 0.22 && (dp2 >= 0 ? 1 : -1) === -pdir;
+      }, 12000);
+      marks.push('低头' + (ok4 ? '✓' : '✗'));
+
+      // 5: nod (host head-gesture event)
+      this._guideNod = false;
+      await prompt(5, '请点头确认');
+      var ok5 = await this._waitStage(function () { return self._guideNod === true; }, 12000);
+      marks.push('点头' + (ok5 ? '✓' : '✗'));
+
+      // 6: temple tap (Enter / GlobalHook key event)
+      this._guideTap = false;
+      await prompt(6, '请单击镜腿');
+      var ok6 = await this._waitStage(function () { return self._guideTap === true; }, 12000);
+      marks.push('单击' + (ok6 ? '✓' : '✗'));
+
+      var done = marks.filter(function (m) { return m.indexOf('✓') >= 0; }).length;
+      return {
+        status: done === 6 ? 'PASS' : 'FAIL',
+        detail: ('完成 ' + done + '/6：' + marks.join(' ')).slice(0, 72)
+      };
+    } finally {
+      try { sensor.stop(); } catch (e) {}
+    }
   },
 
   // Platform boundary items: these capabilities do NOT exist in the official
@@ -614,12 +694,12 @@ export default {
     if (kind === 'eye') {
       return {
         status: 'SKIP',
-        detail: 'NO eye-tracking API · gaze = head orientation (13/21)'
+        detail: '平台无眼动追踪 API · 凝视=头部朝向（见 14/21）'
       };
     }
     return {
       status: 'SKIP',
-      detail: 'NO OCR API · read text = telephoto photo + LLM (11/19)'
+      detail: '平台无 OCR API · 读文字=长焦拍照+大模型（见 12/20）'
     };
   }
 };
@@ -628,18 +708,16 @@ export default {
 <page>
   <view class="page">
     <view class="head">
-      <text class="title">GLASSES BENCHMARK</text>
+      <text class="title">眼镜全功能自检</text>
       <text class="summary">{{summary}}</text>
       <text class="sub">{{deviceLine}}</text>
     </view>
     <view class="actions">
-      <button class="{{runCls}}" bindtap="runAll">RUN ALL</button>
-      <button class="{{speakCls}}" bindtap="speakTest">SPEAK</button>
-      <button class="{{listenCls}}" bindtap="listenTest">LISTEN</button>
+      <button class="btn btn-main" bindtap="onPrimary">{{runLabel}}</button>
     </view>
     <canvas id="benchCanvas" width="448" height="40" class="bench-canvas"></canvas>
-    <scroll-view class="list" scroll-y="true" scroll-into-view="{{scrollTarget}}">
-      <view ink:for="{{tests}}" class="{{item.fcls}}" id="row-{{item.id}}" bindtap="runOne" data-id="{{item.id}}">
+    <view class="list">
+      <view ink:for="{{pageItems}}" class="row">
         <view class="row-top">
           <text class="name">{{item.name}}</text>
           <text class="{{item.cls}}">{{item.status}}</text>
@@ -647,9 +725,10 @@ export default {
         </view>
         <text class="detail">{{item.detail}}</text>
       </view>
-    </scroll-view>
+    </view>
     <view class="foot-row">
       <text class="foot">{{lastEvent}}</text>
+      <text class="page-num">{{pageText}}</text>
       <text class="ver">{{appVersion}}</text>
     </view>
   </view>
@@ -690,29 +769,19 @@ export default {
 .actions {
   display: flex;
   flex-direction: row;
-  gap: 8px;
   margin-bottom: 8px;
 }
 .btn {
   flex-grow: 1;
-  color: rgba(64,255,94,0.72);
-  border: 1px solid rgba(64,255,94,0.48);
+  color: #40ff5e;
+  border: 1px solid #40ff5e;
   border-radius: 4px;
-  padding: 5px;
-  font-size: 11px;
+  padding: 8px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 16px;
+  line-height: 18px;
   text-align: center;
-}
-.btn-main {
-  color: #40ff5e;
-  border-color: rgba(64,255,94,0.72);
-  background-color: rgba(64,255,94,0.12);
-}
-.btn-focus {
-  color: #40ff5e;
-  border-color: #40ff5e;
-  background-color: rgba(64,255,94,0.30);
+  background-color: rgba(64,255,94,0.18);
 }
 .bench-canvas {
   width: 448px;
@@ -722,16 +791,15 @@ export default {
   margin-bottom: 8px;
 }
 .list {
-  height: 148px;
+  height: 158px;
+  display: flex;
+  flex-direction: column;
 }
 .row {
   display: flex;
   flex-direction: column;
-  padding: 6px 0;
+  padding: 5px 0;
   border-bottom: 1px solid rgba(64,255,94,0.24);
-}
-.row-focus {
-  background-color: rgba(64,255,94,0.14);
 }
 .row-top {
   display: flex;
@@ -784,6 +852,13 @@ export default {
   font-family: monospace;
   font-size: 10px;
   line-height: 14px;
+}
+.page-num {
+  color: rgba(64,255,94,0.72);
+  font-family: monospace;
+  font-size: 10px;
+  line-height: 14px;
+  margin-right: 10px;
 }
 .ver {
   color: rgba(64,255,94,0.48);

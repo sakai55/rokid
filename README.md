@@ -36,47 +36,49 @@ https://github.com/sakai55/rokid/tree/agent-glasses-benchmark
 
 ## 测试项
 
+测试项按官方能力档案（`~/memory/rokid-glasses-capabilities.md`）的顺序编排：
+
 | # | 项目 | 测什么 |
 |---|------|--------|
-| 01 | Device | navigator 身份 / Ink·Skia 版本 / 语言 / 地区 |
-| 02 | Display | 视口尺寸 / 渲染开关 / 12 次连续重绘 |
-| 03 | CPU | 30 万次数学循环吞吐 (ops/s) |
-| 04 | Crypto | getRandomValues + SHA-256 + randomUUID |
-| 05 | Storage | localStorage + wx 同步存储读写 |
-| 06 | Net Info | 在线状态 / 连接类型 / RTT / 下行估算 |
-| 07 | Net Fetch | HTTPS 请求 example.com 往返 |
-| 08 | Canvas 2D | 渐变 / 图形 / 文字 / flush（画布直接可见） |
-| 09 | Audio Out | Web Audio 880Hz 振荡器（扬声器） |
-| 10 | Microphone | 设备枚举 + 四种官方麦克风模式逐个探测（wearer / far-field / near-field / omnidirectional）+ wearer 模式 0.9 秒录音 |
-| 11 | Camera | 取流 + 三种官方模式各拍一张并解码实际像素（wide 2016×2688 / telephoto 2016×1512 / default 3024×4032，回退 wx CameraContext 无模式参数） |
-| 12 | Accel | 加速度计读数 |
-| 13 | Gyro/Ori | 陀螺仪 + 绝对方向四元数 |
-| 14 | Geolocation | 单次定位 + 精度 |
-| 15 | Bluetooth | BLE 可用性 + 已知设备数 |
-| 16 | Battery | 电量 + 充电状态（不支持时 SKIP） |
-| 17 | TTS Synth | speechSynthesis.synthesize；SPEAK 按钮做真人耳确认 |
-| 18 | ASR Caps | 识别能力查询；LISTEN 按钮做实时识别 |
-| 19 | LLM | LanguageModel 可用性 + 一次短推理 |
-| 20 | Barcode | BarcodeDetector 支持格式 |
-| 21 | Interaction | 按键 / 点头手势 / 头稳 / 语音唤醒（被动监听，触发即 PASS） |
-| 22 | EyeTrack（边界） | 平台无眼动追踪 API——恒为 SKIP 并注明：「凝视」=头部朝向+头稳+点头（见 13/21），永不报 PASS |
-| 23 | OCR（边界） | 平台无 OCR API——恒为 SKIP 并注明：读文字走 telephoto 拍照 + LLM 图片输入（见 11/19），永不报 PASS |
+| 01 | 设备信息 | navigator 身份 / Ink·Skia 版本 / 语言 / 地区 |
+| 02 | 显示 | 视口尺寸 / 渲染开关 / 12 次连续重绘 |
+| 03 | 算力 | 30 万次数学循环吞吐 (ops/s) |
+| 04 | 加密 | getRandomValues + SHA-256 + randomUUID |
+| 05 | 存储 | localStorage + wx 同步存储读写 |
+| 06 | 网络信息 | 在线状态 / 连接类型 / RTT / 下行估算 |
+| 07 | 网络请求 | HTTPS 请求 example.com 往返 |
+| 08 | 画布 | Canvas 2D 渐变 / 图形 / 文字 / flush（画布直接可见） |
+| 09 | 条码 | BarcodeDetector 支持格式 |
+| 10 | 音频播放 | Web Audio 880Hz 振荡器（扬声器） |
+| 11 | 麦克风 | 设备枚举 + 四种官方麦克风模式逐个探测（wearer / far-field / near-field / omnidirectional）+ wearer 模式 0.9 秒录音 |
+| 12 | 相机 | 取流 + 三种官方模式各拍一张并解码实际像素（wide 2016×2688 / telephoto 2016×1512 / default 3024×4032，回退 wx CameraContext 无模式参数） |
+| 13 | 加速度 | 加速度计读数 |
+| 14 | 陀螺与方向 | 陀螺仪 + 绝对方向四元数 |
+| 15 | 定位 | 单次定位 + 精度 |
+| 16 | 蓝牙 | BLE 可用性 + 已知设备数 |
+| 17 | 电池 | 电量 + 充电状态（不支持时 SKIP） |
+| 18 | 语音合成 | speechSynthesis.synthesize 生成；运行中每项结果的语音播报同时就是可听确认 |
+| 19 | 语音识别 | 识别能力查询（能力接口 + 构造器存在性） |
+| 20 | 大模型 | LanguageModel 可用性 + 一次短推理 |
+| 21 | 交互 | 引导式：语音+屏幕提示依次做 6 个动作（左转头 / 右转头 / 抬头 / 低头 / 点头 / 单击镜腿），用方向传感器与事件逐个验证，完成几个记几个 |
+| 22 | 眼动追踪（边界） | 平台无眼动追踪 API——恒为 SKIP 并注明：「凝视」=头部朝向+头稳+点头（见 14/21），永不报 PASS |
+| 23 | 文字识别（边界） | 平台无 OCR API——恒为 SKIP 并注明：读文字走 telephoto 拍照 + LLM 图片输入（见 12/20），永不报 PASS |
 
-状态：PASS / FAIL / SKIP（硬件或主机不支持、或平台无此 API）/ MANUAL（需人触发）。
-点任意一行可单独重跑该项；RUN ALL 顺序跑完 01–20 与 22–23。
+状态：PASS / FAIL / SKIP（硬件或主机不支持、或平台无此 API）/ MANUAL（未开始）。
+单击开始后顺序跑完全部 23 项；第 21 项（交互）会用语音逐个提示动作，跟着做即可。每测完一项语音播报结果，全部完成播报汇总。
 
 ## 操作方式（镜腿手势映射）
 
-真机上没有触屏，全部操作走镜腿触控板（页面自己接管按键事件，不依赖宿主把按键转成按钮点击）：
+真机上没有触屏，全部操作走镜腿触控板。界面只有一个按钮，不滚动屏：
 
 | 手势 | 键事件 | 作用 |
 |---|---|---|
-| 单击 | Enter / GlobalHook | 触发当前焦点；打开页面时焦点默认在 **RUN ALL**，单击即开跑全部 |
-| 滑动 | ArrowUp / ArrowDown | 在 RUN ALL / SPEAK / LISTEN / 23 个测试行之间移动焦点（高亮 + 列表自动滚到焦点行） |
-| 点头 | onHeadGesture 'nod' | 与单击相同，触发当前焦点 |
+| 单击 | Enter / GlobalHook | 开始测试；跑完后单击 = 重新测试（运行中单击无动作） |
+| 点头 | onHeadGesture 'nod' | 与单击相同：开始 / 重新测试 |
+| 滑动 | ArrowUp / ArrowDown | 翻页查看结果（每页 4 项，共 6 页；运行中页面自动跟随最新完成项，也可手动翻页） |
 | 双击 | Backspace | 交给系统：返回 / 退出（页面不拦截） |
 
-想单独重跑某一项：滑动把焦点移到该行，单击即可。屏幕按钮同时保留点击绑定，供 Studio 模拟器用鼠标操作。
+屏幕上的「开始测试」按钮同时保留点击绑定，供 Studio 模拟器用鼠标操作。
 
 ## 打包
 
@@ -92,7 +94,7 @@ https://github.com/sakai55/rokid/tree/agent-glasses-benchmark
    在 AIX Packaging 点 **Repackage and Save**，确认顶部出现绿色
    **● Debug version ready — Ready for device debugging**
 3. **Hi Rokid**（海外版，不是国内版 Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包
-4. 对眼镜说「乐奇，打开 glasses-benchmark」，然后**单击镜腿**（焦点默认在 RUN ALL）即开跑；滑动可移焦点到某一行，单击单独重跑该项
+4. 对眼镜说「乐奇，打开 glasses-benchmark」，然后**单击镜腿**即开始测试，逐项听语音播报；跑完后滑动镜腿翻页看结果
 
 注意：07 Fetch 需要眼镜联网（经手机蓝牙/Wi-Fi）；14 定位、10/11 麦克风/相机
 第一次会弹系统授权，拒绝会记 FAIL 并写明原因——这正是要测的。
@@ -106,13 +108,13 @@ https://github.com/sakai55/rokid/tree/agent-glasses-benchmark
 
 ### Feature Description
 
-Glasses Benchmark is a full self-check for Rokid Glasses under AIUI. Tap RUN ALL to run 23 checks: device, display, CPU, crypto, storage, network, Canvas 2D, audio, microphone (all 4 official modes), camera (wide / telephoto / default), sensors, geolocation, Bluetooth, battery, TTS, ASR, LLM, barcode and interaction. Two boundary items state what the platform has no API for — eye tracking and OCR — and always report SKIP, never PASS. Every item shows PASS, FAIL, SKIP or MANUAL with a reason.
+Glasses Benchmark is a self-check for Rokid Glasses, ordered by the official capability list. One button: tap the temple to run 23 checks — device, display, CPU, crypto, storage, network, Canvas 2D, barcode, audio, microphone (4 modes), camera (3 modes), sensors, geolocation, Bluetooth, battery, TTS, ASR, LLM and interaction. Each result is announced by voice; swipe to page through results. Two boundary items (eye tracking, OCR) name capabilities with no platform API and always report SKIP.
 
 ### Opening Message
 
 Hi, I'm **Glasses Benchmark** — your on-glasses self-check.
 
-Tap **RUN ALL** and I'll test 23 items one by one, from display and CPU to camera, sensors, TTS and the built-in LLM. Two items are platform boundaries (no eye-tracking or OCR API exists) and will always show **SKIP** — that's the honest answer, not a failure. Items marked **MANUAL** need a quick tap or your ears to confirm. You can also tap any single row to re-run just that test.
+Tap the temple once and I'll test 23 items one by one, from display and CPU to camera, sensors, TTS and the built-in LLM — and I'll **announce each result by voice** as it finishes. Swipe the temple to page through the results. Two items are platform boundaries (no eye-tracking or OCR API exists) and will always show **SKIP** — that's the honest answer, not a failure.
 
 ### Preview Media
 
@@ -124,6 +126,23 @@ Tap **RUN ALL** and I'll test 23 items one by one, from display and CPU to camer
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### v2.0.0（本地包版本；Studio Build 号待重新打包后生成）
+
+**Features added**
+
+- Per-item voice announcements: every finished check is spoken aloud (pass / fail / skip, with the platform-boundary wording for eye tracking and OCR), plus a spoken summary at the end.
+- Guided interaction check: the interaction item now prompts the wearer by voice through six actions — turn head left, turn right, look up, look down, nod, tap the temple — and verifies each from the orientation sensor (relative direction, opposite directions required), the head-gesture event and the key event.
+- Results are paged, not scrolled: swipe the temple to flip pages (4 items per page, 6 pages); pages auto-follow the newest result while running.
+
+**Improvements**
+
+- Full restructure around a single button: the page now has exactly one control （开始测试 / 重新测试） — tap or nod to start. The separate SPEAK / LISTEN buttons and tap-a-row re-runs are gone; the per-item announcements cover the audible TTS check.
+- Items reordered and renamed in Chinese following the official capability dossier (barcode moves next to Canvas; sensors, voice and LLM grouped as in the dossier).
+
+**Fixes**
+
+- None.
 
 #### v1.1.3（本地包版本；Studio Build 号待重新打包后生成）
 
