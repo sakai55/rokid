@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - in-view teleprompter: your paragraphs sit in your line of sight, nod or tap to advance, dictate your own script by voice, and an optional best-effort AUTO follow advances when your spoken words literally match a coming paragraph","main":"app.js","name":"teleprompter-gaze","version":"1.0.0"}
