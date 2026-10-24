@@ -1,5 +1,12 @@
 # garden-hands — 园艺手记（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-garden-hands
+```
+
+
 50 个「指向性生活问题」Agent 的第 14 个。戴着手套、手上全是泥，
 记不住哪块畦什么时候浇过水 — 不是重复浇就是漏浇。本 Agent 让苗床
 按「你站在园子里看向它的头部朝向」登记，浇完水点一下头就记上
