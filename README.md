@@ -1,5 +1,12 @@
 # plant-doctor — 植物医生（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-plant-doctor
+```
+
+
 50 个「指向性生活问题」Agent 的第 04 个。盆栽蔫了、黄了、生虫了，
 你不知道出了什么问题、也不知道该不该浇水：看着植物拍一张（只作
 记录），把你眼睛看到的症状选出来，眼镜按症状给出最可能的原因和
