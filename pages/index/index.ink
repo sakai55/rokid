@@ -10,6 +10,7 @@ import wx from 'wx';
 export default {
   data: {
     summary: 'READY · 0/23 PASS',
+    appVersion: 'v1.1.2',
     deviceLine: '-',
     lastEvent: 'EVT: temple tap = run focused · swipe = move focus',
     renderTick: 0,
@@ -647,7 +648,10 @@ export default {
         <text class="detail">{{item.detail}}</text>
       </view>
     </scroll-view>
-    <text class="foot">{{lastEvent}}</text>
+    <view class="foot-row">
+      <text class="foot">{{lastEvent}}</text>
+      <text class="ver">{{appVersion}}</text>
+    </view>
   </view>
 </page>
 
@@ -768,11 +772,24 @@ export default {
   line-height: 14px;
   margin-top: 1px;
 }
+.foot-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 6px;
+}
 .foot {
+  flex-grow: 1;
   color: rgba(64,255,94,0.72);
   font-family: monospace;
   font-size: 10px;
   line-height: 14px;
-  margin-top: 6px;
+}
+.ver {
+  color: rgba(64,255,94,0.48);
+  font-family: monospace;
+  font-size: 10px;
+  line-height: 14px;
+  text-align: right;
 }
 </style>
