@@ -1,226 +1,145 @@
-<div align="center">
+# Signal Watch（叫号守望）
 
-# `rokid` — Rokid AIUI Agents
+注意力外挂系列 W04（WATCH 守望型）。医院、银行、取餐窗口叫号时，眼睛必须死盯大屏，闭眼歇一下就可能过号。本 Agent 的做法：佩戴者只在开始时用自己的眼睛看一眼大屏，把「你的号」和「当前号」填进来（步进器或口述），之后的盯屏工作交给节律提醒——每隔一段节律语音叫你回看一眼、更新当前号；只差 3 个号时提前喊你准备，到号时喊你，过号了就如实说过号。
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
+![预览-填写](<https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/signal-watch/preview-signal-watch-index.png>)
+![预览-演示回看](<https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/signal-watch/preview-signal-watch-demo.png>)
+![预览-准备](<https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/signal-watch/preview-signal-watch-ready.png>)
+![预览-到号](<https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/signal-watch/preview-signal-watch-called.png>)
 
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
+## 解决的问题
 
-</div>
+叫号场景里，人的注意力被一块大屏绑架：不敢闭眼、不敢走神，因为错过没有回放。本 Agent 把「盯」外包给节律，把人的眼睛降级为每几分钟一次的「采样器」：看一眼、报个数，其余时间放心歇眼。速度与 ETA 只由佩戴者自己的更新算出，慢了快了都是真实节律的反映。
 
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：`aix/` 目录里的 `<slug>.aix` 下载后走 **Import from AIX**。
+## 注意力外包设计
 
-## 目录
+- **号码来自佩戴者的眼睛，永远如此**：MY（你的号）与 NOW（当前号）只能由佩戴者步进输入或口述输入——口述的是 ta 自己看到的那个号。Agent **不读大屏**（不截屏、不做屏幕识别）、**不听广播**（不识别叫号播报）；麦克风只收佩戴者本人的口述。
+- **节律守望（WATCH）**：250 ms tick 引擎，全部计时用 tick 计数。回看节律 CAD 可选 1/2/5 分钟（默认 2 分钟）：到点语音一次「回看一下大屏，更新当前号」+ 横幅常驻，直到佩戴者更新 NOW（任一输入路径）或点 GO 稍后（LATER，恰好顺延一个节律）。
+- **差值/速度/ETA 只来自你的更新**：每次 NOW 更新按 tick 打戳；速度 = 第一次打戳到最近一次之间前进的号数 ÷ tick 时间，并注明「据你的 N 次更新」（10 秒内的步进连点算一次回看）。ETA = 差值 ÷ 速度；更新不足或号码没前进时如实显示「rate unknown yet」，不编造。
+- **三档状态，句句一次**：差 ≤3 → READY，语音一次「只差 N 个号了，准备过去」（差 4 不触发；差值重新大于 3 后会重新武装）；差 = 0 → CALLED，语音一次「到你的号了」，横幅直到点 DONE；更新显示 NOW > MY → PASSED，语音一次「已经过号了，去服务台问问」，界面明说已过几个，不假装没事。
+- **开始前的诚实校验**：MY 必须大于 NOW，否则拒绝开始并问「你的号已经过了？」——已经过号的号码不进守望流程。
+- **提醒只在本页打开时存在**：界面常驻一行明示。零持久化：不调用任何存储 API，号码只活在页面内存里，关页即忘。
 
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
+## 功能流程
 
-## 仓库结构
+1. **SETUP**：FIELD 在「你的号 → 当前号 → 场馆」间切换当前编辑项；步进 +1/+10/−1 或滑动调整；DICT 口述你看到的号（先做佩戴者麦模式可用性检查，结果单独一行 MIC CHECK，再走宿主 ASR；中文数字与阿拉伯数字都能解析，解析不了就如实拒绝、绝不猜）；场馆（医院/银行/取餐/其他）只是标签。GO 逐项推进并开始守望（校验见上）。
+2. **WATCH**：节律到点提醒回看 → 你看一眼大屏，步进/滑动/口述更新 NOW → 差值、速度、ETA 即时重算。任何时刻 SPEAK 或点头可听当前差值与 ETA。
+3. **收尾**：CALLED/PASSED 后 GO = DONE 结束本轮；DONE 后 GO 开始全新一轮填写。
 
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── aix/<slug>.aix             # 全部 Agent 打包好的 AIX（集中存放，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
-```
+## 手势映射
 
-## 快速开始
+主流程（填写 → 开始 → 回看更新 → READY/CALLED → DONE）只用滑动 + 单击（+ 点头听读）即可全程完成，不依赖盯屏点按钮：
+
+| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+|---|---|---|
+| 单击 | Enter | 主操作 GO（情境化）：填写时推进字段/开始守望；提醒待处理时 = 稍后（LATER）；CALLED/PASSED 时 = DONE；其余时候 = 朗读状态 |
+| 上滑 / 下滑 | ArrowUp / ArrowDown | 当前数值 +1 / −1（填写与守望中更新 NOW 都用它） |
+| 点头（头稳时） | `onHeadGesture('nod')` | 只朗读当前差值/ETA，绝不开始/更新/稍后/结束 |
+| 双击 | Backspace | 系统返回（不拦截） |
+| 长按 | — | 唤醒助手（系统级，不拦截） |
+
+屏幕按钮（每个都有保留理由；手术/排队场景手不方便时靠手势即可）：
+
+| 按钮 | 理由 |
+|---|---|
+| +1 / −1 | 滑动的镜像，精确修正一位 |
+| +10 | 大跨度赶步（当前号离你的号还远时连按滑动太慢） |
+| FIELD | 切换编辑项（手势的 Enter 会逐项推进，FIELD 可任意跳回修改） |
+| DICT | 口述输入你看到的号（双手占用/不想连按时的快速路径） |
+| CAD | 切换回看节律 1/2/5 分钟（大厅快慢不同，需要现场调） |
+| GO ✓ | Enter 的镜像（主操作） |
+| SPEAK | 随时听差值/ETA（点头的镜像，头不方便动时用） |
+| DEMO | 演示种子数据走完 READY→CALLED→PASSED 全程（提审/自测用） |
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| `RECORD_AUDIO` | 仅用于佩戴者口述自己看到的号码（DICT）；口述前先做 getUserMedia 佩戴者模式可用性检查。Agent 不听广播、不录环境音 |
+
+只申请 1 项。麦克风模式只作用于 getUserMedia 流，永不影响宿主 `SpeechRecognition`；聆听状态标注为 (host ASR)。TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方文档注明该属性不生效）。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/signal-watch
+~/tools/bin/aix pack . -o ../dist/signal-watch.aix
+~/tools/bin/aix list ../dist/signal-watch.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+## 真机测试（GO 的 Path 1，无线缆）
 
-## 标准工作流
+1. 将本项目导入 Global AIUI Studio（GitHub 导入分支 `agent-signal-watch`）。
+2. 在 Studio 中构建并保存新的 AIX 版本（构建与提审）。
+3. 手机 Hi Rokid App：设置 → 开发者选项 → AIUI → 更新眼镜资源包，等到「智能体资源包下载成功」。
+4. 在眼镜上语音打开：「乐奇，打开 Signal Watch 智能体」。
+5. 验收点：医院/银行真实排队场景走完一轮（填写 → 节律提醒 → 更新 → READY → CALLED）；故意填错一次大小关系，确认被拒绝并听到「你的号已经过了？」；故意更新到过号，确认如实进入 PASSED；DICT 口述中文数字（如「一百二十八」）能填入且可核对；闭眼等待一个节律，确认只提醒一次且横幅等到更新/稍后才消失；关掉本页后确认不再有任何提醒（设计如此）。
 
-<div align="center">
+## 真机测试信息
 
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
-
-</div>
-
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
-
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 字段 | 值 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Studio 名称 | Signal Watch（待导入后回填） |
+| Version / Build | 1.0.0 / 待导入后回填 |
+| App Category | 待导入后回填 |
+| Intent Description | Queue-number look-back watcher: wearer-entered numbers, cadence look-back prompts, ready/called/passed alerts. |
+| Agent ID | 待导入后回填 |
+| 状态 | 本地构建完成，待导入 Studio |
 
-**分支法要点**
+## 验证情况
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+**已验证（本地）**
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+- 静态校验：三处 JSON 解析通过；从 .ink 抽出的 `<script setup>` 与 app.js 均 `node --check` 通过；无 `Page(`/`App(`/`Widget(`/`workers:` 误用。
+- Node harness 105 条断言全过：开始校验（含 MY≤NOW 诚实拒绝并语音发问）、步进口述双路径录入（含中文数字解析、二百五/一千二等进位读法、垃圾口述如实拒绝、麦克风检查先于 ASR 的顺序断言）、节律每个间隔只响一次 + 稍后顺延整整一个节律 + 更新 NOW 重置节律、差值/速度/ETA 按 tick 打戳更新计算（含连点算一次更新、回退修正后速度诚实归零）、READY 在差 3 触发（差 4 不触发）且可重新武装、CALLED 在差 0、PASSED 在更新过头时如实出现、纯手势全程走通、点头只朗读、全程零 wx 调用、TTS 从不设置 lang。
+- `aix pack` 成功（约 20.4 KB），`aix list` 确认 README.md 在包内、artifacts 已排除。
+- 预览截图 4 张已生成并逐张目检：EVT 行与底部常驻诚实行均在画面内（点击坐标经帧哈希探针标定）。
 
-1. 在仓库 `aix/` 目录里点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+**未验证（如实说明）**
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+- **号码只能由佩戴者提供，这是设计边界而非缺陷**：本 Agent 没有读屏能力（平台无此 API 路径供本场景使用），也不会听叫号广播；速度/ETA 的准确性取决于佩戴者回看更新是否及时，更新越稀疏估计越粗。
+- 节律提醒只在本 Agent 页面打开期间触发；关页、切走或眼镜息屏后的行为以真机为准，本 Agent 不声称后台提醒。
+- 宿主 ASR 对中文数字的真实识别率、嘈杂大厅里的口述可用性、宿主 TTS 实际发声、宿主的头部手势/稳定性事件投递，均待真机验证；DICT 在宿主 ASR 不可用时如实 SKIP，步进路径始终可用。
+- getUserMedia 佩戴者模式在真机上的 settings 回读值待真机确认；检查失败不阻塞口述（口述走宿主 ASR，与麦模式无关）。
 
-</details>
+## 提审资料 (Review Submission)
 
-## 海外链路（全链路海外，缺一不可）
+### Feature Description（482 字符）
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+> Queue watcher for clinics, banks, food counters. Read the hall screen once with your own eyes: enter your number and the number now called, by stepper or dictation. The agent owns the staring: it prompts a look-back every 1/2/5 min, tracks the gap, estimates pace and a rough ETA from your updates, speaks when 3 numbers remain, calls out at your number, and says plainly if it passed. It never reads the screen or hears announcements; reminders run only while open, nothing stored.
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Opening Message（446 字符）
 
-## 真机测试（云端下发）
+> ## Signal Watch
+>
+> Staring at the call screen so you don't miss your number? Enter **your number** and the **number now called** — both read by your own eyes, stepped in or dictated. Then rest your eyes: I'll prompt you to look back every few minutes, track the gap from your updates, warn you at 3 to go, and call out when it's you. If it already passed, I'll say so plainly.
+>
+> *Numbers come from you — I never read the screen or listen to the PA.*
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+### Preview Media
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
+- `preview-signal-watch-index.png` — SETUP 填写（双号未填，场馆标签与编辑指南）
+- `preview-signal-watch-demo.png` — DEMO 守望中：回看提醒待处理（MY 128 / NOW 117，差 11）
+- `preview-signal-watch-ready.png` — READY：只差 2 个（演示更新至 126），速度/ETA 来自演示更新
+- `preview-signal-watch-called.png` — CALLED：到号横幅（演示更新至 128）
 
-</details>
+> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
 
-## 提交审核
+### Change Log（Build 1.0.0）
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+**Features added**
 
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+- 双号填写（步进 + 口述双路径，口述支持中文数字，进位读法与 #25 同源解析）+ 开始前 MY>NOW 诚实校验
+- 节律回看守望（1/2/5 分钟可选）：语音提醒 + 横幅待办，更新消解或顺延一个节律
+- 差值/速度/ETA 实时计算，速度只来自佩戴者自己的打戳更新并如实标注样本数
+- READY（差 ≤3）/ CALLED（差 0）/ PASSED（已过号）三态各语音一次，PASSED 明说不掩饰
+- 纯手势主流程（滑动调值、单击情境主操作、点头只朗读）+ DEMO 全程演示
 
-## 维护约定
+**Improvements**
 
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+- 无（首个版本）
 
-## Agent 清单
+**Fixes**
 
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
-
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
-| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
-| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
-| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 | `agent-elder-day` |
-| W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 | `agent-stove-watch` |
-| W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 | `agent-bath-watch` |
-| W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 | `agent-laundry-watch` |
+- 无（首个版本）
