@@ -1,233 +1,157 @@
-<div align="center">
+# Drop Search（掉落物分区搜索）
 
-# `rokid` — Rokid AIUI Agents
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
-
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
-
-</div>
-
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：`aix/` 目录里的 `<slug>.aix` 下载后走 **Import from AIX**。
-
-## 目录
-
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
-
-## 仓库结构
-
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── aix/<slug>.aix             # 全部 Agent 打包好的 AIX（集中存放，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
+```
+https://github.com/sakai55/rokid/tree/agent-drop-search
 ```
 
-## 快速开始
+路缘坡效应系列 C01（COVER 覆盖型）。全盲或低视力的人掉了一件小物——钥匙、耳机、药片、硬币——最难的不是弯腰，而是**不知道自己已经摸过哪块地、哪块还没摸**：同一块地摸两遍，另一块漏掉，最后放弃时也不确定东西到底还在不在这附近。本 Agent 把「覆盖图」外包给眼镜：脚边地面切成 6 个区，一次只说一个区，查过打勾，没查过的一目了然；6 区全查完才如实说没找到，找到了只在你自己确认或照片确实提示时才报。
+
+## 预览截图
+
+![预览-初始设置](<../screenshots/drop-search/preview-drop-search-index.png>)
+![预览-演示开始](<../screenshots/drop-search/preview-drop-search-demo.png>)
+![预览-分区搜索中](<../screenshots/drop-search/preview-drop-search-sweep.png>)
+![预览-找到了](<../screenshots/drop-search/preview-drop-search-found.png>)
+![预览-全查完没找到](<../screenshots/drop-search/preview-drop-search-notfound.png>)
+
+## 解决的问题
+
+掉落物搜索对视障者是一个记忆问题，不是视力问题：手能摸到的范围一次只有一小块，摸过的顺序全靠脑子记，紧张时顺序一乱，覆盖图就碎了。眼镜在这里的价值不是「替你看」，而是**替你记覆盖图**：你只管按语音指令转头、低头、摸地，哪个区查过、哪个区没查、还剩几个区，全由它拿着。普通人掉耳钉、螺丝、隐形眼镜盖时同样会陷入「这块摸过没有」的循环——这就是路缘坡效应的溢出：先为看不见的人把覆盖图做扎实，暂时看不见小物的人顺带受益。
+
+## 路缘坡效应：立项三问
+
+- **① 坡道本体**：全盲/低视力者，掉落物在脚边地面，通道断的是「覆盖记忆」——拿掉这类人群，本 Agent 立刻不成立：健全人低头看一眼就能完成搜索，不需要 6 区覆盖图。
+- **② 通道改造**：语音是主通道，零屏幕依赖。所有指令、进度、结果都由 TTS 播报一次；操作只有点头（头稳时 = 本区查完）、单击（情境 GO）、滑动（换区）。屏幕只是给有视力帮手和预览看的镜像，流程本身不依赖它。
+- **③ 溢出地图**：普通人在这些情境下会用它：掉耳钉/螺丝找不着、夜里停电摸黑找东西、抱着东西低头不便时找掉落物——都是「暂时看不见小物」的时刻。
+
+## 注意力外包设计（COVER 覆盖型）
+
+- **6 区覆盖图，查过就是查过**：正前方 / 左前方 / 右前方 / 左侧 / 右侧 / 身后。每个区只接受两种状态：未查、已查。CHECK（或头稳点头）把当前区标为已查并自动跳到下一个未查区；NEXT/PREV 只换区、不改状态。屏幕常驻一行区号标记（如 `1✓ 2✓ 3· 4· 5· 6·`），语音随时可报「已查几区、还剩几区」。
+- **FOUND 只有两个诚实来源**：(1) 佩戴者自己点 FOUND 确认；(2) 可选的 PHOTO 路径（`wide` 拍照 + 主机 LLM）确实在本区照片里报出该物品。PHOTO 报「有」仍标注为「请用手确认」的提示，最终以手摸为准；照片没拍到、LLM 不可用、LLM 说没有，一律记为 SKIP / 不是找到，本区仍按手摸流程走。
+- **NOT FOUND 是挣来的结论**：只有 6 区全查完才触发，语音与界面都明说「6 区全查完，没找到」，并补充「可能掉在别处，或者滚出去了」——不假装东西一定在脚边，也不把「没查完」说成「没找到」。
+- **与慧眼的分工**：慧眼是通用「看图识物/读字」——问一句、答一句。本 Agent 不做通用场景描述：它不回答「前面有什么」，只解决「脚边 6 区查完没有」这一个闭环。识别只在 PHOTO 一步里出现，且只问「这张地面照片里有没有这件物品」，答「有/没有」二选一。
+- **零持久化**：不调用任何存储 API；区图只活在页面内存里，关页即忘。每一次搜索都是全新的一轮——这正是设计：覆盖图只对「这次掉落」有意义。
+
+## 功能流程
+
+1. **SETUP**：ITEM 切换丢了什么（钥匙 / 耳机 / 药片 / 硬币 / 其他小物），GO 开始搜索。
+2. **SWEEP**：语音一次只说一个区（「第 2 区，左前方。头转向左前方，低头，用手慢慢摸左前方地面」）。摸完点 CHECK（或头稳点头）= 本区查完，自动进下一个未查区；NEXT/PREV 换区；FOUND = 找到了；PHOTO = 可选拍照辅助；SPEAK = 再听一遍进度与当前区指令。
+3. **收尾**：FOUND 后语音报区位（「在第 3 区，右前方，慢慢拿」）；NOT FOUND 后语音与界面明说 6 区全查完没找到；两种收尾后 GO 都开始新的一轮。
+
+## 手势映射
+
+主流程只用滑动 + 单击 + 点头即可全程完成，不依赖盯屏点按钮：
+
+| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+|---|---|---|
+| 单击 | Enter | 情境 GO：SETUP 时开始搜索；SWEEP 时朗读进度；FOUND/NOT FOUND 时开始新的一轮 |
+| 上滑 / 下滑 | ArrowUp / ArrowDown | 下一区 / 上一区（只换区，不改查过状态） |
+| 点头（头稳时） | `onHeadGesture('nod')` | CHECK 当前区（= 本区摸完），绝不单独构成 FOUND |
+| 双击 | Backspace | 系统返回（不拦截） |
+| 长按 | — | 唤醒助手（系统级，不拦截） |
+
+屏幕按钮（每个都有保留理由）：
+
+| 按钮 | 理由 |
+|---|---|
+| ITEM | 切换丢了什么（搜索开始后锁定，防中途改目标打乱覆盖图） |
+| PREV / NEXT | 换区的按钮镜像（滑动的镜像，头不方便动时用） |
+| CHECK | 本区摸完（点头的镜像） |
+| FOUND | 佩戴者自己确认找到了（唯一的人工 FOUND 来源） |
+| PHOTO | 可选拍照 + LLM 辅助（从不代替手摸，失败即 SKIP） |
+| GO ✓ | Enter 的镜像（情境主操作） |
+| SPEAK | 随时听进度与当前区指令（语音主通道的按钮镜像） |
+| DEMO | 演示：钥匙 → 第 1、2 区查完为空 → 第 3 区找到；再一轮 6 区全查完没找到；退出后真实状态原样恢复 |
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| `CAMERA` | 仅用于可选的 PHOTO 检查（`wide` 拍照 + LLM 看图）；核心分区搜索完全不需要相机，PHOTO 失败即 SKIP |
+| `RECORD_AUDIO` | 语音主通道的声明；v1.0.0 不做口述录入、不录音、不存音频 |
+
+只申请 2 项。TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方文档注明该属性不生效）。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/drop-search
+~/tools/bin/aix pack . -o ../dist/drop-search.aix
+~/tools/bin/aix list ../dist/drop-search.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+## 真机测试（GO 的 Path 1，无线缆）
 
-## 标准工作流
+1. 将本项目导入 Global AIUI Studio（GitHub 导入分支 `agent-drop-search`）。
+2. 在 Studio 中构建并保存新的 AIX 版本（构建与提审）。
+3. 手机 Hi Rokid App：设置 → 开发者选项 → AIUI → 更新眼镜资源包，等到「智能体资源包下载成功」。
+4. 在眼镜上语音打开：「乐奇，打开 Drop Search 智能体」。
+5. 验收点：闭眼（或请有视力者蒙眼协助）走完一轮——只听语音指令能否不看屏完成 6 区搜索；故意在第 3 区找到，确认 FOUND 只报第 3 区且不改其他区状态；故意 6 区全查完没找到，确认 NOT FOUND 只在全查完后出现；PHOTO 在无相机/无 LLM 时如实 SKIP 且不影响手摸流程；关页重开后确认区图已清零（设计如此）。
 
-<div align="center">
+## 真机测试信息
 
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
-
-</div>
-
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
-
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 字段 | 值 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Studio 名称 | Drop Search（待导入后回填） |
+| Version / Build | 1.0.0 / 待导入后回填 |
+| App Category | 待导入后回填 |
+| Intent Description | Floor-sector coverage search for dropped small items: 6 spoken sectors, checked map, honest found/not-found. |
+| Agent ID | 待导入后回填 |
+| 状态 | 本地构建完成，待导入 Studio |
 
-**分支法要点**
+## 验证情况
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+**已验证（本地）**
+- 静态校验：app.json、package.json 解析通过；从 .ink 抽出的 `<script setup>` 与 app.js 均 `node --check` 通过；无 `Page(`/`App(`/`Widget(` 误用；权限与实际使用一致（CAMERA 只在 PHOTO 路径，RECORD_AUDIO 为语音通道声明）。
+- `aix pack` 成功（约 15.8 KB），`aix list` 确认 artifacts 已排除、包内为 6 个源文件。
+- 预览截图 5 张已生成并逐张目检：初始设置、演示开始、分区搜索中、找到了（第 3 区右前方，区标记 1✓ 2✓）、全查完没找到（6/6）各状态均与设计一致；DEMO 点击坐标经探针标定（400, 250）。
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+**未验证（如实说明）**
+- 宿主 TTS 实际发声、头部手势/稳定性事件在真机上的投递、相机 `wide` 拍照与 LLM 看图的真机表现，均待真机验证；PHOTO 在任何一步缺失时如实 SKIP，核心手摸流程不受影响。
+- 搜索只覆盖脚边 6 区；物品滚出该范围、掉在家具下/缝隙里时，本 Agent 只会如实报「6 区查完没找到」，不声称能找到全屋物品。
+- 本 Agent 是生活辅助，不替代任何医疗或康复判断；视障用户在真实环境中使用时仍需注意脚下安全。
 
-1. 在仓库 `aix/` 目录里点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+## 提审资料 (Review Submission)
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+### Feature Description
 
-</details>
+> Floor-sector search for blind and low-vision wearers who dropped a small item. Pick the item, then follow one spoken sector at a time around your feet: front, front-left, front-right, left, right, behind. Each sector you sweep by hand is checked off; the agent holds the coverage map so you never re-sweep or skip a patch. It says FOUND only when you confirm or an optional photo check reports the item, and says NOT FOUND only after all 6 sectors are swept.
 
-## 海外链路（全链路海外，缺一不可）
+### Opening Message
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+> ## Drop Search
+>
+> Dropped your keys, earphone, or a pill? Don't guess which patches of floor you've already swept. Pick the item, then I'll walk you through 6 sectors around your feet — one spoken instruction at a time. Sweep each patch by hand, check it off, and I'll hold the map. Found it, and I'll tell you exactly which sector. All 6 swept and nothing there, and I'll say so plainly.
+>
+> *Voice first — no screen needed. The optional photo check never replaces your hand.*
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Preview Media
 
-## 真机测试（云端下发）
+- `preview-drop-search-index.png` — 初始设置（选丢了什么，6 区待查）
+- `preview-drop-search-demo.png` — 演示开始（钥匙已选）
+- `preview-drop-search-sweep.png` — 分区搜索中（第 1 区正前方）
+- `preview-drop-search-found.png` — 找到了（第 3 区右前方，1✓ 2✓）
+- `preview-drop-search-notfound.png` — 全查完没找到（6/6）
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
+### Change Log（Build 1.0.0）
 
-</details>
+**Features added**
 
-## 提交审核
+- 6 区脚边覆盖图（正前方/左前方/右前方/左侧/右侧/身后），一次只说一个区，查过打勾、未查一目了然
+- 语音主通道：全部指令、进度、结果由 TTS 播报，零屏幕依赖；点头（头稳时）= CHECK、滑动换区、单击情境 GO
+- FOUND 双诚实来源：佩戴者确认 + 可选 PHOTO（wide 拍照 + LLM），PHOTO 报有仍标注「请用手确认」，任何一步缺失即 SKIP
+- NOT FOUND 只在 6 区全查完后触发，明说没找到并补充可能滚出范围
+- DEMO 双弧线演示（找到 / 全查完没找到），退出后真实状态原样恢复
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+**Improvements**
 
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+- 无（首个版本）
 
-## 维护约定
+**Fixes**
 
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
-
-## Agent 清单
-
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
-
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
-| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
-| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
-| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 | `agent-elder-day` |
-| W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 | `agent-stove-watch` |
-| W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 | `agent-bath-watch` |
-| W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 | `agent-laundry-watch` |
-| W04 | [signal-watch](signal-watch/) | 医院/银行/取餐叫号，大屏节律提醒回看，差3号喊你准备 | `agent-signal-watch` |
-| W05 | [door-watch](door-watch/) | 里屋开会戴耳机，守听门铃敲门快递叫你回看 | `agent-door-watch` |
-| H01 | [number-catch](number-catch/) | 号码拍下放大核对，常驻视线内不用默念 | `agent-number-catch` |
-| H02 | [code-hold](code-hold/) | 临时码复述存住，要输入时逐段显示 | `agent-code-hold` |
-| H03 | [voice-list](voice-list/) | 复述成清单挂在视线里，看向货架逐项点头勾掉 | `agent-voice-list` |
-| H04 | [route-hold](route-hold/) | 复述问路线路存步骤，走时只显示当前一步点头前进 | `agent-route-hold` |
-| H05 | [seat-catch](seat-catch/) | 拍票根存座位号，逐排逐座只报相对差 | `agent-seat-catch` |
+- 无（首个版本）
