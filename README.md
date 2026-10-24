@@ -242,3 +242,5 @@ aix preview .                               # 本地预览（起服务 / --html-
 | F03 | [buy-filter](buy-filter/) | 清单预算忌口三条件，只亮符合商品 | `agent-buy-filter` |
 | F04 | [meeting-filter](meeting-filter/) | 守听长会，命中名字关键词才亮屏 | `agent-meeting-filter` |
 | F05 | [lecture-filter](lecture-filter/) | 守听课堂，信号句命中即存笔记 | `agent-lecture-filter` |
+| D01 | [play-watch](play-watch/) | 游乐场副线定时提醒回看，未确认逐级升级 | `agent-play-watch` |
+| D02 | [bag-watch](bag-watch/) | 行李副线定时提醒回看，离开门未确认喊停 | `agent-bag-watch` |
