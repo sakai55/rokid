@@ -19,6 +19,8 @@ Full dossier: `~/memory/rokid-glasses-capabilities.md` in Muse's memory (repo su
 - **LLM**: host-managed `LanguageModel` streaming only; tool calls arrive as `toolcall` events and are not auto-executed. **TTS**: 11 fixed voices; the `lang` attribute does not take effect.
 - **Network**: HTTPS only, domains must be on the filed allowlist; no LAN direct connections. Network may be proxied via the phone app over Bluetooth.
 
+- **Gestures first, minimal buttons (GO, 2026-10-24)**: the temple touchpad is the primary controller — tap = confirm (`Enter`), double-tap = back (`Backspace`), swipe = scroll/switch (`ArrowUp/Down`), head-steady + nod = gaze confirm; single-finger long-press wakes the assistant, two-finger long-press fires the AI Shortcut Command (a fixed text, ≤500 chars, delivered to a chosen agent — a hardware entry that bypasses ASR entirely). Full verified gesture table: capability dossier §3.2.1. Design pages so the main flow runs on gestures alone; keep on-screen buttons to the minimum and state the agent's gesture mapping in its README. (A fleet-wide UI unification for "too many same-style buttons" is deliberately deferred by GO until all 120 agents are done — do not start it early.)
+
 If a feature cannot be wired to a real API, label it honestly in UI + README as sample/placeholder with the pending link named (see gaze-translate). Never fake a capability.
 
 ## Steps
