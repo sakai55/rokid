@@ -57,6 +57,19 @@
 状态：PASS / FAIL / SKIP（硬件或主机不支持、或平台无此 API）/ MANUAL（需人触发）。
 点任意一行可单独重跑该项；RUN ALL 顺序跑完 01–20 与 22–23。
 
+## 操作方式（镜腿手势映射）
+
+真机上没有触屏，全部操作走镜腿触控板（页面自己接管按键事件，不依赖宿主把按键转成按钮点击）：
+
+| 手势 | 键事件 | 作用 |
+|---|---|---|
+| 单击 | Enter / GlobalHook | 触发当前焦点；打开页面时焦点默认在 **RUN ALL**，单击即开跑全部 |
+| 滑动 | ArrowUp / ArrowDown | 在 RUN ALL / SPEAK / LISTEN / 23 个测试行之间移动焦点（高亮 + 列表自动滚到焦点行） |
+| 点头 | onHeadGesture 'nod' | 与单击相同，触发当前焦点 |
+| 双击 | Backspace | 交给系统：返回 / 退出（页面不拦截） |
+
+想单独重跑某一项：滑动把焦点移到该行，单击即可。屏幕按钮同时保留点击绑定，供 Studio 模拟器用鼠标操作。
+
 ## 打包
 
 ```bash
@@ -71,7 +84,7 @@
    在 AIX Packaging 点 **Repackage and Save**，确认顶部出现绿色
    **● Debug version ready — Ready for device debugging**
 3. **Hi Rokid**（海外版，不是国内版 Rokid Ai App）→ 设置 → 开发者选项 → AIUI → 更新眼镜资源包
-4. 对眼镜说「乐奇，打开 glasses-benchmark」，点 RUN ALL
+4. 对眼镜说「乐奇，打开 glasses-benchmark」，然后**单击镜腿**（焦点默认在 RUN ALL）即开跑；滑动可移焦点到某一行，单击单独重跑该项
 
 注意：07 Fetch 需要眼镜联网（经手机蓝牙/Wi-Fi）；14 定位、10/11 麦克风/相机
 第一次会弹系统授权，拒绝会记 FAIL 并写明原因——这正是要测的。
@@ -103,6 +116,20 @@ Tap **RUN ALL** and I'll test 23 items one by one, from display and CPU to camer
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### v1.1.1（本地包版本；Studio Build 号待重新打包后生成）
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Real-device operation: the page previously only logged temple key events, so the RUN ALL / SPEAK / LISTEN buttons could not be operated from the temple touchpad at all. The page now maps temple input itself — swipe (ArrowUp/Down) moves a visible focus across the buttons and all 23 test rows, tap (Enter/GlobalHook) or a nod activates the focused item, and the default focus is RUN ALL, so a single tap starts the full run.
 
 #### v1.1.0（本地包版本；Studio Build 号待重新打包后生成）
 
