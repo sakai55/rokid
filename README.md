@@ -1,232 +1,164 @@
-<div align="center">
+# Seat Catch（找座外包）
 
-# `rokid` — Rokid AIUI Agents
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
-
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
-
-</div>
-
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：`aix/` 目录里的 `<slug>.aix` 下载后走 **Import from AIX**。
-
-## 目录
-
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
-
-## 仓库结构
-
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── aix/<slug>.aix             # 全部 Agent 打包好的 AIX（集中存放，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
+```
+https://github.com/sakai55/rokid/tree/agent-seat-catch
 ```
 
-## 快速开始
+
+注意力外挂系列 H05（HOLD 默念型，本组收官）。电影院、剧场、会场、火车车厢——检票进场后满场找座，是最典型的短时记忆陷阱：排号座位号在票根上看一次忘一次，走一路低头掏票根看三回。本 Agent 的做法：看向票根头稳住，拍一张长焦照片，主机大模型读出区/排/座，放大给你核对，你确认了才成为目标——而且只活在本次会话的内存里，坐下就清、关掉就没。之后它陪你逐排找：你路过一块排号牌就拍一块，它读出当前排，只告诉你差几排；进了排，拍最近的座位号，它告诉你再往里几个。它没有任何室内定位，永远只报相对差。
+
+## 解决的问题
+
+找座难的不是座位本身，是「从看清票根到坐下」这段路不能想别的：手里有包、眼睛要看路、脑子里还得留着「8 排 12 座」反复默念。本 Agent 把这一程外包掉——捕获只花一次注视（拍照读座），保存必过一次核对（防机器读错），找的过程零默念（目标挂在会话里，每一步只报相对差），终点自动清账（坐下确认即擦除，不留任何记录）。脑子从复读机里解放出来，座位交给眼镜记，且只记这一程。
+
+## 注意力外挂设计（HOLD 默念型）
+
+- **和 H01 number-catch 的分工（如实说明，第一位）**：number-catch 是通用号码的「存住 + 回看」——房号、柜号、取餐号存下来常驻显示。seat-catch 不是给座位号再做一个存档：存目标只是第一步，产品本体是**找座全流程**——存完之后逐排比对、逐座逼近，直到你说坐下了为止。它的主屏不是号码回看，而是「还差 3 排」「再往里 4 个」这类相对提示；存的方式也相反：number-catch 的号码落盘留存，本 Agent 的目标**零落盘**（见下条）。
+- **目标只存会话内存，零落盘（本 Agent 的核心纪律）**：座位号是寿命最短的号码——坐下即作废。为它落盘毫无意义，所以本 Agent 全页没有任何存储调用：确认后的目标只是一个运行时字段，坐下确认擦除、放弃找座擦除、关掉 Agent 擦除。界面常驻行写明「只存本次会话内存 · 关掉/坐下即清 · 零落盘」，完成页写明「它没有留下任何座位记录」。
+- **读数走官方拍照路径，且过三道门**：SNAP / ROW / SEAT 分别拍票根、排号牌、座位号（都是 `telephoto` 长焦），照片 Blob 转 data: URL 发给主机 `LanguageModel` 读图，回复格式写死（`SEAT: 区|排|座` / `ROW: 排` / `SEATNO: 座`，读不到回 `NONE`）；解析器只接受干净格式或紧贴的「N 排 M 座」式抢救，散文式回复一律判读失败——**读不清就是失败，绝不猜一个座位出来**。平台没有 OCR，本 Agent 也不声称有。照片只活在内存里，读完即弃，从不保存。
+- **确认门：核对后 OK 才成为目标**：票根读数先落在核对屏，大字 + 「机器读数，可能读错」的标注；改错不用嘴——FIELD 切排/座焦点、+1/−1 步进（座位号的字母后缀如 12A 在步进时保留）、ZONE 轮换左/中/右/无区。读数不全（排或座缺失）时 OK 如实拒绝并保留待核对内容；DEL 一下放弃未确认读数（它本来就没成为目标）。**点头在核对屏被刻意忽略——点头永不存目标。**
+- **引导只有相对差，没有定位（诚实边界，第二位）**：本 Agent 不申请定位、无地图、无场馆平面图、没有任何指向座位的箭头。它给的每句提示都是你刚读到的号与目标号的算术差：找排阶段「还差 3 排，继续向前 / 走过 1 排，往回走 / 就是这一排」；找座阶段「再往里 4 个（往号码变大的方向）/ 往回 2 个（往号码变小的方向）/ 就是这个座位」——方向来自座位号本身的递增顺序，看座椅靠背就懂。排号读数命中时自动进入找座阶段；你也可以在找排阶段点 OK 按**你自己的判断**进排，界面与日志都会如实标注「未经读数核对」。全部朗读串经扫描，不含任何导航/定位/到达断言。
+- **读失败永远有手动路**：没相机、没模型、模型不可用/报错/没读清、wx 回退照片无法转图——票根阶段落到空白核对屏并写明原因，步进填上排/座照样开始；找排/找座阶段 +1/−1 变成手动报当前排/座（全程标注「手动」）。拍照读数是加速器，不是门槛。
+- **就座确认是两步制（点头与 SIT 共用）**：头稳的点头在本 Agent 里只有一个意思——「我坐下了」，且只在找座阶段有效：第一下只武装（「再点头一次确认就座」），第二下才擦除目标并落到完成页；头不稳的点头不算数。找排阶段、核对屏上的点头一律无效并说明原因：点头永不推进排数、永不确认读数。放弃找座同理是两步 DEL。
+- **为什么胸前设备做不了**：找座全程双手要拿包、扶座椅、让行人，递回必须进视线（低头看胸口设备在暗场里既慢又挡路）；「看向票根/排号牌/座位号」要求相机与视线同轴（胸口相机拍到的是别人的后背和你的手）；就座确认靠头部信号（点头）而不是摸设备——三条都只有头戴设备成立。
+
+## 功能流程
+
+1. **读票根（SNAP）**：看向票根、头稳住点 SNAP，长焦拍照 → 主机大模型读出区/排/座 → 落核对屏（未确认，还不是目标）。
+2. **核对（CONFIRM）**：大字核对读数；错了用 FIELD + 步进 / ZONE 改；OK = 成为目标（只进会话内存）；DEL = 放弃这次读数。
+3. **找排（ROW）**：往里走，路过排号牌点 ROW 拍它 → 读出当前排 → 大字 + 朗读相对差（还差 N 排 / 走过 N 排）；命中目标排自动进下一阶段。读不到牌时 +1/−1 手动报排。
+4. **找座（SEAT）**：进排后看向最近的座位号点 SEAT 拍它 → 读出当前座 → 「再往里 N 个 / 往回 N 个 / 就是这个座位」；读不到时 +1/−1 手动报座。
+5. **就座（SIT / 点头）**：对准目标座坐下，点头两下或点 SIT 两下确认 → 目标立即擦除 → 完成页「已就座 · 它没有留下任何座位记录」；OK 开始下一次找座。
+6. **DEMO**：票根屏点 DEMO 播入一次完整模拟找座（模拟读数 中区 8排 12座 → 逐排模拟读数 3/6/8 → 逐座模拟读数 5/12 → 就座完成），全程标注模拟、不动相机；真实状态（若有）被暂存，退出 DEMO 精确恢复。
+
+## 手势映射
+
+主流程（拍票根 → 核对 → 逐排读号 → 点头就座）靠滑动 + 单击 + 点头即可走完：
+
+| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+|---|---|---|
+| 单击 | Enter | 情境主操作 OK：核对屏 = **确认成为目标**；找排时 = 按你的判断进排找座；找座时 = 就座确认的一步（与 SIT 同义，两步制）；完成页 = 开始新的找座 |
+| 下滑 | ArrowDown | −1：核对屏改小焦点字段（排/座）；找排/找座时手动报当前排/座 −1 |
+| 上滑 | ArrowUp | +1：核对屏改大焦点字段（排/座）；找排/找座时手动报当前排/座 +1 |
+| 点头（头稳时） | `onHeadGesture('nod')` | **我坐下了**（本 Agent 的核心手势）：只在找座阶段有效，两下制——第一下武装、第二下擦除目标进完成页；头不稳不算；永不存目标、永不推进排数、永不确认读数 |
+| 双击 | Backspace | 系统返回（不拦截） |
+| 长按 | — | 唤醒助手（系统级，不拦截） |
+
+屏幕按钮（每个都有保留理由）：
+
+| 按钮 | 理由 |
+|---|---|
+| SNAP | 拍票根的主动作（找排/找座阶段点它等同 ROW / SEAT，拍当前要读的号） |
+| OK ✓ | Enter 的镜像（情境主操作：确认目标 / 判断进排 / 就座确认 / 新的找座） |
+| DEMO | 一次完整模拟找座（提审/自测用；全程标注模拟读数，不用相机） |
+| ROW | 找排阶段拍排号牌读数的主动作 |
+| SEAT | 找座阶段拍最近座位号读数的主动作 |
+| SIT | 「坐下了」的按钮等价物（与点头共用两步武装，第一下武装、第二下擦除目标） |
+| FIELD | 核对屏步进焦点在排/座之间切换 |
+| +1 / −1 | 核对屏改排/座数值；找排/找座阶段是无相机时手动报当前排/座的唯一入口 |
+| ZONE | 核对屏轮换区（左区/中区/右区/无区） |
+| SPEAK | 朗读当前语境：待核对座位 / 目标 + 当前相对提示 / 已就座状态 |
+| DEL | 核对屏 = 放弃未确认读数；找排/找座时 = 两步放弃本次找座并擦除目标 |
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| `CAMERA` | SNAP / ROW / SEAT 的长焦拍照：票根、逐块排号牌、排内最近的座位号（照片 Blob 只在内存中用于一次读图尝试，读完即弃，永不保存） |
+
+只申请 1 项。**刻意不申请 `RECORD_AUDIO`**：纠错靠步进键，没有需要麦克风的口述环节（朗读用宿主 TTS，不需要录音权限）。**刻意不申请 `GEOLOCATION`**：室内找座不需要也用不上卫星定位，本 Agent 永远不知道你在哪——它只有你确认的目标座位，和你刚拍给它看的当前排号/座号。TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方文档注明该属性不生效）。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/seat-catch
+~/tools/bin/aix pack . -o ../dist/seat-catch.aix
+~/tools/bin/aix list ../dist/seat-catch.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线（`shot-seat.js`，独立页面副本 `preview-seat.html`；点击坐标按状态逐个探针标定——信息框高度变化会让命中带整体偏移一行，坐标表写在脚本头注里）。
 
-## 标准工作流
+## 预览截图
 
-<div align="center">
+![预览-首页](../screenshots/seat-catch/preview-seat-catch-index.png)
+![预览-演示读数待核对](../screenshots/seat-catch/preview-seat-catch-confirm.png)
+![预览-找排中](../screenshots/seat-catch/preview-seat-catch-grow.png)
+![预览-找座中](../screenshots/seat-catch/preview-seat-catch-gseat.png)
+![预览-已就座](../screenshots/seat-catch/preview-seat-catch-done.png)
 
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
+## 真机测试（GO 的 Path 1，无线缆）
 
-</div>
+1. 将本项目导入 Global AIUI Studio（GitHub 导入分支 `agent-seat-catch`）。
+2. 在 Studio 中构建并保存新的 AIX 版本（构建与提审）。
+3. 手机 Hi Rokid App：设置 → 开发者选项 → AIUI → 更新眼镜资源包，等到「智能体资源包下载成功」。
+4. 在眼镜上语音打开：「乐奇，打开 Seat Catch 智能体」。
+5. 验收点：暗光影院里长焦拍票根的读数成功率与读错形态（区/排/座哪一项最容易错、核对屏步进改错是否顺手）；逐排拍排号牌的节奏（走一步拍一块是否跟得上人流、读数延迟）；排内拍座椅靠背号的可读距离；点头两下就座确认在坐下动作中的误触/漏触（人坐下时头本来就会动，头稳判定是否过严）；关掉 Agent 重开目标是否确实不存在（设计如此）；DEMO 全程在无票根时向他人演示是否讲得清。
 
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
+## 真机测试信息
 
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 字段 | 值 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Studio 名称 | Seat Catch（待导入后回填） |
+| Version / Build | 1.0.0 / 待导入后回填 |
+| App Category | 待导入后回填 |
+| Intent Description | Find-your-seat keeper: photo the ticket stub once, verify the seat big, then be guided relatively - row sign by row sign, seat number by seat number - until you say you are seated. Session memory only, wiped when seated. No indoor positioning. |
+| Agent ID | 待导入后回填 |
+| 状态 | 本地构建完成，待导入 Studio |
 
-**分支法要点**
+## 验证情况
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+**已验证（本地）**
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+- 静态校验：app.json / package.json / `<script def>` 三处 JSON 解析通过；抽出的 `<script setup>` 与 app.js 均 `node --check` 通过；无 `Page(`/`App(`/`Widget(`/`workers:` 误用；权限仅 `CAMERA`，页面源码中无任何存储 API、无 `GEOLOCATION`/`RECORD_AUDIO`/ASR 字样（与功能严格一致：纠错靠步进、无口述环节）。
+- Node harness **137 条断言全过**：三路读数解析电池（管道格式、字母座位号、区抢救读、NONE 形式、散文拒绝、排 0/纯字母拒绝）；确认门（未确认读数绝不成为目标、读数不全 OK 被拒且待核对保留）；步进纠错（焦点切换、排/座 ±1、字母后缀保留、区轮换、更正标记、从空白步进落到 1）；纯手动填数也能成为目标；引导数学（还差 3 排/走过 2 排/排命中自动进找座、座号往大/往小差数、命中播报）；点头纪律（头不稳忽略、点头永不存目标、找排阶段点头无效、两下稳点头就座并擦除）；SIT 两步与点头共用武装、就座播报明说已清除；DEL 各路径（核对丢弃、两步放弃、其他动作解除武装）；DEMO 全程（模拟读数标注、逐排逐座推进、真实目标暂存后逐字节恢复、中途退出亦可恢复）；相机 + LLM 正路（断言 telephoto 模式、字节数上 CAP 行、拍后停轨、prompt 形态 = user 内容里 text + image_url data: URL、system 只走 initialPrompts）；排/座读数走同一套 machinery；全部 LLM 失败变体（不可用/NONE 回复/抛错/无模型）与无相机宿主都落到有标注的手动路；wx 回退照片如实标注读不了；键位全程（Enter/方向键）；onUnload 后目标与待核对全清（会话性验证）；全部朗读串扫描无导航/定位/到达断言；TTS 从不设置 lang。
+- `aix pack` 成功（18.57 KB），`aix list` 确认包内文件集干净（artifacts 已排除）。
+- 预览截图 5 张已生成并逐张目检：首页 / DEMO 读数待核对 / 找排中（还差 5 排）/ 找座中（再往里 7 个）/ 已就座（目标已清除）；点击坐标按状态逐个探针标定（信息框变高时命中带上移一行，DEMO/SIT 在不同状态用不同坐标，见 `shot-seat.js` 头注）。
 
-1. 在仓库 `aix/` 目录里点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+**未验证（如实说明）**
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+- **它不知道你在哪（第一位）**：本 Agent 没有任何室内定位手段——不申请定位、无地图、无场馆图。它只会算差：你在错的过道里拍排号牌，它照样按读到的排号给差值；排号牌缺失/被挡时只能靠手动报排。第一次去的场馆请先确认自己进的是目标区那一侧的门，区（左/中/右）核对在核对屏上就是为这件事设的。
+- **读数来自机器读图（第一位并列）**：票根字体千差万别（热敏纸、手写改座、电子票截图反光），模型读错区/排/座任何一项都会把目标设错——核对屏是唯一的把关点，读成什么样就显示什么样，错了一眼可见、步进改对再 OK。排号牌与座椅号在暗场、远距离、倾斜角度下的读出率未经真机验证；读不到时手动报排/报座是正式路径，不是凑合。
+- **零落盘的另一面**：目标只记这一程是刻意的，但也意味着中途关掉 Agent（或眼镜重启）目标即消失，需要重新拍票根——票根请先别扔。
+- 真机事项：头部稳定性事件与点头手势在「坐下」这个动作本身中的投递与误触率（坐下时头会晃，两下制的武装窗口 6 秒是否够用）；宿主 TTS 在影院散场噪声中的可懂度；长焦在暗光下的实际成像质量。
 
-</details>
+## 提审资料 (Review Submission)
 
-## 海外链路（全链路海外，缺一不可）
+### Feature Description
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+> Seat Catch finds your seat so your head does not have to memorise it. Glance at the ticket stub: a telephoto photo is read into zone, row and seat, you verify it big, and it is kept in session memory only - never saved, wiped when you sit down. Then it guides you relatively, row sign by row sign and seat number by seat number (3 rows to go, 7 more in), with no indoor positioning and no pretence of knowing where you are.
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Opening Message
 
-## 真机测试（云端下发）
+> ## Seat Catch
+>
+> Ticket checked and already forgetting your seat? Aim at the stub and tap **SNAP** - the read lands big for you to verify (steppers fix a misread), and **OK** keeps it for this trip only. Then photo each row sign with **ROW** and the nearest seat number with **SEAT**: it only ever tells you the difference. Seated? **SIT** twice (or nod twice) and the target is wiped.
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+### Preview Media
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
+- `preview-seat-catch-index.png` — 首页初始态：无目标 + 常驻诚实行（无室内定位 · 靠逐排读号比对 · 目标只记这一次，坐下就清）
+- `preview-seat-catch-confirm.png` — DEMO 模拟读数待核对：中区 8排 12座大字 + 核对操作行
+- `preview-seat-catch-grow.png` — 找排中：读到 3 排 →「还差 5 排，继续向前」
+- `preview-seat-catch-gseat.png` — 找座中：读到 5 座 →「再往里 7 个（往号码变大的方向）」
+- `preview-seat-catch-done.png` — 已就座：目标已清除 + 「它没有留下任何座位记录」
 
-</details>
+> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
 
-## 提交审核
+### Change Log（Build 1.0.0）
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+**Features added**
 
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+- 拍照读票根 + 核对门：长焦拍票根，主机大模型读出区/排/座落核对屏大字显示，步进（排/座焦点 + ±1，字母座位号后缀保留）与区轮换纠错，OK 才成为目标；读数不全如实拒绝，点头永不存目标
+- 逐排逐座相对引导：找排阶段逐块拍排号牌读当前排，只报相对差（还差/走过/就是这排），命中自动进排；找座阶段拍最近座位号，按座号差给「再往里 N 个（往号码变大方向）」式提示；全程无室内定位、无到达断言
+- 会话级目标（零落盘）：目标只存运行时内存，坐下确认（点头/SIT 两步制）即擦除并落完成页，放弃找座（两步 DEL）与关掉 Agent 同样擦除；全套读失败/无相机/无模型时步进手动路全程可用
+- DEMO：一次完整模拟找座（模拟票根读数 → 逐排 3/6/8 → 逐座 5/12 → 就座完成），全程标注模拟、不用相机，真实状态暂存后精确恢复
 
-## 维护约定
+**Improvements**
 
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+- 无（首个版本）
 
-## Agent 清单
+**Fixes**
 
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
-
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
-| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
-| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
-| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 | `agent-elder-day` |
-| W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 | `agent-stove-watch` |
-| W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 | `agent-bath-watch` |
-| W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 | `agent-laundry-watch` |
-| W04 | [signal-watch](signal-watch/) | 医院/银行/取餐叫号，大屏节律提醒回看，差3号喊你准备 | `agent-signal-watch` |
-| W05 | [door-watch](door-watch/) | 里屋开会戴耳机，守听门铃敲门快递叫你回看 | `agent-door-watch` |
-| H01 | [number-catch](number-catch/) | 号码拍下放大核对，常驻视线内不用默念 | `agent-number-catch` |
-| H02 | [code-hold](code-hold/) | 临时码复述存住，要输入时逐段显示 | `agent-code-hold` |
-| H03 | [voice-list](voice-list/) | 复述成清单挂在视线里，看向货架逐项点头勾掉 | `agent-voice-list` |
-| H04 | [route-hold](route-hold/) | 复述问路线路存步骤，走时只显示当前一步点头前进 | `agent-route-hold` |
+- 无（首个版本）
