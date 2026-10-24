@@ -1,240 +1,115 @@
-<div align="center">
+# Meeting Filter（会议过滤）
 
-# `rokid` — Rokid AIUI Agents
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
-
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
-
-</div>
-
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：`aix/` 目录里的 `<slug>.aix` 下载后走 **Import from AIX**。
-
-## 目录
-
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
-
-## 仓库结构
-
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── aix/<slug>.aix             # 全部 Agent 打包好的 AIX（集中存放，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
+```
+https://github.com/sakai55/rokid/tree/agent-meeting-filter
 ```
 
-## 快速开始
+注意力外挂系列 F04（FILTER 过滤型，本组第四位）。两小时的会，真正和你有关的可能只有十分钟——其余时间你不敢走神，又实在听不进去；全程竖着耳朵的结果是注意力被整场会议征用，而那十分钟来临时你反而因为听累了而错过。本 Agent 把这个「竖耳朵」的活外包出去：会前先声明门禁——自己的名字 + 议题关键词（示例：王磊·预算·上线），然后只管放空；守听时 ASR 转写逐段过门，只有命中名字或关键词的段才亮起横幅、TTS 报一次「命中：王磊，请看前十秒回放」，并把命中前约 10 秒的字幕贴出来——命中只有配上前文才有用；没命中的段只让「已听」计数走一格，不亮屏、不出声、不打断你。会后小结告诉你：这场会听了几段、命中几次、命中的关键词和时间，确认后清空。
+
+## 解决的问题
+
+长会的注意力税：和你无关的九成内容也要你全程在线，生怕错过那一成；可全程在线恰恰最耗注意力，到了关键句反而走神。本 Agent 把「听 + 判断」外包：规则事先定好（名字 + 关键词），守听时你只管不听；命中时它负责叫你并给前文，没命中时它只负责计数——结束时的小结告诉你命中了什么，你可以回看，但不必当时被整场会议打断。
+
+## 注意力外挂设计（FILTER 过滤型）
+
+- **先声明门禁，规则会中不改**：关键词组、收音模式只能在待机时换（KW 在 王磊·预算·上线 / 李娜·招聘·排期 / 张伟·发布·复盘 间轮换，MODE 在 far-field / omnidirectional 间轮换）；守听中改规则会被拒绝并说明原因——信任中的过滤器不能在你不注意时被改写规则。
+- **匹配规则只有一条，这是第一位的诚实边界**：转写文本（归一化后）含关键词组里的词即命中，按组内顺序第一个命中的词被点名。没有说话人识别、没有分说话人、没有会议纪要引擎——门禁测的是文本，不是人；ASR 听错一个字就可能漏报或误报，界面、朗读、README 都明说。
+- **命中才亮，且亮的是「关键词 + 前 10 秒」**：滚动缓冲只保留约 10 秒的字幕，超时的段在匹配前就被丢弃，所以命中时贴出来的前文货真价实是命中前十秒。TTS 只点名关键词并指向回放，不把整段缓冲再念一遍——刚省下的注意力不能又被朗读吃回去。
+- **没命中的段只动计数器**：没命中只让「已听」加一，不弹横幅、不播报；空转写根本不计数——你并没有真的听到一段话，计进去就是假覆盖。过滤器如果每段话都报一遍，过滤器本身就成了干扰源。
+- **开始/结束守听必须是 deliberate 的点按**：点按（Enter）开始/结束守听；头稳点头只在待机开始守听和小结确认时有效，守听中点头无效——门的开关绝不能因为一次无意的点头就触发；不稳的点头不占 1.2 秒锁。
+- **纠错便宜，销毁需确认**：守听中 DEL 只清命中横幅，绝不动命中列表、不结束守听；无横幅时 DEL 被忽略，不会「静默清掉什么」；小结页返回键回到守听（不删东西），确认（点按/点头）才清空本次记录。
+- **只记本次会议，关掉即清（诚实边界，第二位）**：全部内容只存本次会话内存，关掉 Agent 即清——适用窗口就是正在开的这场会，零隐私残留；没有全程录音可泄露，因为缓冲天生只有约 10 秒，没命中的段过期即弃；下一场会重新从空白门禁开始，正是正确用法。
+- **收音模式的诚实边界（第三位）**：MODE 选的是 getUserMedia 音频流的拾音方向（far-field 适合会议室、omnidirectional 适合圆桌），宿主 ASR 用的是宿主麦克风，模式**不改变**识别的拾音——本 Agent 从不声称「模式把识别对准了某个人」。
+- **为什么胸前设备做不了**：命中横幅必须进视线（低头看胸口设备等于又一次离场）；没命中的段必须静默计数（胸口设备出声报「这段和你无关」等于把过滤反过来变成打断）；前 10 秒回放要一眼扫全（语音逐字报一遍等于重新占用注意力）。三条都只有头戴设备成立。
+
+## 与邻近 Agent 的分工
+
+- 指向性系列 `speaker-focus`：按座位朝向做会议纪要（谁在说话、从哪个方向来）——它是**纪要引擎**；本 Agent 从不写纪要，它是**门禁**：只有关键词命中才浮出水面，并附上命中前十秒。
+- 指向性系列 `far-ear`：把远处人声变成实时字幕让你听得清——它是**助听器**；本 Agent 对没命中的段恰恰相反：它故意不把全部字幕都推给你，因为全部推出来就是让你全程在线。
+- `focus-shield`（F01）：声音的会话门禁——白名单词打断，其余只记时间线；本 Agent 是它的会议孪生，区别是命中附带前 10 秒回放缓冲而不是时间线：命中只有配上前文才有用。
+- `sign-filter`（F02）、`buy-filter`（F03）：视觉孪生——声明的目标/三条件打断，其余只计。本 Agent 把同一扇门装到声音上，待机时才能改规则、零落盘两条纪律是共用的。
+
+## 功能流程
+
+1. **定门禁（KW / MODE，待机时）**：在示例关键词组、收音模式间轮换；守听中改规则会被拒绝。
+2. **开始守听（START / 点按 / 头稳点头）**：状态行明说「只有命中名字/关键词才亮，未命中只计不打断」。
+3. **守听过门（ASR 转写逐段）**：宿主 ASR 最终结果逐段过门；没命中只让「已听」加一，不亮屏、不出声；空转写不计数。
+4. **命中才亮（命中）**：关键词命中 → 视线内横幅 + TTS 报一次关键词并指向回放，前 10 秒字幕贴在横幅下；DEL 只清横幅，不动命中列表。
+5. **结束与小结（END）**：小结列出已听几段、命中几次、命中关键词与时间；返回键回到守听（不删东西），确认后清空本次记录。
+6. **演示（DEMO）**：四段演示——守听开始（关键词 王磊·预算·上线，收音 far-field）→ 两段没命中字幕静默计数（咖啡机、门禁卡，无横幅、无 TTS）→ 命中段「预算这块王磊说下周要重新核一遍」横幅 + TTS + 前两段作前 10 秒回放 → 会议小结（已听 3 段、命中 1 次、关键词 王磊）；已有用户守听时 DEMO 拒绝，绝不覆盖。
+
+## 手势映射
+
+| 手势/按键 | 动作 |
+|---|---|
+| 点按（Enter） | 待机：开始守听；守听中：结束出小结；小结页：确认并清空 |
+| 双击（Backspace） | 小结页：回到守听；守听中：无动作并说明（END 结束守听，DEL 清横幅）；待机：无动作并说明 |
+| 上滑（ArrowUp） | 命中列表下一条 |
+| 下滑（ArrowDown） | 命中列表上一条 |
+| 头稳 + 点头 | 待机：开始守听；小结页：确认并清空；守听中：无效并说明（点头绝不开关守听）；不稳的点头不计入 1.2 秒锁 |
+| 屏上按钮 | DEMO 演示 / START 开始 / END 结束出小结 / KW 换关键词组 / MODE 换收音模式 / SPEAK 朗读当前状态 / DEL 清横幅 / BACK 返回 / NEXT 下一条命中 |
+
+## 权限说明
+
+- 只申请 `RECORD_AUDIO`（app.json 的 `permissions` 为 `["RECORD_AUDIO"]`，静态校验明确断言这一点）。
+- 收音流：getUserMedia 音频流按 `microphoneMode`（far-field / omnidirectional）拾音；转写：宿主 SpeechRecognition 最终结果逐段过门，两者都包在 try/catch 里，预览环境不可用时软失败（DEMO 照常走）。
+- 不申请 `CAMERA`（没有任何拍照环节：关键词从示例池里选，确认靠手势）、不申请 `GEOLOCATION`（开会不需要定位）。
+
+## 打包与预览命令
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+~/tools/bin/aix pack . -o ../dist/meeting-filter.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+本地预览截图管线见 `~/workspace/custom-skills/rokid-preview-screenshots/SKILL.md`（本地 Ink + puppeteer，480×352；本 Agent 的探针脚本在 `~/workspace/preview-tools/shot-meeting-filter.js`）。
 
-## 标准工作流
+## 真机测试信息表
 
-<div align="center">
-
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
-
-</div>
-
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
-
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 项目 | 内容 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Studio 名称 | （导入后回填） |
+| Version / Build | 1.0.0 / （导入后回填） |
+| App Category | （导入后回填） |
+| Intent Description | （导入后回填） |
+| Agent ID | （导入后回填） |
+| 状态 | 未导入（本地全流程完成，待 GO 在 Global Studio 导入 + 真机测试） |
 
-**分支法要点**
+## 预览截图
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+![待机：关键词组](../screenshots/meeting-filter/preview-meeting-filter-idle.png)
+![守听进行中：DEMO 第 1 段](../screenshots/meeting-filter/preview-meeting-filter-listening.png)
+![没命中静默计数：DEMO 第 2 段](../screenshots/meeting-filter/preview-meeting-filter-nonhit.png)
+![命中横幅 + 前 10 秒回放：DEMO 第 3 段](../screenshots/meeting-filter/preview-meeting-filter-hit.png)
+![会议小结：DEMO 第 4 段](../screenshots/meeting-filter/preview-meeting-filter-summary.png)
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+## 提审资料 (Review Submission)
 
-1. 在仓库 `aix/` 目录里点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+### Feature Description
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+会议过滤器：两小时的会，真正和你有关的可能只有十分钟——其余时间不敢走神又听不进去，全程在线反而最耗注意力。本 Agent 会前先声明门禁（示例：名字王磊 + 议题关键词预算·上线），然后只管放空；守听时 ASR 转写逐段过门，只有命中名字或关键词的段才亮起横幅、TTS 报一次并贴出命中前约 10 秒的字幕；没命中的段只让已听计数走一格，不亮屏、不出声。会后小结列出已听几段、命中几次与关键词，确认后清空。诚实边界：没有说话人识别，听错就可能漏报/误报；滚动缓冲只保留约 10 秒，没命中即丢弃，不做全程录音存档；收音模式只影响 getUserMedia 流的拾音，不改变宿主识别的拾音；数据只存本次会议内存，关掉即清。权限仅 RECORD_AUDIO。
 
-</details>
+### Opening Message
 
-## 海外链路（全链路海外，缺一不可）
+**先定门禁，再开会——只有命中你的那十分钟才配打断你。**
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+- 待机时定门禁：KW 换关键词组，MODE 换收音模式；守听中改规则会被拒绝
+- START 开始守听：状态行明说只有命中名字/关键词才亮，未命中只计不打断
+- 守听过门：宿主 ASR 最终结果逐段过门；没命中只让已听加一，不亮屏、不出声；空转写不计数
+- 命中：关键词命中 → 视线内横幅 + TTS 报一次关键词并指向回放，前 10 秒字幕贴在横幅下；DEL 只清横幅，不动命中列表
+- END 出会议小结：已听几段、命中几次、命中关键词与时间；返回键回到守听，确认后清空本次记录
+- 诚实边界：没有说话人识别，听错就可能漏报/误报；缓冲只保留约 10 秒，没命中即丢弃，不做全程录音；模式只影响收音流的拾音，不改变宿主识别的拾音；数据只存本次会议，关掉即清
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Preview Media
 
-## 真机测试（云端下发）
+- 图片：上述 5 张预览截图（待机、守听进行中、没命中静默计数、命中横幅 + 前 10 秒回放、会议小结）
+- 视频：真机阶段补（需眼镜实拍）
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+### Change Log
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
-
-</details>
-
-## 提交审核
-
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
-
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
-
-## 维护约定
-
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
-
-## Agent 清单
-
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
-
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
-| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
-| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
-| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 | `agent-elder-day` |
-| W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 | `agent-stove-watch` |
-| W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 | `agent-bath-watch` |
-| W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 | `agent-laundry-watch` |
-| W04 | [signal-watch](signal-watch/) | 医院/银行/取餐叫号，大屏节律提醒回看，差3号喊你准备 | `agent-signal-watch` |
-| W05 | [door-watch](door-watch/) | 里屋开会戴耳机，守听门铃敲门快递叫你回看 | `agent-door-watch` |
-| H01 | [number-catch](number-catch/) | 号码拍下放大核对，常驻视线内不用默念 | `agent-number-catch` |
-| H02 | [code-hold](code-hold/) | 临时码复述存住，要输入时逐段显示 | `agent-code-hold` |
-| H03 | [voice-list](voice-list/) | 复述成清单挂在视线里，看向货架逐项点头勾掉 | `agent-voice-list` |
-| H04 | [route-hold](route-hold/) | 复述问路线路存步骤，走时只显示当前一步点头前进 | `agent-route-hold` |
-| H05 | [seat-catch](seat-catch/) | 拍票根存座位号，逐排逐座只报相对差 | `agent-seat-catch` |
-| C01 | [drop-search](drop-search/) | 掉落小物脚边 6 区逐区手摸，查完才报没找到 | `agent-drop-search` |
-| C01 | [last-glance](last-glance/) | 离开前环视存档最后画面，焦虑时按区回放 | `agent-last-glance` |
-| C02 | [room-sweep](room-sweep/) | 睡前逐项巡房确认打勾，漏项按方位提醒补看 | `agent-room-sweep` |
-| C03 | [proof-sweep](proof-sweep/) | 逐行指读记进度，跳行漏段当场提醒给覆盖率 | `agent-proof-sweep` |
-| C04 | [pack-sweep](pack-sweep/) | 清单逐件看向登记，出门前点名没装的那几件 | `agent-pack-sweep` |
-| C05 | [shelf-sweep](shelf-sweep/) | 货架分层分段记已扫格，没扫的格点名提醒 | `agent-shelf-sweep` |
-| F01 | [focus-shield](focus-shield/) | 只放行白名单声音，其余只记时间线休息时摘要 | `agent-focus-shield` |
+**Build 1.0.0**
+- Features added：门禁声明（示例关键词组、收音模式，待机时可换）；守听过门（宿主 ASR 最终结果逐段匹配，命中横幅 + 一次 TTS + 前 10 秒回放缓冲，没命中只计并注明原因）；会议小结（已听/命中/命中关键词与时间）；DEMO 四段演示；DEL 清横幅/小结确认清空；本次会议内存零落盘；头稳点头纪律（守听中点头不开关守听，不稳点头不占锁）。
+- Improvements：无（首版）。
+- Fixes：无（首版）。
