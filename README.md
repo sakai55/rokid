@@ -1,5 +1,12 @@
 # 灶台守望 stove-watch
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-stove-watch
+```
+
+
 注意力外挂系列 **W01**（守望型 WATCH）· Rokid 眼镜 AIUI Agent
 
 开火时逐个看向锅登记并设时，之后三口锅的倒计时在你视线里
