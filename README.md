@@ -247,3 +247,6 @@ aix preview .                               # 本地预览（起服务 / --html-
 | D03 | [dog-walk](dog-walk/) | 遛狗副线狗停当场定性，回家门逐项核对才放行 | `agent-dog-walk` |
 | D04 | [tour-watch](tour-watch/) | 跟团副线只捞集合句，快到点按朝向提醒归队 | `agent-tour-watch` |
 | D05 | [queue-roam](queue-roam/) | 取号副线守听叫号，距5号内叫你回去等着 | `agent-queue-roam` |
+| R01 | [day-lookback](day-lookback/) | 白天凝视按时间朝向排线，晚上顺线复盘 | `agent-day-lookback` |
+| R02 | [talk-replay](talk-replay/) | 谈话字幕按说话方朝向，回放只列承诺数字期限 | `agent-talk-replay` |
+| R03 | [shop-replay](shop-replay/) | 犹豫商品按店面朝向存档，回放比价钉最便宜 | `agent-shop-replay` |
