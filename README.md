@@ -1,5 +1,12 @@
 # repair-buddy — 修理搭档（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-repair-buddy
+```
+
+
 50 个「指向性生活问题」Agent 的第 12 个。修水龙头、自行车、马桶
 时，双手都在活儿上——一只手扶着阀芯、一只手攥着扳手，根本腾不
 出手举手机看教程；要看的零件又小，凑近了也看不清。本 Agent 把
