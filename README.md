@@ -260,3 +260,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 | S01 | [chat-catchup](chat-catchup/) | 谈话走神摇头求助，眼前给最近15秒要点摘要 | `agent-chat-catchup` |
 | C02 | [my-bus-watch](my-bus-watch/) | 只守登记的一路公交，拍车头核线路号报上车与否 | `agent-my-bus-watch` |
 | S02 | [guest-watch](guest-watch/) | 客人逐位看向登记座位，定时提醒回看茶水位 | `agent-guest-watch` |
+| S03 | [elder-ear](elder-ear/) | 守听老人聊天，叮嘱句存清单聊完复述 | `agent-elder-ear` |
+| S04 | [standup-echo](standup-echo/) | 守听站会只亮关联句，未命中默记摘要会后查 | `agent-standup-echo` |
+| S05 | [gift-clue](gift-clue/) | 日常聊天默记想要句成线索卡，按人回放 | `agent-gift-clue` |
+| B01 | [eye-rest](eye-rest/) | 头稳凝视近处满20分钟提醒远眺，抬头确认 | `agent-eye-rest` |
