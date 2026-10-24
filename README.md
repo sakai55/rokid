@@ -1,5 +1,12 @@
 # glasses-benchmark — Rokid 眼镜全功能 Benchmark（AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-glasses-benchmark
+```
+
+
 第一个开发测试智能体：一键跑完 Rokid 眼镜在 AIUI 下的全部功能，共 23 项（21 项实测 + 2 项平台边界声明）。
 
 ## 预览截图
