@@ -1,5 +1,12 @@
 # cry-watch — 哭声守望（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-cry-watch
+```
+
+
 50 个「指向性生活问题」Agent 的第 18 个。宝宝在隔壁房间
 睡着，你在厨房忙、戴着耳机，或者听力不太好 — 那边闹起来
 了，你往往要过好一会儿才察觉。眼镜整天戴在头上，正好
