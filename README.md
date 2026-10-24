@@ -63,7 +63,7 @@ https://github.com/sakai55/rokid/tree/agent-tour-watch
 ~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-本地预览截图管线见 `~/workspace/custom-skills/rokid-preview-screenshots/SKILL.md`（本地 Ink + puppeteer，480×352；本 Agent 的探针脚本在 `~/workspace/preview-tools/shot-tour-watch.js`，DEMO 点按序列待探针核定后填入，逐态探测：首版截图务必逐张目视，坐标错位产出的假帧必须重拍）。
+本地预览截图管线见 `~/workspace/custom-skills/rokid-preview-screenshots/SKILL.md`（本地 Ink + puppeteer，480×352；本 Agent 的探针脚本在 `~/workspace/preview-tools/shot-tour-watch.js`，DEMO 点按序列 [185, 175, 175, 175, 175]，逐态探测：守听态 y=195/205 打中的是 START（仅 EVT 行变化）、y=215 是 SPEAK，只有 y=175 是真 DEMO——哈希变化不等于命中，首版截图务必逐张目视）。
 
 ## 真机测试信息表
 
