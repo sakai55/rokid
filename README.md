@@ -1,5 +1,12 @@
 # story-look — 绘本共读（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-story-look
+```
+
+
 50 个「指向性生活问题」Agent 的第 37 个，H 组（学习记忆）第二个。
 给孩子讲绘本，最容易变成家长一个人的独白：照着书一页一页念，
 孩子听两页就开始抠沙发。本 Agent 把共读变成对话：绘本在你
