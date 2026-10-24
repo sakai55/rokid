@@ -1,5 +1,12 @@
 # head-nav — 头向导航（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-head-nav
+```
+
+
 50 个「指向性生活问题」Agent 的第 06 个。看手机导航要低头走路，
 东南西北又分不清——本 Agent 把目标方向换算成相对你头部朝向的方向：
 视线里一个大箭头加「左前方 35°」，转头让箭头朝上就能往前走，

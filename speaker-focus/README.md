@@ -1,5 +1,12 @@
 # speaker-focus — 发言聚焦（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-speaker-focus
+```
+
+
 50 个「指向性生活问题」Agent 的第 46 个。多人会议最累的不是听，
 是**跟人**：三四个人轮流开口，你低头记两行就丢了谁在说，纪要
 写成一锅粥。本 Agent 的办法是把「谁」换成「你当时看着哪个方

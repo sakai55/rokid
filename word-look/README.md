@@ -1,5 +1,12 @@
 # word-look — 看词查词（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-word-look
+```
+
+
 50 个「指向性生活问题」Agent 的第 36 个，H 组（学习记忆）第一个。
 看书、看路牌、看说明书，遇到一个生词，第一反应是掏手机——
 解锁、开词典、打字，一查回来，刚才读到哪儿、那句话什么意思，

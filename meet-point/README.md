@@ -1,5 +1,12 @@
 # meet-point — 汇合方位（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-meet-point
+```
+
+
 50 个「指向性生活问题」Agent 的第 08 个。在商场、景区和朋友走散，
 电话里「我在那个店旁边」说了半天还是找不到人——本 Agent 把对方的
 位置换算成相对你头部朝向的方向：大箭头 +「对方在你右前方 60°，

@@ -1,5 +1,12 @@
 # memory-anchor — 记忆锚点（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-memory-anchor
+```
+
+
 50 个「指向性生活问题」Agent 的第 38 个。想法和待办总是「转头就忘」：
 看着药瓶想起晚上要吃药，转身就没影；站在洗手台前想起要买牙膏，走到
 门口已经忘了。本 Agent 让你看着相关物品说出备忘，把备忘与「物品分类

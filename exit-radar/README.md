@@ -1,5 +1,12 @@
 # exit-radar — 出口雷达（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-exit-radar
+```
+
+
 50 个「指向性生活问题」Agent 的第 10 个。入住陌生酒店、走进
 陌生办公楼时，几乎没人会留意紧急出口在哪——真出事时在烟雾和
 慌乱里现找就晚了。本 Agent 让你在到达时就把这件事做掉：慢慢

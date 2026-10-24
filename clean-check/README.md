@@ -1,5 +1,12 @@
 # clean-check — 清洁复查（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-clean-check
+```
+
+
 50 个「指向性生活问题」Agent 的第 30 个。打扫最气人的不是累，
 是漏：窗台、柜顶、墙角、桌下，每次漏的总是这几个边角，复查
 还得弯腰低头逐个凑近看。本 Agent 把房间的六个易漏区域绑在

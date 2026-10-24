@@ -1,5 +1,12 @@
 # queue-sense — 排队估算（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-queue-sense
+```
+
+
 50 个「指向性生活问题」Agent 的第 45 个。排队最熬人的不是等，
 是**不知道还要等多久、不知道隔壁队是不是更快**。原计划是「看向
 队伍拍照估算人数」——这里先把诚实改法写在最前面：**本机没有可靠

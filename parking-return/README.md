@@ -1,5 +1,12 @@
 # parking-return — 找车方位（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-parking-return
+```
+
+
 50 个「指向性生活问题」Agent 的第 09 个。在大型停车场、地下车库
 回来时找不到自己的车——本 Agent 在你停车下车时把三样东西绑在
 一起存好：当时的 GPS 定位、你车头的朝向、你选的区域（B1/B2/

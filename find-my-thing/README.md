@@ -1,5 +1,12 @@
 # find-my-thing — 寻物方位（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-find-my-thing
+```
+
+
 50 个「指向性生活问题」Agent 的第 07 个。眼镜盒、钥匙、遥控器、钱包
 放下就忘在哪：放下时看着它登记一下，眼镜记下「物品 + 房间 +
 你当时的头部朝向 + 时间」；找的时候选中物品慢慢转头，转到你现在的

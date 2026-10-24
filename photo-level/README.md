@@ -1,5 +1,12 @@
 # photo-level — 拍照水平（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-photo-level
+```
+
+
 50 个「指向性生活问题」Agent 的第 44 个。用眼镜拍照（或者举着
 手机拍）总是歪：地平线斜几度，照片立刻显得业余；构图没感觉，
 主体永远死在正中央。本 Agent 的取景框就是你的眼睛——三分法网

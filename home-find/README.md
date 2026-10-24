@@ -1,5 +1,12 @@
 # home-find — 家中寻物（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-home-find
+```
+
+
 50 个「指向性生活问题」Agent 的第 26 个（F 组家居生活第一个）。
 东西一收起来就找不到：护照塞进哪个柜子了？备用钥匙挂哪儿了？
 药盒是在床头柜还是书房？手机备忘录能记文字，记不了「你当时

@@ -1,5 +1,12 @@
 # badge-reader — 名牌识人（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-badge-reader
+```
+
+
 50 个「指向性生活问题」Agent 的第 47 个。
 社交场合最尴尬的一瞬：对方胸前挂着名牌，字小、挂得低，你
 不能凑近盯着看；好不容易寒暄完，转头就把人家名字忘了。本

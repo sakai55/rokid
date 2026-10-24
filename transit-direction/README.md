@@ -1,5 +1,12 @@
 # transit-direction — 出站定向（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-transit-direction
+```
+
+
 50 个「指向性生活问题」Agent 的第 42 个。出了地铁站最大的崩溃不是
 路远，是**方向感清零**：站内地图看懂了，一出地面就分不清自己面朝
 哪条街，手机导航的蓝点箭头转来转去，越看越晕。本 Agent 的办法是

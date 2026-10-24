@@ -1,5 +1,12 @@
 # sign-reader — 远牌读牌（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-sign-reader
+```
+
+
 50 个「指向性生活问题」Agent 的第 41 个，I 组（出行定向）第一个。
 站牌在马路对面、登机口信息在通道尽头、菜单牌挂在柜台上方——
 太远太小看不清，走近看又来不及。本 Agent 让你看向牌子拍一张

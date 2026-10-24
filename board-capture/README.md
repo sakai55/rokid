@@ -1,5 +1,12 @@
 # board-capture — 板书捕获（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-board-capture
+```
+
+
 50 个「指向性生活问题」Agent 的第 39 个，H 组（学习记忆）第三个。
 上课、开会时，黑板白板上的字又远又多，老师讲完一擦就没，手抄
 根本跟不上。本 Agent 让你看向板书拍一张长焦照片，眼镜把照片

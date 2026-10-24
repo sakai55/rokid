@@ -1,5 +1,12 @@
 # expiry-check — 临期检查（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-expiry-check
+```
+
+
 50 个「指向性生活问题」Agent 的第 03 个。冰箱和囤货柜里的食品总是放到
 过期才发现：看着包装拍一下日期区域，日期你亲口/手动确认，眼镜算好
 剩余天数、排好紧急顺序管起来，3 天内到期的出声提醒你。

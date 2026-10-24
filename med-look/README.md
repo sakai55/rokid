@@ -1,5 +1,12 @@
 # med-look — 看药助手（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-med-look
+```
+
+
 50 个「指向性生活问题」Agent 的第 31 个（G 组健康安全开篇）。
 老人药瓶上的字小得看不清，多瓶药的吃法又容易记混 — 这瓶是
 早饭后吃还是睡前吃、吃 1 片还是 2 片，到点了全靠猜。本 Agent

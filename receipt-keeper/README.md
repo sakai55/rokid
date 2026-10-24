@@ -1,5 +1,12 @@
 # receipt-keeper — 小票账本（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-receipt-keeper
+```
+
+
 50 个「指向性生活问题」Agent 的第 25 个。小票随手一丢，月底
 不知道钱花哪了——手机记账要掏手机、解锁、开 App、敲数字，
 一套下来小票早扔了。眼镜就在你脸上：结账时看一眼小票，

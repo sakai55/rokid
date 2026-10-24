@@ -1,5 +1,12 @@
 # home-patrol — 出门巡检（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-home-patrol
+```
+
+
 50 个「指向性生活问题」Agent 的第 28 个。出门前总有一组问题在
 脑子里盘旋：门锁了吗？窗户关了吗？燃气阀拧了吗？水龙头还滴
 吗？——锁了门走出去一百米，又开始怀疑。本 Agent 把巡检拆成

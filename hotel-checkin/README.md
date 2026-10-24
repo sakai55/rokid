@@ -1,5 +1,12 @@
 # hotel-checkin — 入住巡检（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-hotel-checkin
+```
+
+
 50 个「指向性生活问题」Agent 的第 43 个。住进酒店最怕的不是贵，是
 **没底**：床单换没换、淋浴有没有热水、门锁牢不牢——凭感觉扫一眼
 就住下，半夜才发现问题。本 Agent 把入住检查拆成固定的八个检查点

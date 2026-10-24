@@ -1,5 +1,12 @@
 # meter-reader — 抄表助手（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-meter-reader
+```
+
+
 50 个「指向性生活问题」Agent 的第 27 个。水表、电表、燃气表
 的数字又小、位置又高、光线又差，抄完写在纸上回头就丢，更
 没人帮你算「这个月用了多少、比上个月多还是少」。眼镜就在

@@ -1,5 +1,12 @@
 # shelf-compare — 看货比价（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-shelf-compare
+```
+
+
 50 个「指向性生活问题」Agent 的第 02 个。在超市里同类商品看花眼、价格和
 规格记不住没法比时：看着货架上的商品扫一下条码，一个个加进眼镜里的
 对比表，单位价自动算好、最划算的一件标出来，并朗读给你听。

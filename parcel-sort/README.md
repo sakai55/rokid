@@ -1,5 +1,12 @@
 # parcel-sort — 快递分拣（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-parcel-sort
+```
+
+
 50 个「指向性生活问题」Agent 的第 29 个。快递一多就堆在门口一地：
 这件是谁的？那件是不是生鲜、得先拆？拆错顺序，生鲜在普通堆里
 放坏，文件被压在最底下。本 Agent 的分法很眼镜化：一件一件地

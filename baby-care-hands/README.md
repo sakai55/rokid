@@ -1,5 +1,12 @@
 # baby-care-hands — 抱娃手记（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-baby-care-hands
+```
+
+
 50 个「指向性生活问题」Agent 的第 15 个（C 组双手忙碌收尾）。
 双臂抱着宝宝，腾不出手点手机记录 — 喂过奶、换过尿布没法当场
 记，到凌晨三点根本想不起来上次喂奶是几点。本 Agent 把记录

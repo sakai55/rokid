@@ -1,5 +1,12 @@
 # food-safe — 剩菜安全（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-food-safe
+```
+
+
 50 个「指向性生活问题」Agent 的第 35 个，G 组（健康安全）收尾。
 剩菜放了三四天，闻着好像没事、看着也没坏，到底能不能吃？
 生鲜买回来搁冰箱一角，忘了是哪天放的。本 Agent 自己测不出
