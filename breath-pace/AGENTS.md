@@ -121,3 +121,11 @@ anyone is.
   stage 5, rounds 1, total 12 s). Button coordinates were
   probed per state and every PNG re-verified by eye (see
   `shot-breath-pace.js` in `~/workspace/preview-tools/`).
+  Two probe findings worth keeping: (1) the DEMO band moves
+  with the status line — idle DEMO (66,170), pacing DEMO
+  (66,165), and in pacing states y180 already hits the END
+  row (it closed a round into a 0-round summary), so pacing
+  DEMO taps must stay at y<=170; (2) DEMO stops the live
+  one-second timer, otherwise live ticks drift the phase
+  between the DEMO tap and the screenshot and the staged
+  frames are not reproducible.
