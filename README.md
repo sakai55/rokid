@@ -220,3 +220,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 | 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
 | 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
 | 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
+| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 | `agent-elder-day` |
+| W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 | `agent-stove-watch` |
+| W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 | `agent-bath-watch` |
+| W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 | `agent-laundry-watch` |
