@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - meeting speaker focus: register seats by the direction you face, listen rounds tag each captioned segment with the seat you were facing, minutes read back grouped by facing direction (tags are facing, never voice identity)","main":"app.js","name":"speaker-focus","version":"1.0.0"}
