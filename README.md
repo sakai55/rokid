@@ -1,5 +1,12 @@
 # name-call — 喊名提醒（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-name-call
+```
+
+
 50 个「指向性生活问题」Agent 的第 19 个。在嘈杂的办公室、
 车间或家庭聚会里，有人隔着房间喊你的名字，你却没听见 —
 尤其当你戴着耳机或听力不太好时。手机不能替你听名字；
