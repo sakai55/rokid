@@ -1,5 +1,12 @@
 # fresh-pick — 生鲜挑手（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-fresh-pick
+```
+
+
 50 个「指向性生活问题」Agent 的第 23 个。不会挑水果的人，
 买回家切开才发现没熟、过熟或已经坏了。本 Agent 不替你看
 水果——它感测不到任何东西。它做的是把老手的挑选方法拆成
