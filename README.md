@@ -1,222 +1,160 @@
-<div align="center">
+# laundry-watch · 洗衣守望
 
-# `rokid` — Rokid AIUI Agents
+Rokid 眼镜 AIUI 智能体（注意力外挂系列 W03，守望型 WATCH）：洗衣机在阳台，洗完没人知道，衣服闷一天；反复跑去阳台看更费神。站在面板前看一眼登记——头部朝向就是洗衣机的地址，面板上显示的分钟数（你亲眼读的）就是唯一的时钟——之后倒计时在你视线里走着，你尽管离开阳台；剩 3 分钟它先轻喊一声，估时走完它按「相对你的方向」叫你回去晾衣，直到你真的走回去看回洗衣机（回看 = 确认）。可选的守听层只认电平的形状：最后 20% 时段里一声短促的响亮声音，提醒你去看一眼——**电平不是蜂鸣识别，它永远只说「刚才有一声响亮的短音」**。
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
+## 预览截图
 
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
+本地 `aix preview` 渲染（480×352，演示状态）：
 
-</div>
+![主界面（未登记）](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/laundry-watch/preview-laundry-watch-index.png)
 
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：`aix/` 目录里的 `<slug>.aix` 下载后走 **Import from AIX**。
+![DEMO：短音提醒已触发](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/laundry-watch/preview-laundry-watch-spike.png)
 
-## 目录
+![DEMO：估时到点、回看确认闭环](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/laundry-watch/preview-laundry-watch-acked.png)
 
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
+## 解决的问题
 
-## 仓库结构
+- 洗衣机多在阳台/卫生间，洗完的提示音隔着门根本听不见，衣服在筒里闷一天发臭；
+- 不放心就反复跑去看：一次洗衣来回跑三四趟，注意力全耗在「洗完没」上；
+- 手机定时器能响，但它不知道洗衣机在哪、响完你没去它也不管，关掉闹钟照样忘。
 
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── aix/<slug>.aix             # 全部 Agent 打包好的 AIX（集中存放，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
-```
+## 注意力外包设计（为什么必须是眼镜）
 
-## 快速开始
+- **朝向即地址**：登记时你正看着面板，头部朝向就是洗衣机的位置；到点播报的是「右后方的洗衣机」，胸前设备没有你的视线，不知道机器在你哪个方向。
+- **回看即确认**：确认动作不是掏手机点掉闹钟，而是走回阳台、把视线落回洗衣机并停住 1 秒——确认与「人真的到了机器跟前」是同一件事，胸前设备看不见你的视线，做不了这种确认。
+- **余光里的倒计时**：剩余时间与机器的相对方向常驻视线边缘，离开阳台后随时一瞥就知道还要等多久、等会儿往哪儿走，不必掏任何设备。
+- **守听只借耳朵的余量**：全向电平流在最后 20% 才睁眼，一声短促响音换一次提醒；它不假装听懂声音，只把「好像有动静」这份不确定如实交还给你的眼睛判断。
+
+## 功能流程
+
+1. 站在洗衣机面板前看着它，点 **SET** 登记：当前头部朝向被绑定；下滑选衣量（小件 / 日常 / 大件），上滑选面板分钟数（15 / 30 / 45 / 60 / 90），再单击开始守望。**衣量只是标签，从不参与计算；时间以面板显示为准。**没有朝向读数时登记如实拒绝。
+2. 洗涤中随时看指南框：洗衣机在你的哪个方向、还剩多久。点 **TIME** 加 5 分钟（脱水/漂洗比面板估时久时用）。洗涤中连点两次 SET 才能替换登记（先武装、再打开、确认才换），绝不静默丢弃当前这筒。
+3. 还剩 3 分钟（仅估时 >5 分钟的筒）轻喊一次：「洗衣快结束了，还剩大约三分钟，准备晾衣服」。
+4. 点 **LISTEN**（可选）开全向电平守听：只在最后 20%（或到点未确认期间）睁眼；一声短促响音（电平跳高又在 2 秒内落下）提醒一次「刚才有一声响亮的短音，去看一眼洗衣机」，同一段响声不重复，需 4 秒安静重新布防；窗口外的短音（电视、关门）忽略；持续轰鸣（脱水声）故意不作信号。再点一次 LISTEN 关闭并释放麦克风。
+5. 估时走完：按洗衣机相对你的方向朗读一次「<方向>的洗衣机到时间了，去晾衣服」，横幅留在眼前不重复喊。走回阳台看向洗衣机、头稳住停满 1 秒 = 回看确认（记 `face`），或点 **ACK**（记 `tap`）。快速扫过不算数。
+6. 点 **SPEAK** 或头部稳定时点头，随时听当前进度。
+7. **DEMO**：播入一筒演示衣（面板 45 分钟、已洗 85%、洗衣机在正前方、模拟守听开启，约 2 秒后抛出一声短促响音触发提醒）；每点一次 DEMO 转头 +45° 并快进 6%：途中响起 3 分钟轻喊，估时走完报警，转回正对洗衣机停满 1 秒触发回看确认；转满一圈后再点一次退出，恢复你真实的这筒，全程不写任何存储。
+
+## 手势映射
+
+镜腿触控板手势为一等输入（宿主把触控板映射为按键事件，本 Agent 的按键分发逐一对应，档案 §3.2.1）：
+
+| 手势 | 宿主事件 | 本 Agent 行为 |
+| --- | --- | --- |
+| 单击 | Enter | 情景主操作：登记中 = 开始守望；洗衣机在等回看 = 确认（ACK）；替换已武装 = 打开登记；其余 = 登记（无筒时）或朗读状态 |
+| 滑动 | ArrowUp / ArrowDown | 登记中：上滑换面板分钟数（15→30→45→60→90 循环），下滑换衣量（小件→日常→大件循环） |
+| 双击 | Backspace | 返回（宿主处理），Agent 不拦截 |
+| 单指长按 | —（系统级） | 唤醒 AI 助手，与本 Agent 无关 |
+| 点头（头部稳定时） | `onHeadGesture('nod')` | 朗读当前状态（等同 SPEAK）；**从不代替回看确认**——确认必须真的把视线落回洗衣机 |
+
+主流程（登记 → 等待 → 到点 → 回看确认）全部可用手势单独完成（Node 断言第 7 组已走通）。屏幕保留 6 个按钮作为同义入口与状态可见性：
+
+- **SET**：登记/替换洗衣机的唯一入口，保留——登记是低频但关键的显式动作；
+- **TIME**：登记中 = 选面板分钟数（滑动的同义入口）；洗涤中 = 加 5 分钟，保留——「还没洗完、再给它几分钟」是高频小动作；
+- **ACK**：回看确认的点按后备，保留——朝向传感器不可用时唯一的确认路径；
+- **LISTEN**：麦克风开关（涉及权限与隐私），必须显式保留为按钮；
+- **SPEAK**：朗读状态，点头的同义入口，保留——点头在嘈杂/不便时不总可用；
+- **DEMO**：安全试玩入口（不写存储、不动真实登记之外的状态），保留。
+
+## 权限
+
+| 权限 | 用途 |
+| --- | --- |
+| `RECORD_AUDIO` | LISTEN 守听的全向麦克风电平流（只算 RMS 电平，不录制、不保存、不上传） |
+
+- 不用相机、不用定位：登记靠头部朝向与你亲眼读的面板分钟数。
+- **零持久化（构造级）**：本 Agent 不写任何存储——登记、剩余时间、电平读数只活在本次会话内存里，页面关掉一切消失。麦克风音频从不落盘。
+- **守望只在本页打开时存在**：倒计时、轻喊、到点播报与电平守听只在 Agent 打开期间运行；关掉页面或眼镜息屏后不会有任何提醒，更不会推送到手机。界面底行常驻写明。
+- TTS 从不设置语言属性（宿主不采纳）；全向麦克风模式只作用于电平流，本 Agent 没有语音识别环节。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/laundry-watch
+~/tools/bin/aix pack . -o ../dist/laundry-watch.aix   # 产物进仓库 aix/laundry-watch.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+## 真机测试
 
-## 标准工作流
+海外版链路 Path 1（无线）：Global Studio 导入本分支 → 构建与提审里打包保存新版本 → Rokid AI App（海外版）设置 → 开发者选项 → AIUI → 更新眼镜资源包 → 等「智能体资源包下载成功」→ 对眼镜说「乐奇，打开洗衣守望智能体」。
 
-<div align="center">
+真机核对清单：
 
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
+- [ ] 站在面板前点 SET，指南框朝向与登记行 `reg` 角度符合登记时站位
+- [ ] 上滑/下滑切档顺滑；单击开始后清单行显示剩余时间与相对方向
+- [ ] 走开后回头看：方向箭头随转头实时变化（↖↗ 等 8 向）
+- [ ] TIME 加 5 分钟生效（总数与剩余同步增加）
+- [ ] 还剩 3 分钟轻喊只响一次；估时走完到点播报带正确方向、只响一次
+- [ ] 回阳台看向洗衣机停 1 秒：横幅消失、记 `face`；快速转头扫过不触发
+- [ ] LISTEN 开启后电平条跳动；在最后 20% 人为拍一下手（短促响声）→ 提醒一次且文案是「响亮的短音」而非「蜂鸣」；持续说话/放音乐（持续响）不触发
+- [ ] 窗口外（刚开始洗时）拍手不触发提醒
+- [ ] 头部稳定时点头只朗读、不确认；关掉页面后到点不再有任何声音（预期行为）
 
-</div>
+## 真机测试信息
 
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
+| 字段 | 值 |
+| --- | --- |
+| Studio 名称 | 待导入后回填 |
+| Version / Build | 待导入后回填 |
+| App Category | 待导入后回填 |
+| Intent Description | Laundry Watch: look-to-register panel-minutes wash timer with spike-level nudge and look-back acknowledgement |
+| Agent ID | 待导入后回填 |
+| 状态 | 本地构建完成（Node 断言 84/84 通过，aix 打包与本地预览已验证）；未导入 Studio、未真机测试 |
 
-## Studio 导入（实测结论）
+## 验证情况
 
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
+已验证（本地，2026-10-24）：
 
-| 地址形式 | 结果 |
-|---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+- 静态校验：app.json / package.json / `<script def>` JSON 解析通过；页面脚本与 app.js `node --check` 通过；无 `Page(`/`App(`/`Widget(`/`workers:` 残留；6 个按钮绑定齐全。
+- Node 断言 84/84（宿主 API 全桩件复刻）：无朝向/无传感器时 SET 如实拒绝；滑动选档与衣量标签不入算；倒计时逐拍递减；TIME +5 分钟；剩 3 分钟轻喊恰在 720 拍触发且只一次、短估时（≤5 分钟）不喊；到点播报带方向且只一次；回看确认的驻留语义（入锥只算开始、满 5 拍才确认、出锥重置、头不稳不算）；点按确认与非报警时 ACK 被忽略；替换登记先武装后确认、报警期间 SET 被拒；**电平守听纪律**：窗口外短音忽略、窗口内短音只提醒一次、同 episode 不重复、4 秒安静重新布防、新 episode 再提醒、8 拍（2 秒）边界算短音、9 拍算持续响不提醒、持续轰鸣不作信号、报警等待期间窗口保持开启、OverconstrainedError 回退默认麦并标注、LISTEN 关闭/onHide 释放轨道；点头纪律（不稳忽略、只朗读、从不确认、登记中忽略、非点头忽略）；纯手势全流程走通；DEMO 播种 85%、脚本短音触发提醒、快进跨过轻喊与到点、回看确认闭环、退出无损恢复真实筒；全程 wx 调用为 0、TTS 从不设 lang、所有播报文本无任何声音分类措辞。
 
-**分支法要点**
+未验证（必须如实说明）：
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+- **电平不是蜂鸣识别**：运行时没有声音分类器。本 Agent 只认「窗口内一声短促的响亮声音」这个电平形状——洗衣机完工提示音、微波炉、门铃、电视音效在电平上长得一样。它只负责说「刚才有一声响亮的短音，去看一眼」，判断那声是什么的是你的眼睛；窗口与 episode 纪律只是把误报压到可接受，不等于听懂了声音。
+- **估时就是面板估时，不是真实结束时刻**：暂停、加衣、进水慢都会让真实结束漂移；到点播报只表示「面板估时走完了」，所以确认权设计在你的回看上，本 Agent 不替你断言衣服洗完了。
+- 宿主真机上的 AnalyserNode 行为、`getUserMedia` 的 `microphoneMode: 'omnidirectional'` 支持度与 `getSettings()` 回读，需真机核对；不支持时回退默认麦克风并在界面标注。
+- yaw 长期漂移（磁干扰）会让相对方向与回看锥失准；登记朝向只对登记时站位成立，换站位几何即变（同 #07 / #28 的已知限制）。
+- TTS 在嘈杂阳台/洗衣机轰鸣环境中的可听度、宿主朝向传感器精度与稳定性事件的真实行为，需真机核对。
+- 守望只在本页打开时成立：关页面/息屏后倒计时与守听都停摆，这是平台约束不是缺陷，但意味着「开着页面把眼镜放桌上等」与「戴着做别的事」才是预期用法。
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+## 提审资料 (Review Submission)
 
-1. 在仓库 `aix/` 目录里点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+### Feature Description（457 字符 ≤500）
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+Register your washing machine by looking at its panel: the glasses bind the direction you face and count down the minutes the panel itself shows. A soft call at three minutes left, a spoken alert naming the machine's direction when the estimate ends, and an optional level watch that nudges you once if a short loud sound occurs near the end. You confirm by walking back and looking at the machine. Level is not beep recognition; timers run only while open.
 
-</details>
+### Opening Message（404 字符 ≤500，Markdown）
 
-## 海外链路（全链路海外，缺一不可）
+## Laundry Watch
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+Stand at the panel, look at it, and tap **SET** - I bind that direction and count down the minutes the panel shows.
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+- **TIME** adds 5 minutes when a cycle runs long
+- **LISTEN** watches sound level near the end - a short loud sound earns one nudge (level only, never beep recognition)
+- When time is up I call you by direction; walk back and look at the machine for a second to confirm
 
-## 真机测试（云端下发）
+### Preview Media
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+- 图片 ×3：`preview-laundry-watch-index.png`、`preview-laundry-watch-spike.png`、`preview-laundry-watch-acked.png`（本目录 `https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/laundry-watch/`，本地 aix preview 渲染）
+- 视频 ×1：待真机录制后补（提审要求 3–5 个媒体文件、至少 1 图 1 视频、视频 ≤60 秒）
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
+### Change Log
 
-</details>
+#### Build 1.0.0
 
-## 提交审核
+**Features added**
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+- Look-to-register wash watch: heading binding at the panel, panel-minutes countdown (15/30/45/60/90 presets), load-size label that never enters the math
+- Three-minute soft call (estimates over 5 minutes), zero-time spoken alert naming the machine's relative direction, +5-minute TIME extension, arm-then-confirm re-registration
+- Look-back acknowledgement: face the machine with a steady head for 1 second, or tap ACK
+- Optional LISTEN level watch over an omnidirectional mic stream: one nudge per short-loud-sound episode inside the last 20% (or while the alert waits), quiet re-arm, sustained noise deliberately ignored
+- Gesture-first control (temple tap/slides, nod to hear status) and a self-restoring DEMO seeded at 85%
 
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+**Improvements**
 
-## 维护约定
+- None (first build)
 
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+**Fixes**
 
-## Agent 清单
-
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
-
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
-| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
-| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
+- None (first build)
