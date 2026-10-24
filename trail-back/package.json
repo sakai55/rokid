@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - trail back: mark key junctions as breadcrumbs (direction + photo) while you wander a mall, gallery or big car park, then follow them back in reverse order point by point; it is not navigation, there is no indoor positioning, photos are session-only and discarded.","main":"app.js","name":"trail-back","version":"1.0.0"}
