@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - eye rest: head-steady near-gaze timing, in-view far-look reminder at 20 minutes, head-up auto-confirm; no eye tracking, head-steady is only an approximation, not medical advice, session memory only.","main":"app.js","name":"eye-rest","version":"1.0.0"}
