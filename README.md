@@ -1,5 +1,12 @@
 # sound-compass — 声源罗盘（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-sound-compass
+```
+
+
 50 个「指向性生活问题」Agent 的第 16 个。声音发生了 — 水管在
 响、水壶开了、手机在另一个房间响、有人在喊你 — 却分不清是从
 哪个方向来的。本 Agent 用「转头电平扫描」解决：你慢慢转一圈，
