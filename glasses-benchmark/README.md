@@ -14,17 +14,18 @@
 
 | 项目 | 值 |
 |---|---|
-| Agent Name（Studio） | 12345 |
-| Version（Build） | 1.0.19 |
-| App Category | Life |
-| Intent Description | full |
-| Agent ID | ca29aef525bd42db377edba9021656 |
-| AIX Package Size | 7.93 KB |
-| 状态 | ● Debug version ready — Ready for device debugging |
+| Agent Name（Studio） | sakai55/rokid（分支导入的默认名，待在 Studio 内改名） |
+| Version（Build） | 1.0.1（Device Debug 首次 Package and Save：1.0.0 → 1.0.1） |
+| App Category | Work（导入端到端验证时所填） |
+| Intent Description | —（未填） |
+| Agent ID | 87963d2dfa304a9f8ff9595eb7879820 |
+| AIX Package Size | 12.74 KB（Studio 打包生成） |
+| 状态 | ● Packaged — Uploaded to the cloud and completed AIX packaging；Simulator 运行通过（完整 UI、无报错） |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
-> 每次在 Studio 里 Repackage and Save 后，Build 号会递增，上表同步更新。
+> 更正（2026-10-24）：本表此前误填了另一个 agent「12345」（Agent ID ca29aef525bd42db377edba9021656，GO 通过对话会话创建，Build 1.0.19 / Life / "full"）的数据——那不是本仓库的 glasses-benchmark。上表为分支 `agent-glasses-benchmark` 导入的草稿的实测值。
+> 注意：Studio 里的代码仍是首次导入时的版本，仓库的改动不会自动同步过去；本地代码现为 v1.1.2，需在 Studio 重新同步分支后，再 Package and Save 生成新 Build，上表随之更新。
 
 ## 测试项
 
@@ -79,7 +80,7 @@
 
 ## 真机测试（海外版 · 云端下发）
 
-1. 推到 GitHub → Global AIUI Studio（en-US）从 GitHub 导入（子目录 `glasses-benchmark`）
+1. 推到 GitHub → Global AIUI Studio（en-US）用分支地址导入：`https://github.com/sakai55/rokid/tree/agent-glasses-benchmark`（已导入过的草稿需重新同步到最新代码）
 2. Studio 的 **Device Debug** 页签填 Basic Information（Name / Category / Intent Description），
    在 AIX Packaging 点 **Repackage and Save**，确认顶部出现绿色
    **● Debug version ready — Ready for device debugging**
@@ -116,6 +117,20 @@ Tap **RUN ALL** and I'll test 23 items one by one, from display and CPU to camer
 - 状态：未齐（已有 2 张图；还需至少 1 个视频，总数补到 3–5 个后才可提交）
 
 ### Change Log
+
+#### v1.1.2（本地包版本；Studio Build 号待重新打包后生成）
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- The app version (mirrors package.json `version`) is now shown at the bottom-right corner of the page, so the build actually running on the glasses can be identified at a glance — Studio's own Build number is generated on its side and does not follow the repo version.
+
+**Fixes**
+
+- None.
 
 #### v1.1.1（本地包版本；Studio Build 号待重新打包后生成）
 
