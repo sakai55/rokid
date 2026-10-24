@@ -1,5 +1,12 @@
 # homework-lens — 作业辅导（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-homework-lens
+```
+
+
 50 个「指向性生活问题」Agent 的第 40 个，H 组（学习记忆）第四个。
 孩子题目不会，家长常常不是不会做，而是讲不清步骤——一上来
 报答案，孩子没学会；从头推导，又不知从哪一台阶开始。本 Agent
