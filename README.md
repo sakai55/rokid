@@ -1,5 +1,12 @@
 # ambient-captions — 环境字幕（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-ambient-captions
+```
+
+
 50 个「指向性生活问题」Agent 的第 20 个。听力不佳时，
 面对面聊天是一场猜谜：每句话听一半漏一半，人名、数字
 最容易丢。字幕早就有了 — 但只在电视和视频里有，坐在
