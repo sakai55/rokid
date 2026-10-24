@@ -12,12 +12,14 @@ var PAGE_SIZE = 4;
 export default {
   data: {
     summary: '就绪 · 共 23 项',
-    appVersion: 'v2.0.0',
+    appVersion: 'v2.0.1',
     deviceLine: '-',
     lastEvent: '单击镜腿开始测试 · 滑动翻页看结果',
     renderTick: 0,
     running: false,
     runLabel: '开始测试',
+    selId: null,
+    hasRun: false,
     page: 0,
     pageText: '第 1/6 页',
     pageItems: [],
@@ -49,6 +51,7 @@ export default {
   },
 
   onLoad() {
+    this._runEndAt = 0;
     var line = '-';
     try {
       var ink = (navigator.versions && navigator.versions.ink) || '?';
@@ -65,18 +68,23 @@ export default {
   // scrolling. Double-tap (Backspace) stays with the host.
   onKeyDown(event) {
     var code = event && event.code;
-    if (code === 'Enter' || code === 'GlobalHook') this._guideTap = true;
-    if (code === 'ArrowDown') this._setPage(1);
-    else if (code === 'ArrowUp') this._setPage(-1);
-    else if (code === 'Enter' || code === 'GlobalHook') this._primary();
+    if (code === 'ArrowDown') { this._clearSelection(); this._setPage(1); }
+    else if (code === 'ArrowUp') { this._clearSelection(); this._setPage(-1); }
+    else if (code === 'Enter' || code === 'GlobalHook') {
+      this._guideTap = true;
+      this._primary();
+    }
   },
   onVoiceWakeup(event) {
     this.setData({ lastEvent: 'EVT: wakeup ' + ((event && event.keyword) || '') });
   },
+  // Nod NEVER starts a run: a nod after a run ends used to restart the whole
+  // run by itself (the v2.0.0 "won't stop" bug). Outside the guided
+  // interaction stage, a nod selects the next FAILED item for re-test.
   onHeadGesture(event) {
     if (event && event.gesture === 'nod') {
       this._guideNod = true;
-      this._primary();
+      if (!this.data.running) this._selectNextFailed();
     }
   },
   onOrientationStabilityChange(event) {
@@ -87,7 +95,59 @@ export default {
 
   _primary() {
     if (this.data.running) return;
-    this.runAll();
+    // Debounce: a temple tap can be delivered twice (Enter + GlobalHook) and
+    // a queued event can land just after a run ends; without this the
+    // finished run restarts by itself.
+    if (this._runEndAt && Date.now() - this._runEndAt < 2000) return;
+    if (this.data.selId) this._rerunSelected();
+    else this.runAll();
+  },
+
+  _refreshRunLabel() {
+    var label = '开始测试';
+    if (this.data.running) label = '测试中…';
+    else if (this.data.selId) {
+      var item = null;
+      for (var i = 0; i !== this.data.tests.length; i++) {
+        if (this.data.tests[i].id === this.data.selId) { item = this.data.tests[i]; break; }
+      }
+      label = item ? ('重测 ' + item.speak) : '重新测试';
+    } else if (this.data.hasRun) label = '重新测试';
+    this.setData({ runLabel: label });
+  },
+
+  _clearSelection() {
+    if (!this.data.selId) return;
+    this.setData({ selId: null });
+    this._syncPage();
+    this._refreshRunLabel();
+  },
+
+  // Failed-item re-test selection: nod cycles through FAILED items only
+  // (wrapping), the page follows the selection, and a tap re-runs it.
+  _selectNextFailed() {
+    var failed = [];
+    for (var i = 0; i !== this.data.tests.length; i++) {
+      if (this.data.tests[i].status === 'FAIL') failed.push(this.data.tests[i]);
+    }
+    if (!failed.length) {
+      this.setData({ lastEvent: '无失败项可重测' });
+      this._announce('没有失败项');
+      return;
+    }
+    var idx = -1;
+    for (var j = 0; j !== failed.length; j++) {
+      if (failed[j].id === this.data.selId) { idx = j; break; }
+    }
+    var next = failed[(idx + 1) % failed.length];
+    this.setData({ selId: next.id });
+    for (var k = 0; k !== this.data.tests.length; k++) {
+      if (this.data.tests[k].id === next.id) { this.setData({ page: Math.floor(k / PAGE_SIZE) }); break; }
+    }
+    this._syncPage();
+    this._refreshRunLabel();
+    this.setData({ lastEvent: '已选中：' + next.name + ' · 单击重测' });
+    this._announce('已选中' + next.speak + '，单击镜腿重测');
   },
 
   _pages() { return Math.ceil(this.data.tests.length / PAGE_SIZE); },
@@ -98,9 +158,14 @@ export default {
     var page = this.data.page;
     if (page < 0) page = 0;
     if (page > pages - 1) page = pages - 1;
+    var self = this;
+    var items = tests.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE).map(function (t) {
+      return { id: t.id, name: t.name, speak: t.speak, status: t.status, cls: t.cls,
+        msText: t.msText, detail: t.detail, selCls: t.id === self.data.selId ? 'row-sel' : '' };
+    });
     this.setData({
       page: page,
-      pageItems: tests.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE),
+      pageItems: items,
       pageText: '第 ' + (page + 1) + '/' + pages + ' 页'
     });
   },
@@ -112,13 +177,13 @@ export default {
     if (page === this.data.page) return;
     this.setData({ page: page });
     this._syncPage();
-    this.setData({ lastEvent: '翻页：' + this.data.pageText + ' · 单击开始/重测' });
+    this.setData({ lastEvent: '翻页：' + this.data.pageText + ' · 点头选失败项，单击重测' });
   },
 
   _setTest(id, patch) {
     var list = this.data.tests.map(function (t) {
       if (t.id !== id) return t;
-      var n = { id: t.id, name: t.name, speak: t.speak, status: t.status, cls: t.cls, msText: t.msText, detail: t.detail };
+      var n = { id: t.id, name: t.name, speak: t.speak, status: t.status, cls: t.cls, msText: t.msText, detail: t.detail, selCls: t.selCls || '' };
       if (patch.status) {
         n.status = patch.status;
         n.cls = 'st st-' + patch.status.toLowerCase();
@@ -177,7 +242,9 @@ export default {
 
   async runAll() {
     if (this.data.running) return;
-    this.setData({ running: true, runLabel: '测试中…', lastEvent: '开始测试…' });
+    this.setData({ running: true, selId: null, lastEvent: '开始测试…' });
+    this._syncPage();
+    this._refreshRunLabel();
     this._announce('开始测试，共二十三项');
     var ids = ['device', 'display', 'cpu', 'crypto', 'storage', 'netinfo', 'fetch',
       'canvas', 'barcode', 'audio', 'mic', 'camera', 'accel', 'gyro', 'geo', 'ble',
@@ -186,8 +253,10 @@ export default {
       var r = await this._runOne(ids[i]);
       this._announceResult(ids[i], r.status);
     }
-    this.setData({ running: false, runLabel: '重新测试', lastEvent: '全部完成 · 滑动镜腿翻页查看结果' });
+    this._runEndAt = Date.now();
+    this.setData({ running: false, hasRun: true, lastEvent: '全部完成 · 滑动翻页查看，点头选失败项' });
     this._setTest('ocr', {});
+    this._refreshRunLabel();
     var pass = 0, fail = 0, skip = 0;
     this.data.tests.forEach(function (t) {
       if (t.status === 'PASS') pass++;
@@ -195,6 +264,23 @@ export default {
       else if (t.status === 'SKIP') skip++;
     });
     this._announce('全部完成。通过' + pass + '项，失败' + fail + '项，跳过' + skip + '项');
+  },
+
+  // Re-run exactly one selected failed item; a pass clears the selection so
+  // the next tap goes back to full re-test, a repeated fail keeps it selected.
+  async _rerunSelected() {
+    var id = this.data.selId;
+    if (!id || this.data.running) return;
+    this.setData({ running: true });
+    this._refreshRunLabel();
+    this.setData({ lastEvent: '重测：' + id });
+    var r = await this._runOne(id);
+    this._announceResult(id, r.status);
+    this._runEndAt = Date.now();
+    this.setData({ running: false });
+    if (r.status !== 'FAIL') this.setData({ selId: null });
+    this._setTest(id, {});
+    this._refreshRunLabel();
   },
 
   async _runOne(id) {
@@ -717,7 +803,7 @@ export default {
     </view>
     <canvas id="benchCanvas" width="448" height="40" class="bench-canvas"></canvas>
     <view class="list">
-      <view ink:for="{{pageItems}}" class="row">
+      <view ink:for="{{pageItems}}" class="row {{item.selCls}}">
         <view class="row-top">
           <text class="name">{{item.name}}</text>
           <text class="{{item.cls}}">{{item.status}}</text>
@@ -800,6 +886,9 @@ export default {
   flex-direction: column;
   padding: 5px 0;
   border-bottom: 1px solid rgba(64,255,94,0.24);
+}
+.row-sel {
+  background-color: rgba(64,255,94,0.14);
 }
 .row-top {
   display: flex;
