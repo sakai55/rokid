@@ -11,33 +11,38 @@ export default {
   data: {
     summary: 'READY · 0/23 PASS',
     deviceLine: '-',
-    lastEvent: 'EVT: tap RUN ALL, or tap a row to run one test',
+    lastEvent: 'EVT: temple tap = run focused · swipe = move focus',
     renderTick: 0,
     running: false,
+    focusKey: 'runall',
+    scrollTarget: '',
+    runCls: 'btn btn-main btn-focus',
+    speakCls: 'btn',
+    listenCls: 'btn',
     tests: [
-      { id: 'device', name: '01 Device', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'navigator identity / versions / language' },
-      { id: 'display', name: '02 Display', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'viewport / rendering / redraw burst' },
-      { id: 'cpu', name: '03 CPU', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'JS math loop throughput' },
-      { id: 'crypto', name: '04 Crypto', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'random + SHA-256 digest' },
-      { id: 'storage', name: '05 Storage', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'localStorage + wx storage sync' },
-      { id: 'netinfo', name: '06 Net Info', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'online state + connection quality' },
-      { id: 'fetch', name: '07 Net Fetch', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'HTTPS round-trip to example.com' },
-      { id: 'canvas', name: '08 Canvas 2D', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'gradient / shapes / text / flush' },
-      { id: 'audio', name: '09 Audio Out', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'Web Audio oscillator via speaker' },
-      { id: 'mic', name: '10 Microphone', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'enumerate + 4 mic modes + 0.9s rec' },
-      { id: 'camera', name: '11 Camera', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'photo: wide / telephoto / default' },
-      { id: 'accel', name: '12 Accel', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'accelerometer reading' },
-      { id: 'gyro', name: '13 Gyro/Ori', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'gyroscope + absolute orientation' },
-      { id: 'geo', name: '14 Geolocation', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'single position fix' },
-      { id: 'ble', name: '15 Bluetooth', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'BLE availability + known devices' },
-      { id: 'battery', name: '16 Battery', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'level + charging state' },
-      { id: 'tts', name: '17 TTS Synth', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'synthesize pipeline (SPEAK = audible)' },
-      { id: 'asr', name: '18 ASR Caps', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'recognition capabilities (LISTEN = live)' },
-      { id: 'llm', name: '19 LLM', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'LanguageModel availability + prompt' },
-      { id: 'barcode', name: '20 Barcode', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'BarcodeDetector formats' },
-      { id: 'interaction', name: '21 Interaction', status: 'MANUAL', cls: 'st st-manual', msText: '-', detail: 'press a key / nod head / voice wakeup' },
-      { id: 'eyetrack', name: '22 EyeTrack', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'boundary: platform has NO eye-tracking API' },
-      { id: 'ocr', name: '23 OCR', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'boundary: platform has NO OCR API' }
+      { id: 'device', name: '01 Device', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'navigator identity / versions / language', fcls: 'row' },
+      { id: 'display', name: '02 Display', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'viewport / rendering / redraw burst', fcls: 'row' },
+      { id: 'cpu', name: '03 CPU', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'JS math loop throughput', fcls: 'row' },
+      { id: 'crypto', name: '04 Crypto', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'random + SHA-256 digest', fcls: 'row' },
+      { id: 'storage', name: '05 Storage', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'localStorage + wx storage sync', fcls: 'row' },
+      { id: 'netinfo', name: '06 Net Info', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'online state + connection quality', fcls: 'row' },
+      { id: 'fetch', name: '07 Net Fetch', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'HTTPS round-trip to example.com', fcls: 'row' },
+      { id: 'canvas', name: '08 Canvas 2D', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'gradient / shapes / text / flush', fcls: 'row' },
+      { id: 'audio', name: '09 Audio Out', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'Web Audio oscillator via speaker', fcls: 'row' },
+      { id: 'mic', name: '10 Microphone', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'enumerate + 4 mic modes + 0.9s rec', fcls: 'row' },
+      { id: 'camera', name: '11 Camera', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'photo: wide / telephoto / default', fcls: 'row' },
+      { id: 'accel', name: '12 Accel', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'accelerometer reading', fcls: 'row' },
+      { id: 'gyro', name: '13 Gyro/Ori', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'gyroscope + absolute orientation', fcls: 'row' },
+      { id: 'geo', name: '14 Geolocation', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'single position fix', fcls: 'row' },
+      { id: 'ble', name: '15 Bluetooth', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'BLE availability + known devices', fcls: 'row' },
+      { id: 'battery', name: '16 Battery', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'level + charging state', fcls: 'row' },
+      { id: 'tts', name: '17 TTS Synth', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'synthesize pipeline (SPEAK = audible)', fcls: 'row' },
+      { id: 'asr', name: '18 ASR Caps', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'recognition capabilities (LISTEN = live)', fcls: 'row' },
+      { id: 'llm', name: '19 LLM', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'LanguageModel availability + prompt', fcls: 'row' },
+      { id: 'barcode', name: '20 Barcode', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'BarcodeDetector formats', fcls: 'row' },
+      { id: 'interaction', name: '21 Interaction', status: 'MANUAL', cls: 'st st-manual', msText: '-', detail: 'press a key / nod head / voice wakeup', fcls: 'row' },
+      { id: 'eyetrack', name: '22 EyeTrack', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'boundary: platform has NO eye-tracking API', fcls: 'row' },
+      { id: 'ocr', name: '23 OCR', status: 'WAIT', cls: 'st st-wait', msText: '-', detail: 'boundary: platform has NO OCR API', fcls: 'row' }
     ]
   },
 
@@ -50,15 +55,30 @@ export default {
     } catch (e) { line = 'navigator n/a'; }
     this.setData({ deviceLine: line });
     try { this.enableWorldAwareness(); } catch (e) { /* optional */ }
+    this._applyFocus();
   },
 
   onUnload() {
     if (this._recog) { try { this._recog.abort(); } catch (e) {} this._recog = null; }
   },
 
-  onKeyDown(event) { this._noteEvent('keyDown ' + (event && event.code)); },
+  onKeyDown(event) {
+    var code = event && event.code;
+    this._noteEvent('keyDown ' + code);
+    // Temple touchpad arrives as key events (tap = Enter / GlobalHook,
+    // swipe = ArrowUp/ArrowDown). The host does not turn these into button
+    // taps, so the page maps them itself: swipe moves a focus highlight,
+    // tap (or a nod) activates whatever is focused. Default focus: RUN ALL.
+    if (code === 'ArrowDown') this._moveFocus(1);
+    else if (code === 'ArrowUp') this._moveFocus(-1);
+    else if (code === 'Enter' || code === 'GlobalHook') this._activateFocused();
+    // Backspace is left to the host (back / exit).
+  },
   onVoiceWakeup(event) { this._noteEvent('wakeup ' + ((event && event.keyword) || '')); },
-  onHeadGesture(event) { this._noteEvent('gesture ' + ((event && event.gesture) || '')); },
+  onHeadGesture(event) {
+    this._noteEvent('gesture ' + ((event && event.gesture) || ''));
+    if (event && event.gesture === 'nod') this._activateFocused();
+  },
   onOrientationStabilityChange(event) {
     if (event && event.stable) this._noteEvent('orientation stable');
   },
@@ -68,10 +88,68 @@ export default {
     this._setTest('interaction', { status: 'PASS', detail: 'last: ' + text });
   },
 
+  _focusOrder() {
+    var order = ['runall', 'speak', 'listen'];
+    this.data.tests.forEach(function (t) { order.push(t.id); });
+    return order;
+  },
+
+  _applyFocus() {
+    var key = this.data.focusKey;
+    var isBtn = key === 'runall' || key === 'speak' || key === 'listen';
+    this.setData({
+      runCls: 'btn btn-main' + (key === 'runall' ? ' btn-focus' : ''),
+      speakCls: 'btn' + (key === 'speak' ? ' btn-focus' : ''),
+      listenCls: 'btn' + (key === 'listen' ? ' btn-focus' : ''),
+      scrollTarget: isBtn ? '' : 'row-' + key
+    });
+    var list = this.data.tests.map(function (t) {
+      return {
+        id: t.id, name: t.name, status: t.status, cls: t.cls,
+        msText: t.msText, detail: t.detail,
+        fcls: t.id === key ? 'row row-focus' : 'row'
+      };
+    });
+    this.setData({ tests: list });
+  },
+
+  _moveFocus(dir) {
+    var order = this._focusOrder();
+    var idx = order.indexOf(this.data.focusKey);
+    if (idx < 0) idx = 0;
+    idx = (idx + dir + order.length) % order.length;
+    var key = order[idx];
+    this.setData({ focusKey: key });
+    this._applyFocus();
+    var label = key;
+    if (key === 'runall') label = 'RUN ALL';
+    else if (key === 'speak') label = 'SPEAK';
+    else if (key === 'listen') label = 'LISTEN';
+    else {
+      for (var i = 0; i !== this.data.tests.length; i++) {
+        if (this.data.tests[i].id === key) { label = this.data.tests[i].name; break; }
+      }
+    }
+    this.setData({ lastEvent: 'EVT: focus → ' + label + ' (tap to run)' });
+  },
+
+  _activateFocused() {
+    var key = this.data.focusKey;
+    if (key === 'runall') { this.runAll(); return; }
+    if (key === 'speak') { this.speakTest(); return; }
+    if (key === 'listen') { this.listenTest(); return; }
+    if (this.data.running) return;
+    if (key === 'interaction') {
+      this._setTest('interaction', { status: 'MANUAL', detail: 'listening: press key / nod / wakeup' });
+      return;
+    }
+    this._runOne(key);
+  },
+
   _setTest(id, patch) {
     var list = this.data.tests.map(function (t) {
       if (t.id !== id) return t;
-      var n = { id: t.id, name: t.name, status: t.status, cls: t.cls, msText: t.msText, detail: t.detail };
+      var n = { id: t.id, name: t.name, status: t.status, cls: t.cls, msText: t.msText, detail: t.detail, fcls: t.fcls || 'row' };
       if (patch.status) {
         n.status = patch.status;
         n.cls = 'st st-' + patch.status.toLowerCase();
@@ -554,13 +632,13 @@ export default {
       <text class="sub">{{deviceLine}}</text>
     </view>
     <view class="actions">
-      <button class="btn btn-main" bindtap="runAll">RUN ALL</button>
-      <button class="btn" bindtap="speakTest">SPEAK</button>
-      <button class="btn" bindtap="listenTest">LISTEN</button>
+      <button class="{{runCls}}" bindtap="runAll">RUN ALL</button>
+      <button class="{{speakCls}}" bindtap="speakTest">SPEAK</button>
+      <button class="{{listenCls}}" bindtap="listenTest">LISTEN</button>
     </view>
     <canvas id="benchCanvas" width="448" height="40" class="bench-canvas"></canvas>
-    <scroll-view class="list" scroll-y="true">
-      <view ink:for="{{tests}}" class="row" bindtap="runOne" data-id="{{item.id}}">
+    <scroll-view class="list" scroll-y="true" scroll-into-view="{{scrollTarget}}">
+      <view ink:for="{{tests}}" class="{{item.fcls}}" id="row-{{item.id}}" bindtap="runOne" data-id="{{item.id}}">
         <view class="row-top">
           <text class="name">{{item.name}}</text>
           <text class="{{item.cls}}">{{item.status}}</text>
@@ -627,6 +705,11 @@ export default {
   border-color: rgba(64,255,94,0.72);
   background-color: rgba(64,255,94,0.12);
 }
+.btn-focus {
+  color: #40ff5e;
+  border-color: #40ff5e;
+  background-color: rgba(64,255,94,0.30);
+}
 .bench-canvas {
   width: 448px;
   height: 40px;
@@ -642,6 +725,9 @@ export default {
   flex-direction: column;
   padding: 6px 0;
   border-bottom: 1px solid rgba(64,255,94,0.24);
+}
+.row-focus {
+  background-color: rgba(64,255,94,0.14);
 }
 .row-top {
   display: flex;
