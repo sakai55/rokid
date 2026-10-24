@@ -125,6 +125,21 @@ Tap **RUN ALL** and I'll test 23 items one by one, from display and CPU to camer
 
 ### Change Log
 
+#### v1.1.3（本地包版本；Studio Build 号待重新打包后生成）
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- app.json now declares top-level `name` ("Glasses Benchmark") and `description`, following the official capabilities sample — the aim is for Studio's GitHub import to name the draft after the agent itself instead of the repo coordinate "sakai55/rokid". Pending verification: takes effect only if a fresh import shows the new name (Studio-side behavior, to be confirmed on next import).
+- README gains the copy-ready Studio import block at the top (per SOP).
+
+**Fixes**
+
+- None.
+
 #### v1.1.2（本地包版本；Studio Build 号待重新打包后生成）
 
 **Features added**
