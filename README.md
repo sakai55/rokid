@@ -218,3 +218,5 @@ aix preview .                               # 本地预览（起服务 / --html-
 | 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
 | 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
 | 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
+| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
+| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
