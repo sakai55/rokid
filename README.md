@@ -1,230 +1,151 @@
-<div align="center">
+# Voice List（语音清单）
 
-# `rokid` — Rokid AIUI Agents
+注意力外挂系列 H03（HOLD 默念型）。出门前家人连珠炮：牛奶、鸡蛋、钥匙、洗手液、苹果——五样东西一口气砸过来，走到门口就忘一半。本 Agent 的做法：家人说完，你自己复述一遍（麦克风只听你一个人），每项先落在核对片上，你确认了才进清单；清单以文字存在眼镜里，关掉 Agent 也不会丢。到店之后清单就挂在视线里：看向货架上的那一项，头稳住点一下头就勾掉；只剩最后一项时，它会被放大并朗读一次——就是出门前最容易漏的那一项。
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
+![预览-首页](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/voice-list/preview-voice-list-index.png)
+![预览-演示清单](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/voice-list/preview-voice-list-demo.png)
+![预览-最后一项聚光](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/voice-list/preview-voice-list-spotlight.png)
+![预览-全部勾完](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/voice-list/preview-voice-list-done.png)
 
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
+## 解决的问题
 
-</div>
+听觉短时记忆对「连珠炮清单」最不友好：五项无关联的东西同时涌进来，脑子只能靠默念维持，一被打断就丢。本 Agent 把这段路外包掉——建单只花一次复述（你说一遍），入单必过一次核对（防识别听错），清单落盘成文字（回家路上、到店之前都不怕忘），购物时零记忆负担（清单挂在视线里，点头即勾），最后收尾有聚光提醒（只剩一项时放大 + 朗读，出门/结账前不漏项）。脑子从复读机里解放出来，清单交给眼镜记。
 
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：`aix/` 目录里的 `<slug>.aix` 下载后走 **Import from AIX**。
+## 注意力外包设计（HOLD 默念型）
 
-## 目录
+- **麦克风只听你，不听家人**：建单 = 你把刚听到的东西用自己的声音复述一遍。本 Agent 从不声称在听、在录、在转写对方说话——界面状态行、EVT 措辞、本文档都写明「只听你复述」。家人说一遍，你说一遍，眼镜从你这遍接住。
+- **确认即入单，未确认绝不入单**：每一项先落在核对片上，标注「ASR 听写待确认」，只有你点 OK（Enter）才进清单落盘。听错了先改：DICT 重念替换待确认项（它本来就没入单），或 DEL 丢弃；**点头在核对时被刻意忽略**——点头永远不入单。清单上限 8 项，第 9 项如实拒绝并保留待确认项，绝不静默丢弃或覆盖。
+- **解析贴近原话**：只剥掉句首的裸引导词（买 / 要买 / 我要买 / 带 / 拿 / 别忘了…）和句末标点——「买一瓶洗手液」保留数量说法，不会被「清洗」成你没说过的话。超过 30 字的听写截到 30 字并在 EVT 行写明截断；剥完为空的按没听清拒绝，绝不猜。
+- **预置快加走同一道核对**：PRESET 在 牛奶 / 鸡蛋 / 钥匙 间轮换，落在同一张核对片上（再点换下一项，OK 入单）。快加是为不方便开口的场合准备的，不是对核对纪律的绕行。
+- **显示截断如实标注**：超过 12 字的项显示为前 12 字 + 「…」，全文留在存储里、SPEAK 读的是全文；核对片与焦点行都会标注「显示截断」。
+- **清单以文字落盘，这是它的本职（如实说明）**：`{内容, 是否已勾}` 纯文字（key `voiceList`，最多 8 项），每次变更即存，关掉 Agent、之后再打开还在——在家说、到店买，全靠这条。存的是文字，从不存音频；界面常驻行与本文档都写明。
+- **点头 = 勾选，本 Agent 的核心 HOLD 手势**：到店看向货架上的那一项，头稳住点一下头，焦点项即被勾掉并当场朗读（「牛奶，勾了 3/5」）。头不稳的点头不算数；**点头永不取消勾选**（取消是刻意的 Enter 切换）、永不入单、永不删除。焦点用滑动 / +1 / −1 移动，打开时自动落在第一个未勾项上。
+- **进度只报还差的**：计数行写「已勾 3/5 · 还差：鸡蛋、钥匙」；SPEAK 只朗读未勾项的全文，绝不念已勾的。
+- **最后一项聚光**：只剩一项未勾时，它被放大显示并朗读一次（「就剩最后一项：钥匙」）——出门前、结账前最容易漏的就是这一项。聚光会重新武装：剩余数离开 1 之后再回到 1（比如把已勾的取消勾选、又勾回去），会再朗读一次，不装没发生过。「全买齐了」同样每次到达只报一次。
+- **删除与清空都是两步**：DEL 第一下武装、第二下才删焦点项；CLEAR 两下才清空整单（朗读一次「清单已清空」）；做别的动作或过 6 秒自动解除武装。
+- **为什么胸前设备做不了**：勾选要靠「看向货架 + 头部信号」定位你正在看的那一项（胸前设备没有头部朝向与停稳/点头信号）、递回要进视线内（推着购物车双手不空，清单得挂在眼前）、建单要贴着你的嘴（头部麦克风听你复述最清楚）——三条都只有头戴设备成立。
 
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
+## 功能流程
 
-## 仓库结构
+1. **建单（DICT）**：先做佩戴者模式麦克风可用性检查（结果单独一行 `MIC CHECK:`，检查流读完设置立即停轨），再用宿主 SpeechRecognition（zh-CN）在它自己的麦克风上听你复述的一项。
+2. **核对片**：听到的项以大字显示 + 来源标注（ASR 听写 / PRESET）。OK = 入单；DICT = 重念替换；DEL = 丢弃这项；PRESET = 换下一预置项。
+3. **购物（SHOP）**：清单在视线内，滑动选焦点，看向货架上的那一项头稳点头勾掉，或 Enter 勾选/取消勾选；进度行随时报还差哪几项。
+4. **收尾**：只剩一项 → 聚光放大 + 朗读一次；全勾完 → 朗读一次「全买齐了」+ 横幅；CLEAR 两下清掉整单备下一趟，或留着（勾选状态一并保存）。
+5. **DEMO**：内存播入 5 项已勾 3 项（牛奶✓ / 鸡蛋 / 钥匙✓ / 洗手液✓ / 苹果），焦点在鸡蛋；继续点 DEMO 依次走完「勾鸡蛋 → 最后一项聚光 → 勾苹果 → 全买齐」；全程不写真实存储，退出后真实清单原样恢复。
 
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── aix/<slug>.aix             # 全部 Agent 打包好的 AIX（集中存放，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
-```
+## 手势映射
 
-## 快速开始
+主流程（复述 → 核对 → 入单 → 点头勾选 → 收尾）靠滑动 + 单击 + 点头即可走完：
+
+| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+|---|---|---|
+| 单击 | Enter | 情境主操作 OK：核对片上 = **确认入单**；清单里 = 勾选焦点项 / 对已勾项取消勾选（切换） |
+| 上滑 / 下滑 | ArrowUp / ArrowDown | 清单里移动焦点（上一项 / 下一项，环绕）；核对片上焦点锁定，滑动不生效 |
+| 点头（头稳时） | `onHeadGesture('nod')` | **勾选焦点项**（本 Agent 的核心手势）：一下勾一项并朗读「X，勾了 n/m」；头不稳不算；永不取消勾选、永不入单、永不删除 |
+| 双击 | Backspace | 系统返回（不拦截） |
+| 长按 | — | 唤醒助手（系统级，不拦截） |
+
+屏幕按钮（每个都有保留理由）：
+
+| 按钮 | 理由 |
+|---|---|
+| DICT | 复述建单/重念替换的主动作（本 Agent 的建单全靠它） |
+| PRESET | 无声快加：牛奶 / 鸡蛋 / 钥匙轮换到核对片，不方便开口时用 |
+| OK ✓ | Enter 的镜像（情境主操作，含核对片上的确认入单与清单里的勾选切换） |
+| +1 / −1 | 焦点移动（Enter 旁的手动等价物，头不方便动时用滑动键亦可） |
+| SPEAK | 只朗读还差的项（核对片上改为朗读待确认项全文，供耳核对） |
+| DEL | 核对片上 = 丢弃待确认项；清单里 = 两步删除焦点项 |
+| CLEAR | 两步清空整单（下一趟用；一下武装、两下才清） |
+| DEMO | 演示种子清单走完勾选、聚光与全勾流程（提审/自测用） |
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| `RECORD_AUDIO` | DICT 的佩戴者模式麦克风可用性检查（getUserMedia，检查流立即停轨）+ 宿主 SpeechRecognition 听你复述的清单项/替换项（zh-CN） |
+
+只申请 1 项，无相机（说出来的清单不需要拍照）、无定位。麦克风模式只作用于 getUserMedia 流，永不影响宿主 `SpeechRecognition`；聆听状态标注为 (host ASR)。TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方文档注明该属性不生效）。麦克风只在用户点 DICT 时启动，用完立即停掉全部媒体轨道。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/voice-list
+~/tools/bin/aix pack . -o ../dist/voice-list.aix
+~/tools/bin/aix list ../dist/voice-list.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线（`shot-voice.js`，独立页面副本 `preview-voice.html`）。
 
-## 标准工作流
+## 真机测试（GO 的 Path 1，无线缆）
 
-<div align="center">
+1. 将本项目导入 Global AIUI Studio（GitHub 导入分支 `agent-voice-list`）。
+2. 在 Studio 中构建并保存新的 AIX 版本（构建与提审）。
+3. 手机 Hi Rokid App：设置 → 开发者选项 → AIUI → 更新眼镜资源包，等到「智能体资源包下载成功」。
+4. 在眼镜上语音打开：「乐奇，打开 Voice List 智能体」。
+5. 验收点：DICT 复述五项日常物品时宿主识别的实际返回形态与核对片把关是否顺手；安静与嘈杂环境各测一轮；在超市里看向貨架点头勾选的误触率（头不稳不勾是否符合手感）；只剩一项时聚光朗读是否响起、取消勾选再勾回是否重新提醒；全勾完后关掉 Agent 再打开，清单与勾选状态是否仍在；存满 8 项后第 9 项被拒且待确认项不丢。
 
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
+## 真机测试信息
 
-</div>
-
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
-
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 字段 | 值 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Studio 名称 | Voice List（待导入后回填） |
+| Version / Build | 1.0.0 / 待导入后回填 |
+| App Category | 待导入后回填 |
+| Intent Description | Say-it-once list keeper: repeat the items in your own voice, confirm each one, then check them off with a nod at the shelf. The last remaining item is promoted and spoken once so it is not forgotten. |
+| Agent ID | 待导入后回填 |
+| 状态 | 本地构建完成，待导入 Studio |
 
-**分支法要点**
+## 验证情况
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+**已验证（本地）**
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+- 静态校验：app.json / package.json / `<script def>` 三处 JSON 解析通过；抽出的 `<script setup>` 与 app.js 均 `node --check` 通过；无 `Page(`/`App(`/`Widget(`/`workers:` 误用。
+- Node harness **90 条断言全过**：听写核对流程（未确认项绝不入单、OK 之前零存储写入）、重念替换待确认项、解析电池（句首引导词剥离、完整短语保留原话、垃圾拒绝）、预置片轮换且走同一核对、8 项封顶拒绝且待确认项保留、存档条目恰为 {text, done} 两字段、持久化往返（模拟重开后条目与勾选状态恢复、焦点落第一个未勾项、重开不重写存储）、点头纪律（头不稳不勾、头稳点头只勾焦点项一次且当场朗读、点头永不取消勾选/永不入单）、Enter 双向切换、焦点环绕、进度数学与「还差」点名、最后一项聚光只报一次且取消再勾重新武装、全勾完每次到达只报一次、删除与清空两步制 + 其他动作解除武装、SPEAK 只读未勾项、显示截断且全文保留并朗读、纯键位 + 点头走完购物全程、DEMO 全程真实存储逐字节不变、麦克风检查先于 ASR 且检查轨道先停（OverconstrainedError 回退有标注）、TTS 从不设置 lang。
+- `aix pack` 成功（约 21.6 KB），`aix list` 确认 README.md 在包内、artifacts 已排除。
+- 预览截图 4 张已生成并逐张目检：EVT 行与底部常驻诚实行均在画面内（点击坐标经帧哈希探针逐状态标定）。
 
-1. 在仓库 `aix/` 目录里点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+**未验证（如实说明）**
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+- **听写是佩戴者自己的复述（第一位）**：清单项的文字 = 宿主 ASR 听你复述的结果，不是家人原话的转写。本 Agent 听不到、也不声称能听到家人说话；家人说得快、你复述时记错或漏复述，清单就跟着错——核对片是唯一的把关点，识别成什么样就显示什么样，错了一眼可见、重念即可。
+- 真机 DICT 识别率：安静/嘈杂环境下宿主识别器听复述的准确度、物品名（尤其生鲜/品牌名）的实际返回形态（wearer 检查流不参与识别）；头部稳定性事件与点头手势在真机上的投递与误触率（点头在这里最坏是误勾一项，可 Enter 取消，但超市里误勾可能当时没察觉）。
+- wx 存储在眼镜重启后的持久性；宿主 TTS 在嘈杂卖场里朗读「还差项」的可懂度。
 
-</details>
+## 提审资料 (Review Submission)
 
-## 海外链路（全链路海外，缺一不可）
+### Feature Description（488 字符）
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+> Voice List catches the rapid-fire list your family throws at you on your way out. Repeat the items in your own voice - each heard item waits for your confirm before it joins the list, so a mishearing never sneaks in. The list is held as text on the glasses and survives closing the agent. At the shop, swipe to an item and nod with your head steady to check it off; SPEAK reads only what is still missing. When one item is left it is shown huge and spoken once - the one everyone forgets.
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Opening Message（415 字符）
 
-## 真机测试（云端下发）
+> ## Voice List
+>
+> Family fired five things at you by the door? Repeat them one by one with **DICT** - the mic hears *you*, and every item waits on a confirm chip before it joins the list. At the shop the list sits in your view: swipe to move, **nod** to check the item in front of you, **SPEAK** to hear only what is still missing. When exactly one item is left, it goes huge and is spoken once - the doorway reminder.
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+### Preview Media
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
+- `preview-voice-list-index.png` — 首页初始态：空清单 + 常驻诚实行（清单靠你自己的声音记 · 先核对再入单 · 只存文字）
+- `preview-voice-list-demo.png` — DEMO 清单：5 项已勾 3 项，焦点在鸡蛋
+- `preview-voice-list-spotlight.png` — 最后一项聚光：勾掉鸡蛋后，只剩苹果被放大 + 朗读一次
+- `preview-voice-list-done.png` — 全部勾完：全买齐了横幅（DEMO 内）
 
-</details>
+> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
 
-## 提交审核
+### Change Log（Build 1.0.0）
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+**Features added**
 
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+- 复述建单 + 核对门：你用自己的声音复述家人刚说的东西（佩戴者模式麦克风检查在前、宿主 ASR 在后），每一项先落核对片，只有你确认才入单落盘；重念替换 / DEL 丢弃都先于入单，点头永不入单
+- 点头勾选：清单在视线内，滑动选焦点，看向货架上的那一项头稳点头即勾并当场朗读进度；Enter 双向切换作刻意取消；SPEAK 只读还差的项
+- 最后一项聚光：只剩一项未勾时放大显示并朗读一次，取消再勾会重新提醒；全勾完每次到达只报一次
+- 文字落盘：清单 {内容, 是否已勾} 纯文字最多 8 项存本机，关掉 Agent 再开还在；显示超 12 字截断并标注，全文保留
+- DEMO：5 项已勾 3 项的种子清单走完勾选、聚光与全勾全程，不写真实存储，退出精确恢复
 
-## 维护约定
+**Improvements**
 
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+- 无（首个版本）
 
-## Agent 清单
+**Fixes**
 
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
-
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
-| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
-| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
-| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 | `agent-elder-day` |
-| W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 | `agent-stove-watch` |
-| W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 | `agent-bath-watch` |
-| W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 | `agent-laundry-watch` |
-| W04 | [signal-watch](signal-watch/) | 医院/银行/取餐叫号，大屏节律提醒回看，差3号喊你准备 | `agent-signal-watch` |
-| W05 | [door-watch](door-watch/) | 里屋开会戴耳机，守听门铃敲门快递叫你回看 | `agent-door-watch` |
-| H01 | [number-catch](number-catch/) | 号码拍下放大核对，常驻视线内不用默念 | `agent-number-catch` |
-| H02 | [code-hold](code-hold/) | 临时码复述存住，要输入时逐段显示 | `agent-code-hold` |
+- 无（首个版本）
