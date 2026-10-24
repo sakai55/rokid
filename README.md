@@ -1,230 +1,155 @@
-<div align="center">
+# Route Hold（路线默念）
 
-# `rokid` — Rokid AIUI Agents
+注意力外挂系列 H04（HOLD 默念型）。问路，对方一口气说完：「左转、直行、第二个灯右转。」边走边在脑子里默念，聊一句话、看一眼手机，就走错一个路口。本 Agent 的做法：对方说完，你自己复述一遍（麦克风只听你一个人）——可以一步步说、每步核对后存下；也可以一口气说整条，它按步骤词拆开摆在你面前，你删掉拆错的步再存。走的时候，眼前只有当前这一步，你判断这步走完了，点一下头才进下一步。它不知道你在哪，也永远不会假装知道。
 
-**Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
-只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
+![预览-首页](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/route-hold/preview-route-hold-index.png)
+![预览-演示走路第1步](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/route-hold/preview-route-hold-walk1.png)
+![预览-演示走路第2步](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/route-hold/preview-route-hold-walk2.png)
+![预览-演示步骤走完](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/route-hold/preview-route-hold-done.png)
 
-![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
-![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
-![studio](https://img.shields.io/badge/AIUI%20Studio-Global%20·%20en--US-00C853?style=flat-square)
-![scope](https://img.shields.io/badge/scope-AIUI%20Agents%20only-blue?style=flat-square)
+## 解决的问题
 
-</div>
+口头路线是典型的短时记忆陷阱：三五步无关联的指令同时涌进来，脑子只能靠默念维持，边走边念还占着注意力，一分心就错步。本 Agent 把这段路外包掉——存路线只花一次复述（你说一遍），入步必过一次核对（防识别听错），整条一口气说的先拆成待存步摆出来给你删改（拆错不可怕，存错才可怕），路线落盘成文字（说完先干别的、过会儿再走都行），走路时零记忆负担（眼前只有当前一步，判断走完点一下头）。脑子从复读机里解放出来，路线交给眼镜记。
 
-> [!IMPORTANT]
-> **导入铁律**：往 Global AIUI Studio 导单个 Agent，只用它的专属分支地址
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> 子目录地址、根地址、blob 地址都已实测证伪（见 [Studio 导入](#studio-导入实测结论)）。
-> 保底路线：`aix/` 目录里的 `<slug>.aix` 下载后走 **Import from AIX**。
+## 注意力外包设计（HOLD 默念型）
 
-## 目录
+- **麦克风只听你，不听指路人**：建路线 = 你把刚听到的路线用自己的声音复述一遍。本 Agent 从不声称在听、在录、在转写对方说话——界面状态行、EVT 措辞、本文档都写明「只听你复述」。对方说一遍，你说一遍，眼镜从你这遍接住。
+- **它没有任何定位能力，这是刻意的（如实说明，第一位）**：本 Agent 不申请定位权限，没有地图、没有位置跟踪——它根本不知道你在哪。推进一步靠的是你的判断：你觉得这步走完了，点头（或 OK / 下滑）才进下一步；它永远不会自己推进。步骤走完时它只说「路线走完了，应该到了」——走完的是步骤，到没到由你判断，它从不断言到达。
+- **确认即存步，未确认绝不存**：每一步先落在核对片上，标注「ASR 听写待确认」，只有你点 OK（Enter）才存入路线落盘。听错了先改：DICT 重念替换待确认步（它本来就没存下），或 DEL 丢弃；**点头在核对时被刻意忽略**——点头永远不存步。路线上限 8 步，第 9 步如实拒绝并保留待确认步，绝不静默丢弃或覆盖。
+- **SPLIT 整条拆步是「提案」不是「保存」**：一口气说整条时，它按步骤词拆分（然后 / 接着 / 其次 / 最后、句号、紧挨转弯词或「第二个灯」这类序号地标前的逗号、「再」只在后面跟转弯词时才算步骤词——「再走一百米」是一步，不会被腰斩），拆出的步全部摆在核对屏上：DEL 逐个删掉拆错的，OK 才全部存下。若一句话里找不到步骤词，它就如实整句当作一步走核对门，绝不靠猜硬拆。
+- **超出上限会出声说明**：核对屏待存步超过剩余空位时，存得下的存下，存不下的会朗读明说「还有 N 步没存下，路线满了」——绝不静默丢弃。
+- **解析贴近原话**：只剥掉步首的裸步骤词（先 / 然后 / 接着 / 最后）和句末标点——它们是连接词，不是步骤本身。超过 30 字的听写截到 30 字并在 EVT 行写明截断；剥完为空的按没听清拒绝，绝不猜。
+- **显示截断如实标注**：超过 12 字的步显示为前 12 字 + 「…」，全文留在存储里、走路推进与 SPEAK 读的是全文；核对片与步行屏都会标注「显示截断」。
+- **步骤以文字落盘，这是它的本职（如实说明）**：`{步骤文字}` 纯文字（key `routeHold`，最多 8 步），每次变更即存，关掉 Agent、之后再打开还在——在路口说、走到一半想起来再走，全靠这条。**走到的步数位置不落盘**：重开回到编辑态，再走从第一步开始。存的是文字，从不存音频；界面常驻行与本文档都写明。
+- **走路时只显示当前一步（PLAN 定版）**：下一步默认不预告。PEEK 是明确标注的例外：一个开关，点一下把下一步以小字亮出来瞥一眼，再点关掉；推进、后退、重置都会自动关掉它——是瞥一眼，不是常开模式。
+- **点头 = 这步走完了，本 Agent 的核心 HOLD 手势**：走路时头稳住点一下头，推进一步并当场朗读新一步（「第2步：直行」）。头不稳的点头不算数；**点头永不后退**（后退是刻意的上滑）、永不存步、永不接受待存步、永不删除。
+- **走错有补救**：上滑退回一步（朗读退回的步）；从「走完」退回会重新武装收尾播报；走路中 DEL 两下重置回第一步；要改路线点 WALK 回编辑态重录——**走路中不能改路线**，DICT / SPLIT 在走路时被如实拒绝并告诉你先回编辑。
+- **删除是两步**：编辑态 DEL 第一下武装、第二下才删焦点步；做别的动作或过 6 秒自动解除武装。核对屏里 DEL 删待存步是一下生效——待存步从未存下，没有需要保护的东西。
+- **为什么胸前设备做不了**：走路时递回要进视线内（双手要扶包、看路，步骤得挂在眼前）、推进确认要靠头部信号（低头摸胸口按键既危险又打断看路）、复述要贴着你的嘴（头部麦克风听你复述最清楚）——三条都只有头戴设备成立。
 
-- [仓库结构](#仓库结构)
-- [快速开始](#快速开始)
-- [标准工作流](#标准工作流)
-- [Studio 导入（实测结论）](#studio-导入实测结论)
-- [海外链路（全链路海外，缺一不可）](#海外链路全链路海外缺一不可)
-- [真机测试（云端下发）](#真机测试云端下发)
-- [提交审核](#提交审核)
-- [维护约定](#维护约定)
-- [Agent 清单](#agent-清单)
+## 功能流程
 
-## 仓库结构
+1. **存路线（DICT 逐步）**：先做佩戴者模式麦克风可用性检查（结果单独一行 `MIC CHECK:`，检查流读完设置立即停轨），再用宿主 SpeechRecognition（zh-CN）在它自己的麦克风上听你复述的一步；落在核对片上，OK 存下，DICT 重念替换，DEL 丢弃。
+2. **存路线（SPLIT 整条）**：一口气复述整条路线，同样的麦克风检查 + 宿主识别，然后按步骤词拆成待存步清单：滑动选步、DEL 删错步、OK 全部存下（超限部分朗读说明）。找不到步骤词的整句自动转成单个待确认步。
+3. **走路（WALK）**：点 WALK（或编辑态点 OK）开始，眼前只剩当前一步大字 + 小字步数（第 2/3 步）；头稳点头 / OK / 下滑 = 这步走完，朗读下一步；上滑 = 退一步；PEEK = 瞥一眼下一步（默认关）；DEL 两下 = 回第一步；WALK = 回编辑。
+4. **收尾**：最后一步走完后横幅显示「路线走完了 — 应该到了（到没到你判断）」并朗读一次；退回再走完会重新播报。
+5. **DEMO**：内存播入 PLAN 原句拆成的 3 步（左转 / 直行 / 第二个灯右转），直接进入走路态；继续点 DEMO 依次推进到走完；全程不写真实存储，退出后真实路线原样恢复。
 
-```text
-rokid/
-├── README.md                  # 本文件
-├── <slug>/                    # 一个 Agent 一个目录（一套完整 AIUI 工程）
-│   ├── app.json  AGENTS.md  app.js  package.json
-│   ├── pages/                 # .ink 页面
-│   └── README.md              # 该 Agent 的真机信息表 + 提审资料（以它为准）
-├── aix/<slug>.aix             # 全部 Agent 打包好的 AIX（集中存放，备选导入用）
-├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
-├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
-├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── assets/                    # README 素材（如工作流图 workflow.svg）
-└── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
-```
+## 手势映射
 
-## 快速开始
+主流程（复述 → 核对 → 存步 → 点头推进 → 收尾）靠滑动 + 单击 + 点头即可走完：
+
+| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+|---|---|---|
+| 单击 | Enter | 情境主操作 OK：核对片上 = **确认存步**；核对屏上 = **全部存下**；编辑态 = 开始走路；走路时 = 这步走完，推进一步 |
+| 下滑 | ArrowDown | 编辑/核对时移动焦点（下一步 / 下一个待存步）；走路时 = 推进一步（与点头同义，头要看路时用） |
+| 上滑 | ArrowUp | 编辑/核对时移动焦点（上一步）；走路时 = 退回一步（朗读退回的步） |
+| 点头（头稳时） | `onHeadGesture('nod')` | **这步走完了**（本 Agent 的核心手势）：走路时一下推进一步并朗读新步；头不稳不算；永不后退、永不存步、永不接受待存步、永不删除 |
+| 双击 | Backspace | 系统返回（不拦截） |
+| 长按 | — | 唤醒助手（系统级，不拦截） |
+
+屏幕按钮（每个都有保留理由）：
+
+| 按钮 | 理由 |
+|---|---|
+| DICT | 逐步复述存步/重念替换的主动作（一步步建路线全靠它） |
+| SPLIT | 整条复述拆步的主动作（一口气说完，拆开给你核对） |
+| OK ✓ | Enter 的镜像（情境主操作：存步 / 全部存下 / 开始走 / 推进一步） |
+| +1 / −1 | 焦点移动（编辑/核对时选步，走路时推进/后退；Enter 旁的手动等价物） |
+| SPEAK | 朗读当前语境：待确认步全文 / 待存步清单 / 整条路线 / 走路时只读当前步全文 |
+| DEL | 核对片上 = 丢弃待确认步；核对屏上 = 删掉焦点的待存步；编辑态 = 两步删除焦点步；走路时 = 两步重置回第一步 |
+| PEEK | 瞥一眼下一步（默认关；只走路时有效，推进/后退/重置后自动关） |
+| WALK | 模式开关：编辑态 = 开始走路；走路时 = 回到编辑（改路线只能在编辑态） |
+| DEMO | 演示 PLAN 原句 3 步路线走完全程（提审/自测用） |
+
+## 权限
+
+| 权限 | 用途 |
+|---|---|
+| `RECORD_AUDIO` | DICT / SPLIT 的佩戴者模式麦克风可用性检查（getUserMedia，检查流立即停轨）+ 宿主 SpeechRecognition 听你复述的步骤/整条路线（zh-CN） |
+
+只申请 1 项。**刻意不申请 `GEOLOCATION`**：脑子里默念的路线不需要定位，本 Agent 永远不知道你在哪。无相机（说出来的路线不需要拍照）。麦克风模式只作用于 getUserMedia 流，永不影响宿主 `SpeechRecognition`；聆听状态标注为 (host ASR)。TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方文档注明该属性不生效）。麦克风只在用户点 DICT / SPLIT 时启动，用完立即停掉全部媒体轨道。
+
+## 打包与预览
 
 ```bash
-npm install -g @yodaos-pkg/aix-cli          # AIX CLI（pack / preview / show）
-npm create @yodaos-pkg/aiui-agent@latest    # 官方脚手架
-npx skills add https://github.com/jsar-project/AIUI/tree/main/skills/aiui-dev
-                                            # aiui-dev Skill（给 Coding Agent 用）
-aix pack . -o <slug>.aix                    # 在 Agent 目录内打包
-aix preview .                               # 本地预览（起服务 / --html-out 导出 HTML）
+cd ~/workspace/rokid/route-hold
+~/tools/bin/aix pack . -o ../dist/route-hold.aix
+~/tools/bin/aix list ../dist/route-hold.aix
+~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-> [!WARNING]
-> 打包前项目根必须有 `.aixignore`，排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/`——否则开发文件会进包（实测 2.3 KB → 107 KB）。
+本地预览截图走 `~/workspace/preview-tools/` 的本地 Ink + puppeteer 路线（`shot-route.js`，独立页面副本 `preview-route.html`）。
 
-## 标准工作流
+## 真机测试（GO 的 Path 1，无线缆）
 
-<div align="center">
+1. 将本项目导入 Global AIUI Studio（GitHub 导入分支 `agent-route-hold`）。
+2. 在 Studio 中构建并保存新的 AIX 版本（构建与提审）。
+3. 手机 Hi Rokid App：设置 → 开发者选项 → AIUI → 更新眼镜资源包，等到「智能体资源包下载成功」。
+4. 在眼镜上语音打开：「乐奇，打开 Route Hold 智能体」。
+5. 验收点：DICT 逐步复述三步短路线时宿主识别的实际返回形态与核对片把关是否顺手；SPLIT 一口气说「左转、直行、第二个灯右转」时拆步是否正确、口语变体（带「然后/接着/最后」、带「再走一百米」）的拆分是否符合预期；边走边点头推进的误触率（头不稳不推进是否符合手感）；实际按存下路线走一条陌生路，全程只靠点头推进是否顺手；走到最后一步的收尾播报与「退回再走完重新播报」；关掉 Agent 再打开，步骤是否仍在、步数位置是否回到编辑态（设计如此）；存满 8 步后第 9 步被拒且待确认步不丢；SPLIT 待存步超限时「没存下」的朗读说明是否清楚。
 
-<img src="assets/workflow.svg" width="1000" alt="标准工作流：本地开发 → 预览截图 → 推 GitHub → 同步分支 → Studio 导入 → 打包保存 → 云端下发 → 真机测试 → 提交审核"/>
+## 真机测试信息
 
-</div>
-
-1. **本地开发** — 在 `<slug>/` 目录里开发、改页面。
-2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
-3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
-4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
-5. **真机测试** — 云端下发，见 [真机测试](#真机测试云端下发)。
-6. **提交审核** — 真机测试通过并经维护者确认后，在 **Submit** 页签提交（见 [提交审核](#提交审核)）。
-
-## Studio 导入（实测结论）
-
-导入对话框（`IMPORT PROJECT` / "GitHub Subdirectory Import"）**只有 URL 一个输入框**，
-没有分支/路径选择；Studio 把 `/tree/` 后的**整段当作一个 ref**，不拆「ref + 路径」。
-2026-10-24 逐条实测：
-
-| 地址形式 | 结果 |
+| 字段 | 值 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
-| ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
-| ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
-| ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
-| ❌ `…/blob/main/<slug>/app.json` | 能过导入，Run 报「请先创建Agent的项目文件」 |
+| Studio 名称 | Route Hold（待导入后回填） |
+| Version / Build | 1.0.0 / 待导入后回填 |
+| App Category | 待导入后回填 |
+| Intent Description | Hear-it-once route keeper: repeat spoken directions in your own voice, confirm each step (or split a whole route and prune it), then walk with only the current step in view - a nod means you judge it done. No map, no positioning. |
+| Agent ID | 待导入后回填 |
+| 状态 | 本地构建完成，待导入 Studio |
 
-**分支法要点**
+## 验证情况
 
-- 分支名必须是**单段**（`agent-<slug>`），分支**根目录**放该 Agent 的全套文件。
-- 导入后生成的 Draft 名为 `sakai55/rokid`，进 Studio 后改名。
-- 改代码后重新导入：先同步分支根目录，再重新粘贴分支地址导入，然后走真机流程。
+**已验证（本地）**
 
-<details>
-<summary><b>备选：AIX 导入（保底路线）</b></summary>
+- 静态校验：app.json / package.json / `<script def>` 三处 JSON 解析通过；抽出的 `<script setup>` 与 app.js 均 `node --check` 通过；无 `Page(`/`App(`/`Widget(`/`workers:` 误用；权限仅 `RECORD_AUDIO`，全仓无 `GEOLOCATION` 字样出现在代码中。
+- Node harness **113 条断言全过**：权限恰为 [RECORD_AUDIO]；单步解析电池（剥步首步骤词/句末标点、整步原话保留、空与裸步骤词拒绝）；拆步电池（PLAN 原句经逗号+序号地标拆对、步骤词各变体、「再」后跟转弯词才拆而「再走一百米」保持整步、无步骤词整句保留、句号分步）；DICT 与 SPLIT 两条听写核对流程（未确认绝不存、确认/接受前零存储写入、条目恰为 {text} 单字段）；重念替换待确认步、垃圾听写拒绝；核对屏提案 → 删错步 → 接受全程落盘文本精确；拆不出 2 步时整句转单步核对门；把核对屏删空回到编辑且原路线不变；8 步封顶拒绝且待确认步保留、路线满时接受被拒且提案保留、部分接受只存得下的且朗读说明没存下的数目；持久化往返（模拟重开后步骤恢复、回到编辑态、重开不重写存储）；走路纪律（头不稳点头不算、头稳点头一下恰推进一次且朗读新步、收尾句每次到达只报一次且退回后重新武装、退到第一步再退不算）；PEEK 默认关 / 开关切换 / 推进后自动关 / 最后一步与走完后的行为；走路重置两步制 + 推进动作解除武装；走路中 SPEAK 只读当前步全文；走路外点头纪律（永不存步、永不接受提案）与走路中 DICT 被拒；纯键位 + 点头走完一条路线；DEMO 全程真实存储逐字节不变；麦克风检查先于 ASR 且检查轨道先停（OverconstrainedError 回退有标注）；全部朗读串扫描无导航/定位/到达断言；TTS 从不设置 lang。
+- `aix pack` 成功（约 25.7 KB），`aix list` 确认 README.md 在包内、artifacts 已排除。
+- 预览截图 4 张已生成并逐张目检：EVT 行与底部常驻诚实行均在画面内（点击坐标经帧哈希探针逐状态标定）。
 
-1. 在仓库 `aix/` 目录里点开 `<slug>.aix`，下载到本地。
-2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
-3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
+**未验证（如实说明）**
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+- **它不知道你在哪（第一位）**：本 Agent 没有任何定位手段——不申请定位、无地图、无位置跟踪。推进完全靠你的判断：你在错的路口点头，它就照样进下一步；步骤走完只代表步骤走完，不代表你到了。陌生路线请先在路口核对周围地标再点头，收尾句「应该到了」之后请自己确认目的地。
+- **听写是佩戴者自己的复述（第一位并列）**：步骤文字 = 宿主 ASR 听你复述的结果，不是对方原话的转写。本 Agent 听不到、也不声称能听到对方说话；对方说得快、你复述时记错或漏复述，路线就跟着错——核对片与核对屏是唯一的把关点，识别成什么样就显示什么样，错了一眼可见、重念或删改即可。
+- 真机听写与拆步：安静/嘈杂路口宿主识别器听复述的准确度；真实口语里步骤词的千变万化（「到了红绿灯往左拐」「穿过地下通道」等）会让拆步出现合并/多拆，核对屏就是为这种情况设的；头部稳定性事件与点头手势在行走中的投递与误触率（走路时头动更多，点头在这里最坏是误推进一步，可上滑退回，但当时可能没察觉）；wx 存储在眼镜重启后的持久性；宿主 TTS 在嘈杂街头的可懂度。
 
-</details>
+## 提审资料 (Review Submission)
 
-## 海外链路（全链路海外，缺一不可）
+### Feature Description（480 字符）
 
-> [!CAUTION]
-> 以下四点齐全才算海外版开发；任何一环用了国内版，链路就不通。
-> 国内站（aiui.rokid.com）与 Global 站账号、项目**不互通**。
+> Route Hold keeps the directions a stranger rattles off in one breath - turn left, straight on, right at the second light - so your head does not have to. Repeat the route in your own voice: step by step, each step confirmed, or all at once and split into steps you review before saving. While you walk, only the current step is in front of your eyes; a steady nod means YOU judge it done and the next step appears. No map, no positioning - it never pretends to know where you are.
 
-| 环节 | 必须用 | 不能用 |
-|---|---|---|
-| 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
-| Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+### Opening Message（408 字符）
 
-## 真机测试（云端下发）
+> ## Route Hold
+>
+> Someone just told you the way in one breath? Repeat it back with **DICT** (one step at a time) or **SPLIT** (the whole route - it is split on markers and you prune the steps before saving). Then tap **WALK**: only the current step stays in view, and a steady **nod** moves to the next step when *you* judge it done. It has no map and no position - the walking is yours, the remembering is its.
 
-<details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+### Preview Media
 
-1. 进 **Device Debug** 页签，填 **Basic Information**：
-   - Agent Icon（建议 1:1）、**Agent Name**（必填）
-   - **App Category**（必填）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必填，≤500 字）：写清什么场景、什么前提下、被什么样的用户请求唤起
-   - Version / Agent ID 由系统生成；**Version 是 Build 号，每次 Repackage and Save 自动递增**
-2. **AIX Packaging** 区点 **Repackage and Save**，等打包完成。
-3. **成功标志**：顶部绿色状态 **● Debug version ready — Ready for device debugging**。
-   没出现就说明没保存成功，App 端拉不到，不要白等。
-4. 手机打开 **Hi Rokid**（海外版）→ 确认眼镜已连接 →「设置 → 开发者选项 → AIUI」→
-   「更新眼镜资源包」→ 等「智能体资源包下载成功」。
-5. 对眼镜语音打开 Agent（如「乐奇，打开 xxx」）开始测试。
-6. 迭代循环：改代码 → 推 GitHub / 同步分支 → Studio 重新导入 → Repackage and Save
-   → Hi Rokid 更新资源包 → 再测。**只改代码不重新打包保存，App 拉到的还是旧版。**
+- `preview-route-hold-index.png` — 首页初始态：空路线 + 常驻诚实行（路线靠你自己的声音记 · 它不带路、不认路 · 你点头才进下一步）
+- `preview-route-hold-walk1.png` — DEMO 走路第 1 步：眼前只有当前一步「左转」+ 第 1/3 步
+- `preview-route-hold-walk2.png` — DEMO 走路第 2 步：点头推进到「直行」，PEEK 关（下一步不显示）
+- `preview-route-hold-done.png` — DEMO 步骤走完：「路线走完了 — 应该到了（到没到你判断）」
 
-</details>
+> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
 
-## 提交审核
+### Change Log（Build 1.0.0）
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+**Features added**
 
-1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
-   Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+- 复述存步 + 核对门：你用自己的声音复述问路听来的路线（佩戴者模式麦克风检查在前、宿主 ASR 在后），逐步说每步先落核对片、确认才存；整条一口气说则按步骤词拆成待存步清单，删错步后再全部存下，拆不出步骤词就整句当一步走核对门；点头永不存步、永不接受提案
+- 点头推进走路：走时眼前只有当前一步大字，头稳点头 / OK / 下滑 = 你判断这步走完，朗读下一步；上滑退回一步；收尾只宣布步骤走完，到没到由你判断
+- PEEK 偷看下一步：默认关的开关，瞥一眼下一步，推进/后退/重置自动关闭
+- 文字落盘：步骤 {文字} 纯文字最多 8 步存本机，关掉 Agent 再开还在（步数位置不存，重开从编辑起）；显示超 12 字截断并标注，全文保留；超限存不下的步会朗读说明，绝不静默丢弃
+- DEMO：PLAN 原句「左转、直行、第二个灯右转」3 步路线内存走完推进与收尾全程，不写真实存储，退出精确恢复
 
-## 维护约定
+**Improvements**
 
-- **一个 Agent 一个目录**（main），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../screenshots/<slug>/…`）。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+- 无（首个版本）
 
-## Agent 清单
+**Fixes**
 
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾）。
-每个 Agent 的真机状态、提审资料看它自己目录里的 README。
-
-| # | Agent | 一句话说明 | 导入分支 |
-|---|---|---|---|
-| — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
-| — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
-| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
-| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
-| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 | `agent-elder-day` |
-| W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 | `agent-stove-watch` |
-| W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 | `agent-bath-watch` |
-| W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 | `agent-laundry-watch` |
-| W04 | [signal-watch](signal-watch/) | 医院/银行/取餐叫号，大屏节律提醒回看，差3号喊你准备 | `agent-signal-watch` |
-| W05 | [door-watch](door-watch/) | 里屋开会戴耳机，守听门铃敲门快递叫你回看 | `agent-door-watch` |
-| H01 | [number-catch](number-catch/) | 号码拍下放大核对，常驻视线内不用默念 | `agent-number-catch` |
-| H02 | [code-hold](code-hold/) | 临时码复述存住，要输入时逐段显示 | `agent-code-hold` |
+- 无（首个版本）
