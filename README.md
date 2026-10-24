@@ -250,3 +250,8 @@ aix preview .                               # 本地预览（起服务 / --html-
 | R01 | [day-lookback](day-lookback/) | 白天凝视按时间朝向排线，晚上顺线复盘 | `agent-day-lookback` |
 | R02 | [talk-replay](talk-replay/) | 谈话字幕按说话方朝向，回放只列承诺数字期限 | `agent-talk-replay` |
 | R03 | [shop-replay](shop-replay/) | 犹豫商品按店面朝向存档，回放比价钉最便宜 | `agent-shop-replay` |
+| R04 | [route-replay](route-replay/) | 路上登记危险点，次日出门按序预告 | `agent-route-replay` |
+| R05 | [attention-diary](attention-diary/) | 一天注意力被谁偷走，一张账单说清 | `agent-attention-diary` |
+| P01 | [cue-door](cue-door/) | 看向大门触发清单，逐项确认全过才放行 | `agent-cue-door` |
+| P02 | [cue-fridge](cue-fridge/) | 看向冰箱触发清单，拿一样勾一样关门报漏拿 | `agent-cue-fridge` |
+| P03 | [cue-desk](cue-desk/) | 看向书桌亮今日三件事，起身按未完成给续接句 | `agent-cue-desk` |
