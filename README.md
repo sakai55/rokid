@@ -1,5 +1,12 @@
 # allergen-guard — 过敏守卫（Rokid 眼镜 AIUI Agent）
 
+**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+
+```
+https://github.com/sakai55/rokid/tree/agent-allergen-guard
+```
+
+
 50 个「指向性生活问题」Agent 的第 22 个。过敏/忌口的人每买一样
 东西都要眯眼读配料表，漏看一个词就可能进医院。本 Agent 不替
 你读标签——它把你的忌口清单逐项摆在眼前，一项一项问你
