@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI Agent - stand move: head-activity plus still-time monitoring, over-threshold stand-up reminder, a look-around sweep as the activity confirm, session summary at the end; a sweep is only a head-turn proxy, not proof you stood up, not medical advice, session memory only.","main":"app.js","name":"stand-move","version":"1.0.0"}
