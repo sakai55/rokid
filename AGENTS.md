@@ -1,7 +1,7 @@
 # Focus Shield — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series F01 (FILTER 过滤型， first of the group): a session gate for deep
+series FI01 (FILTER 过滤型， first of the group): a session gate for deep
 work — while a focus session runs, the world keeps making noise, and the
 wearer is afraid of missing the one thing that actually matters.
 
@@ -26,7 +26,7 @@ wearer is afraid of missing the one thing that actually matters.
   footer, the README and every hint say so: doorbells, alarms and
   a child's cry can only appear as unclassified noise entries to
   review at the break — they are NOT recognised, and the agent
-  never promises otherwise. The W01 stove-watch precedent
+  never promises otherwise. The WA01 stove-watch precedent
   (电平 ≠ 沸腾识别） is followed verbatim: level ≠ identity.
   Tier 1 matches text only: it cannot tell who said the name, and
   it says so.
@@ -46,7 +46,7 @@ wearer is afraid of missing the one thing that actually matters.
   entries or ends the session. Clearing a whole session is only
   possible from the summary screen, in two DEL taps, with a 6 s
   arm that any other action cancels — the same destructive-
-  operation discipline as C01–C05. Back from the summary returns
+  operation discipline as CO01–CO05. Back from the summary returns
   to the live session without deleting anything; the summary is
   rebuilt on END.
 - **DEMO is staged and never overwrites a user session.** DEMO
@@ -72,7 +72,7 @@ wearer is afraid of missing the one thing that actually matters.
   nod is ignored on purpose — ending a session must never happen
   by accident while you are working. Unlike the C-series pages,
   an UNSTEADY nod does NOT arm the 1.2 s lock (harness-caught
-  during F01 development: an unsteady nod was eating the next
+  during FI01 development: an unsteady nod was eating the next
   steady one); the lock arms only after steadiness is confirmed.
 - TTS uses the fixed host voice; the utterance `lang` is never
   set (documented as not taking effect). The only timers are the
