@@ -172,7 +172,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 **徽章说明**：
 
 | 徽章 | 种类 | 含义 |
-|---|---|
+|---|---|---|
 | ![Z01](https://img.shields.io/badge/Z01-24292F?style=flat-square) | 编号徽章 | 这个 Agent 的唯一编号，字母 = 系列 / 分组，数字 = 组内序号 |
 | ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | 系列徽章 | 指向性系列：利用视线同轴、头部朝向等指向性能力解决生活问题（Z01–Z50） |
 | ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | 系列徽章 | 注意力外挂系列：把持续占用的注意力外包给眼镜（W/H/C/F/D/R/P/S/B/E 各 01–05） |
