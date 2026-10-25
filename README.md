@@ -171,37 +171,16 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 **徽章说明**：
 
-<img src="https://img.shields.io/badge/DI01-24292F?style=flat-square" alt="DI01" height="24">
-
-这个 Agent 的唯一编号，前两个字母 = 分类，后两位数字 = 组内序号
-
-<img src="https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square" alt="指向性" height="24">
-
-指向性系列：利用视线同轴、头部朝向等指向性能力解决生活问题（DI01–DI50）
-
-<img src="https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square" alt="注意力" height="24">
-
-注意力外挂系列：把持续占用的注意力外包给眼镜（WA/HO/CO/FI/DU/RE/CU/SO/BO/AM 各 01–05）
-
-<img src="https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square" alt="路缘坡" height="24">
-
-路缘坡系列：先为一类特殊人群解决一个具体难题，再溢出到情境性障碍中的普通人（CC01–CC20）
-
-<img src="https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square" alt="游戏" height="24">
-
-头部动作小游戏系列：用头部动作玩的极简小游戏（GA01–GA20）
-
-<img src="https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square" alt="直接冲突" height="24">
-
-与眼镜默认能力<strong>直接冲突</strong>（冲突排查第一档，共 14 个）：本体就是默认能力，只加了一层小扭转
-
-<img src="https://img.shields.io/badge/%E9%AB%98%E5%BA%A6%E9%87%8D%E5%8F%A0-F9A825?style=flat-square" alt="高度重叠" height="24">
-
-与眼镜默认能力<strong>高度重叠</strong>（冲突排查第二档，共 40 个）：默认功能能完成大半，只剩一层薄闭环
-
-<img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试" height="24">
-
-既不直接冲突、也不高度重叠的 Agent 都是<strong>待测试</strong>（共 88 个），冲突与否等真机测试确认
+<table>
+<tr><td><img src="https://img.shields.io/badge/DI01-24292F?style=flat-square" alt="DI01" height="24"></td><td>这个 Agent 的唯一编号，前两个字母 = 分类，后两位数字 = 组内序号</td></tr>
+<tr><td><img src="https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square" alt="指向性" height="24"></td><td>指向性系列：利用视线同轴、头部朝向等指向性能力解决生活问题（DI01–DI50）</td></tr>
+<tr><td><img src="https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square" alt="注意力" height="24"></td><td>注意力外挂系列：把持续占用的注意力外包给眼镜（WA/HO/CO/FI/DU/RE/CU/SO/BO/AM 各 01–05）</td></tr>
+<tr><td><img src="https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square" alt="路缘坡" height="24"></td><td>路缘坡系列：先为一类特殊人群解决一个具体难题，再溢出到情境性障碍中的普通人（CC01–CC20）</td></tr>
+<tr><td><img src="https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square" alt="游戏" height="24"></td><td>头部动作小游戏系列：用头部动作玩的极简小游戏（GA01–GA20）</td></tr>
+<tr><td><img src="https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square" alt="直接冲突" height="24"></td><td>与眼镜默认能力<strong>直接冲突</strong>（冲突排查第一档，共 14 个）：本体就是默认能力，只加了一层小扭转</td></tr>
+<tr><td><img src="https://img.shields.io/badge/%E9%AB%98%E5%BA%A6%E9%87%8D%E5%8F%A0-F9A825?style=flat-square" alt="高度重叠" height="24"></td><td>与眼镜默认能力<strong>高度重叠</strong>（冲突排查第二档，共 40 个）：默认功能能完成大半，只剩一层薄闭环</td></tr>
+<tr><td><img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试" height="24"></td><td>既不直接冲突、也不高度重叠的 Agent 都是<strong>待测试</strong>（共 88 个），冲突与否等真机测试确认</td></tr>
+</table>
 
 基础项（`my-agent`、`glasses-benchmark`）没有任何徽章。
 读例：`gaze-translate` 行尾的 ![DI01](https://img.shields.io/badge/DI01-24292F?style=flat-square) ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) ![直接冲突](https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square) = 编号 DI01 · 指向性系列 · 与默认能力直接冲突；`drop-search` 行尾的 ![CC01](https://img.shields.io/badge/CC01-24292F?style=flat-square) ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) ![待测试](https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square) = 编号 CC01 · 路缘坡系列 · 冲突与否待测试。
