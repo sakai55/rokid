@@ -1,7 +1,7 @@
 # Noise Map — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series E03 (AMBIENT 环境型， third of the group, series #48): you want
+series AM03 (AMBIENT 环境型， third of the group, series #48): you want
 the quietest corner at home or in the office to work in, and picking by
 feel always picks wrong. This agent takes the picking off your hands:
 you turn your head a full circle, one SCAN tap per sector records the
@@ -64,17 +64,17 @@ direction is announced once by voice.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `light-change` (E01) is timed camera
+- Attention-series `light-change` (AM01) is timed camera
   metering plus a below-threshold lamp reminder. Noise-map
   uses no camera at all: it samples mic levels while you
   turn, and its output is a direction map, not a lamp
   reminder.
-- Attention-series `sky-watch` (E02) registers a drying
+- Attention-series `sky-watch` (AM02) registers a drying
   direction, meters the sky on a timer, and warns on a big
   brightness drop. Noise-map registers nothing and meters
   nothing on a timer: it scans 8 directions in one turn and
   names the quietest one.
-- Attention-series `eye-rest` (B01) times near vision and
+- Attention-series `eye-rest` (BO01) times near vision and
   reminds you to look far. Noise-map times nothing: it maps
   sound by direction in a single turn.
 
@@ -114,7 +114,7 @@ agent never knows where anyone is.
   BACK-to-idle keeps session with START resume; focus
   walks 8 rows with wrap, rowTap out-of-range and
   missing-dataset guards (missing dataset keeps focus,
-  never jumps to 0 — the B05 page bug, fixed here by
+  never jumps to 0 — the BO05 page bug, fixed here by
   construction); nod discipline (unsteady ignored without
   arming, steady nod in idle starts, lock blocks a second
   nod, lock expiry works, nod in scanning ignored as not a
