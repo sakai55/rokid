@@ -138,7 +138,7 @@ export default {
   // ONE clock snapshot -> {date, time} as pure strings. A batch of
   // related values (DEMO seeds, a record's date + time) always comes
   // from a single snapshot: the preview host's Date is virtualised
-  // and drifts between calls (lesson from #25), so sampling Date
+  // and drifts between calls (lesson from DI25), so sampling Date
   // repeatedly for related values can split them.
   _stamp() {
     var d = new Date();
@@ -417,7 +417,7 @@ export default {
       return;
     }
     if (this._heading === null) {
-      // Same honesty rule as find-my-thing #07: never invent a
+      // Same honesty rule as find-my-thing DI07: never invent a
       // heading. A memo without a direction is a note, not an anchor.
       this.setData({
         status: 'SAVE FAIL: no heading (SRC NONE) - DEMO or wait for sensor',
