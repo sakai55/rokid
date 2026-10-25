@@ -1,0 +1,10 @@
+{
+  "name": "noraebang-rotation",
+  "version": "1.0.2",
+  "description": "Noraebang fair rotation wheel: four singers on a ring, the current one big in the middle, previous and next at half light. Song reservation numbers are held per singer, DONE rotates the mic, PASS yields openly and takes priority next round. No scoring, no recording - fairness is the whole machine.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
