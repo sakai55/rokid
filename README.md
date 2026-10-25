@@ -46,7 +46,7 @@ https://github.com/sakai55/rokid/tree/agent-baby-care-hands
   2小时10分钟前。上次睡了1小时20分钟。今天喂了4次，
   换了3次尿布。」
 - **零权限零打扰**：不用相机、不用麦克风、不用朝向传感器，
-  app.json 不声明任何权限（同 #07 find-my-thing）；宝宝的
+  app.json 不声明任何权限（同 DI07 find-my-thing）；宝宝的
   记录只存本机，不拍照、不录音、不上传。
 
 ## 功能流程
