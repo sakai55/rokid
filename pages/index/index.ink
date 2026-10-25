@@ -144,7 +144,7 @@ export default {
   _pad2(n) { return (n < 10 ? '0' : '') + n; },
 
   // ONE clock snapshot -> "HH:MM" (the preview host's Date is
-  // virtualised and drifts between calls - same lesson as #25/#38).
+  // virtualised and drifts between calls - same lesson as DI25/DI38).
   _timeStr() {
     var d = new Date();
     return this._pad2(d.getHours()) + ':' + this._pad2(d.getMinutes());
