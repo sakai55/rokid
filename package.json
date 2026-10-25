@@ -1,0 +1,10 @@
+{
+  "name": "onsen-gate",
+  "version": "1.0.1",
+  "description": "Onsen entry gates: three thresholds before the bath - wash first, hair tied and towel out of the water, enter quietly. A gate opens only when you confirm the previous one; pass all three and it becomes a gentle 10-minute soak timer. No camera anywhere in this agent, by design - the permissions list is empty.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
