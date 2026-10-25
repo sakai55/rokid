@@ -1,7 +1,7 @@
 # Water Watch — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series B02 (BODY 身体型， second of the group, series #42): you get busy
+series BO02 (BODY 身体型， second of the group, series #42): you get busy
 and go a whole day without two glasses of water, and only when you are
 thirsty do you remember the cup was right beside you. This agent takes
 the remembering off your hands: it registers the cup direction when you
@@ -65,16 +65,16 @@ timer.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `eye-rest` (B01) is the near-gaze timer: it
+- Attention-series `eye-rest` (BO01) is the near-gaze timer: it
   counts steady near gaze and confirms a far look by head pitch.
   Water-watch borrows the timer shape but watches a body habit,
   not a gaze: its timer is wall-clock since the last drink and
   its confirmation is a steady gaze at the cup, not a pitch.
-- Attention-series `guest-watch` (S02) is the guest seat register
+- Attention-series `guest-watch` (SO02) is the guest seat register
   plus timed tea-level glance-backs plus a door SCAN. Water-watch
   registers no guests and scans nothing: it registers one cup
   direction and counts your own drinks.
-- Attention-series `standup-echo` (S04) is the standup module-
+- Attention-series `standup-echo` (SO04) is the standup module-
   keyword gate: hits become notes, non-hits become digest rows.
   Water-watch has no keywords and no notes: its only input is a
   registered direction plus minutes, its only output is a gentle
