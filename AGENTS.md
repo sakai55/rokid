@@ -1,11 +1,11 @@
 # Neck Clock （时钟点位） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G05: the flagship anti-circling
+Head-movement mini-game series GA05: the flagship anti-circling
 teaching game. Extreme simplicity: 3 states only (ready / playing /
 done), one page, one main button.
 
-Distinct from G01–G04: this game does not count reps in one axis.
+Distinct from GA01–GA04: this game does not count reps in one axis.
 It teaches the point-vs-circle distinction itself: every cue is ONE
 clock position (12 = up, 6 = down, 3 = right, 9 = left), reached,
 held ~0.8 s, and returned from — and only then is the next cue
@@ -99,19 +99,19 @@ around the dial. The done voice line closes the lesson: 「完成，
     fake stable)
   - cue-stall re-prompt: 8 s, once per step
 - **Formulas (fleet-consistent):**
-  - pitch = asin(2*(w*x - y*z)), clamped, as in G01/G04
+  - pitch = asin(2*(w*x - y*z)), clamped, as in GA01/GA04
   - yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees,
-    as in G02
+    as in GA02
   - Only the RELATIVE pitch/yaw vs the calibrated center are used,
     so the host's absolute zero never matters.
 - **Sign learning — two axes, both learned, neither assumed
   (device verification items).**
   - DOWN: the first calibration prompt records the sign the head
     actually moves when asked to look down as DOWN; UP is the
-    opposite pitch sign (G01/G04 pattern).
+    opposite pitch sign (GA01/GA04 pattern).
   - LEFT: the second calibration prompt records the sign the head
     actually moves when asked to turn left as LEFT; RIGHT is the
-    opposite yaw sign (G02 pattern).
+    opposite yaw sign (GA02 pattern).
   - Residual caveats: calibration trusts the player to follow each
     prompt; looking up instead of down would learn the pitch signs
     backwards, and turning right instead of left would learn the
