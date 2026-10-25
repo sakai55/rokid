@@ -1,7 +1,7 @@
 # My Bus Watch — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Curb-Cut
-series K02 (FILTER 守望型）: a target-route bus watcher for blind /
+series CC02 (FILTER 守望型）: a target-route bus watcher for blind /
 low-vision wearers waiting for one specific bus.
 
 ## Design contract
