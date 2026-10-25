@@ -137,7 +137,7 @@ export default {
   _pad2(n) { return (n < 10 ? '0' : '') + n; },
 
   // ONE clock snapshot -> "HH:MM" (preview host Date drifts between
-  // calls, so one entry's time comes from one read - #25/#38 lesson).
+  // calls, so one entry's time comes from one read - DI25/DI38 lesson).
   _stamp() {
     var d = new Date();
     return this._pad2(d.getHours()) + ':' + this._pad2(d.getMinutes());
@@ -1048,7 +1048,7 @@ export default {
       return;
     }
     // Seed times derive from ONE Date snapshot as pure arithmetic
-    // (#25 lesson: preview host clocks drift between reads).
+    // (DI25 lesson: preview host clocks drift between reads).
     var snap = new Date();
     var fmt = function (d) { return this._pad2(d.getHours()) + ':' + this._pad2(d.getMinutes()); }.bind(this);
     var t1 = new Date(snap.getTime() - 25 * 60000);
