@@ -106,7 +106,7 @@ export default {
 
   // Date/time strings from ONE snapshot's parts - never a second
   // sample, so a batch of seeds can never drift apart (preview host's
-  // Date is virtualized and drifts between samples; #25/#26 lesson).
+  // Date is virtualized and drifts between samples; DI25/DI26 lesson).
   _dateStrParts(y, m0, day) {
     return y + '-' + this._pad2(m0 + 1) + '-' + this._pad2(day);
   },
@@ -262,7 +262,7 @@ export default {
     this._recompute();
   },
 
-  // ---------- SCAN: wide photo + BarcodeDetector (same as shelf-compare #02) ----------
+  // ---------- SCAN: wide photo + BarcodeDetector (same as shelf-compare DI02) ----------
   // The decoded string is only a record ID for this parcel. There is
   // no carrier database to look it up in, and no OCR: the recipient
   // still comes from the wearer's own eyes on the label.
