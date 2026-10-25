@@ -7,7 +7,7 @@ https://github.com/sakai55/rokid/tree/agent-stove-watch
 ```
 
 
-注意力外挂系列 **W01**（守望型 WATCH）· Rokid 眼镜 AIUI Agent
+注意力外挂系列 **WA01**（守望型 WATCH）· Rokid 眼镜 AIUI Agent
 
 开火时逐个看向锅登记并设时，之后三口锅的倒计时在你视线里
 并行走着；哪口到点，它按「相对你的方向」叫你一次，并把提
