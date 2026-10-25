@@ -1,7 +1,7 @@
 # Attention Diary — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series R05 (REVIEW 回顾型， last of the group, series #30): at the end of
+series RE05 (REVIEW 回顾型， last of the group, series #30): at the end of
 the day you want to know who stole your attention — this agent takes the
 day's attention bill off your hands. Log one trigger per category as the
 day goes (watch reminder, silent save, shield block, filter hit, replay
@@ -63,18 +63,18 @@ and close with a summary naming the category that stole the most.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `day-lookback` (R01) is the day timeline:
+- Attention-series `day-lookback` (RE01) is the day timeline:
   gazes you marked, typed 画面 / 数字 / 承诺, ordered by time.
   Attention-diary is not a timeline: its units are trigger
   entries grouped by category, and its close is a counted bill
   with a single "stole the most" verdict, not a replay.
-- Attention-series `talk-replay` (R02) is the talk replay:
+- Attention-series `talk-replay` (RE02) is the talk replay:
   conversation captions tagged by speaker, replayed as only
   承诺 / 数字 / 期限 sentences. Attention-diary has no captions
   and no sentence classes: its categories are trigger sources
   across the whole fleet (watch, silent save, shield, filter,
   replay, side-line), and its output is counts, not sentences.
-- Attention-series `route-replay` (R04) is the route preview:
+- Attention-series `route-replay` (RE04) is the route preview:
   hazard spots with directions and on-the-spot photos, walked
   in registration order. Attention-diary has no directions and
   no photos: its units are counted triggers, and its walk is
