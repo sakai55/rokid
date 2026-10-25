@@ -14,7 +14,7 @@ there and lose the moment someone talks to you.
   data: URL via `FileReader` and sent to the host `LanguageModel` as an
   `image_url` part of ONE user message (multimodal content in the user
   role only, system prompt via `initialPrompts`, `availability()` first,
-  session `destroy()`ed after — dossier §2.9, same machinery as #39
+  session `destroy()`ed after — dossier §2.9, same machinery as DI39
   board-capture). The prompt asks for exactly `READ: <number or code>`
   (or `READ: NONE`); the parser accepts a clean digit-bearing token and
   rejects prose — an unclear reply is a failed read, never a guess.
@@ -56,7 +56,7 @@ there and lose the moment someone talks to you.
   Any other action (selection move, mode change, 6 s timeout) disarms.
   Everywhere else a nod is non-destructive by construction: in list it
   only speaks, in confirm it never saves, in catch it is ignored —
-  unlike #39, a nod here never files anything.
+  unlike DI39, a nod here never files anything.
 - TTS uses the fixed host voice; the utterance `lang` is never set
   (documented as not taking effect). Timers are not used for stored
   data: entry times come from ONE Date snapshot formatted "HH:MM".
