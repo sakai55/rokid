@@ -1,7 +1,7 @@
 # Pack Sweep — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series C04 (COVER 覆盖型， fourth of the group): packing a bag by feel —
+series CO04 (COVER 覆盖型， fourth of the group): packing a bag by feel —
 you only discover the missing ID, charger or medicine at the destination.
 
 ## Design contract
@@ -24,7 +24,7 @@ you only discover the missing ID, charger or medicine at the destination.
   item unchecks it; DEL on a todo item deletes it from this packing
   session. Clearing the whole list is only possible from the summary
   screen, in two DEL taps, with a 6 s arm that any other action
-  cancels — the same destructive-operation discipline as C01–C03.
+  cancels — the same destructive-operation discipline as CO01–CO03.
 - **ADD grows the list, and exits DEMO.** ADD appends the next item
   from a fixed spare pool （耳机、充电宝、纸巾、笔记本、墨镜）; when
   the pool is exhausted it says so and adds nothing. Adding your own
@@ -59,18 +59,18 @@ you only discover the missing ID, charger or medicine at the destination.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- C02 `room-sweep` is the same coverage-table pattern applied to
+- CO02 `room-sweep` is the same coverage-table pattern applied to
   safety items in a room: pass/flag semantics on physical checks
   before sleep. Pack-sweep applies the pattern to a bag: packed/todo
   semantics on luggage items, with a departure gate.
-- H03 `voice-list` is a spoken shopping/errand list ticked off at
+- HO03 `voice-list` is a spoken shopping/errand list ticked off at
   the shop shelf. Pack-sweep is not spoken and not about shopping:
   it is the pre-departure bag check, and its gate (FIN refuses with
   names) is about leaving, not buying.
-- C01 `last-glance` archives what you SAW when leaving a room for
+- CO01 `last-glance` archives what you SAW when leaving a room for
   later replay. Pack-sweep never archives anything: it only decides
   whether the bag is complete right now.
-- C03 `proof-sweep` tracks line coverage in a document with a skip
+- CO03 `proof-sweep` tracks line coverage in a document with a skip
   detector. Pack-sweep has no skip detector (there is no order to
   skip in a bag) and no coverage percentage as its verdict — its
   verdict is binary: 行李齐了, or the named missing items.
