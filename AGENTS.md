@@ -15,10 +15,10 @@ Rokid 眼镜板书捕获智能体（AIUI Agent）。
 
 - 拍（SNAP）：看向板书点 SNAP，用
   `ImageCapture.takePhoto({mode:'telephoto'})` 长焦拍下整块板
-  （不可用时回退 wx.media CameraContext，同 #01）。同时记录
+  （不可用时回退 wx.media CameraContext，同 DI01）。同时记录
   当时的头部朝向（AbsoluteOrientationSensor 四元数算 yaw，
   无传感器时如实记 `---`，不编造）与时间（一处快照取日期 +
-  时间，同 #38 的时钟纪律）。照片 Blob 只留在内存里等 READ，
+  时间，同 DI38 的时钟纪律）。照片 Blob 只留在内存里等 READ，
   **从不落盘**：wx 同步存储存不下照片，本 Agent 也从不把照片
   写进任何存储——最终留下的只有文字。
 - 读（READ）：把照片 Blob 经 `FileReader.readAsDataURL` 编码
