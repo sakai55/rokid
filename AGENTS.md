@@ -1,7 +1,7 @@
 # Sign Filter — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series F02 (FILTER 过滤型， second of the group): in an unfamiliar street,
+series FI02 (FILTER 过滤型， second of the group): in an unfamiliar street,
 every shop sign shouts for attention and the one you want hides among them.
 This agent inverts the work: you declare the target first, then walk — only
 a sign whose read text contains the target is allowed to surface.
@@ -14,7 +14,7 @@ a sign whose read text contains the target is allowed to surface.
   the target mid-walk would silently rewrite what counts as a hit while
   the wearer is trusting the filter — so every TGT tap while scanning is
   refused with an explanation, never silently applied. This is the same
-  idle-only-settings discipline as F01's whitelist.
+  idle-only-settings discipline as FI01's whitelist.
 - **The match rule is one line, and it is the headline.** Normalised
   sign text (uppercase, spaces and hyphens stripped) must CONTAIN the
   normalised target string. There is no sign database, no fuzzy match,
@@ -42,7 +42,7 @@ a sign whose read text contains the target is allowed to surface.
   nod confirms only where confirmation is safe: START in idle, CONFIRM
   on the summary screen. In a live walk a steady nod is ignored on
   purpose — snapping a photo must be a deliberate tap. An unsteady nod
-  never arms the 1.2 s lock (the F01 fix, kept).
+  never arms the 1.2 s lock (the FI01 fix, kept).
 - **Correction is cheap, destruction is confirmed.** DEL in a live
   walk only clears the hit banner — it never deletes the seen list or
   ends the walk. Back from the summary returns to the live walk
@@ -73,12 +73,12 @@ a sign whose read text contains the target is allowed to surface.
   loud — it is a reader. Sign-filter reads signs only to test them
   against a declared target and surfaces only the match — it is a
   filter. Same camera, opposite attention contract.
-- `focus-shield` (F01) is a session gate for sound: whitelist words
+- `focus-shield` (FI01) is a session gate for sound: whitelist words
   interrupt, everything else is logged. Sign-filter is the visual
   twin of that gate: a declared target interrupts, every other sign
   is counted. The idle-only-settings discipline and the
   zero-persistence discipline are shared on purpose.
-- `shelf-sweep` (C05) proves coverage of a shelf you already face.
+- `shelf-sweep` (CO05) proves coverage of a shelf you already face.
   Sign-filter proves nothing about coverage — it only answers
   "is the thing I want among the signs I have looked at so far".
 
@@ -126,5 +126,5 @@ the UI footer, the README and every hint it gives.
   `shot-sign-filter.js`, `probe-sign-filter*.js` in
   `~/workspace/preview-tools/`): DEMO is the row-1 first button
   (x=88); its true y moves with the info-box height — probe every
-  state and verify every PNG by eye, per the recorded F01/H02
+  state and verify every PNG by eye, per the recorded FI01/HO02
   lesson that a single hash probe can hit the wrong button.
