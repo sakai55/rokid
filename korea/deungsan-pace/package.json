@@ -1,6 +1,6 @@
 {
   "name": "deungsan-pace",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Mountain pace ledger, not a navigator: your climb as 8 segments on a profile line, rest and water logged pin by pin, a gentle nudge when water falls behind time. GEO takes a one-shot altitude record when you ask, and fails honestly. Trails are for signs and maps; legs are what I keep accounts for.",
   "main": "app.js",
   "keywords": [],

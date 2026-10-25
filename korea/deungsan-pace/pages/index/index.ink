@@ -72,11 +72,11 @@ export default {
     const prof = '    ╱‾‾╲\n  ╱      ╲\n╱' + ' '.repeat(pos) + '●' + ' '.repeat(Math.max(0, 8 - pos)) + '╲___';
     const need = Math.max(1, Math.floor(s.mins / 30));
     this.setData({
-      status: s.prog >= 8 ? 'SUMMIT: 정상 — 下山の配速もここから' : ('HIKE: ' + s.prog + '/8 구간 · 約 ' + s.mins + ' 分'),
-      hero: '進捗 ' + s.prog + '/8 · 高度 ' + (s.alt === null ? '未記録' : (s.alt < 0 ? '取得不可' : ('約 ' + s.alt + 'm'))),
-      heroSub: '', r1: '休息 ' + s.rests + ' 回 · 補水 ' + s.water + '/' + need + ' 杯目安' + (s.water < need && s.prog > 0 ? ' — 水を飲みましょう' : ''),
-      r2: '路線は案内しません — 配速と補水の帳簿だけです', r3: '', r4: '', marks: prof,
-      guide: 'GO 下一段 · REST 休息 · WATER 補水 · GEO 高度を一度だけ記録'
+      status: s.prog >= 8 ? 'SUMMIT: 정상 — 하산 페이스도 여기서부터' : ('HIKE: ' + s.prog + '/8 구간 · 약 ' + s.mins + '분'),
+      hero: '진행 ' + s.prog + '/8 · 고도 ' + (s.alt === null ? '미기록' : (s.alt < 0 ? '가져올 수 없음' : ('약 ' + s.alt + 'm'))),
+      heroSub: '', r1: '휴식 ' + s.rests + ' 회 · 수분 ' + s.water + '/' + need + ' 잔 기준' + (s.water < need && s.prog > 0 ? ' — 물을 마시세요' : ''),
+      r2: '길은 안내하지 않습니다 — 페이스와 수분 장부뿐입니다', r3: '', r4: '', marks: prof,
+      guide: 'GO 다음 구간 · REST 휴식 · WATER 수분 · GEO 고도 한 번만 기록'
     });
   },
   _speak(text) {

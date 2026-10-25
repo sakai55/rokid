@@ -78,7 +78,7 @@ export default {
       r2: '주문: ' + (ordTxt || '없음') + ' = ₩' + food,
       r3: '다음 후보: ' + MENUS[s.menuIdx][0] + ' ₩' + MENUS[s.menuIdx][1] + ' (스와이프로 변경)',
       r4: '', marks: '',
-      guide: '+1H 시간 블록 · ORDER 후보 주문 기록 · END 결산 ·点头=+1H'
+      guide: '+1H 시간 블록 · ORDER 후보 주문 기록 · END 결산 · 끄덕임=+1H'
     });
   },
   _speak(text) {

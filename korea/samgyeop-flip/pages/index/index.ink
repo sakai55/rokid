@@ -71,12 +71,12 @@ export default {
   _recompute() {
     const s = this._s;
     this.setData({
-      status: s.running ? ('GRILL: 배치 ' + s.batch + ' · ' + (s.side + 1) + '면 굽는 중') : 'SETUP: START로 절拍 시작 · 熟度は色と弾力で判断を',
+      status: s.running ? ('GRILL: 배치 ' + s.batch + ' · ' + (s.side + 1) + '면 굽는 중') : 'SETUP: START로 타이머 시작 · 익은 정도는 색과 탄력으로 직접 확인',
       hero: String(s.left), heroSub: (s.side + 1) + '면 · ' + SIDE_SECS[s.side] + '초',
       r1: '고기 ' + s.pieces + '점 · 뒤집기 ' + s.flips + '회',
       r2: '가위 ' + s.cuts + '/' + s.pieces + ' — 차면 배치 완료',
-      r3: '', r4: '', marks: '절拍だけ守る · 熟度は 단정しない',
-      guide: 'START 开始/暂停 · FLIP 立即翻面 · CUT 剪一段 · 点头=FLIP'
+      r3: '', r4: '', marks: '박자만 지킵니다 · 익은 정도는 단정하지 않아요',
+      guide: 'START 시작/일시정지 · FLIP 바로 뒤집기 · CUT 한 조각 자르기 · 끄덕임=FLIP'
     });
   },
   _speak(text) {

@@ -14,8 +14,8 @@ import wx from 'wx';
 // no navigation, no meeting transcription is claimed anywhere.
 
 const SCAN_MODE = 'wide';
-const SCAN_SYSTEM = '只回答照片里计量垃圾袋包装上印的容量数字（如 20L），读不到输出 NONE，不要解释。';
-const SCAN_QUESTION = '这张照片里的종량제 봉투（计量垃圾袋）包装上印的容量是几升？只输出数字加L，读不到输出 NONE。';
+const SCAN_SYSTEM = '사진 속 종량제 봉투 포장에 인쇄된 용량 숫자만 답하세요 (예: 20L). 읽을 수 없으면 NONE이라고만 출력하고 설명하지 마세요.';
+const SCAN_QUESTION = '이 사진의 종량제 봉투 포장에 인쇄된 용량은 몇 리터인가요? 숫자와 L만 출력하고, 읽을 수 없으면 NONE이라고 출력하세요.';
 const DEMO_S = [{"cap": 20, "filled": 9, "food": 1, "bags": 0, "note": ""}, {"cap": 20, "filled": 17, "food": 3, "bags": 0, "note": "80% 경고"}, {"cap": 20, "filled": 0, "food": 3, "bags": 1, "note": "새 봉투"}];
 
 export default {
@@ -46,7 +46,7 @@ export default {
   act2Tap() {
     if (this._demoIdx >= 0) return;
     this._s.food++;
-    this._speak('음식물 0.5킬로目安으로 기록했어요。');
+    this._speak('음식물 0.5킬로 기준으로 기록했어요.');
     this.setData({ evt: 'EVT: food drop logged (0.5kg est.)' }); this._recompute();
   },
   act3Tap() {
@@ -65,8 +65,8 @@ export default {
   _scanNote(msg) { this._s.note = msg; this.setData({ evt: 'EVT: ' + msg }); },
   _scanAnswer(ans) {
     const m = String(ans || '').match(/(10|20|30|50)\s*L/i);
-    if (m) { this._s.cap = parseInt(m[1], 10); this._s.note = '袋型 ' + m[1] + 'L（暫定読取）'; this._speak('봉투 크기를 바꿨어요。'); }
-    else this._s.note = '容量 読めず — 手動のまま';
+    if (m) { this._s.cap = parseInt(m[1], 10); this._s.note = '봉투 ' + m[1] + 'L (임시 판독)'; this._speak('봉투 크기를 바꿨어요.'); }
+    else this._s.note = '용량을 읽지 못했어요 — 수동 입력 그대로';
     this.setData({ evt: 'EVT: SCAN bag size tentative' }); this._recompute();
   },
   _recompute() {
@@ -77,12 +77,12 @@ export default {
     for (let i = rows - 1; i >= 0; i--) { g += (i < filledRows ? '█████' : '░░░░░') + (i > 0 ? '\n' : ''); }
     const fee = s.food * 60;
     this.setData({
-      status: 'BAG: ' + s.cap + 'L 종량제 · 배출済み ' + s.bags + ' 袋' + (s.note ? ' · ' + s.note : ''),
-      hero: 'あと ' + (s.cap - s.filled) + 'L 入ります', heroSub: '',
-      r1: '現在 ' + s.filled + '/' + s.cap + 'L（' + Math.round(s.filled / s.cap * 100) + '%）',
-      r2: '음식물 ' + s.food + ' 回 · 料金目安 約 ' + fee + '원（推定）',
-      r3: '満杯では +1L 不可 — 正直な量表', r4: '', marks: g,
-      guide: '+1L 逐升 · FOOD 食物投放 · THROW 封袋排出 · SCAN 袋型（暂定）'
+      status: 'BAG: ' + s.cap + 'L 종량제 · 배출 완료 ' + s.bags + ' 봉투' + (s.note ? ' · ' + s.note : ''),
+      hero: '앞으로 ' + (s.cap - s.filled) + 'L 더 들어가요', heroSub: '',
+      r1: '현재 ' + s.filled + '/' + s.cap + 'L (' + Math.round(s.filled / s.cap * 100) + '%）',
+      r2: '음식물 ' + s.food + ' 회 · 요금 기준 약 ' + fee + '원 (추정)',
+      r3: '가득 차면 +1L 불가 — 정직한 계량표', r4: '', marks: g,
+      guide: '+1L 1리터씩 · FOOD 음식물 투입 · THROW 봉투 배출 · SCAN 봉투 크기 (임시)'
     });
   },
   async scanTap() {

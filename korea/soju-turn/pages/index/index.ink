@@ -90,11 +90,11 @@ export default {
   _recompute() {
     const s = this._s;
     this.setData({
-      status: 'ROUND ' + (s.rounds + 1) + ' · 어른 ' + (s.elder ? '계심（転頭あり）' : '안 계심') + ' · 센서 ' + (s.sensor === 'ok' ? '有効' : 'なし（点按確認）'),
-      hero: STAGES[s.stage], heroSub: s.stage === 2 ? '頭を35°以上 돌렸다 돌아오면自動で次へ' : '両手と体の向きが礼儀です',
-      r1: '나 ｜ 두 손', r2: s.elder ? '어른 ｜ 向かい' : '동료 ｜ 向かい',
+      status: 'ROUND ' + (s.rounds + 1) + ' · 어른 ' + (s.elder ? '계심 (고개 돌림 있음)' : '안 계심') + ' · 센서 ' + (s.sensor === 'ok' ? '사용 가능' : '없음 (눌러서 확인)'),
+      hero: STAGES[s.stage], heroSub: s.stage === 2 ? '고개를 35° 이상 돌렸다 돌아오면 자동으로 다음 단계' : '두 손과 몸의 방향이 예의입니다',
+      r1: '나 ｜ 두 손', r2: s.elder ? '어른 ｜ 맞은편' : '동료 ｜ 맞은편',
       r3: '', r4: '', marks: s.stage === 2 ? '――▶ 돌리기' : '―――',
-      guide: '잔 상태：' + s.glass + ' · NEXT 次段 · ELDER 长辈在席切换 · 头の向きが入力'
+      guide: '잔 상태: ' + s.glass + ' · NEXT 다음 단계 · ELDER 어르신 참석 전환 · 고개 방향이 입력'
     });
   },
   _speak(text) {

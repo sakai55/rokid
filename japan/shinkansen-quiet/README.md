@@ -62,7 +62,7 @@ cd ~/workspace/rokid/shinkansen-quiet
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | Shinkansen Quiet（待导入后回填） |
-| Version / Build | 1.0.1 / 待导入后回填 |
+| Version / Build | 1.0.2 / 待导入后回填 |
 | App Category | Life |
 | Intent Description | Worn on a Shinkansen quiet car: monitors the wearer voice level and reminds them to move to the deck when they get loud. |
 | Agent ID | 待导入后回填 |
@@ -116,3 +116,17 @@ cd ~/workspace/rokid/shinkansen-quiet
 **Fixes**
 
 - 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+
+### Change Log（Build 1.0.2）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 无
+
+**Fixes**
+
+- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）

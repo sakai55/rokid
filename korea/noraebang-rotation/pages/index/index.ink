@@ -67,11 +67,11 @@ export default {
     const prev = SINGERS[(s.turn + SINGERS.length - 1) % SINGERS.length];
     const next = SINGERS[(s.turn + 1) % SINGERS.length];
     this.setData({
-      status: 'TURN: ' + SINGERS[s.turn] + ' · 歌った曲 ' + s.sung + (s.yielded >= 0 ? ' · 양보待ち：' + SINGERS[s.yielded] : ''),
+      status: 'TURN: ' + SINGERS[s.turn] + ' · 부른 곡 ' + s.sung + (s.yielded >= 0 ? ' · 양보 대기: ' + SINGERS[s.yielded] : ''),
       hero: SINGERS[s.turn], heroSub: '',
-      r1: '前：' + prev, r2: '次：' + next + ' · 予約 ' + SONGS[s.songs[s.turn]],
+      r1: '이전: ' + prev, r2: '다음: ' + next + ' · 예약 ' + SONGS[s.songs[s.turn]],
       r3: '', r4: '', marks: SINGERS.join(' → ') + ' →',
-      guide: 'DONE 唱完轮转 · SONG# 预约号 · PASS 让唱（下轮优先） · 点头=DONE'
+      guide: 'DONE 완창·교체 · SONG# 예약 번호 · PASS 양보 (다음 차례 우선) · 끄덕임=DONE'
     });
   },
   _speak(text) {

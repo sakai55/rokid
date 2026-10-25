@@ -1,6 +1,6 @@
 {
   "name": "hangang-base",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Hangang picnic basecamp holder: your mat as four cells - delivery-point code, pickup number, mat return time, cleanup progress. You wander off; the basecamp sits and remembers. Tap GO and it reads the four cells aloud. No navigation, no ordering - it holds the spot's information, nothing more.",
   "main": "app.js",
   "keywords": [],

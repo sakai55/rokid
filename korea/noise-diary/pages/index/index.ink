@@ -85,11 +85,11 @@ export default {
     const s = this._s;
     const arc = '22 ──────── 02 ──────── 06';
     this.setData({
-      status: s.armed ? 'DIARY: 夜の守候中 — 記録だけで、夜間は一切知らせません' : ('MORNING: 昨夜 ' + s.events + ' 件 · 最も大きい音 ' + (s.maxAt === '-' ? 'なし' : (s.maxAt + ' · ' + s.maxLv))),
-      hero: s.armed ? '守候中 · 事件 ' + s.events + ' 件' : '朝の復盤です',
-      heroSub: '', r1: '峰值1：' + (s.peaks[0] || '—'), r2: '峰值2：' + (s.peaks[1] || '—'), r3: '峰值3：' + (s.peaks[2] || '—'),
+      status: s.armed ? 'DIARY: 밤새 기록 중 — 기록만 하고, 밤에는 알리지 않아요' : ('MORNING: 지난밤 ' + s.events + ' 건 · 가장 큰 소리 ' + (s.maxAt === '-' ? '없음' : (s.maxAt + ' · ' + s.maxLv))),
+      hero: s.armed ? '기록 중 · 사건 ' + s.events + ' 건' : '아침 복기입니다',
+      heroSub: '', r1: '피크1: ' + (s.peaks[0] || '—'), r2: '피크2: ' + (s.peaks[1] || '—'), r3: '피크3: ' + (s.peaks[2] || '—'),
       r4: '', marks: arc,
-      guide: 'ARM 夜守候 · REVIEW 晨复盘 · RESET 清空 · 声は録らない、時刻だけ'
+      guide: 'ARM 밤 기록 시작 · REVIEW 아침 복기 · RESET 비우기 · 소리는 녹음하지 않고 시각만'
     });
   },
   _speak(text) {

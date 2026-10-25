@@ -82,7 +82,7 @@ export default {
       hero: cueMode ? (s.cue < 3 ? CUES[s.cue] : '準備完了 — あとは降りるだけ') : ('現在：' + STATIONS[s.at]),
       heroSub: '', r1: STATIONS.join(' · '), r2: cueMode ? 'CUE/点頭で一件ずつ完了に' : '到着は ARRIVE で確認（列車APIはありません）',
       r3: '', r4: '', marks: marks,
-      guide: 'ARRIVE 到站 · CUE 礼仪逐件 · GEO 粗旁证 · 不导航，只管时机'
+      guide: 'ARRIVE 到着 · CUE マナーを一件ずつ · GEO 大まかな傍証 · 案内はしません、時機だけ'
     });
   },
   _speak(text) {

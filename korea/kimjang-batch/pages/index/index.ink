@@ -13,13 +13,13 @@ import wx from 'wx';
 // glasses do not ship by default; no translation, no generic recognition,
 // no navigation, no meeting transcription is claimed anywhere.
 const STAGES = ['절이기', '헹구기', '양념 바르기'];
-const DEMO_S = [{"count": 23, "target": 60, "stage": 0, "asr": "有効"}, {"count": 60, "target": 60, "stage": 0, "asr": "有効"}, {"count": 41, "target": 60, "stage": 2, "asr": "有効"}];
+const DEMO_S = [{"count": 23, "target": 60, "stage": 0, "asr": "사용 가능"}, {"count": 60, "target": 60, "stage": 0, "asr": "사용 가능"}, {"count": 41, "target": 60, "stage": 2, "asr": "사용 가능"}];
 
 export default {
   data: { status: '', hero: '', heroSub: '', r1: '', r2: '', r3: '', r4: '', marks: '', guide: '', evt: 'EVT: ready' },
 
   onLoad() {
-    this._s = {"count": 0, "target": 60, "stage": 0, "asr": "未試行"};
+    this._s = {"count": 0, "target": 60, "stage": 0, "asr": "미시도"};
     this._demoIdx = -1; this._savedS = null; this._busy = false; this._steady = false;
     this._timer = null; this._micTimer = null; this._stream = null; this._ac = null;
     try { this.enableWorldAwareness(); } catch (e) {}
@@ -38,23 +38,23 @@ export default {
     if (this._demoIdx >= 0) return;
     const self = this;
     try {
-      if (typeof SpeechRecognition === 'undefined') { this._s.asr = '不可（降级：点头/+1）'; this.setData({ evt: 'EVT: ASR SKIP - nod path remains' }); this._recompute(); return; }
+      if (typeof SpeechRecognition === 'undefined') { this._s.asr = '불가 (대체: 끄덕임/+1)'; this.setData({ evt: 'EVT: ASR SKIP - nod path remains' }); this._recompute(); return; }
       const sr = new SpeechRecognition();
       sr.lang = 'ko-KR'; sr.continuous = false; sr.interimResults = false;
       sr.onresult = (ev) => {
         try {
           const t = ev.results[ev.resultIndex][0].transcript || '';
-          self._s.asr = '有効';
+          self._s.asr = '사용 가능';
           if (t.indexOf('다음') >= 0 || t.indexOf('하나') >= 0) { self._s.count++; self.setData({ evt: 'EVT: voice count +1 (' + t + ')' }); }
           else self.setData({ evt: 'EVT: heard "' + t + '" - not a count word' });
           self._recompute();
         } catch (e) {}
       };
-      sr.onerror = () => { self._s.asr = '失敗（降级：点头/+1）'; self.setData({ evt: 'EVT: ASR error - fallback' }); self._recompute(); };
+      sr.onerror = () => { self._s.asr = '실패 (대체: 끄덕임/+1)'; self.setData({ evt: 'EVT: ASR error - fallback' }); self._recompute(); };
       sr.start();
-      this._s.asr = '聞き取り中';
+      this._s.asr = '듣는 중';
       this.setData({ evt: 'EVT: ASR listening - say 다음' }); this._recompute();
-    } catch (e) { this._s.asr = '不可（降级）'; this.setData({ evt: 'EVT: ASR SKIP' }); this._recompute(); }
+    } catch (e) { this._s.asr = '불가 (대체 수단)'; this.setData({ evt: 'EVT: ASR SKIP' }); this._recompute(); }
   },
   act1Tap() {
     if (this._demoIdx >= 0) return;
@@ -85,11 +85,11 @@ export default {
     const filled = Math.round(Math.min(1, s.count / s.target) * 20);
     let band = ''; for (let i = 0; i < 20; i++) band += (i < filled ? '█' : '░');
     this.setData({
-      status: 'STAGE: ' + STAGES[s.stage] + ' · 音声 ' + s.asr,
-      hero: String(s.count), heroSub: '포기 / 目標 ' + s.target + ' · ' + STAGES[s.stage],
-      r1: '点头=+1 · 语音 다음=+1 · 下滑=-1 纠错 · 段目标未满 STAGE 不放行',
+      status: 'STAGE: ' + STAGES[s.stage] + ' · 음성 ' + s.asr,
+      hero: String(s.count), heroSub: '포기 / 목표 ' + s.target + ' · ' + STAGES[s.stage],
+      r1: '끄덕임=+1 · 음성 다음=+1 · 아래로 쓸기=-1 정정 · 단계 목표 미달이면 STAGE 불가',
       r2: '', r3: '', r4: '', marks: band + ' ' + s.count + '/' + s.target,
-      guide: 'GO 语音计数 · +1/+10 · STAGE 下一段 · 数字は大きく、手は汚れたままで'
+      guide: 'GO 음성 세기 · +1/+10 · STAGE 다음 단계 · 숫자는 크게, 손은 묻은 채로'
     });
   },
   _speak(text) {

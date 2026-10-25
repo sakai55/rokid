@@ -67,13 +67,13 @@ export default {
     const s = this._s;
     const marks = NOS.map((n, i) => i === s.noIdx ? '【' + n + '】' : ' ' + n + ' ').join(' ');
     this.setData({
-      status: s.taken ? 'DONE: 取回完了 · ' + NOS[s.noIdx] : (s.stored ? 'STORED: ' + NOS[s.noIdx] + ' · ' + ITEMS[s.itemIdx] : 'EMPTY: 柜を選んで STORE'),
-      hero: s.taken ? '取回完了' : (s.stored ? NOS[s.noIdx] + ' 寄存中' : NOS[s.noIdx]),
+      status: s.taken ? 'DONE: 受け取り完了 · ' + NOS[s.noIdx] : (s.stored ? 'STORED: ' + NOS[s.noIdx] + ' · ' + ITEMS[s.itemIdx] : 'EMPTY: ロッカーを選んで STORE'),
+      hero: s.taken ? '受け取り完了' : (s.stored ? NOS[s.noIdx] + ' 預け中' : NOS[s.noIdx]),
       heroSub: '',
       r1: '中身：' + ITEMS[s.itemIdx] + (s.stored ? '（固定）' : '（ITEM で切替）'),
       r2: '場所：新宿駅 西口ロッカー街 · 24時を過ぎると 1 日分加算（目安）',
       r3: '', r4: '', marks: marks,
-      guide: 'STORE 寄存 · ITEM 中身切替 · TAKE 取回核对 · 点头=文脉动作（寄存/取回）'
+      guide: 'STORE 預ける · ITEM 中身を替える · TAKE 受け取り確認 · うなずき=文脈アクション（預ける/受け取る）'
     });
   },
   _speak(text) {

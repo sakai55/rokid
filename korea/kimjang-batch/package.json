@@ -1,6 +1,6 @@
 {
   "name": "kimjang-batch",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Kimjang batch counter built for hands covered in chili flakes: one 62-pixel number per stage - salting, rinsing, seasoning. Nod to add one, say 'daeum' to add one (guarded speech recognition, honest fallback), +10 per basket, swipe down to correct. Stage goals gate the pipeline. It counts; recipes stay yours.",
   "main": "app.js",
   "keywords": [],

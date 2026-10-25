@@ -1,6 +1,6 @@
 {
   "name": "jongnyang-gauge",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Jongnyang pay-as-you-throw gauge: your standard bag as a rising volume scale, litre by litre, with an 80% warning and a throw-out that seals and counts the bag. A parallel ledger logs food-waste drops and a clearly-labelled fee estimate. It measures volume and habit - it never claims to weigh or to classify your trash.",
   "main": "app.js",
   "keywords": [],

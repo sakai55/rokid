@@ -14,8 +14,8 @@ import wx from 'wx';
 // no navigation, no meeting transcription is claimed anywhere.
 const PEOPLE = ['田中部長', '佐藤課長', '鈴木さん', '高橋さん', '伊藤さん', '渡辺さん'];
 const SCAN_MODE = 'wide';
-const SCAN_SYSTEM = '只回答照片里是否能看到礼盒或其条码：有输出 BOX，没有输出 NONE，不要解释。';
-const SCAN_QUESTION = '这张照片里有没有礼盒或礼盒上的条码？有只输出 BOX，没有只输出 NONE。';
+const SCAN_SYSTEM = '写真にギフトボックスまたはそのバーコードが見えるかだけ答えてください。あれば BOX、なければ NONE と出力し、説明は不要です。';
+const SCAN_QUESTION = 'この写真にギフトボックスまたはそのバーコードはありますか？あれば BOX だけ、なければ NONE だけを出力してください。';
 const DEMO_S = [{"st": [1, 1, 0, 0, 0, 0], "idx": 2, "boxes": 1}, {"st": [1, 1, 1, 2, 0, 0], "idx": 4, "boxes": 0}, {"st": [1, 1, 1, 1, 1, 1], "idx": 5, "boxes": 0}];
 
 export default {
@@ -81,7 +81,7 @@ export default {
       r1: '現在：' + PEOPLE[s.idx] + ' 様分 — ' + (s.st[s.idx] === 1 ? '購入済 ✓' : (s.st[s.idx] === 2 ? '後で △（未購入）' : '未購入')),
       r2: '礼盒在庫 ' + s.boxes + ' 箱 · BOUGHTは在庫から1箱使う',
       r3: '', r4: '', marks: marks,
-      guide: 'BOUGHT 核销一人 · LATER 待补 · STOCK/SCAN 加在库 · 点头=BOUGHT'
+      guide: 'BOUGHT 一人分を消し込み · LATER 後回し · STOCK/SCAN 在庫を足す · うなずき=BOUGHT'
     });
   },
   async scanTap() {

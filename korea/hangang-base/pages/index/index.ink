@@ -33,10 +33,10 @@ export default {
   _cells() {
     const s = this._s;
     return [
-      '交付点\n' + CODES[s.code],
-      '取餐号\n' + (s.food === 0 ? '未登记' : ('A-' + s.food)),
-      '垫子归还\n21:30 まで',
-      '片付け\n' + s.clean + '/4 ' + (s.clean < 4 ? CLEAN[s.clean] : '完了')
+      '배달 포인트\n' + CODES[s.code],
+      '수령 번호\n' + (s.food === 0 ? '미등록' : ('A-' + s.food)),
+      '돗자리 반납\n21:30까지',
+      '정리\n' + s.clean + '/4 ' + (s.clean < 4 ? CLEAN[s.clean] : '완료')
     ];
   },
   _nodAction() { this.goTap(); },
@@ -52,7 +52,7 @@ export default {
   act1Tap() {
     if (this._demoIdx >= 0) return;
     this._s.code = (this._s.code + 1) % CODES.length;
-    this._speak('交付点는 ' + CODES[this._s.code] + '예요。');
+    this._speak('배달 포인트는 ' + CODES[this._s.code] + '예요.');
     this.setData({ evt: 'EVT: delivery point -> ' + CODES[this._s.code] }); this._recompute();
   },
   act2Tap() {
@@ -75,10 +75,10 @@ export default {
     const s = this._s;
     const c = this._cells();
     this.setData({
-      status: 'BASE: 한강 베이스캠프 · 焦点は格 ' + (s.focus + 1) + '/4',
-      hero: s.clean >= 4 ? '片付け完了 — 좋은 하루였어요' : '营地は私が見ています',
+      status: 'BASE: 한강 베이스캠프 · 현재 칸 ' + (s.focus + 1) + '/4',
+      hero: s.clean >= 4 ? '정리 완료 — 좋은 하루였어요' : '베이스는 제가 보고 있어요',
       heroSub: '', r1: c[0], r2: c[1], r3: c[2], r4: c[3], marks: '',
-      guide: 'CODE 交付点 · FOOD# 取餐号 · CLEAN 片付け · GO 逐格播报'
+      guide: 'CODE 배달 포인트 · FOOD# 수령 번호 · CLEAN 정리 · GO 칸마다 안내'
     });
   },
   _speak(text) {

@@ -107,7 +107,7 @@ export default {
   },
   speakTap() {
     const s = this._s;
-    const t = s.armed ? ('守候中。現在の声の強さ ' + Math.round(s.level) + '、ピーク ' + s.peak + '、越線 ' + s.over + ' 回です。') : '守候は止まっています。ARMで開始します。';
+    const t = s.armed ? ('見守り中。現在の声の強さ ' + Math.round(s.level) + '、ピーク ' + s.peak + '、超過 ' + s.over + ' 回です。') : '見守りは止まっています。ARMで開始します。';
     const ok = this._speak(t);
     this.setData({ evt: 'EVT: SPEAK ' + (ok ? 'summary spoken' : 'FAIL') });
     this._recompute();
@@ -118,14 +118,14 @@ export default {
     let bar = ''; for (let i = 0; i < 24; i++) bar += (i < n ? '█' : '░');
     const thrPos = Math.round(s.thr / 100 * 24);
     this.setData({
-      status: s.armed ? ('WATCH: ' + (s.practice ? '練習モード（仮の声量）' : 'あなたの声だけを守候中')) : 'SETUP: ARMで守候開始 — 録音も転写もしない',
+      status: s.armed ? ('WATCH: ' + (s.practice ? '練習モード（仮の声量）' : 'あなたの声だけを見守り中')) : 'SETUP: ARMで守候開始 — 録音も転写もしない',
       hero: String(Math.round(s.level)),
       heroSub: 'しきい値 ' + s.thr + '（スワイプで調整） · 越えたら一度だけ提醒',
-      r1: 'PEAK ' + s.peak + ' · 越線 ' + s.over + ' 回 · 最近 ' + s.lastOver,
+      r1: 'PEAK ' + s.peak + ' · 超過 ' + s.over + ' 回 · 最近 ' + s.lastOver,
       r2: s.over > 0 ? '通話はデッキ（車両の連結部）へ — 点頭で確認' : '静かな車内です。その調子でどうぞ',
       r3: '', r4: '',
       marks: bar,
-      guide: 'ARM 守候 · RESET 峰值清零 · PRACTICE 练习 · 点头=越线确认'
+      guide: 'ARM 監視開始 · RESET ピーク消去 · PRACTICE 練習 · うなずき=超過の確認'
     });
   },
   _speak(text) {

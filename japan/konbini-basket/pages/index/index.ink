@@ -15,8 +15,8 @@ import wx from 'wx';
 const ITEMS = [['おにぎり', 150], ['お茶 500ml', 130], ['サラダ', 210], ['プリン', 160]];
 const PHRASES = ['割り箸をください', '袋に入れてください', '温めてください', 'そのままで大丈夫です'];
 const SCAN_MODE = 'wide';
-const SCAN_SYSTEM = '只输出照片中条码的数字或商品名，不要解释。';
-const SCAN_QUESTION = '这张照片里商品的条码数字或商品名是什么？只输出它，没有就输出 NONE。';
+const SCAN_SYSTEM = '写真のバーコードの数字または商品名だけを出力してください。説明は不要です。';
+const SCAN_QUESTION = 'この写真の商品のバーコード数字または商品名は何ですか？それだけを出力し、なければ NONE と出力してください。';
 const DEMO_S = [{"got": [true, false, false, false], "idx": 1, "phrase": 0, "note": ""}, {"got": [true, true, true, false], "idx": 3, "phrase": 1, "note": ""}, {"got": [true, true, true, true], "idx": 3, "phrase": 2, "note": "complete"}];
 
 export default {
@@ -82,7 +82,7 @@ export default {
       status: s.note ? ('NOTE: ' + s.note) : (n === 4 ? 'DONE: 全部そろった — レジへ' : 'LIST: あと ' + (4 - n) + ' 点 · 現在 ' + ITEMS[s.idx][0]),
       hero: '合計 ¥' + sum, heroSub: n + '/4 点',
       r1: rows[0], r2: rows[1], r3: rows[2], r4: rows[3], marks: '',
-      guide: '句卡：' + PHRASES[s.phrase] + ' · GOT 核销 · SCAN 暂定读名 · PHRASE 换句卡'
+      guide: '定型句：' + PHRASES[s.phrase] + ' · GOT 消し込み · SCAN 暫定読み · PHRASE 句を替える'
     });
   },
   async scanTap() {

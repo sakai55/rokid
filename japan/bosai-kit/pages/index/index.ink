@@ -14,8 +14,8 @@ import wx from 'wx';
 // no navigation, no meeting transcription is claimed anywhere.
 const CATS = ['水 2L', '非常食', '懐中電灯', 'ラジオ', 'モバイル電源', '常備薬', '軍手', 'ホイッスル'];
 const SCAN_MODE = 'telephoto';
-const SCAN_SYSTEM = '只输出照片中食品或药品的有效期年月（如 2027年3月），读不到输出 NONE，不要解释。';
-const SCAN_QUESTION = '这张包装照片上的有效期是哪一年哪一月？只输出年月，读不到输出 NONE。';
+const SCAN_SYSTEM = '写真の食品または薬品の有効期限の年月だけを出力してください（例：2027年3月）。読めなければ NONE と出力し、説明は不要です。';
+const SCAN_QUESTION = 'この包装写真の有効期限は何年何月ですか？年月だけを出力し、読めなければ NONE と出力してください。';
 const DEMO_S = [{"st": [1, 1, 0, 0, 0, 0, 0, 0], "idx": 2, "note": "-"}, {"st": [1, 1, 1, 1, 2, 0, 0, 0], "idx": 5, "note": "常備薬 2026年9月（暫定）"}, {"st": [1, 1, 1, 1, 2, 1, 1, 1], "idx": 7, "note": "常備薬 2026年9月（暫定）"}];
 
 export default {
@@ -82,7 +82,7 @@ export default {
       r1: '現在：' + CATS[s.idx] + ' — 在庫と期限を見て OK / FLAG',
       r2: '期限メモ：' + s.note,
       r3: '', r4: '', marks: marks,
-      guide: 'OK 查过 · FLAG 过期/待换 · SCAN 拍期限（暂定） · 点头=OK'
+      guide: 'OK 点検済み · FLAG 期限切れ/要交換 · SCAN 期限を撮る（暫定） · うなずき=OK'
     });
   },
   async scanTap() {

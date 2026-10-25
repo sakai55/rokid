@@ -62,7 +62,7 @@ cd ~/workspace/rokid/coin-locker
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | Coin Locker（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Version / Build | 1.0.1 / 待导入后回填 |
 | App Category | Life |
 | Intent Description | At a Japanese station: remembers coin-locker number and stored item until verified pickup. |
 | Agent ID | 待导入后回填 |
@@ -102,3 +102,17 @@ cd ~/workspace/rokid/coin-locker
 **Fixes**
 
 - 无（首个版本）
+
+### Change Log（Build 1.0.1）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 无
+
+**Fixes**
+
+- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）

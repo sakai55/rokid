@@ -71,7 +71,7 @@ export default {
       r2: '合計 ¥' + s.total,
       r3: '割り勘 一人 ¥' + this._per() + '（100円単位で切上）',
       r4: '', marks: '',
-      guide: '+ITEM 加品 · +PERSON 加人（下滑减） · TRAIN 换终电档 · 点头=结算'
+      guide: '+ITEM 一品追加 · +PERSON 一人追加（下スワイプで減） · TRAIN 終電の便を替える · うなずき=精算'
     });
   },
   _speak(text) {

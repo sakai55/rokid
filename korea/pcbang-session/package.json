@@ -1,6 +1,6 @@
 {
   "name": "pcbang-session",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "PCbang Session: a seat ledger for Korean PC cafes. Log each hour block with a tap or a nod when the house system announces it, log every snack and drink order to your seat, and see the running estimated bill - machine time plus food - before you walk to the counter. No link to the cafe's own billing system; the counter total rules.",
   "main": "app.js",
   "keywords": [],

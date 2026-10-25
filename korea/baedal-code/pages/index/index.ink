@@ -66,11 +66,11 @@ export default {
     const s = this._s;
     const digs = [0, 1, 2, 3].map((i) => s.wiped ? '—' : (i < s.reveal ? s.code[i] : '●'));
     this.setData({
-      status: s.wiped ? 'WIPED: 暗号は消えました — 復元できません（設計です）' : ('VAULT: ' + s.reveal + '/4 桁 表示中 · 8秒で自動で隠れます'),
-      hero: s.showOrder ? ('注文 ' + s.order) : (s.wiped ? '空の金庫' : '공동현관 코드'),
-      heroSub: '数字は音声で読み上げません — 目だけに渡します',
+      status: s.wiped ? 'WIPED: 코드는 지워졌어요 — 복원할 수 없습니다 (설계입니다)' : ('VAULT: ' + s.reveal + '/4 자리 표시 중 · 8초 뒤 자동으로 가려집니다'),
+      hero: s.showOrder ? ('주문 ' + s.order) : (s.wiped ? '빈 금고' : '공동현관 코드'),
+      heroSub: '숫자는 음성으로 읽지 않습니다 — 눈으로만 전달합니다',
       r1: digs[0], r2: digs[1], r3: digs[2], r4: digs[3], marks: '',
-      guide: 'REVEAL 逐位 · ORDER 订单号 · WIPE 销毁 · 存储ゼロ、关页即忘'
+      guide: 'REVEAL 한 자리씩 · ORDER 주문 번호 · WIPE 삭제 · 저장 0, 페이지를 닫으면 잊음'
     });
   },
   _speak(text) {
