@@ -1,0 +1,1 @@
+{"description":"Rokid Glasses AIUI probe - sustained video stream, recording and frame-to-LLM latency","name":"Stream Probe","pages":["pages/index/index"],"permissions":["CAMERA"],"window":{"navigationBarTitleText":"Stream Probe"}}
