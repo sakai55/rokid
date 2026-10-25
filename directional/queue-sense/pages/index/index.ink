@@ -132,7 +132,7 @@ export default {
   // Elapsed seconds tick up once per second from a timer. Every
   // duration in this agent is a difference of tick counts, so the
   // preview host's drifting virtual clock cannot distort a rate
-  // (same discipline as #38/#42). Wall-clock strings come from ONE
+  // (same discipline as DI38/DI42). Wall-clock strings come from ONE
   // Date snapshot per event (see _stamp).
   _startTimer() {
     if (this._timer) return;
@@ -299,7 +299,7 @@ export default {
       var st = this._stamp();
       // Only the byte count + time are kept; the Blob itself is
       // dropped here and never written anywhere (same posture as
-      // #44). The photo is a memory of the queue, never an input.
+      // DI44). The photo is a memory of the queue, never an input.
       q.photoBytes = bytes;
       q.photoTime = st.time;
       this.setData({
@@ -380,7 +380,7 @@ export default {
     var self = this;
     this.setData({ busy: true, micLine: 'MIC CHECK: checking wearer mic...' });
     // Wearer-mode mic AVAILABILITY check (same documented pattern
-    // as #21/#41): open the wearer-mode stream, read back settings,
+    // as DI21/DI41): open the wearer-mode stream, read back settings,
     // stop every track at once. The check stream is NOT the
     // recognition input and does not shape what recognition hears -
     // the host SpeechRecognition below listens on its own mic

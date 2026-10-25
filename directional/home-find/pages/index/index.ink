@@ -139,7 +139,7 @@ export default {
   // ONE clock snapshot -> {date, time} as pure strings. Related
   // values (a batch of DEMO seeds, a record's date + time) always
   // come from a single snapshot: the preview host's Date is
-  // virtualised and drifts between calls (lesson from #25), so
+  // virtualised and drifts between calls (lesson from DI25), so
   // sampling Date repeatedly for related values can split them.
   _stamp() {
     var d = new Date();
@@ -357,7 +357,7 @@ export default {
     var label = target === 'item' ? 'ITEM' : 'CLUE';
     this.setData({ busy: true, status: label + ': checking wearer mic...' });
     // Wearer-mode mic check (documented getUserMedia audio constraints,
-    // same pattern as market-radar #21): the 4-mic array in 'wearer'
+    // same pattern as market-radar DI21): the 4-mic array in 'wearer'
     // mode prioritises YOUR voice. The stream only verifies the mode
     // opens; recognition uses the benchmark SpeechRecognition.
     var micNote = 'wearer mic not checked';
@@ -446,7 +446,7 @@ export default {
       return;
     }
     if (this._heading === null) {
-      // Same honesty rule as find-my-thing #07: never invent a
+      // Same honesty rule as find-my-thing DI07: never invent a
       // heading. A spot without a direction is a note, not a memory.
       this.setData({
         status: 'SAVE FAIL: no heading (SRC NONE) - DEMO or wait for sensor',
@@ -539,7 +539,7 @@ export default {
         stream.getTracks().forEach(function (t) { t.stop(); });
         stream = null; this._stream = null;
       }
-      // Fallback: wx camera context, like receipt-keeper #25.
+      // Fallback: wx camera context, like receipt-keeper DI25.
       try {
         var ctx = wx.media && wx.media.createCameraContext ? wx.media.createCameraContext() : null;
         if (!ctx) throw firstErr;
@@ -607,7 +607,7 @@ export default {
     this._recompute();
   },
 
-  // ---------- guidance (same geometry as find-my-thing #07) ----------
+  // ---------- guidance (same geometry as find-my-thing DI07) ----------
 
   _dirName(rel) {
     var a = Math.abs(rel);

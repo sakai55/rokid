@@ -17,10 +17,10 @@ Rokid 眼镜作业辅导智能体（AIUI Agent）。
 
 - 拍（SNAP）：看向题目点 SNAP，用
   `ImageCapture.takePhoto({mode:'telephoto'})` 长焦拍下题目
-  （不可用时回退 wx.media CameraContext，同 #01/#39）。同时
+  （不可用时回退 wx.media CameraContext，同 DI01/DI39）。同时
   记录当时的头部朝向（AbsoluteOrientationSensor 四元数算
   yaw，无传感器时如实记 `---`，不编造）与时间（一处快照取
-  日期 + 时间，同 #38/#39 的时钟纪律）。照片 Blob 只留在
+  日期 + 时间，同 DI38/DI39 的时钟纪律）。照片 Blob 只留在
   内存里等 ASK，**从不落盘**。
 - 模式与科目（SUBJ / MODE）：ASK 之前先选——科目在
   数学 / 语文 / 英语 / 科学 / 其他间轮换，会写进提示词上下

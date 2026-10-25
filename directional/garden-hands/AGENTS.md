@@ -15,7 +15,7 @@ Rokid 眼镜园艺手记智能体（AIUI Agent）。
 
 - 朝向读取：AbsoluteOrientationSensor（约 5Hz）四元数算 yaw 朝向角，
   界面如实标注来源 SENSOR / DEMO / NONE；无传感器时不编造朝向，
-  REG 会拒绝并说明原因（同 #07 find-my-thing）。
+  REG 会拒绝并说明原因（同 DI07 find-my-thing）。
 - 登记（REGISTER 模式，默认）：BED 轮换内置畦名（番茄畦 /
   黄瓜架 / 香草盆 / 月季丛 / 草莓畦，各带内置浇水间隔：番茄 2 天、
   黄瓜 2 天、香草 1 天、月季 3 天、草莓 2 天）；REG（或头部稳定

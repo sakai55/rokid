@@ -206,7 +206,7 @@ export default {
   },
 
   // One heading sample at wall time nowMs. Tracks the newest sample
-  // time (a frozen stream must prove nothing, same rule as #33) and
+  // time (a frozen stream must prove nothing, same rule as DI33) and
   // the last time the head actually moved by 2 deg or more - that
   // stillness age, not the raw samples, is what "steady" means here.
   _feedHeading(deg, nowMs) {

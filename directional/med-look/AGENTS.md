@@ -18,7 +18,7 @@ Rokid 眼镜看药助手智能体（AIUI Agent）。
   `getUserMedia({audio:{captureSource:'microphone',
   microphoneMode:'wearer'}})` 做佩戴者模式麦克风检查，再用
   SpeechRecognition（zh-CN）一次性识别，听到的名字**原样**
-  保存并显示在屏幕上等你核对（同 #21 market-radar 的纪律）；
+  保存并显示在屏幕上等你核对（同 DI21 market-radar 的纪律）；
   主机没有识别能力时如实显示 SKIP，改为轮换四个通用类别名
   预置（降压药 / 降糖药 / 钙片 / 维生素D — 是类别称呼，
   不是真实药品品牌）。DOSE 轮换剂量（1 片 / 2 片 / 1 粒 /

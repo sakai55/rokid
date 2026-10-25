@@ -15,7 +15,7 @@ Rokid 眼镜菜场雷达智能体（AIUI Agent）。
 
 - 朝向读取：AbsoluteOrientationSensor（约 5Hz）四元数算 yaw 朝向角，
   界面如实标注来源 SENSOR / DEMO / NONE；无传感器时不编造朝向，
-  REG 会拒绝并说明原因（同 #07 find-my-thing / #10 exit-radar）。
+  REG 会拒绝并说明原因（同 DI07 find-my-thing / DI10 exit-radar）。
 - 登记（REG 模式，默认）：CAT 轮换品类（蔬菜 / 水果 / 肉类 /
   海鲜 / 干货调料）；NOTE 用一次性 SpeechRecognition（zh-CN）记
   备注——先按文档方式用 `getUserMedia({audio:{captureSource:
@@ -55,7 +55,7 @@ Rokid 眼镜菜场雷达智能体（AIUI Agent）。
 
 ## 行为边界
 
-- **朝向只对你登记时站的位置成立**（同 #07 / #10 的几何边界）：
+- **朝向只对你登记时站的位置成立**（同 DI07 / DI10 的几何边界）：
   登记的是「从我站的地方看向这个摊位」的方向，你走到市场
   另一头再转头，角度就对不上了。找摊位时要回到当初登记的
   摊位附近区域，再慢慢转头让它亮起来。市场没动，动的是你

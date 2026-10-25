@@ -511,7 +511,7 @@ export default {
     var self = this;
     this.setData({ busy: true, heardLine: 'HEARD: checking wearer mic...' });
     // Wearer-mode mic check (documented getUserMedia audio constraints,
-    // same pattern as receipt-keeper #25): the 4-mic array in 'wearer'
+    // same pattern as receipt-keeper DI25): the 4-mic array in 'wearer'
     // mode prioritises YOUR voice over the meter-room echo. The stream
     // only verifies the mode opens; recognition uses SpeechRecognition.
     var micNote = 'wearer mic not checked';

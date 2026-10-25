@@ -18,7 +18,7 @@ Rokid 眼镜家中寻物智能体（AIUI Agent）。
 
 - 朝向读取：AbsoluteOrientationSensor（约 5Hz）四元数算 yaw
   朝向角，界面如实标注来源 SENSOR / DEMO / NONE；无传感器时
-  不编造朝向，SAVE 会拒绝并说明原因（同 #07 find-my-thing）。
+  不编造朝向，SAVE 会拒绝并说明原因（同 DI07 find-my-thing）。
 - 登记（STORE 模式，默认）：ITEM 用一次性 SpeechRecognition
   （zh-CN）说物品——先按文档方式用 `getUserMedia({audio:
   {captureSource:'microphone', microphoneMode:'wearer'}})` 做
@@ -48,7 +48,7 @@ Rokid 眼镜家中寻物智能体（AIUI Agent）。
   字节数并标注 record only。运行时没有 OCR，照片永远不会
   被读取，收纳位置只来自你亲口说的线索。
 - DEMO：用一次时钟快照（同一快照以纯字符串推导全部日期与
-  时间——预览主机的 Date 是虚拟化的、多次采样会漂移，#25
+  时间——预览主机的 Date 是虚拟化的、多次采样会漂移，DI25
   的教训）登记 3 个标注 DEMO 的物品（护照 书房 书柜第二层
   @210° / 备用钥匙 玄关 门后挂钩 @40° / 药盒 卧室 床头柜
   抽屉 @300°）并切到 FIND 选中护照；之后每点一次 DEMO
@@ -61,7 +61,7 @@ Rokid 眼镜家中寻物智能体（AIUI Agent）。
 
 ## 行为边界
 
-- **朝向只对你登记时站的位置成立**（同 #07 的几何边界）：
+- **朝向只对你登记时站的位置成立**（同 DI07 的几何边界）：
   登记的是「从我站的地方看向这个收纳处」的方向。找东西时
   先按回忆线索回到登记的房间、站到当初登记位置附近，再
   转头让 FACING THE SPOT 亮起来；站在别的房间转头，角度

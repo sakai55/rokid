@@ -41,7 +41,7 @@ https://github.com/sakai55/rokid/tree/agent-parcel-sort
 
 - **凝视即流水线（核心）**：分拣是天然的串行凝视任务——看向
   哪件就处理哪件。SCAN 对着正看的这件面单广角拍照
-  （`ImageCapture.takePhoto({mode:'wide'})`，同 #02 的大视场
+  （`ImageCapture.takePhoto({mode:'wide'})`，同 DI02 的大视场
   条码路）并尝试 `BarcodeDetector` 解码；头部稳定时点头即
   SORT，手里抱着箱子也不用腾手点屏。
 - **结论用耳朵交接**：每件分完立即 TTS 朗读放堆指令

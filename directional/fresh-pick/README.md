@@ -42,7 +42,7 @@ https://github.com/sakai55/rokid/tree/agent-fresh-pick
   `enableWorldAwareness()` 后 `onOrientationStabilityChange`
   报告头部稳定（HEAD STEADY）；点头（`onHeadGesture` 的
   `nod`）在核查中只「确认你已经选好的那一项」——绝不
-  替你选，更不会自动挑最好的那档（同 #22 的先选后确认
+  替你选，更不会自动挑最好的那档（同 DI22 的先选后确认
   纪律）。没选就点头/确认会被拦下并提示先选。
 - **感测的是你，不是水果（诚实边界）**：AIUI 运行时
   没有把照片变成成熟度结论的链路——本 Agent 不把照片

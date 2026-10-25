@@ -16,10 +16,10 @@ Rokid 眼镜看词查词智能体（AIUI Agent）。
 
 - 看（LOOK）：看着生词所在的页面点 LOOK，用
   `ImageCapture.takePhoto({mode:'telephoto'})` 长焦拍下这一页
-  （不可用时回退 wx.media CameraContext，同 #01）。照片只作
+  （不可用时回退 wx.media CameraContext，同 DI01）。照片只作
   记录——锚定「这个词是在哪儿遇到的」，界面只显示字节数，
   拍完立即停掉全部媒体轨道。它永远不会被读取：AIUI 运行时
-  没有 OCR 接口（同 #01 的结论）。
+  没有 OCR 接口（同 DI01 的结论）。
 - 说（SAY）：词靠你说。先按文档方式用
   `getUserMedia({audio:{captureSource:'microphone',
   microphoneMode:'wearer'}})` 做佩戴者模式麦克风检查，再用
@@ -29,13 +29,13 @@ Rokid 眼镜看词查词智能体（AIUI Agent）。
   主机根本没有识别能力时如实 SKIP，改为轮换内置离线词典的
   词条当演示输入，绝不假装在听。
 - 核对（产品本身）：听到的词**原样**（只去首尾空白）大字
-  显示，先给你看再查——同 #21 的逐字纪律，眼镜从不悄悄
+  显示，先给你看再查——同 DI21 的逐字纪律，眼镜从不悄悄
   「纠正」它。听错一个词，就会理直气壮地查出一个错误
   意思，所以核对这一步不是礼貌，是防线；不对就再 SAY
   一次，点头（`onHeadGesture`）只推进你正在走的流程
   （DEFINE、然后 SAVE），从不替你编词、改词。
 - 查（DEFINE）：只把你核对过的词以**纯文本**发给主机
-  LanguageModel 大模型（同 #01 的调用方式），要三行：
+  LanguageModel 大模型（同 DI01 的调用方式），要三行：
   一行中文释义、一行简单英文解释、一句短例句，结果标注
   来源 LLM；大模型不可用时回退内置离线小词典（24 个常见
   词：itinerary、boarding、receipt、prescription、

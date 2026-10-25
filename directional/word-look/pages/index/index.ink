@@ -70,7 +70,7 @@ export default {
     if (g !== 'nod' || this.data.busy) return;
     // A nod only advances the pipeline YOU are driving: DEFINE the word
     // you checked, or SAVE the definition you heard. It never invents
-    // a word and never corrects one (same discipline as #22/#23).
+    // a word and never corrects one (same discipline as DI22/DI23).
     this._advance();
   },
 
@@ -443,7 +443,7 @@ export default {
   },
 
   _setWord(txt, how) {
-    // The heard word is kept VERBATIM (trimmed only, like #21). It is
+    // The heard word is kept VERBATIM (trimmed only, like DI21). It is
     // shown big precisely so the wearer can catch a mishearing BEFORE
     // DEFINE - a wrong word gets a confidently wrong definition.
     this._word = txt;
@@ -463,7 +463,7 @@ export default {
   async _sayListen(lang, isFallback) {
     var self = this;
     this.setData({ busy: true, wordNote: 'WORD: checking wearer mic...' });
-    // Wearer-mode mic check (same documented pattern as #21): the
+    // Wearer-mode mic check (same documented pattern as DI21): the
     // 4-mic array in 'wearer' mode prioritises YOUR voice. The stream
     // only verifies the mode opens; recognition does the listening.
     var micNote = 'wearer mic not checked';

@@ -540,7 +540,7 @@ export default {
     this._dwellTicks = 0;
   },
 
-  // Coverage rule (same as #30/#43): gaze inside an unconfirmed
+  // Coverage rule (same as DI30/DI43): gaze inside an unconfirmed
   // item's +-25 deg cone AND head steady, continuously for 2000ms
   // = 8 ticks of 250ms. Leaving the cone, switching items, or
   // moving the head resets the count - a fast sweep earns nothing.
@@ -580,7 +580,7 @@ export default {
   // Confirming means: you looked at the object and say it is done.
   // The agent cannot verify the medicine was swallowed or the door
   // is really locked - and it never gives medical advice, dosage
-  // logic, or missed-dose guidance (same restraint as #31).
+  // logic, or missed-dose guidance (same restraint as DI31).
   _confirm(i, how) {
     var it = this._items[i];
     if (it.done) return;

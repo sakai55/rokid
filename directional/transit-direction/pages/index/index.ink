@@ -179,7 +179,7 @@ export default {
     // Built-in DEMO preset destinations: small lat/lon offsets around the
     // current fix (or the labeled demo origin). This build has no way to
     // enter real destination coordinates - the presets stand in for one,
-    // exactly as disclosed in the UI and README (same posture as #08).
+    // exactly as disclosed in the UI and README (same posture as DI08).
     return [
       { name: '公交站', en: 'Bus stop', dLat: 0.0018, dLon: 0.0026 },
       { name: '便利店', en: 'Conv. store', dLat: -0.0011, dLon: 0.0022 },
@@ -258,7 +258,7 @@ export default {
   // The guide engine ticks on accumulated tick counts (500 ms per tick),
   // NOT on repeated Date samples, so the 3 s drift rule cannot be
   // distorted by the preview host's drifting clock (same discipline
-  // as #38 memory-anchor).
+  // as DI38 memory-anchor).
   _startTimer() {
     if (this._timer) return;
     var self = this;
@@ -468,7 +468,7 @@ export default {
     this._recompute();
   },
 
-  // ---------- guidance math (same geometry as #06 / #08) ----------
+  // ---------- guidance math (same geometry as DI06 / DI08) ----------
 
   _bearingDist(lat1, lon1, lat2, lon2) {
     var R = 6371000;

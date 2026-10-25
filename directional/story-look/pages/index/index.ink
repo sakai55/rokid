@@ -414,7 +414,7 @@ export default {
 
   _setDesc(txt, how) {
     // The parent's description is kept VERBATIM (trimmed only, like
-    // #21/#36): the whole tale is built from these words, so what the
+    // DI21/DI36): the whole tale is built from these words, so what the
     // parent sees here is exactly what the model will be given.
     this._cur.desc = txt;
     this._cur.narration = '';
@@ -434,7 +434,7 @@ export default {
     var self = this;
     this.setData({ busy: true, descNote: 'DESC: checking wearer mic...' });
     // Wearer-mode mic AVAILABILITY check (same documented pattern as
-    // #21/#36): the stream only verifies the mode opens and reads back
+    // DI21/DI36): the stream only verifies the mode opens and reads back
     // its settings, then stops. It does NOT feed recognition - the host
     // SpeechRecognition below listens on its own microphone, and no
     // documented path lets the wearer mode shape what it hears

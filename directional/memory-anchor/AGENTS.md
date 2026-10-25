@@ -17,7 +17,7 @@ Rokid 眼镜记忆锚点智能体（AIUI Agent）。
 
 - 朝向读取：AbsoluteOrientationSensor（约 5Hz）四元数算 yaw
   朝向角，界面如实标注来源 SENSOR / DEMO / NONE；无传感器时
-  不编造朝向，SAVE 会拒绝并说明原因（同 #07 / #26）。
+  不编造朝向，SAVE 会拒绝并说明原因（同 DI07 / DI26）。
 - 记备忘（NOTE）：点 NOTE 后先做一次佩戴者模式麦克风**可用性
   检查**——按文档方式用 `getUserMedia({audio:{captureSource:
   'microphone', microphoneMode:'wearer'}})` 开流、读回
@@ -51,7 +51,7 @@ Rokid 眼镜记忆锚点智能体（AIUI Agent）。
   锚点的备忘与登记信息。DONE 两步删除：第一次点只布防并显示
   将删哪条，第二次点才真正删除（防误删）。
 - DEMO：用一次时钟快照（同一快照以纯字符串推导全部日期与
-  时间——预览主机的 Date 是虚拟化的、多次采样会漂移，#25
+  时间——预览主机的 Date 是虚拟化的、多次采样会漂移，DI25
   的教训）登记 2 个标注 DEMO 的锚点（药 @45°「睡前吃一片
   降压药」/ 钥匙 @200°「备用钥匙放在鞋柜里」）；之后每点一次
   DEMO 朝向 +45°，转到 45° 停留 2 秒即触发药锚点的提醒卡片

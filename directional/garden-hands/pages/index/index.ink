@@ -225,7 +225,7 @@ export default {
     return beds[idx];
   },
 
-  // ---------- heading (AbsoluteOrientationSensor, same as #07/#10) ----------
+  // ---------- heading (AbsoluteOrientationSensor, same as DI07/DI10) ----------
 
   _startHeading() {
     var Ctor = typeof AbsoluteOrientationSensor !== 'undefined' ? AbsoluteOrientationSensor : null;

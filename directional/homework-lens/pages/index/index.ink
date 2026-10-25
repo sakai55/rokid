@@ -124,7 +124,7 @@ export default {
   _pad2(n) { return (n < 10 ? '0' : '') + n; },
 
   // ONE clock snapshot -> {date, time} as pure strings (same lesson
-  // as #25/#38/#39: the preview host's Date is virtualised and
+  // as DI25/DI38/DI39: the preview host's Date is virtualised and
   // drifts between calls, so one capture's date + time come from
   // one read).
   _stamp() {
@@ -170,7 +170,7 @@ export default {
     return !!(this._pending && this._pending.asked && this._pending.steps && this._pending.steps.length);
   },
 
-  // ---------- heading (AbsoluteOrientationSensor, same as #07/#26/#38/#39) ----------
+  // ---------- heading (AbsoluteOrientationSensor, same as DI07/DI26/DI38/DI39) ----------
 
   _startHeading() {
     var Ctor = typeof AbsoluteOrientationSensor !== 'undefined' ? AbsoluteOrientationSensor : null;
@@ -577,7 +577,7 @@ export default {
 
   async _micCheck() {
     // Wearer-mode mic AVAILABILITY check (same documented pattern
-    // as #21/#36/#38/#39): open the wearer-mode stream, read back
+    // as DI21/DI36/DI38/DI39): open the wearer-mode stream, read back
     // its settings, stop every track at once. The check stream is
     // NOT the recognition input and does not shape what recognition
     // hears - the host SpeechRecognition listens on its own
