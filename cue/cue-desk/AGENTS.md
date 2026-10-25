@@ -1,7 +1,7 @@
 # Cue Desk — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series P03 (CUE 提示型， third of the group, series #33): sitting down at
+series CU03 (CUE 提示型， third of the group, series #33): sitting down at
 the desk and scrolling the phone for ten minutes before getting into
 gear, then standing up and forgetting where you left off. This agent
 takes the resume check off your hands: look at the desk and hold
@@ -62,17 +62,17 @@ naming the first unfinished task.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `cue-door` (P01) is the going-out checklist
+- Attention-series `cue-door` (CU01) is the going-out checklist
   gate at the door: unconfirmed END blocks and never says
   "可以出门". Cue-desk is not a gate: standing up reports the
   resume line and records it, it never blocks leaving.
-- Attention-series `cue-fridge` (P02) is the fridge to-fetch
+- Attention-series `cue-fridge` (CU02) is the fridge to-fetch
   checklist: tick as you take, mark out of stock, and before
   closing it names anything still unticked (a reminder, not a
   gate). Cue-desk is not fetching: its trigger is looking at
   the desk itself, and its close is a resume line, not a miss
   report.
-- Attention-series `attention-diary` (R05) is the attention bill:
+- Attention-series `attention-diary` (RE05) is the attention bill:
   trigger entries grouped by category, closed with a counted
   verdict. Cue-desk has no categories and no bill: its units
   are the three tasks, and its close is a resume verdict.

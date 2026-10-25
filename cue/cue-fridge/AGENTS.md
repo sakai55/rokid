@@ -1,7 +1,7 @@
 # Cue Fridge — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series P02 (CUE 提示型， second of the group, series #32): standing in
+series CU02 (CUE 提示型， second of the group, series #32): standing in
 front of the fridge, blanking on what you came to fetch, and remembering
 only after the door closes. This agent takes the to-fetch check off your
 hands: look at the fridge and hold steady, and only then does the
@@ -21,7 +21,7 @@ stock, and before closing it names anything still unticked out loud.
   utterance, counts the warning, and stays in the list; the
   second CLOSE closes for real and the missed items are
   recorded honestly in the summary. This is the deliberate
-  opposite of cue-door (P01), where an unconfirmed END blocks:
+  opposite of cue-door (CU01), where an unconfirmed END blocks:
   a fridge door must not be held hostage by a checklist, and a
   warning that pretended to block would be a lie about what
   happens next. The banner says so in plain words — "再点
@@ -69,17 +69,17 @@ stock, and before closing it names anything still unticked out loud.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `cue-door` (P01) is the going-out checklist
+- Attention-series `cue-door` (CU01) is the going-out checklist
   gate at the door: unconfirmed END blocks and never says
   "可以出门". Cue-fridge is not a gate: its close warning
   reminds and then lets the door close, with the miss recorded
   honestly instead of blocking.
-- Attention-series `pack-sweep` (C04) is the at-home packing
+- Attention-series `pack-sweep` (CO04) is the at-home packing
   checklist: items packed before leaving, counted at home.
   Cue-fridge is not packing: its trigger is looking at the
   fridge itself, and its close is a miss report, not a packing
   count.
-- Attention-series `attention-diary` (R05) is the attention bill:
+- Attention-series `attention-diary` (RE05) is the attention bill:
   trigger entries grouped by category, closed with a counted
   verdict. Cue-fridge has no categories and no bill: its units
   are the five to-fetch items, and its close is a

@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Rhythm Nod （节奏点头） — head-movement mini-game G11, Group B
+// Rhythm Nod （节奏点头） — head-movement mini-game GA11, Group B
 // (head-as-controller). EXTREME simplicity: one page, three states
 // only (ready / playing / done). Four slow count-in beats teach
 // the tempo, then 16 scored beats follow at a FIXED tempo of one
@@ -67,7 +67,7 @@
 // NOD SIGNALS — PRIMARY vs FALLBACK (technical honesty):
 // PRIMARY: onHeadGesture('nod'), officially documented for
 // 'nod' — the primary beat signal; it catches gentle nods.
-// FALLBACK: pitch from AbsoluteOrientationSensor (G01 formula,
+// FALLBACK: pitch from AbsoluteOrientationSensor (GA01 formula,
 // relative to the center calibrated at round start): pitch down
 // past ~20 deg and back inside 10 deg counts as one fallback
 // nod, for hosts that do not deliver the nod event. A gentle
@@ -154,11 +154,11 @@ export default {
 
   // ---- orientation sensor (fallback nod only) -----------------------
   // Pitch from the orientation quaternion, same formula as the
-  // G01 nod-count game (fleet-consistent):
+  // GA01 nod-count game (fleet-consistent):
   // pitch = asin(2*(w*x - y*z)), clamped. Only the RELATIVE pitch
   // vs the calibrated center is ever used, so the host's absolute
   // zero never matters. DOWN-SIGN ASSUMPTION (device verification
-  // item, same as G01): head-down is taken as negative relative
+  // item, same as GA01): head-down is taken as negative relative
   // pitch. If the sign is inverted on device, the fallback simply
   // never fires — it fails safe as "no fallback hit", never as
   // a wrong hit — while the primary nod event still works.

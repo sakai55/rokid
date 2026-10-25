@@ -1,7 +1,7 @@
 # Gift Clue — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series S05 (SOCIAL 社交型， last of the group, series #40): a friend
+series SO05 (SOCIAL 社交型， last of the group, series #40): a friend
 mentions something they like or want in passing, you do not think much of
 it at the time, and by their birthday you cannot remember any of it.
 This agent takes the remembering off your hands: it listens to everyday
@@ -76,19 +76,19 @@ opening, never as a cross-day memory.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `elder-ear` (S03) is the elder-chat
+- Attention-series `elder-ear` (SO03) is the elder-chat
   reminder catcher: keyword hits become a list that is read
   aloud after the chat for confirmation. Gift-clue borrows
   the gate shape but is not a confirmation tool: its hits
   are clue cards assigned to people by hand, its close is a
   per-person visual replay, not a spoken confirmation.
-- Attention-series `standup-echo` (S04) is the standup
+- Attention-series `standup-echo` (SO04) is the standup
   module-keyword gate: hits become related notes, non-hits
   become one-line digest rows for post-meeting review.
   Gift-clue keeps no digest rows: its non-hits are counted
   and dropped, its hits are cards with a hand-assigned
   owner, and its close is a per-person gift replay.
-- Attention-series `chat-catchup` (S01) is the mid-conversation
+- Attention-series `chat-catchup` (SO01) is the mid-conversation
   silent catch-up: a rolling caption buffer served on HELP.
   Gift-clue keeps no rolling buffer and serves nothing
   mid-chat: it files silent cards, stays silent while

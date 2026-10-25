@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Neck Clock （时钟点位） — head-movement mini-game G05, the flagship
+// Neck Clock （时钟点位） — head-movement mini-game GA05, the flagship
 // anti-circling teaching game. EXTREME simplicity: one page, three
 // states only (ready / playing / done). The screen shows at most a
 // big clock position, a count x/8 and one short hint while playing;
@@ -38,9 +38,9 @@
 // HOW A CUE IS COUNTED (sensor state machine, no fake counts):
 // START calibrates the center (head straight at START), then TWO
 // calibration prompts inside the playing state (not extra states):
-// (1) "请低一下头" learns DOWN (UP = opposite pitch sign, G01/G04
+// (1) "请低一下头" learns DOWN (UP = opposite pitch sign, GA01/GA04
 // pattern); (2) "请向左转一下" learns LEFT (RIGHT = opposite yaw
-// sign, G02 pattern). Nothing counts before BOTH calibrations
+// sign, GA02 pattern). Nothing counts before BOTH calibrations
 // complete; restart re-runs both. Each cue: move past threshold ->
 // hold ~0.8 s -> return to center = 1 point, and only then is the
 // next cue announced. A wrong position, an early release, or
@@ -131,9 +131,9 @@ export default {
   },
 
   // ---- orientation sensor -------------------------------------------
-  // Pitch from the orientation quaternion, same formula as G01/G04
+  // Pitch from the orientation quaternion, same formula as GA01/GA04
   // (fleet-consistent): pitch = asin(2*(w*x - y*z)), clamped.
-  // Yaw from the same quaternion, same formula as G02:
+  // Yaw from the same quaternion, same formula as GA02:
   // yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees.
   // Only the RELATIVE pitch/yaw vs the calibrated center are ever
   // used, so the host's absolute zero never matters.

@@ -1,7 +1,7 @@
 # Elder Ear — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series S03 (SOCIAL 社交型， third of the group, series #38): chatting
+series SO03 (SOCIAL 社交型， third of the group, series #38): chatting
 with an elder whose repeated reminders (medicine, door lock, calling
 the children) slip your mind the moment the chat ends. This agent
 takes the remembering off your hands: it listens through the chat,
@@ -67,19 +67,19 @@ list back aloud after the chat for you to confirm item by item.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `lecture-filter` (F05) is the classroom
+- Attention-series `lecture-filter` (FI05) is the classroom
   signal-sentence catcher: preset signal words become notes
   during a lesson. Elder-ear borrows the gate shape but is not
   a lesson tool: its keywords are reminders and requests in a
   chat with an elder, and its close is a spoken replay for
   confirmation, not a note list.
-- Attention-series `talk-replay` (R02) is the post-talk
+- Attention-series `talk-replay` (RE02) is the post-talk
   caption replay: subtitles tagged by speaker side, replayed
   as promise/number/deadline sentences. Elder-ear does not
   tag speakers and does not classify: it files keyword hits
   during the chat and reads them back aloud the moment the
   chat ends.
-- Attention-series `chat-catchup` (S01) is the mid-conversation
+- Attention-series `chat-catchup` (SO01) is the mid-conversation
   silent catch-up: a rolling caption buffer served on HELP.
   Elder-ear keeps no rolling buffer and serves nothing
   mid-chat: it saves only hits, stays silent while listening,

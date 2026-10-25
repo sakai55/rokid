@@ -28,7 +28,7 @@ export default {
   },
 
   onLoad() {
-    // 250ms tick engine, same discipline as W01/W02: the
+    // 250ms tick engine, same discipline as WA01/WA02: the
     // countdown, the face-ack dwell and the spike watch all
     // accumulate TICK COUNTS, never re-sampled wall-clock deltas.
     this._TICK_MS = 250;
@@ -108,7 +108,7 @@ export default {
       this.setData({ lastEvent: 'EVT: head gesture ' + g + ' (ignored)' });
       return;
     }
-    // Nod discipline (same as W01/W02): a steady nod only ever
+    // Nod discipline (same as WA01/WA02): a steady nod only ever
     // SPEAKS the status. A nod never registers the machine,
     // never acknowledges an alert - walking back and looking
     // at the machine (or a deliberate tap) closes the loop.
@@ -351,7 +351,7 @@ export default {
   // The attention loop closes when you actually go back and
   // look: head steady AND the machine inside the +-15 deg
   // cone. Entering the cone only STARTS the span (same
-  // semantics as W01/W02); a further 4 ticks (1s) of
+  // semantics as WA01/WA02); a further 4 ticks (1s) of
   // continuous facing confirms. Sweeping past earns nothing.
   _ackDwellTick() {
     var c = this._cycle;

@@ -1,7 +1,7 @@
 # Seat Catch — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series H05 (HOLD 默念型， last of the group): a find-your-seat keeper for
+series HO05 (HOLD 默念型， last of the group): a find-your-seat keeper for
 the walk from the ticket check to your seat — cinema, theatre, hall,
 train carriage — where the row/seat pair is seen once, forgotten twice,
 and the stub gets checked again and again with your head down.
@@ -9,7 +9,7 @@ and the stub gets checked again and again with your head down.
 ## Design contract
 
 - **Not number-catch for seats: storing the seat is step one, the
-  product is the hunt.** H01 `number-catch` keeps a number and shows it
+  product is the hunt.** HO01 `number-catch` keeps a number and shows it
   back. This agent keeps the target only to GUIDE against it: after
   the confirm, it walks you relatively — current row vs target row,
   current seat number vs target seat number — until you say you are

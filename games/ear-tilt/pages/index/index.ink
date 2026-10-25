@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Ear Tilt （贴耳操） — head-movement mini-game G03, EXTREME simplicity.
+// Ear Tilt （贴耳操） — head-movement mini-game GA03, EXTREME simplicity.
 // One page, three states only: ready / playing / done. The screen shows
 // at most a big instruction, a count x/6 and one short hint while
 // playing (including the hold countdown); voice (TTS) does the rest.

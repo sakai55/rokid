@@ -1,7 +1,7 @@
 # Route Replay — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series R04 (REVIEW 回顾型， fourth of the group): on the commute you
+series RE04 (REVIEW 回顾型， fourth of the group): on the commute you
 notice roadwork and hazard spots and forget them by the next morning —
 this agent takes the route replay off your hands. Look at a spot, mark
 its direction, snap a photo of it, register it; before the next outing,
@@ -77,17 +77,17 @@ and close with a summary of how many were registered and confirmed.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `shop-replay` (R03) is the shopping replay:
+- Attention-series `shop-replay` (RE03) is the shopping replay:
   candidates with prices and on-the-spot photos, ending in a
   cheapest comparison. Route-replay has no prices and no
   cheapest jump: its units are hazard spots, and its close is a
   confirmed-count summary.
-- Attention-series `day-lookback` (R01) is the day timeline:
+- Attention-series `day-lookback` (RE01) is the day timeline:
   gazes you marked, typed 画面 / 数字 / 承诺, pictures as text
   descriptions. Route-replay is not a day: its units are route
   spots with directions and on-the-spot photos, and its replay
   is a confirmation walk, not a timeline.
-- Attention-series `last-glance` (C01) is the leaving archive:
+- Attention-series `last-glance` (CO01) is the leaving archive:
   one photo per zone with an LLM one-line description, 6/6
   required to leave. Route-replay has no LLM description and no
   leaving gate: its photos are per-spot shots, and its close is

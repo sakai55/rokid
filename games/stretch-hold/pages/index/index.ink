@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Stretch Hold （仰低拉伸） — head-movement mini-game G04, EXTREME
+// Stretch Hold （仰低拉伸） — head-movement mini-game GA04, EXTREME
 // simplicity. One page, three states only: ready / playing / done.
 // The screen shows at most a big instruction, a count x/6 and one
 // short hint while playing (including the hold countdown); voice
@@ -43,7 +43,7 @@
 // a labeled DEMO stepper so the playing/done states can be previewed.
 // On a real device with a sensor, there is no DEMO path at all.
 //
-// DISTINCT FROM G01 nod-count: G01 counts QUICK nods (down ~0.8 s
+// DISTINCT FROM GA01 nod-count: GA01 counts QUICK nods (down ~0.8 s
 // hold). This game HOLDS: every rep requires the full 5 s hold plus
 // a return to center.
 // -------------------------------------------------------------------
@@ -111,7 +111,7 @@ export default {
   },
 
   // ---- orientation sensor -------------------------------------------
-  // Pitch from the orientation quaternion, same formula as G01
+  // Pitch from the orientation quaternion, same formula as GA01
   // nod-count (fleet-consistent):
   // pitch = asin(2*(w*x - y*z)), clamped. Only the RELATIVE pitch vs
   // the calibrated center is ever used, so the host's absolute zero

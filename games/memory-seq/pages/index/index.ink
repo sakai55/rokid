@@ -6,10 +6,10 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Memory Seq （方向记忆） — head-movement mini-game G12, Group B
+// Memory Seq （方向记忆） — head-movement mini-game GA12, Group B
 // (head-as-controller), closing Group B. EXTREME simplicity: one
 // page, three states only (ready / playing / done). Direction
-// MEMORY, distinct from G05/G10: those follow cues in real time;
+// MEMORY, distinct from GA05/GA10: those follow cues in real time;
 // here the player must REMEMBER a sequence after it is announced,
 // with NO cue on screen during recall — the screen never shows a
 // direction during announce or recall (only "听" / "做", the step
@@ -35,7 +35,7 @@
 // HOW A ROUND IS SCORED (sensor state machine, no fake counts):
 // START calibrates the center (head straight at START), then TWO
 // calibration prompts inside the playing state (not extra states),
-// G05's dual-axis pattern: (1) "请低一下头" learns DOWN (UP =
+// GA05's dual-axis pattern: (1) "请低一下头" learns DOWN (UP =
 // opposite pitch sign); (2) "请向左转一下" learns LEFT (RIGHT =
 // opposite yaw sign). Nothing counts before BOTH calibrations
 // complete; restart re-runs both. Per round: ANNOUNCE phase —
@@ -138,14 +138,14 @@ export default {
     }
   },
 
-  // ---- orientation sensor (G05/G10 formulas, fleet-consistent) ------
-  // Pitch = asin(2*(w*x - y*z)), clamped (G01/G04). Yaw =
-  // atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees (G02).
+  // ---- orientation sensor (GA05/GA10 formulas, fleet-consistent) ------
+  // Pitch = asin(2*(w*x - y*z)), clamped (GA01/GA04). Yaw =
+  // atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees (GA02).
   // Only the RELATIVE pitch/yaw vs the calibrated center are ever
   // used, so the host's absolute zero never matters.
   //
   // SIGN LEARNING — learned, not assumed (two prompts, both inside
-  // the playing state, G05's pattern): "请低一下头" records the
+  // the playing state, GA05's pattern): "请低一下头" records the
   // sign the head actually moves as DOWN; UP is the opposite pitch
   // sign. "请向左转一下" records the sign the head actually moves
   // as LEFT; RIGHT is the opposite yaw sign. Residual caveats,

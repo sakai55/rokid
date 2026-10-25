@@ -1,12 +1,12 @@
 # Nod Quiz （点头问答） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G16, Group C
+Head-movement mini-game series GA16, Group C
 (observation/control): a yes/no quiz answered by head motion
 only. Extreme simplicity: 3 states only (ready / playing /
 done), one page, one main button.
 
-Distinct from G08/G11: those games time a nod; this game gives
+Distinct from GA08/GA11: those games time a nod; this game gives
 the nod a meaning (YES) and pairs it with a sensor-only NO
 (a single side turn), so one question has exactly two head
 answers and no spoken or tapped answer exists.
@@ -57,7 +57,7 @@ screen; the full text is here and in the README.
   defensible and the reasoning is stated here and in the
   README rather than hidden. Because the split is 5/5, neither
   answer can win a round by guessing one side.
-- **Return rule (exact, like G10/G13).** After every verdict
+- **Return rule (exact, like GA10/GA13).** After every verdict
   (right, wrong or timeout) the game enters `returnwait`: the
   next question is NEVER announced until the return actually
   happens — |relative yaw| < 10 deg AND |relative pitch| <
@@ -96,10 +96,10 @@ screen; the full text is here and in the README.
   forth is explicitly NOT the NO signal — the ready screen,
   this file and the README all say so. NO comes from the
   sensor only (below).
-- **YES signals — primary vs fallback (G08/G11 pattern).**
+- **YES signals — primary vs fallback (GA08/GA11 pattern).**
   PRIMARY: `onHeadGesture('nod')` — the primary YES signal;
   it catches gentle nods. FALLBACK: pitch from
-  `AbsoluteOrientationSensor` (G01 formula, relative to the
+  `AbsoluteOrientationSensor` (GA01 formula, relative to the
   center calibrated at round start): pitch down past ~20 deg
   and back inside 10 deg counts as one fallback nod, for
   hosts that do not deliver the nod event. A gentle real nod
@@ -109,7 +109,7 @@ screen; the full text is here and in the README.
   delivered by both paths still verdicts the question once.
 - **NO signal — sensor only, sign-free.** NO = |relative yaw|
   past ~27 deg, held ~0.8 s (hold resets if |yaw| drops below
-  22 deg first). Yaw uses the G15 quaternion formula, relative
+  22 deg first). Yaw uses the GA15 quaternion formula, relative
   to the round-start center. Because only the ABSOLUTE yaw is
   used, the left/right sign does not matter for NO: turning
   to either side counts, so a host yaw-sign inversion cannot
@@ -137,14 +137,14 @@ screen; the full text is here and in the README.
   - fallback nod: pitch down past 20 deg, return inside 10 deg
   - tick: 50 ms
   - demo/sensorless return auto-pass: 1200 ms after the verdict
-- **Pitch formula (same as G01, fleet-consistent):**
+- **Pitch formula (same as GA01, fleet-consistent):**
   `pitch = asin(2*(w*x - y*z))`, clamped, from the sensor
-  quaternion, in degrees. **Yaw formula (same as G15):**
+  quaternion, in degrees. **Yaw formula (same as GA15):**
   `yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z))`, in degrees.
   Only RELATIVE values vs the calibrated center are used, so
   the host's absolute zero never matters.
 - **DOWN-SIGN ASSUMPTION — device verification item (same as
-  G01).** Head-down is taken as negative relative pitch. If
+  GA01).** Head-down is taken as negative relative pitch. If
   the first device test shows the sign inverted, the fallback
   nod simply never fires — it fails safe as "no fallback
   YES", never as a wrong YES — while the primary nod event

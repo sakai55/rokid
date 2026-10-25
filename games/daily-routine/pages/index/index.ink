@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Daily Routine （每日一套） — head-movement mini-game G20, Group D
+// Daily Routine （每日一套） — head-movement mini-game GA20, Group D
 // (fun finale) and the SERIES FINALE (20/20). EXTREME simplicity:
 // one page, three states only (ready / playing / done). One
 // mechanic: follow the guided routine to the end. The finale
@@ -34,19 +34,19 @@
 // should ask a doctor first.
 //
 // THE 5 SEGMENTS (fixed order, documented here and in AGENTS.md):
-//  1. 点头 3 次 — gentle nods, G01 pattern: down past ~27 deg,
+//  1. 点头 3 次 — gentle nods, GA01 pattern: down past ~27 deg,
 //     hold ~0.8 s, return <10 deg. Nod event is the primary YES
 //     for a nod (see onHeadGesture below); pitch fallback covers
 //     hosts that do not deliver it.
 //  2. 转头左右各 2 次 — alternating left, right, left, right,
-//     G02 pattern: past ~27 deg, hold ~0.8 s, return <10 deg.
-//  3. 贴耳左右各 1 次 — ear-to-shoulder hold 3 s each side, G03
-//     pattern BUT 3 s, not G03's 5 s (deliberate routine
+//     GA02 pattern: past ~27 deg, hold ~0.8 s, return <10 deg.
+//  3. 贴耳左右各 1 次 — ear-to-shoulder hold 3 s each side, GA03
+//     pattern BUT 3 s, not GA03's 5 s (deliberate routine
 //     shortening, documented). Voice: 「肩膀别抬」.
-//  4. 仰低拉伸各 1 次 — up hold 3 s, then down hold 3 s, G04
-//     pattern BUT 3 s, not G04's 5 s (deliberate routine
+//  4. 仰低拉伸各 1 次 — up hold 3 s, then down hold 3 s, GA04
+//     pattern BUT 3 s, not GA04's 5 s (deliberate routine
 //     shortening, documented). Up only to a mild stretch.
-//  5. 收下巴 2 次 — chin tucks, G06 pattern BUT 3 s, not G06's
+//  5. 收下巴 2 次 — chin tucks, GA06 pattern BUT 3 s, not GA06's
 //     5 s (deliberate routine shortening, documented): small
 //     pitch in the 14-20 deg band, hold 3 s, return <8 deg
 //     pitch. Pitch >= 20 deg is a full nod, NOT a tuck, and
@@ -61,7 +61,7 @@
 // <8 deg, the gate still checks both axes) before the next
 // segment is announced: if not returned within 4 seconds, TTS
 // prompts 「请回正」 and the timer resets — the next segment is
-// NEVER announced until the return actually happens (G10/G13's
+// NEVER announced until the return actually happens (GA10/GA13's
 // stricter rule).
 // CALIBRATION (three prompts, inside the playing state, not extra
 // states): START calibrates the center (head straight at START),
@@ -70,7 +70,7 @@
 // sign); (3) 「请向左贴一下」 learns left roll (right roll =
 // opposite roll sign). Nothing counts before ALL THREE
 // calibrations complete; restart re-runs all three.
-// TUCK RISK FLAG (G06's, carried honestly): a true chin tuck is
+// TUCK RISK FLAG (GA06's, carried honestly): a true chin tuck is
 // mostly a horizontal TRANSLATION, which an orientation sensor
 // barely sees; there is no translation sensor API on this
 // platform. The routine therefore detects the tuck as a SMALL
@@ -92,7 +92,7 @@ const HOLD_NOD_MS = 800;  // nod / turn hold: ~0.8 s
 const HOLD_SEG_MS = 3000; // ear / stretch / tuck hold: 3 s (routine variant)
 const TUCK_LO = 14;       // tuck band lower bound (pitch deg)
 const TUCK_HI = 20;       // tuck band upper bound; >= 20 deg = full nod, not a tuck
-const TUCK_RETURN = 8;    // tuck return: pitch < 8 deg (G06, tighter than 10)
+const TUCK_RETURN = 8;    // tuck return: pitch < 8 deg (GA06, tighter than 10)
 const SEG_MS = 30000;     // per-segment timeout: 30 s, then skip
 const RETURN_GRACE_MS = 4000; // return grace: TTS "请回正", timer resets, no advance
 const STALL_MS = 8000;    // calibration stall -> one TTS re-prompt
@@ -363,7 +363,7 @@ export default {
 
   // Nod event: officially documented ONLY for 'nod'. It NEVER counts
   // on its own. It only completes a nod rep the sensor already saw
-  // go down, once the head is back inside the center band (G01's
+  // go down, once the head is back inside the center band (GA01's
   // pattern); in segWait it moves a down-past-15-deg head into the
   // hold, so a gentle nod the pitch fallback would miss still
   // counts when the sensor confirms the head is down.

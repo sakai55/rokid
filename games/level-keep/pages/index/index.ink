@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Level Keep （端水平） — head-movement mini-game G14, Group C
+// Level Keep （端水平） — head-movement mini-game GA14, Group C
 // (observation/control). EXTREME simplicity: one page, three
 // states only (ready / playing / done). The whole game is holding
 // the head LEVEL: there is NO turning at all. Tap start ->
@@ -36,15 +36,15 @@
 // the 10-second hold begins. Level = RELATIVE ROLL vs that
 // reference, from the AbsoluteOrientationSensor quaternion:
 // roll = atan2(2*(w*x + y*z), 1 - 2*(x*x + y*y)), in degrees
-// (the G03 ear-tilt formula), and the relative roll is the
+// (the GA03 ear-tilt formula), and the relative roll is the
 // wrapped difference of the current roll and the reference roll,
 // in [-180, 180]. Only roll counts: pitch/yaw drift does NOT
 // break level by itself — that is what distinguishes this game
-// from G07 steady-hold (G07: total angular change in ANY
+// from GA07 steady-hold (GA07: total angular change in ANY
 // direction breaks stillness; this game: roll only, with a
 // visual ball). The hold accumulates only while the relative
 // roll stays within +/-8 degrees of the reference. FAIRNESS
-// GRACE (same as G07): a tilt beyond 8 degrees lasting under
+// GRACE (same as GA07): a tilt beyond 8 degrees lasting under
 // ~0.3 s does NOT reset — the grace window freezes accumulation
 // but does not clear it, and if the head returns inside 8
 // degrees within 300 ms the hold resumes from the same value.
@@ -142,7 +142,7 @@ export default {
   },
 
   // ---- orientation sensor -------------------------------------------
-  // Roll from the sensor quaternion (G03 formula), in degrees.
+  // Roll from the sensor quaternion (GA03 formula), in degrees.
   // Only the RELATIVE roll vs the captured level reference is
   // ever used, so the host's absolute zero never matters.
   _rollDeg(q) {

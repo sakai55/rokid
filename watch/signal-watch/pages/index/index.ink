@@ -8,7 +8,7 @@
 import wx from 'wx';
 
 // -------------------------------------------------------------------
-// Signal Watch (W04, WATCH family): queue-number look-back watcher.
+// Signal Watch (WA04, WATCH family): queue-number look-back watcher.
 // The wearer reads the hall screen ONCE with their own eyes and enters
 // two numbers: MY (your queue number) and NOW (the number currently
 // called) - by stepper or by dictating the number THEY saw. After

@@ -228,7 +228,7 @@ export default {
     // summary. Packing happens at home where you can still
     // turn back and fetch — a warning that pretended to
     // block would be a lie about what happens next. This is
-    // the deliberate opposite of cue-door (P01), where an
+    // the deliberate opposite of cue-door (CU01), where an
     // unconfirmed END blocks.
     var missing = this._missing();
     if (missing.length > 0 && !this._warned) {

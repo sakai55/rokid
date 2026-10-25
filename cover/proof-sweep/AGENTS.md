@@ -1,7 +1,7 @@
 # Proof Sweep — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series C03 (COVER 覆盖型， third of the group): reading a long contract or
+series CO03 (COVER 覆盖型， third of the group): reading a long contract or
 manual without skipping lines — where the finished page feels done, but
 three lines in the middle were never actually read.
 
@@ -81,10 +81,10 @@ three lines in the middle were never actually read.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- C01 `last-glance` is the leave-the-room archive: photograph six
+- CO01 `last-glance` is the leave-the-room archive: photograph six
   heading zones, replay their descriptions later. It archives what
   you SAW when leaving; it never tracks reading progress.
-- C02 `room-sweep` is the same coverage-table pattern applied to
+- CO02 `room-sweep` is the same coverage-table pattern applied to
   safety items in a room: pass/flag semantics on physical checks.
   Proof-sweep applies the pattern to TEXT: read/missed semantics on
   document lines, with a skip detector and a coverage percentage.

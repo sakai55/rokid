@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Traffic Light （红绿灯） — head-movement mini-game G19, Group D
+// Traffic Light （红绿灯） — head-movement mini-game GA19, Group D
 // (fun finale). EXTREME simplicity: one page, three states only
 // (ready / playing / done). One mechanic: obey the light. 10
 // rounds, fixed sequence: green = turn to the cued direction,
@@ -33,7 +33,7 @@
 // HOW A ROUND IS SCORED (sensor state machine, no fake counts):
 // START calibrates the center (head straight at START), then TWO
 // calibration prompts inside the playing state (not extra
-// states), G05's dual-axis pattern: (1) "请低一下头" learns DOWN
+// states), GA05's dual-axis pattern: (1) "请低一下头" learns DOWN
 // (UP = opposite pitch sign); (2) "请向左转一下" learns LEFT
 // (RIGHT = opposite yaw sign). Nothing counts before BOTH
 // calibrations complete; restart re-runs both. GREEN round: TTS
@@ -45,16 +45,16 @@
 // as a fail (documented choice: the spec's fail condition is the
 // clock, not the wrong turn). RED round: TTS "红灯，别动";
 // surviving 3 seconds with total angular change under 5 deg from
-// the round-start reference (G07's metric, quaternion angle)
+// the round-start reference (GA07's metric, quaternion angle)
 // = pass (+1, "稳住了"); moving to 5 deg or beyond at ANY point
-// during the 3 s = fail at once ("动了") — unlike G07 there is
+// during the 3 s = fail at once ("动了") — unlike GA07 there is
 // NO 0.3 s grace on red, because the whole point of red is
 // freezing instantly. After every GREEN round the player MUST
 // return to center (<10 deg on BOTH axes) before the next round:
 // if not returned within 4 seconds, TTS prompts "请回正" and the
 // grace timer resets — the next round is NEVER announced until
-// the return actually happens (G10/G13's stricter rule, NOT
-// G09's advance-anyway grace). Red rounds end already at center
+// the return actually happens (GA10/GA13's stricter rule, NOT
+// GA09's advance-anyway grace). Red rounds end already at center
 // (a passed red means the head never left it; a failed red ends
 // the moment the head moved, and the return gate after a failed
 // red is handled the same way as after green — see _finishRound:
@@ -171,10 +171,10 @@ export default {
   // Only the RELATIVE pitch/yaw vs the calibrated center are ever
   // used, so the host's absolute zero never matters. The red-round
   // stillness metric additionally uses the raw quaternion angle
-  // (G07's metric): angle = 2*acos(|dot(q, qRef)|), in degrees.
+  // (GA07's metric): angle = 2*acos(|dot(q, qRef)|), in degrees.
   //
   // SIGN LEARNING — learned, not assumed (two prompts, both inside
-  // the playing state, G05's pattern): at round start the game
+  // the playing state, GA05's pattern): at round start the game
   // asks "请低一下头" and records the sign the head actually
   // moves as DOWN; UP is the opposite pitch sign. It then asks
   // "请向左转一下" and records the sign the head actually moves
@@ -265,7 +265,7 @@ export default {
     this._yawCenter = this._yaw;
   },
   // Total angular deviation in degrees vs the red round-start
-  // reference quaternion (G07's metric). Null before a reference
+  // reference quaternion (GA07's metric). Null before a reference
   // is captured or before any reading.
   _deviationDeg() {
     if (!this._hasReading || !this._quat || !this._refQuat) return null;

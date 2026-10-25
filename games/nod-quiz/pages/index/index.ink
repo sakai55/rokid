@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Nod Quiz （点头问答） — head-movement mini-game G16, Group C
+// Nod Quiz （点头问答） — head-movement mini-game GA16, Group C
 // (observation/control). EXTREME simplicity: one page, three
 // states only (ready / playing / done). Ten fixed yes/no
 // questions, one at a time. A gentle nod = YES; a single side
@@ -63,7 +63,7 @@
 // (technical honesty, the core of this game):
 // YES, PRIMARY: onHeadGesture('nod'), officially documented
 // for 'nod' — the primary YES signal; it catches gentle nods.
-// YES, FALLBACK: pitch from AbsoluteOrientationSensor (G01
+// YES, FALLBACK: pitch from AbsoluteOrientationSensor (GA01
 // formula, relative to the center calibrated at round start):
 // pitch down past ~20 deg and back inside 10 deg counts as one
 // fallback nod, for hosts that do not deliver the nod event.
@@ -178,12 +178,12 @@ export default {
   },
 
   // ---- orientation sensor (NO detection + return gate + fallback ---
-  // ---- nod). Yaw from the G15 formula, pitch from the G01 formula,
+  // ---- nod). Yaw from the GA15 formula, pitch from the GA01 formula,
   // both relative to the center calibrated at round start, so the
   // host's absolute zero never matters. NO uses |yaw| only, so a
   // host yaw-sign inversion cannot swap the NO direction — either
   // side counts as NO by design. DOWN-SIGN ASSUMPTION (device
-  // verification item, same as G01): head-down is taken as
+  // verification item, same as GA01): head-down is taken as
   // negative relative pitch. If the sign is inverted on device,
   // the fallback nod simply never fires — it fails safe as "no
   // fallback YES", never as a wrong YES — while the primary nod

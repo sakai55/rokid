@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Turn Dodge （左右闪避） — head-movement mini-game G09, Group B
+// Turn Dodge （左右闪避） — head-movement mini-game GA09, Group B
 // (head-as-controller). EXTREME simplicity: one page, three states
 // only (ready / playing / done). 10 rounds, one obstacle at a time:
 // the obstacle comes from ONE side, announced by voice and shown on
@@ -33,7 +33,7 @@
 // HOW A ROUND IS SCORED (sensor state machine, no fake counts):
 // START calibrates the center (head straight at START), then ONE
 // calibration prompt: "请向左转一下". Whichever yaw sign the head
-// actually moves is learned as LEFT (G02's proven pattern), so a
+// actually moves is learned as LEFT (GA02's proven pattern), so a
 // host yaw-sign inversion cannot silently swap left/right.
 // Return to center, then the 10 rounds run in a FIXED sequence
 // (not random, so preview and device behaviour are reproducible):
@@ -132,7 +132,7 @@ export default {
   // Only the RELATIVE yaw vs the calibrated center is ever used, so
   // the host's absolute zero never matters.
   //
-  // YAW-SIGN — learned, not assumed (G02's pattern): at round start
+  // YAW-SIGN — learned, not assumed (GA02's pattern): at round start
   // the game asks once ("请向左转一下") and records the sign the
   // head actually moves as LEFT. A host whose yaw sign is inverted
   // therefore still counts left as left. Residual caveat,

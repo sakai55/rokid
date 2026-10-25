@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Follow Dot （追光点） — head-movement mini-game G10, Group B
+// Follow Dot （追光点） — head-movement mini-game GA10, Group B
 // (head-as-controller). EXTREME simplicity: one page, three states
 // only (ready / playing / done). 10 dots, one at a time: a dot
 // appears at ONE of four positions (up / down / left / right of
@@ -16,7 +16,7 @@
 // the rest. No menus, no settings, no levels, no camera, no mic/
 // ASR, no storage, no network.
 //
-// DISTINCT FROM G05: G05 follows VOICE cues for clock positions;
+// DISTINCT FROM GA05: GA05 follows VOICE cues for clock positions;
 // this game follows a VISUAL dot — the dot's position on screen
 // is the cue, and the voice only names it.
 //
@@ -40,7 +40,7 @@
 // HOW A DOT IS SCORED (sensor state machine, no fake counts):
 // START calibrates the center (head straight at START), then TWO
 // calibration prompts inside the playing state (not extra states),
-// G05's dual-axis pattern: (1) "请低一下头" learns DOWN (UP =
+// GA05's dual-axis pattern: (1) "请低一下头" learns DOWN (UP =
 // opposite pitch sign); (2) "请向左转一下" learns LEFT (RIGHT =
 // opposite yaw sign). Nothing counts before BOTH calibrations
 // complete; restart re-runs both. Per dot: dot appears, player
@@ -52,7 +52,7 @@
 // within 4 seconds, TTS prompts "请回正" and the grace timer
 // resets — the grace counts nothing and the next dot NEVER
 // appears until the return actually happens (this differs from
-// G09's advance-anyway grace, deliberately: the return rule is
+// GA09's advance-anyway grace, deliberately: the return rule is
 // what keeps this game segmented, not a sweep). The fixed dot
 // sequence is NOT random, so preview and device behaviour are
 // reproducible: left, up, left, down, right, up, down, right,
@@ -142,15 +142,15 @@ export default {
   },
 
   // ---- orientation sensor -------------------------------------------
-  // Pitch from the orientation quaternion, same formula as G01/G04
+  // Pitch from the orientation quaternion, same formula as GA01/GA04
   // (fleet-consistent): pitch = asin(2*(w*x - y*z)), clamped.
-  // Yaw from the same quaternion, same formula as G02:
+  // Yaw from the same quaternion, same formula as GA02:
   // yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees.
   // Only the RELATIVE pitch/yaw vs the calibrated center are ever
   // used, so the host's absolute zero never matters.
   //
   // SIGN LEARNING — learned, not assumed (two prompts, both inside
-  // the playing state, G05's pattern): at round start the game
+  // the playing state, GA05's pattern): at round start the game
   // asks "请低一下头" and records the sign the head actually
   // moves as DOWN; UP is the opposite pitch sign. It then asks
   // "请向左转一下" and records the sign the head actually moves

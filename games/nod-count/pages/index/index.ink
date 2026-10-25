@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Nod Count （点头操） — head-movement mini-game G01, EXTREME simplicity.
+// Nod Count （点头操） — head-movement mini-game GA01, EXTREME simplicity.
 // One page, three states only: ready / playing / done. The screen shows
 // at most a big instruction, a count x/10 and one short hint while
 // playing; voice (TTS) does the rest. No menus, no settings, no levels,

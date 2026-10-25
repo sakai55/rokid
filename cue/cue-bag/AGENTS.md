@@ -1,7 +1,7 @@
 # Cue Bag — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series P04 (CUE 提示型， fourth of the group, series #34): swapping bags
+series CU04 (CUE 提示型， fourth of the group, series #34): swapping bags
 or jackets to go out and always leaving something in the last bag. This
 agent takes the packing check off your hands: look at today's bag and
 hold steady, and only then does the destination packing list open;
@@ -19,7 +19,7 @@ early it names what's missing — a reminder, never a gate.
   utterance, counts the warning, and stays in the list; the
   second END closes for real and the missing items are
   recorded honestly in the summary. This is the deliberate
-  opposite of cue-door (P01), where an unconfirmed END blocks:
+  opposite of cue-door (CU01), where an unconfirmed END blocks:
   packing happens at home where you can still turn back and
   fetch, and a warning that pretended to block would be a lie
   about what happens next. The banner says so in plain words —
@@ -68,28 +68,28 @@ early it names what's missing — a reminder, never a gate.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `cue-door` (P01) is the going-out checklist
+- Attention-series `cue-door` (CU01) is the going-out checklist
   gate at the door: unconfirmed END blocks and never says
   "可以出门". Cue-bag is not a gate: closing early reminds
   and then lets the round close, with the miss recorded
   honestly instead of blocking.
-- Attention-series `pack-sweep` (C04) is the at-home packing
+- Attention-series `pack-sweep` (CO04) is the at-home packing
   checklist: items packed before leaving, counted at home.
   Cue-bag is not generic packing: its trigger is looking at
   today's bag itself, and its list is per destination with
   compartment-grouped confirmation.
-- Attention-series `bag-watch` (D02) is the in-transit luggage
+- Attention-series `bag-watch` (DU02) is the in-transit luggage
   side-line: a direction-registered bag watched while waiting,
   with a leave-gate that blocks on an unconfirmed bag. Cue-bag
   has no direction registration and no waiting watch: its
   work is the at-home packing list before leaving.
-- Attention-series `cue-fridge` (P02) is the fridge to-fetch
+- Attention-series `cue-fridge` (CU02) is the fridge to-fetch
   checklist: tick as you take, mark out of stock, and before
   closing it names anything still unticked (a reminder, not a
   gate). Cue-bag shares the reminder-not-gate shape but is not
   fetching: its trigger is looking at today's bag, and its
   close is a packed/missing verdict, not a miss report.
-- Attention-series `attention-diary` (R05) is the attention bill:
+- Attention-series `attention-diary` (RE05) is the attention bill:
   trigger entries grouped by category, closed with a counted
   verdict. Cue-bag has no categories and no bill: its units
   are the five packing items, and its close is a packed

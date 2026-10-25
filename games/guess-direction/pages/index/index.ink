@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Guess Direction （猜方向） — head-movement mini-game G18, opening
+// Guess Direction （猜方向） — head-movement mini-game GA18, opening
 // Group D (fun finale). EXTREME simplicity: one page, three states
 // only (ready / playing / done). 5 rounds, one at a time: the
 // secret direction is NEVER shown on screen — TTS only reports
@@ -17,10 +17,10 @@
 // round. Voice (TTS) does the rest. No menus, no settings, no
 // levels, no camera, no mic/ASR, no storage, no network.
 //
-// DISTINCT FROM G13: G13 NAMES the direction ("请看向左") and the
+// DISTINCT FROM GA13: GA13 NAMES the direction ("请看向左") and the
 // screen shows the same arrow. This game names NOTHING: the only
 // feedback is distance, so the player must search. Distinct from
-// G05: G05 follows clock-position cues in sequence; here the
+// GA05: GA05 follows clock-position cues in sequence; here the
 // sequence is secret, and distance — not a cue — is the guide.
 //
 // SERIES CONSTITUTION (neck safety, GO's rule — also on the ready
@@ -41,7 +41,7 @@
 // HOW A ROUND IS SCORED (sensor state machine, no fake counts):
 // START calibrates the center (head straight at START), then TWO
 // calibration prompts inside the playing state (not extra states),
-// G05's dual-axis pattern: (1) "请低一下头" learns DOWN (UP =
+// GA05's dual-axis pattern: (1) "请低一下头" learns DOWN (UP =
 // opposite pitch sign); (2) "请向左转一下" learns LEFT (RIGHT =
 // opposite yaw sign). Nothing counts before BOTH calibrations
 // complete; restart re-runs both. Per round: TTS says only "第 x
@@ -60,7 +60,7 @@
 // if not returned within 4 seconds, TTS prompts "请回正" and the
 // grace timer resets — the grace counts nothing and the next
 // round is NEVER announced until the return actually happens
-// (G10/G13's stricter rule, NOT G09's advance-anyway grace).
+// (GA10/GA13's stricter rule, NOT GA09's advance-anyway grace).
 // The final round ends the game at once: there is no next round
 // for a return to gate. The fixed secret sequence is NOT random,
 // so preview and device behaviour are reproducible: left, down,
@@ -153,15 +153,15 @@ export default {
   },
 
   // ---- orientation sensor -------------------------------------------
-  // Pitch from the orientation quaternion, same formula as G01/G04
+  // Pitch from the orientation quaternion, same formula as GA01/GA04
   // (fleet-consistent): pitch = asin(2*(w*x - y*z)), clamped.
-  // Yaw from the same quaternion, same formula as G02:
+  // Yaw from the same quaternion, same formula as GA02:
   // yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees.
   // Only the RELATIVE pitch/yaw vs the calibrated center are ever
   // used, so the host's absolute zero never matters.
   //
   // SIGN LEARNING — learned, not assumed (two prompts, both inside
-  // the playing state, G05's pattern): at round start the game
+  // the playing state, GA05's pattern): at round start the game
   // asks "请低一下头" and records the sign the head actually
   // moves as DOWN; UP is the opposite pitch sign. It then asks
   // "请向左转一下" and records the sign the head actually moves

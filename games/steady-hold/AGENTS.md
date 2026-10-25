@@ -1,11 +1,11 @@
 # Steady Hold （稳头挑战） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G07: opening Group B
+Head-movement mini-game series GA07: opening Group B
 (head-as-controller). Extreme simplicity: 3 states only (ready /
 playing / done), one page, one main button.
 
-Distinct from Group A (G01–G06): those games count head MOTIONS
+Distinct from Group A (GA01–GA06): those games count head MOTIONS
 (nods, turns, tilts, tucks). This game counts the ABSENCE of
 motion — the whole game is staying still, and it involves NO
 turning at all. That is itself the safety point: there is no

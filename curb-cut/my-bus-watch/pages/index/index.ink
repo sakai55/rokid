@@ -8,7 +8,7 @@
 import wx from 'wx';
 
 // -------------------------------------------------------------------
-// My Bus Watch (Curb-Cut K02, FILTER family): target-route bus watch
+// My Bus Watch (Curb-Cut CC02, FILTER family): target-route bus watch
 // for blind / low-vision wearers.
 // The problem it outsources is NOT "what bus is that" in general
 // (that is Huiyan territory) but "is THAT bus MY bus?" The wearer

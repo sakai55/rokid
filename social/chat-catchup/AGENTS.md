@@ -1,7 +1,7 @@
 # Chat Catchup — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series S01 (SOCIAL 社交型， first of the group, series #36): you zone out
+series SO01 (SOCIAL 社交型， first of the group, series #36): you zone out
 for ten seconds mid-conversation, come back, and have no idea what was
 just said — and you do not want to ask the other person to repeat it.
 This agent takes the catch-up off your hands: it silently buffers
@@ -41,7 +41,7 @@ so you can rejoin without interrupting.
 - **No speaker identification.** The buffer does not separate
   speakers: there is no speaker recognition, and the help view
   never attributes a point to anyone. This is the deliberate
-  opposite of talk-replay (R02), which tags sides by user
+  opposite of talk-replay (RE02), which tags sides by user
   switching — chat-catchup tags nothing.
 - **Correction is cheap, destruction is confirmed.** BACK from
   the help view returns to listening with the live buffer still
@@ -79,19 +79,19 @@ so you can rejoin without interrupting.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `meeting-filter` (F04) is the meeting keyword
+- Attention-series `meeting-filter` (FI04) is the meeting keyword
   gate plus a pre-hit ~10 s replay buffer: it only lights up on
   a name/topic keyword, and the buffer exists to serve the hit.
   Chat-catchup has no keyword gate: every caption enters the
   buffer, and the buffer exists to serve a help request you
   make yourself, mid-conversation.
-- Attention-series `talk-replay` (R02) is the post-talk replay:
+- Attention-series `talk-replay` (RE02) is the post-talk replay:
   captions tagged by speaker side (user-switched), replayed
   after the talk filtered to promise/number/deadline sentences.
   Chat-catchup is not post-talk and not filtered: it is
   mid-talk, unfiltered, and speaker-blind.
-- Attention-series `lecture-filter` (F05) captures signal
-  sentences into notes; `tour-watch` (D04) gates guide
+- Attention-series `lecture-filter` (FI05) captures signal
+  sentences into notes; `tour-watch` (DU04) gates guide
   announcements on集合 keywords. Chat-catchup captures nothing
   into notes and gates nothing on keywords: its only output is
   the silent recent-points view on demand.

@@ -1,7 +1,7 @@
 # Cue Mirror — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series P05 (CUE 提示型， last of the group, series #35): the most hectic
+series CU05 (CUE 提示型， last of the group, series #35): the most hectic
 ten seconds of the morning are in front of the mirror — the weather,
 the first thing today, and the thing you must not forget all crowd
 in at once. This agent takes the mirror check off your hands: look
@@ -22,7 +22,7 @@ lines — a reminder, never a gate.
   utterance, counts the warning, and stays in the list; the
   second END closes for real and the unread lines are
   recorded honestly in the summary. This is the deliberate
-  opposite of cue-door (P01), where an unconfirmed END blocks:
+  opposite of cue-door (CU01), where an unconfirmed END blocks:
   a mirror glance must not hold the door hostage, and a
   warning that pretended to block would be a lie about what
   happens next. The banner says so in plain words — "再点
@@ -42,7 +42,7 @@ lines — a reminder, never a gate.
   dies when the round is confirmed and when the agent closes
   (onUnload wipes everything). Yesterday-to-today persistence
   would need a storage exception decided by GO — the same
-  treatment as R01 day-lookback and R04 route-replay — and
+  treatment as RE01 day-lookback and RE04 route-replay — and
   this agent does not take it on its own. No storage API is
   called anywhere.
 - **Looking at the mirror is not mirror recognition.** The
@@ -88,28 +88,28 @@ lines — a reminder, never a gate.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `cue-door` (P01) is the going-out checklist
+- Attention-series `cue-door` (CU01) is the going-out checklist
   gate at the door: unconfirmed END blocks and never says
   "可以出门". Cue-mirror is not a gate: closing early reminds
   and then lets the round close, with the unread recorded
   honestly instead of blocking.
-- Attention-series `cue-desk` (P03) is the desk three things
+- Attention-series `cue-desk` (CU03) is the desk three things
   plus a stand-up resume line: look at the desk, light today's
   three tasks, and on standing up get "回来从这继续". Cue-mirror
   has no stand-up resume: its trigger is looking at the
   mirror, its lines are weather note + first thing + yesterday
   line, and its close is a read/unread verdict.
-- Attention-series `cue-fridge` (P02) is the fridge to-fetch
+- Attention-series `cue-fridge` (CU02) is the fridge to-fetch
   checklist: tick as you take, mark out of stock, and before
   closing it names anything still unticked (a reminder, not a
   gate). Cue-mirror shares the reminder-not-gate shape but is
   not fetching: its trigger is looking at the mirror, and its
   close is a read verdict, not a miss report.
-- Attention-series `attention-diary` (R05) is the attention bill:
+- Attention-series `attention-diary` (RE05) is the attention bill:
   trigger entries grouped by category, closed with a counted
   verdict. Cue-mirror has no categories and no bill: its units
   are the three mirror lines, and its close is a read verdict.
-- Attention-series `day-lookback` (R01) is the daytime gaze
+- Attention-series `day-lookback` (RE01) is the daytime gaze
   timeline. Cue-mirror is not a timeline: it lights only the
   three pre-departure mirror lines and does not register the
   day's gazes.

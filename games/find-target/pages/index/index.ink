@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Find Target （找方向） — head-movement mini-game G13, opening
+// Find Target （找方向） — head-movement mini-game GA13, opening
 // Group C (observation/control: head-steady = confirm). EXTREME
 // simplicity: one page, three states only (ready / playing /
 // done). 8 trials, one at a time: a SINGLE voice cue per trial
@@ -16,8 +16,8 @@
 // menus, no settings, no levels, no camera, no mic/ASR, no
 // storage, no network.
 //
-// DISTINCT FROM G05/G10/G12: G05 follows clock-position cues in
-// sequence, G10 follows a VISUAL dot, G12 replays a sequence from
+// DISTINCT FROM GA05/GA10/GA12: GA05 follows clock-position cues in
+// sequence, GA10 follows a VISUAL dot, GA12 replays a sequence from
 // memory. This game is a single voice cue per trial, confirmed by
 // head-steady: the cue names ONE direction, the player finds it,
 // holds steady, returns — nothing to follow, nothing to remember.
@@ -40,7 +40,7 @@
 // HOW A TRIAL IS SCORED (sensor state machine, no fake counts):
 // START calibrates the center (head straight at START), then TWO
 // calibration prompts inside the playing state (not extra states),
-// G05's dual-axis pattern: (1) "请低一下头" learns DOWN (UP =
+// GA05's dual-axis pattern: (1) "请低一下头" learns DOWN (UP =
 // opposite pitch sign); (2) "请向左转一下" learns LEFT (RIGHT =
 // opposite yaw sign). Nothing counts before BOTH calibrations
 // complete; restart re-runs both. Per trial: TTS cues one
@@ -53,7 +53,7 @@
 // before the next cue: if not returned within 4 seconds, TTS
 // prompts "请回正" and the grace timer resets — the grace counts
 // nothing and the next cue is NEVER announced until the return
-// actually happens (G10's stricter rule, NOT G09's
+// actually happens (GA10's stricter rule, NOT GA09's
 // advance-anyway grace). The final trial ends the game at once:
 // there is no next trial for a return to gate. The fixed cue
 // sequence is NOT random, so preview and device behaviour are
@@ -142,15 +142,15 @@ export default {
   },
 
   // ---- orientation sensor -------------------------------------------
-  // Pitch from the orientation quaternion, same formula as G01/G04
+  // Pitch from the orientation quaternion, same formula as GA01/GA04
   // (fleet-consistent): pitch = asin(2*(w*x - y*z)), clamped.
-  // Yaw from the same quaternion, same formula as G02:
+  // Yaw from the same quaternion, same formula as GA02:
   // yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees.
   // Only the RELATIVE pitch/yaw vs the calibrated center are ever
   // used, so the host's absolute zero never matters.
   //
   // SIGN LEARNING — learned, not assumed (two prompts, both inside
-  // the playing state, G05's pattern): at round start the game
+  // the playing state, GA05's pattern): at round start the game
   // asks "请低一下头" and records the sign the head actually
   // moves as DOWN; UP is the opposite pitch sign. It then asks
   // "请向左转一下" and records the sign the head actually moves

@@ -1,7 +1,7 @@
 # Talk Replay — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series R02 (REVIEW 回顾型， second of the group): after a talk with a
+series RE02 (REVIEW 回顾型， second of the group): after a talk with a
 landlord, a client or a technician, replay the talk's subtitles filtered
 to three kinds of sentences — promises, numbers, deadlines — so what
 the other party promised, and by when, stops being a matter of
@@ -69,15 +69,15 @@ trying to remember.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `meeting-filter` (F04) is the meeting gate:
+- Attention-series `meeting-filter` (FI04) is the meeting gate:
   name/topic keywords plus a ~10 s pre-hit replay buffer.
   Talk-replay has no gate and no buffer: it keeps every
   subtitle of one talk and replays only three kinds.
-- Attention-series `day-lookback` (R01) is the day timeline:
+- Attention-series `day-lookback` (RE01) is the day timeline:
   gazes you marked, typed 画面 / 数字 / 承诺. Talk-replay is
   not a day: it has no gaze marks and no scene type — its
   units are talk subtitles, typed by keyword kind.
-- Attention-series `lecture-filter` (F05) is the lecture gate:
+- Attention-series `lecture-filter` (FI05) is the lecture gate:
   signal sentences captured as notes. Talk-replay does not
   capture notes during the talk: it replays the talk itself,
   filtered, after the talk.

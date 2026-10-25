@@ -246,7 +246,7 @@ export default {
     // and the unread lines are recorded honestly in the
     // summary. A mirror glance must not hold the door
     // hostage: this is the deliberate opposite of cue-door
-    // (P01), where an unconfirmed END blocks.
+    // (CU01), where an unconfirmed END blocks.
     var unread = this._unread();
     if (unread.length > 0 && !this._warned) {
       this._warned = true;

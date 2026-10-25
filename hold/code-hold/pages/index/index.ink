@@ -85,7 +85,7 @@ export default {
       return;
     }
     // Nod discipline in THIS agent: a nod is SPEAK and nothing else.
-    // It never saves, never burns - deliberately unlike H01
+    // It never saves, never burns - deliberately unlike HO01
     // number-catch, where the PLAN sanctioned a two-step nod clear.
     // A password you might still need is not deleted by a head move.
     if (this._mode === 'show') {

@@ -1,7 +1,7 @@
 # Tour Watch — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series D04 (DUAL 并行型， fourth of the group): on a group tour, the
+series DU04 (DUAL 并行型， fourth of the group): on a group tour, the
 wearer's main line is looking at the sights and the side line is "did
 the guide just call a meeting time, and where do I go back to". The
 agent takes the listening: register the meeting point by facing it,
@@ -83,13 +83,13 @@ steady nod.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `meeting-filter` (F04) is the keyword-gate
+- Attention-series `meeting-filter` (FI04) is the keyword-gate
   template: same gate + one-TTS discipline — but its gate is
   "your name / your topics" and it keeps a 10-second pre-hit
   replay buffer. Tour-watch has no replay buffer at all: a hit
   saves the sentence as a note, and the gate is meeting
   information, not personal relevance.
-- Attention-series `lecture-filter` (F05) is the signal-note
+- Attention-series `lecture-filter` (FI05) is the signal-note
   template: same "hit sentence becomes a note, non-hit is
   counted and discarded" rule — but its signals are class
   signals (重点 / 考试 / 作业) and it has no direction, no
@@ -97,7 +97,7 @@ steady nod.
   direction, the meeting clock time and the归队 reminder,
   because a missed meeting point is a missed bus, not a missed
   sentence.
-- Attention-series `dog-walk` (D03) is the sibling template:
+- Attention-series `dog-walk` (DU03) is the sibling template:
   same nod discipline, same zero-persistence rule, same DEMO
   five-stage arc — but its side line is a checklist and a home
   gate with no listening at all. Tour-watch's side line is

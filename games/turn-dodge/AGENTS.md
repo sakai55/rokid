@@ -1,7 +1,7 @@
 # Turn Dodge （左右闪避） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G09, Group B (head-as-controller):
+Head-movement mini-game series GA09, Group B (head-as-controller):
 a left/right dodge game. Extreme simplicity: 3 states only (ready /
 playing / done), one page, one main button.
 
@@ -48,7 +48,7 @@ is here and in the README.
   dodge still ends as a miss. A hit is immediate the moment the
   head passes threshold toward the obstacle — there is no
   hold-or-undo for a wrong turn.
-- **Calibration is one prompt, inside the playing state (G02's
+- **Calibration is one prompt, inside the playing state (GA02's
   pattern).** It is not a fourth page state and not a menu:
   START calibrates the center (head straight at START), then
   the playing screen shows "请向左转一下" as its first
@@ -95,8 +95,8 @@ is here and in the README.
 - **Yaw sign — learned, not assumed (device verification item).**
   The one-prompt calibration records the sign the head actually
   moves when asked to turn left, so a host yaw-sign inversion cannot
-  silently swap left/right dodges — unlike G01's documented
-  down-sign assumption, which G09 does not need. Residual caveat:
+  silently swap left/right dodges — unlike GA01's documented
+  down-sign assumption, which GA09 does not need. Residual caveat:
   calibration trusts the player to follow that one prompt; turning
   right instead of left would learn the signs backwards. Fail-safe:
   nothing counts before calibration completes, and any restart

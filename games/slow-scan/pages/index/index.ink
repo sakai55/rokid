@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Slow Scan （慢速扫描） — head-movement mini-game G15, Group C
+// Slow Scan （慢速扫描） — head-movement mini-game GA15, Group C
 // (observation/control). EXTREME simplicity: one page, three
 // states only (ready / playing / done). One mechanic: a SINGLE
 // slow pass from the left limit to the right limit. Voice (TTS)
@@ -29,7 +29,7 @@
 // HOW A SCAN COUNTS (sensor state machine, no fake counts):
 // START calibrates the center (head straight at START), then ONE
 // calibration prompt: "请向左转一下". Whichever yaw sign the head
-// actually moves is learned as LEFT (G02's proven pattern), so a
+// actually moves is learned as LEFT (GA02's proven pattern), so a
 // host yaw-sign inversion cannot silently swap left/right.
 // Return to center, then: turn to the LEFT limit (past ~27 deg
 // left) and hold briefly ("先转到最左，停一下"), then turn slowly
@@ -134,7 +134,7 @@ export default {
   // Only the RELATIVE yaw vs the calibrated center is ever used, so
   // the host's absolute zero never matters.
   //
-  // YAW-SIGN — learned, not assumed (G02's pattern): at round start
+  // YAW-SIGN — learned, not assumed (GA02's pattern): at round start
   // the game asks once ("请向左转一下") and records the sign the
   // head actually moves as LEFT. A host whose yaw sign is inverted
   // therefore still counts left as left. Residual caveat,

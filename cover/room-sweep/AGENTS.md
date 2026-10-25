@@ -1,7 +1,7 @@
 # Room Sweep — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series C02 (COVER 覆盖型， second of the group): the bedtime sweep of a
+series CO02 (COVER 覆盖型， second of the group): the bedtime sweep of a
 child's room — window, socket covers, small objects on the floor, bed
 rail, door, night light — where the nightly question "did I check
 everything" returns even after you walked the room, because a walked
@@ -70,7 +70,7 @@ room is not a checked room.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- C01 `last-glance` is the leave-the-room archive: photograph six
+- CO01 `last-glance` is the leave-the-room archive: photograph six
   heading zones, replay their descriptions later on the road. It
   archives what you SAW when leaving; it never judges safety items
   and has no pass/flag semantics.

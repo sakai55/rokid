@@ -1,11 +1,11 @@
 # Rhythm Nod （节奏点头） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G11: a rhythm-nod game, Group B
+Head-movement mini-game series GA11: a rhythm-nod game, Group B
 (head-as-controller). Extreme simplicity: 3 states only (ready /
 playing / done), one page, one main button.
 
-Distinct from G08 (nod-catch): G08 times one nod against a
+Distinct from GA08 (nod-catch): GA08 times one nod against a
 falling ball; this game times a nod against a repeating beat.
 The head is a rhythm controller, and the only head action is one
 small gentle nod per beat, at a slow fixed tempo.
@@ -118,7 +118,7 @@ and in the README.
 - **Nod signals — primary vs fallback.** PRIMARY:
   `onHeadGesture('nod')`, officially documented for `'nod'` —
   the primary beat signal; it catches gentle nods.
-  FALLBACK: pitch from `AbsoluteOrientationSensor` (G01
+  FALLBACK: pitch from `AbsoluteOrientationSensor` (GA01
   formula, relative to the center calibrated at round start):
   pitch down past ~20 deg and back inside 10 deg counts as
   one fallback nod, for hosts that do not deliver the nod
@@ -127,13 +127,13 @@ and in the README.
   not hidden. The fallback and the primary event share the
   same `_onNod()` guard, so a nod delivered by both paths
   still verdicts the beat once.
-- **Pitch formula (same as G01, fleet-consistent):**
+- **Pitch formula (same as GA01, fleet-consistent):**
   `pitch = asin(2*(w*x - y*z))`, clamped, from the sensor
   quaternion, in degrees. Only the RELATIVE pitch vs the
   calibrated center is used, so the host's absolute zero never
   matters.
 - **DOWN-SIGN ASSUMPTION — device verification item (same as
-  G01).** Head-down is taken as negative relative pitch. If
+  GA01).** Head-down is taken as negative relative pitch. If
   the first device test shows the sign inverted, the fallback
   simply never fires — it fails safe as "no fallback hit",
   never as a wrong hit — while the primary nod event still

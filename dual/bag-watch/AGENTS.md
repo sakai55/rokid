@@ -1,7 +1,7 @@
 # Bag Watch — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series D02 (DUAL 并行型， second of the group): at a station or a
+series DU02 (DUAL 并行型， second of the group): at a station or a
 cafe, the wearer's main line is waiting or buying and the side line
 is "is my bag still there, and will I remember it when I leave".
 The wearer cannot keep one eye on a bag behind them and do the main
@@ -94,17 +94,17 @@ look-backs, missed reminders, blocks, and whether the gate passed.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `pack-sweep` (C04) is **packing at home
+- Attention-series `pack-sweep` (CO04) is **packing at home
   before leaving**: a checklist of items to put in the bag,
   confirmed one by one while packing. Bag-watch starts after
   the bag is already packed and in transit — it never lists
   contents.
-- Attention-series `last-glance` (C01) is **leaving a place
+- Attention-series `last-glance` (CO01) is **leaving a place
   with a photographic record per zone, replayed later when
   anxiety strikes**: its value is after the fact. Bag-watch
   is live and preventive: it watches during the wait and
   physically intercepts the departure at the gate.
-- Attention-series `play-watch` (D01) is the sibling template:
+- Attention-series `play-watch` (DU01) is the sibling template:
   same timer ladder, same nod discipline, same zero-persistence
   rule — but its side line is a play area and it has no gate
   at all. Bag-watch adds the leave gate and the blocked count,

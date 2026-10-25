@@ -1,7 +1,7 @@
 # Slow Scan （慢速扫描） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G15, Group C
+Head-movement mini-game series GA15, Group C
 (observation/control): a single slow left-to-right head scan.
 Extreme simplicity: 3 states only (ready / playing / done),
 one page, one main button.
@@ -62,7 +62,7 @@ here and in the README.
   plus the elapsed scan seconds. TTS guides: start, the
   left-limit cue, the scan cue, slow-down warnings, and
   completion with total seconds.
-- **Calibration is one prompt, inside the playing state (G02's
+- **Calibration is one prompt, inside the playing state (GA02's
   pattern).** It is not a fourth page state and not a menu:
   START calibrates the center (head straight at START), then
   the playing screen shows "请向左转一下" as its first
@@ -109,8 +109,8 @@ here and in the README.
 - **Yaw sign — learned, not assumed (device verification item).**
   The one-prompt calibration records the sign the head actually
   moves when asked to turn left, so a host yaw-sign inversion cannot
-  silently swap left/right — unlike G01's documented
-  down-sign assumption, which G15 does not need. Residual caveat:
+  silently swap left/right — unlike GA01's documented
+  down-sign assumption, which GA15 does not need. Residual caveat:
   calibration trusts the player to follow that one prompt; turning
   right instead of left would learn the signs backwards. Fail-safe:
   nothing counts before calibration completes, and any restart

@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Breathe Turn （呼吸转头） — head-movement mini-game G17, Group C
+// Breathe Turn （呼吸转头） — head-movement mini-game GA17, Group C
 // (observation/control), closing Group C. EXTREME simplicity: one
 // page, three states only (ready / playing / done). One mechanic:
 // voice-paced breathing — inhale turn, exhale return — 8 cycles.
@@ -119,7 +119,7 @@ export default {
   // Only RELATIVE yaw/pitch vs the calibrated center are ever used,
   // so the host's absolute zero never matters.
   //
-  // YAW-SIGN — learned, not assumed (G02's pattern): at round start
+  // YAW-SIGN — learned, not assumed (GA02's pattern): at round start
   // the game asks once ("请向左转一下") and records the sign the
   // head actually moves as LEFT. A host whose yaw sign is inverted
   // therefore still counts left as left. Residual caveat,

@@ -1,7 +1,7 @@
 # Shelf Sweep — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series C05 (COVER 覆盖型， fifth of the group): finding one thing on a
+series CO05 (COVER 覆盖型， fifth of the group): finding one thing on a
 big shelf — you sweep the same row three times and still miss what is
 right in front of you.
 
@@ -39,7 +39,7 @@ right in front of you.
   to unscan. Clearing the whole sweep is only possible from the
   summary screen, in two DEL taps, with a 6 s arm that any other
   action cancels — the same destructive-operation discipline as
-  C01–C04.
+  CO01–CO04.
 - **TARGET cycles sample targets, DEMO is staged and never
   overwrites a user-edited sweep.** TARGET works only in idle and
   cycles four sample targets （某品牌酱油 → 某本书 → 折叠雨伞 →
@@ -70,17 +70,17 @@ right in front of you.
   and compare prices/specs" — it compares things you can already
   see. Shelf-sweep does not compare anything: it proves you looked
   everywhere for one thing you cannot find.
-- C03 `proof-sweep` is the same coverage-table pattern applied to
+- CO03 `proof-sweep` is the same coverage-table pattern applied to
   lines in a document, with a skip detector for reading order. A
   shelf has no reading order, so shelf-sweep has no skip detector
   and no coverage percentage as its verdict — its verdict is one
   of three: blocked (named unseen cells), found (named cell), or
   not found after a full sweep.
-- C04 `pack-sweep` applies the pattern to a bag (packed/todo
+- CO04 `pack-sweep` applies the pattern to a bag (packed/todo
   semantics, departure gate). Shelf-sweep applies it to a shelf
   (scanned/unseen semantics, finish gate) plus two things a bag
   never needs: a repeat-scan warning and a found stop.
-- C01 `last-glance` archives what you SAW when leaving a room for
+- CO01 `last-glance` archives what you SAW when leaving a room for
   later replay. Shelf-sweep never archives anything: it only
   decides whether this shelf has been fully swept right now.
 

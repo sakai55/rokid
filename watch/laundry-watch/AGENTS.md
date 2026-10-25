@@ -1,6 +1,6 @@
 # laundry-watch
 
-Rokid 眼镜洗衣守望智能体（AIUI Agent），注意力外挂系列 W03
+Rokid 眼镜洗衣守望智能体（AIUI Agent），注意力外挂系列 WA03
 （守望型 WATCH）。
 
 ## 身份

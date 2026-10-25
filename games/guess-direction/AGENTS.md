@@ -1,18 +1,18 @@
 # Guess Direction （猜方向） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G18, opening Group D
+Head-movement mini-game series GA18, opening Group D
 (fun finale): a guess-the-direction game. Extreme simplicity:
 3 states only (ready / playing / done), one page, one main
 button.
 
-Distinct from G13: G13 NAMES the direction ("请看向左") and
+Distinct from GA13: GA13 NAMES the direction ("请看向左") and
 the screen shows the same arrow. This game names NOTHING and
 shows NOTHING about the secret: the only feedback is distance
 ("还远 / 近了 / 很近了 / 到了附近，停稳"), so the player must
-search. Distinct from G05: G05 follows clock-position cues in
+search. Distinct from GA05: GA05 follows clock-position cues in
 sequence; here the sequence is secret, and distance — not a
-cue — is the guide. Distinct from G12: G12 replays a sequence
+cue — is the guide. Distinct from GA12: GA12 replays a sequence
 from memory; here there is nothing to remember, only a hidden
 direction to hunt by distance.
 
@@ -68,11 +68,11 @@ in-game ready screen; the full text is here and in the README.
   returned within 4 seconds, TTS prompts "请回正" and the grace
   timer resets — the grace counts nothing and the next round is
   NEVER announced until the return actually happens. This is
-  G10/G13's stricter rule, deliberately NOT G09's
+  GA10/GA13's stricter rule, deliberately NOT GA09's
   advance-anyway grace: the return rule is what keeps this game
   segmented, not a sweep. The final round ends the game at
   once: there is no next round for a return to gate.
-- **Calibration is two prompts, inside the playing state (G05's
+- **Calibration is two prompts, inside the playing state (GA05's
   pattern).** It is not a fourth page state and not a menu:
   START calibrates the center (head straight at START), then
   the playing screen shows "请低一下头" as its first
@@ -117,7 +117,7 @@ in-game ready screen; the full text is here and in the README.
   - return grace: 4 s, then TTS "请回正" and the timer resets;
     the next round is never announced until the return happens
   - calibration stall re-prompt: 8 s, once per step
-- **Formulas (fleet-consistent, G05's):**
+- **Formulas (fleet-consistent, GA05's):**
   - pitch = asin(2*(w*x - y*z)), clamped
   - yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees
   - down-positive pitch and left-positive yaw are used after
@@ -128,10 +128,10 @@ in-game ready screen; the full text is here and in the README.
   (device verification items).**
   - DOWN: the first calibration prompt records the sign the
     head actually moves when asked to look down as DOWN; UP is
-    the opposite pitch sign (G01/G04 pattern).
+    the opposite pitch sign (GA01/GA04 pattern).
   - LEFT: the second calibration prompt records the sign the
     head actually moves when asked to turn left as LEFT; RIGHT
-    is the opposite yaw sign (G02 pattern).
+    is the opposite yaw sign (GA02 pattern).
   - Residual caveats: calibration trusts the player to follow
     each prompt; looking up instead of down would learn the
     pitch signs backwards, and turning right instead of left

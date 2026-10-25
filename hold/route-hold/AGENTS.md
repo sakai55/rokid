@@ -1,7 +1,7 @@
 # Route Hold — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series H04 (HOLD 默念型）: a hear-it-once route keeper for the directions a
+series HO04 (HOLD 默念型）: a hear-it-once route keeper for the directions a
 stranger rattles off in one breath — "左转、直行、第二个灯右转" — that you
 otherwise recite to yourself the whole way and still get wrong.
 

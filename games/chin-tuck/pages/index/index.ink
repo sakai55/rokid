@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Chin Tuck （收下巴） — head-movement mini-game G06, closing Group A
+// Chin Tuck （收下巴） — head-movement mini-game GA06, closing Group A
 // (neck exercises). EXTREME simplicity: one page, three states only
 // (ready / playing / done). The screen shows at most a big
 // instruction, a count x/8 and one short hint while playing
@@ -34,7 +34,7 @@
 // HOW A REP IS COUNTED (sensor state machine, no fake counts):
 // START calibrates the center (head straight at START), then ONE
 // calibration prompt: "请低一下头". Whichever pitch sign the head
-// actually moves is learned as DOWN (G01/G04 pattern); the tuck
+// actually moves is learned as DOWN (GA01/GA04 pattern); the tuck
 // itself uses that same pitch direction at SMALL amplitude. Each
 // rep: glide into the small tuck band -> hold the full 5 s
 // (spoken countdown 5-4-3-2-1) -> return to center = 1 rep,
@@ -62,7 +62,7 @@
 // -------------------------------------------------------------------
 
 const TOTAL = 8;
-const CALIB_DEG = 27;     // calibration look-down: 25-30 deg pitch (G01/G04)
+const CALIB_DEG = 27;     // calibration look-down: 25-30 deg pitch (GA01/GA04)
 const TUCK_DEG = 14;      // tuck reached: small pitch-down-equivalent, 12-15 deg
 const TOO_FAR_DEG = 20;   // beyond this = a full nod, counts nothing
 const CENTER_DEG = 8;     // return-to-center band: <8 deg pitch
@@ -126,7 +126,7 @@ export default {
   },
 
   // ---- orientation sensor -------------------------------------------
-  // Pitch from the orientation quaternion, same formula as G01/G04
+  // Pitch from the orientation quaternion, same formula as GA01/GA04
   // (fleet-consistent):
   // pitch = asin(2*(w*x - y*z)), clamped. Only the RELATIVE pitch vs
   // the calibrated center is ever used, so the host's absolute zero

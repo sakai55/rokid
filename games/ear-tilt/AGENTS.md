@@ -1,7 +1,7 @@
 # Ear Tilt （贴耳操） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G03: a slow side-tilt hold exercise,
+Head-movement mini-game series GA03: a slow side-tilt hold exercise,
 voice guided. Extreme simplicity: 3 states only (ready / playing /
 done), one page, one main button.
 

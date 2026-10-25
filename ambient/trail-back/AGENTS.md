@@ -1,7 +1,7 @@
 # Trail Back — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series E04 (AMBIENT 环境型， fourth of the group, series #49): you wander
+series AM04 (AMBIENT 环境型， fourth of the group, series #49): you wander
 a mall, a gallery or a big car park for a while and then have no idea
 how to get back. This agent takes the way back off your hands: you mark
 key junctions as breadcrumbs (direction + photo) as you go, and the
@@ -59,15 +59,15 @@ return walk guides you point by point in reverse order.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `room-sweep` (C02) is a pre-departure
+- Attention-series `room-sweep` (CO02) is a pre-departure
   room-by-room check. Trail-back photographs nothing to
   check: its photos are return-walk对照 labels attached
   to junction crumbs.
-- Attention-series `cue-bag` (P04) is an exit luggage
+- Attention-series `cue-bag` (CU04) is an exit luggage
   gate: items confirmed before leaving. Trail-back gates
   nothing before leaving: it records the way out so the
   way back exists.
-- Attention-series `light-change` (E01) meters light on
+- Attention-series `light-change` (AM01) meters light on
   a timer. Trail-back meters nothing on a timer: its only
   input is your MARK at a junction.
 
@@ -96,7 +96,7 @@ never knows where anyone is.
   and 示例画面， photo failure noted with crumb kept, 8
   crumb cap, 9th refused); focus walks rows with wrap,
   rowTap out-of-range and missing-dataset guards (missing
-  dataset keeps focus, never jumps to 0 — the B05 page bug,
+  dataset keeps focus, never jumps to 0 — the BO05 page bug,
   fixed here by construction); return walk (RETURN refused
   with zero crumbs, target last, exactly one TTS naming
   it, NEXT/PREV at the ends refused, ARRIVED advances,

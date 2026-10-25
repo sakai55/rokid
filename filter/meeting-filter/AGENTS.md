@@ -1,7 +1,7 @@
 # Meeting Filter — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series F04 (FILTER 过滤型， fourth of the group): a two-hour meeting
+series FI04 (FILTER 过滤型， fourth of the group): a two-hour meeting
 contains perhaps ten minutes that concern you, and the rest of the time
 you dare not zone out yet cannot really listen. This agent inverts the
 work: you declare the gate first — your name plus topic keywords — then
@@ -17,8 +17,8 @@ surface, carrying the ~10 seconds of transcript that came before it.
   mid-meeting would silently rewrite what counts as a hit while the
   wearer is trusting the filter — so every KW/MODE tap while
   listening is refused with an explanation, never silently applied.
-  This is the same idle-only-settings discipline as F01's whitelist,
-  F02's target and F03's filter.
+  This is the same idle-only-settings discipline as FI01's whitelist,
+  FI02's target and FI03's filter.
 - **The match rule is a keyword gate on transcript text, and it is
   the headline.** A segment hits only when its normalised text
   contains a keyword from the declared set (first keyword in set
@@ -44,7 +44,7 @@ surface, carrying the ~10 seconds of transcript that came before it.
   confirmation is safe: START in idle, CONFIRM on the summary
   screen. In live listening a steady nod is ignored on purpose —
   starting or stopping the gate must be a deliberate tap. An
-  unsteady nod never arms the 1.2 s lock (the F01 fix, kept).
+  unsteady nod never arms the 1.2 s lock (the FI01 fix, kept).
 - **Correction is cheap, destruction is confirmed.** DEL in live
   listening only clears the hit banner — it never deletes the hit
   list or ends the listening; DEL with no banner is ignored, not
@@ -95,12 +95,12 @@ surface, carrying the ~10 seconds of transcript that came before it.
   aid**. Meeting-filter does the opposite for non-hits: it
   deliberately does NOT subtitle everything, because the whole
   point is that you do not have to read the whole meeting.
-- `focus-shield` (F01) is the sound twin of the same gate: a
+- `focus-shield` (FI01) is the sound twin of the same gate: a
   whitelist interrupts, everything else is logged to a timeline.
   Meeting-filter is the meeting twin, with a pre-hit replay buffer
   instead of a timeline: a hit is only useful if you know what was
   said just before it.
-- `sign-filter` (F02) and `buy-filter` (F03) are the visual twins:
+- `sign-filter` (FI02) and `buy-filter` (FI03) are the visual twins:
   a declared target / three conditions interrupt, everything else
   is counted. Meeting-filter applies the same gate to sound, with
   the idle-only-settings discipline and the zero-persistence
@@ -156,5 +156,5 @@ ignorance is stated in the README.
   is the row-1 first button (x=88), but its y moves with the
   status/info-box height, so coordinates were probed per state
   and every PNG was re-verified by eye after the fix, per the
-  recorded F01/H02/F03 lesson that a single hash probe can hit
+  recorded FI01/HO02/FI03 lesson that a single hash probe can hit
   the wrong button.

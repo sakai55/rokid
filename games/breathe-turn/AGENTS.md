@@ -1,7 +1,7 @@
 # Breathe Turn （呼吸转头） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G17, closing Group C
+Head-movement mini-game series GA17, closing Group C
 (observation/control): a voice-paced breathing game — inhale
 turn, exhale return. Extreme simplicity: 3 states only (ready /
 playing / done), one page, one main button.
@@ -50,7 +50,7 @@ full text is here and in the README.
   A still-turned head is never silently counted as a new turn.
   The missed return already failed the previous cycle; the
   center-pass requirement is the guard for the next one.
-- **Calibration is one prompt, inside the playing state (G02's
+- **Calibration is one prompt, inside the playing state (GA02's
   pattern).** It is not a fourth page state and not a menu:
   START calibrates the center (head straight at START), then
   the playing screen shows "请向左转一下" as its first
@@ -94,7 +94,7 @@ full text is here and in the README.
   - cycles per game: 8, fixed alternating sequence
     L,R,L,R,L,R,L,R
   - calibration stall re-prompt: 8 s, once per step
-- **Formulas (fleet-consistent, G02/G15's, plus pitch):**
+- **Formulas (fleet-consistent, GA02/GA15's, plus pitch):**
   - yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees
   - pitch = asin(2*(w*x - y*z)), clamped, in degrees
   - Only the RELATIVE yaw/pitch vs the calibrated center are

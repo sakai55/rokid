@@ -1,7 +1,7 @@
 # Shop Replay — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series R03 (REVIEW 回顾型， third of the group): after a shopping round,
+series RE03 (REVIEW 回顾型， third of the group): after a shopping round,
 replay the candidates you hesitated over — each with the product you
 picked, the price you wrote down, the shop direction you marked and
 the photo taken on the spot — so "which shop was that one in, and how
@@ -71,17 +71,17 @@ much was it" stops being a matter of trying to remember.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `last-glance` (C01) is the leaving archive:
+- Attention-series `last-glance` (CO01) is the leaving archive:
   one photo per zone with an LLM one-line description, 6/6
   required to leave. Shop-replay has no LLM description and no
   leaving gate: its photos are per-candidate shots, and its
   close is a price comparison, not a completeness check.
-- Attention-series `day-lookback` (R01) is the day timeline:
+- Attention-series `day-lookback` (RE01) is the day timeline:
   gazes you marked, typed 画面 / 数字 / 承诺, pictures as text
   descriptions. Shop-replay is not a day: its units are
   shopping candidates with prices and on-the-spot photos, and
   its replay ends in a cheapest comparison.
-- Attention-series `talk-replay` (R02) is the talk replay:
+- Attention-series `talk-replay` (RE02) is the talk replay:
   subtitles filtered to promises / numbers / deadlines.
   Shop-replay has no subtitles and no keyword filter: its
   replay is registration order plus a cheapest jump.

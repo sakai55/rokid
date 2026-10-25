@@ -392,7 +392,7 @@ export default {
   // sentence stored as a lesson note; non-hit -> counter only,
   // the sentence is discarded immediately and never stored.
   // There is deliberately NO rolling transcript buffer here:
-  // F04 keeps ~10 seconds of context for replay, but a lesson
+  // FI04 keeps ~10 seconds of context for replay, but a lesson
   // note needs only the signal sentence itself, and keeping a
   // buffer would mean keeping non-hit speech around.
   _onTranscript(text) {

@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Steady Hold （稳头挑战） — head-movement mini-game G07, opening
+// Steady Hold （稳头挑战） — head-movement mini-game GA07, opening
 // Group B (head-as-controller). EXTREME simplicity: one page, three
 // states only (ready / playing / done). The whole game is staying
 // still: there is NO turning at all, which is itself a safety

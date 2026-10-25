@@ -1,7 +1,7 @@
 # Buy Filter — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series F03 (FILTER 过滤型， third of the group): in a supermarket, every
+series FI03 (FILTER 过滤型， third of the group): in a supermarket, every
 shelf and promotion shouts for attention and the thing you actually came
 for hides among them. This agent inverts the work: you declare the filter
 first — a shopping list, a per-item budget cap, a ban keyword — then shop,
@@ -18,7 +18,7 @@ surface.
   as a pass while the wearer is trusting the filter — so every
   LIST/BUDGET/BAN tap while shopping is refused with an explanation,
   never silently applied. This is the same idle-only-settings discipline
-  as F01's whitelist and F02's target.
+  as FI01's whitelist and FI02's target.
 - **The match rule is three conditions, and it is the headline.**
   A product passes only when ALL THREE hold: (1) its normalised name
   contains a list keyword, (2) its price is at most the budget cap,
@@ -48,7 +48,7 @@ surface.
   nod confirms only where confirmation is safe: START in idle,
   CONFIRM on the summary screen. In live shopping a steady nod is
   ignored on purpose — snapping a photo must be a deliberate tap. An
-  unsteady nod never arms the 1.2 s lock (the F01 fix, kept).
+  unsteady nod never arms the 1.2 s lock (the FI01 fix, kept).
 - **Correction is cheap, destruction is confirmed.** DEL in live
   shopping only clears the pass banner — it never deletes the seen
   list or ends the shopping. Back from the summary returns to live
@@ -87,12 +87,12 @@ surface.
   picked up, one by one — it is a **comparison**. Buy-filter decides
   before you pick anything up, and its filtered items never surface
   at all.
-- `sign-filter` (F02) is the visual twin of the same gate: a declared
+- `sign-filter` (FI02) is the visual twin of the same gate: a declared
   target interrupts, every other sign is counted. Buy-filter is the
   same gate with three conditions instead of one, applied to products
   instead of signs. The idle-only-settings discipline and the
   zero-persistence discipline are shared on purpose.
-- `focus-shield` (F01) is a session gate for sound: whitelist words
+- `focus-shield` (FI01) is a session gate for sound: whitelist words
   interrupt, everything else is logged. Buy-filter is its shopping
   twin for vision.
 
@@ -144,5 +144,5 @@ README.
   and produced a fake "pass" frame that was really stage 2 with a
   LIST-refusal event); the corrected sequence is 177 / 173 / 173 /
   187 / 187, and every PNG was re-verified by eye after the fix,
-  per the recorded F01/H02 lesson that a single hash probe can hit
+  per the recorded FI01/HO02 lesson that a single hash probe can hit
   the wrong button.

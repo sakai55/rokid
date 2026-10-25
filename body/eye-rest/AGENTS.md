@@ -1,7 +1,7 @@
 # Eye Rest — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series B01 (BODY 身体型， first of the group, series #41): you read a
+series BO01 (BODY 身体型， first of the group, series #41): you read a
 book or stare at a screen, two hours pass in one stretch, and only when
 your eyes hurt do you remember to rest. This agent takes the remembering
 off your hands: it times steady near gaze, reminds you in view at 20
@@ -21,7 +21,7 @@ pitches up — then restarts the timer.
   button as fallback): the platform has no distance measurement, so
   "looked far" here means "head pitched up while a reminder was open".
   If the host never delivers a pitch event, LOOK is the fallback,
-  and the README says so (the same defensive pattern as S01's shake).
+  and the README says so (the same defensive pattern as SO01's shake).
 - **A nod is never a far look.** A steady nod starts timing in idle
   and confirms the summary; in timing and in remind it is ignored and
   noted. Counting a nod as a far look would be a lie about what the
@@ -56,17 +56,17 @@ pitches up — then restarts the timer.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `play-watch` (D01) is the playground timed
+- Attention-series `play-watch` (DU01) is the playground timed
   glance-back: it reminds you to look back at a child zone on a
   schedule. Eye-rest borrows the timer shape but watches a body,
   not a place: its timer counts steady near gaze and its
   confirmation is a head pitch, not a glance.
-- Attention-series `standup-echo` (S04) is the standup module-
+- Attention-series `standup-echo` (SO04) is the standup module-
   keyword gate: hits become notes, non-hits become digest rows.
   Eye-rest has no keywords and no notes: its only input is head
   steadiness plus minutes, its only output is a far-look
   reminder and a count.
-- Attention-series `gift-clue` (S05) files silent clue cards from
+- Attention-series `gift-clue` (SO05) files silent clue cards from
   chat keywords. Eye-rest files nothing from chat and listens to
   nothing: it times, reminds, and counts far looks.
 

@@ -6,7 +6,7 @@
 
 <script setup>
 // -------------------------------------------------------------------
-// Turn Count （转头操） — head-movement mini-game G02, EXTREME simplicity.
+// Turn Count （转头操） — head-movement mini-game GA02, EXTREME simplicity.
 // One page, three states only: ready / playing / done. The screen shows
 // at most a big instruction, a count x/10 and one short hint while
 // playing; voice (TTS) does the rest. No menus, no settings, no levels,

@@ -1,7 +1,7 @@
 # Play Watch — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series D01 (DUAL 并行型， first of the group): at a playground, the
+series DU01 (DUAL 并行型， first of the group): at a playground, the
 parent's main line is resting on a bench and the side line is "is the
 child still in the play area". The parent cannot watch continuously
 and rest at the same time, so the agent takes the remembering: register
@@ -85,7 +85,7 @@ outing ends with a small summary of confirmed and missed look-backs.
   Q&A while holding the baby**: the parent's main line is the
   baby itself. Play-watch is the opposite geometry: the child is
   away in a play area and the parent's main line is rest.
-- Attention-series `door-watch` (W05) is also a "listen while you
+- Attention-series `door-watch` (WA05) is also a "listen while you
   do something else" agent, but it guards a doorbell/knock sound
   with a microphone. Play-watch has no microphone at all: its
   only input is the parent's own confirmation.

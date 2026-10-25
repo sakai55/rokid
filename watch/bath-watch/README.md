@@ -7,7 +7,7 @@ https://github.com/sakai55/rokid/tree/agent-bath-watch
 ```
 
 
-注意力外挂系列 **W02**（守望型 WATCH）· Rokid 眼镜 AIUI Agent
+注意力外挂系列 **WA02**（守望型 WATCH）· Rokid 眼镜 AIUI Agent
 
 站在浴缸边看一眼登记，倒计时在你视线里走着，你尽管去收
 拾行李；估时到 80% 它先叫你准备，到 100% 它按「相对

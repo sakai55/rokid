@@ -1,11 +1,11 @@
 # Stretch Hold （仰低拉伸） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G04: a slow up/down stretch-hold
+Head-movement mini-game series GA04: a slow up/down stretch-hold
 exercise, voice guided. Extreme simplicity: 3 states only (ready /
 playing / done), one page, one main button.
 
-Distinct from G01 `nod-count`: G01 counts QUICK nods (down ~0.8 s
+Distinct from GA01 `nod-count`: GA01 counts QUICK nods (down ~0.8 s
 hold). This game HOLDS: every rep requires moving past threshold,
 holding the full 5 s (spoken countdown 5-4-3-2-1), AND returning to
 center.
@@ -81,7 +81,7 @@ and in the README.
     reports them, elapsed time alone gates the hold (documented
     fallback, not a fake stable)
   - rep-stall re-prompt: 8 s, once per step
-- **Pitch formula (same as G01 nod-count, fleet-consistent):**
+- **Pitch formula (same as GA01 nod-count, fleet-consistent):**
   `pitch = asin(2*(w*x - y*z))`, clamped, from the sensor
   quaternion, in degrees. Only the RELATIVE pitch vs the calibrated
   center is used, so the host's absolute zero never matters.

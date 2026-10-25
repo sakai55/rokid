@@ -1,7 +1,7 @@
 # Queue Roam — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series D05 (DUAL 并行型， last of the group): on a ticket queue, the
+series DU05 (DUAL 并行型， last of the group): on a ticket queue, the
 wearer's main line is roaming and the side line is "don't miss your
 number". The agent takes the listening: register your ticket number,
 far-field listening passes every call announcement through a
@@ -77,7 +77,7 @@ threshold that calls you back before your turn.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `tour-watch` (D04) is the sibling template:
+- Attention-series `tour-watch` (DU04) is the sibling template:
   same gate + one-TTS discipline, same nod discipline, same
   zero-persistence rule, same DEMO five-stage arc — but its gate
   is meeting information, it registers a meeting direction and a
@@ -85,13 +85,13 @@ threshold that calls you back before your turn.
   has no direction and no clock: its gate is a ticket number,
   its progress is a manual report, and its reminder is a number
   gap.
-- Attention-series `meeting-filter` (F04) is the keyword-gate
+- Attention-series `meeting-filter` (FI04) is the keyword-gate
   template: same gate + one-TTS discipline — but its gate is
   "your name / your topics" and it keeps a 10-second pre-hit
   replay buffer. Queue-roam has no replay buffer at all: a hit
   is recorded as an event, and the gate is a number, not a
   topic.
-- Attention-series `lecture-filter` (F05) is the signal-note
+- Attention-series `lecture-filter` (FI05) is the signal-note
   template: same "hit is recorded, non-hit is counted and
   discarded" rule — but its signals are class signals and it has
   no progress, no gap and no go-back confirmation. Queue-roam

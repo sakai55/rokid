@@ -1,7 +1,7 @@
 # Turn Count （转头操） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G02: a slow alternating turn-count
+Head-movement mini-game series GA02: a slow alternating turn-count
 exercise, voice guided. Extreme simplicity: 3 states only (ready /
 playing / done), one page, one main button.
 
@@ -75,8 +75,8 @@ in the README.
 - **Yaw sign — learned, not assumed (device verification item).**
   The one-prompt calibration records the sign the head actually
   moves when asked to turn left, so a host yaw-sign inversion cannot
-  silently swap left/right counts — unlike G01's documented
-  down-sign assumption, which G02 does not need. Residual caveat:
+  silently swap left/right counts — unlike GA01's documented
+  down-sign assumption, which GA02 does not need. Residual caveat:
   calibration trusts the player to follow that one prompt; turning
   right instead of left would learn the signs backwards. Fail-safe:
   nothing counts before calibration completes, the first rep is left

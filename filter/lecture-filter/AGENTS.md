@@ -1,7 +1,7 @@
 # Lecture Filter — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series F05 (FILTER 过滤型， fifth of the group, closing the group): a
+series FI05 (FILTER 过滤型， fifth of the group, closing the group): a
 class or lecture has uneven information density, and the few sentences
 that matter — "this is a key exam point", "the homework is due Friday"
 — are exactly the ones most easily missed while you are trying to
@@ -24,8 +24,8 @@ speech you deliberately chose not to keep.
   the gate mid-lesson would silently rewrite what counts as a hit
   while the wearer is trusting the filter — so every SIG/MODE tap
   while listening is refused with an explanation, never silently
-  applied. This is the same idle-only-settings discipline as F01's
-  whitelist, F02's target, F03's filter and F04's keyword gate.
+  applied. This is the same idle-only-settings discipline as FI01's
+  whitelist, FI02's target, FI03's filter and FI04's keyword gate.
 - **The match rule is a signal-word gate on transcript text, and
   it is the headline.** A segment hits only when its normalised
   text contains a signal word from the declared set (first word in
@@ -39,7 +39,7 @@ speech you deliberately chose not to keep.
   re-reading it would itself steal the attention the filter just
   saved. The note keeps the sentence verbatim plus a minute label
   （第1分钟）, so the summary is a readable list, not just counts.
-- **There is deliberately NO rolling transcript buffer.** F04
+- **There is deliberately NO rolling transcript buffer.** FI04
   keeps ~10 seconds of context because a meeting hit is only
   useful with what was said just before it. A lesson note does
   not need that: the signal sentence is self-contained, and a
@@ -56,7 +56,7 @@ speech you deliberately chose not to keep.
   confirmation is safe: START in idle, CONFIRM on the summary
   screen. In live listening a steady nod is ignored on purpose —
   starting or stopping the gate must be a deliberate tap. An
-  unsteady nod never arms the 1.2 s lock (the F01 fix, kept).
+  unsteady nod never arms the 1.2 s lock (the FI01 fix, kept).
 - **Correction is cheap, destruction is confirmed.** DEL in live
   listening only clears the hit banner — it never deletes the
   note list or ends the listening; DEL with no banner is ignored,
@@ -98,7 +98,7 @@ speech you deliberately chose not to keep.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- F04 `meeting-filter` is the **gate with a pre-hit replay
+- FI04 `meeting-filter` is the **gate with a pre-hit replay
   buffer**: a name/topic keyword hit surfaces with the ~10
   seconds before it, because a meeting hit is only useful with
   context. Lecture-filter has no buffer and no replay: a lesson
@@ -112,7 +112,7 @@ speech you deliberately chose not to keep.
   aid**. Lecture-filter is the opposite for non-hits: it
   deliberately does NOT subtitle everything, because the whole
   point is that you do not have to read the whole lesson.
-- `focus-shield` (F01) is the sound twin of the same gate: a
+- `focus-shield` (FI01) is the sound twin of the same gate: a
   whitelist interrupts, everything else is logged to a timeline.
   Lecture-filter is the lesson twin, with a note list instead of
   a timeline: a hit is only useful if it is kept as a sentence
@@ -169,5 +169,5 @@ ignorance is stated in the README.
   `~/workspace/preview-tools/`): DEMO is the row-1 first button
   (x=88), but its y moves with the status/info-box height, so
   coordinates were probed per state and every PNG was re-verified
-  by eye after the fix, per the recorded F01/H02/F03/F04 lesson
+  by eye after the fix, per the recorded FI01/HO02/FI03/FI04 lesson
   that a single hash probe can hit the wrong button.
