@@ -1,16 +1,16 @@
 # Daily Routine （每日一套） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G20, Group D (fun finale) and the
+Head-movement mini-game series GA20, Group D (fun finale) and the
 SERIES FINALE (20/20): a guided daily routine stringing the
 A-group moves together. Extreme simplicity: 3 states only (ready /
 playing / done), one page, one main button.
 
-Distinct from every other game in the series: G01–G06 each teach
+Distinct from every other game in the series: GA01–GA06 each teach
 ONE move; this finale strings all five A-group moves together in
 one routine, with a per-segment skip rule so the routine always
 finishes. It is not a harder version of any single game — its
-holds are deliberately SHORTER (3 s, not 5 s) than G03/G04/G06,
+holds are deliberately SHORTER (3 s, not 5 s) than GA03/GA04/GA06,
 because a routine that demanded five 5-second holds plus nods
 and turns would run long and tire the neck.
 
@@ -40,18 +40,18 @@ full text is here and in the README.
   behaviour are reproducible), documented here and in the code
   (`SEG_NAMES`, `SEG_REPS`, `TURN_SEQ`, `EAR_SEQ`,
   `STRETCH_SEQ`):
-  1. 点头 3 次 — gentle nods, G01 pattern: down past ~27 deg,
+  1. 点头 3 次 — gentle nods, GA01 pattern: down past ~27 deg,
      hold ~0.8 s, return <10 deg. Nod event primary + pitch
      fallback (see below).
   2. 转头左右各 2 次 — alternating left, right, left, right,
-     G02 pattern: past ~27 deg, hold ~0.8 s, return <10 deg.
+     GA02 pattern: past ~27 deg, hold ~0.8 s, return <10 deg.
   3. 贴耳左右各 1 次 — ear-to-shoulder hold 3 s each side,
-     G03 pattern BUT 3 s, not G03's 5 s (deliberate routine
+     GA03 pattern BUT 3 s, not GA03's 5 s (deliberate routine
      shortening). Voice: 「肩膀别抬」.
-  4. 仰低拉伸各 1 次 — up hold 3 s, then down hold 3 s, G04
-     pattern BUT 3 s, not G04's 5 s (deliberate routine
+  4. 仰低拉伸各 1 次 — up hold 3 s, then down hold 3 s, GA04
+     pattern BUT 3 s, not GA04's 5 s (deliberate routine
      shortening). Up only to a mild stretch.
-  5. 收下巴 2 次 — chin tucks, G06 pattern BUT 3 s, not G06's
+  5. 收下巴 2 次 — chin tucks, GA06 pattern BUT 3 s, not GA06's
      5 s (deliberate routine shortening): small pitch in the
      14–20 deg band, hold 3 s, return <8 deg pitch. Pitch
      >= 20 deg is a full nod, NOT a tuck, and counts nothing
@@ -73,7 +73,7 @@ full text is here and in the README.
   4 seconds, TTS prompts 「请回正」 and the grace timer resets
   — the grace counts nothing and the next segment is NEVER
   announced until the return actually happens. This is
-  G10/G13's stricter rule, deliberately NOT G09's
+  GA10/GA13's stricter rule, deliberately NOT GA09's
   advance-anyway grace. The final segment ends the routine at
   once: there is no next segment for a return to gate.
 - **Calibration is three prompts, inside the playing state.**
@@ -107,7 +107,7 @@ full text is here and in the README.
   The nod event is used ONLY in segment 1, and it NEVER counts
   on its own: it only completes a nod rep the sensor already
   saw go down, once the head is back inside the center band
-  (G01's pattern); in `segWait` it moves a head already down
+  (GA01's pattern); in `segWait` it moves a head already down
   past 15 deg into the hold, so a gentle nod the pitch
   fallback would miss still counts when the sensor confirms
   the head is down. All other moves come from the sensor
@@ -118,7 +118,7 @@ full text is here and in the README.
   - ear / stretch / tuck hold: 3 s (3000 ms, routine variant)
   - tuck band: 14–20 deg pitch; >= 20 deg = full nod, voided
     with correction; early-release cut below 11 deg voids
-  - tuck return: pitch < 8 deg (G06, tighter than 10 deg)
+  - tuck return: pitch < 8 deg (GA06, tighter than 10 deg)
   - other returns: <10 deg on BOTH axes (pitch and yaw)
   - segment timeout: 30 s, then skip (never fail)
   - return grace: 4 s, then TTS 「请回正」 and the timer resets;
@@ -138,13 +138,13 @@ full text is here and in the README.
   (device verification items).**
   - DOWN: the first calibration prompt records the sign the
     head actually moves when asked to look down as DOWN; UP is
-    the opposite pitch sign (G01/G04 pattern).
+    the opposite pitch sign (GA01/GA04 pattern).
   - LEFT: the second calibration prompt records the sign the
     head actually moves when asked to turn left as LEFT; RIGHT
-    is the opposite yaw sign (G02 pattern).
+    is the opposite yaw sign (GA02 pattern).
   - LEFT ROLL: the third calibration prompt records the sign
     the head actually moves when asked to tilt left as LEFT;
-    right roll is the opposite roll sign (G03 pattern).
+    right roll is the opposite roll sign (GA03 pattern).
   - Residual caveats: calibration trusts the player to follow
     each prompt; doing the opposite motion would learn that
     axis backwards. Fail-safes: nothing counts before all three
@@ -161,7 +161,7 @@ full text is here and in the README.
     appears before the return, with a 4-second non-return
     producing a spoken 「请回正」.
 - **The tuck-detection proxy, stated honestly (device
-  verification item, G06's flag carried over).** A chin tuck is
+  verification item, GA06's flag carried over).** A chin tuck is
   mostly a horizontal TRANSLATION, which an orientation sensor
   barely sees; there is no translation sensor API on this
   platform. This routine therefore detects the tuck as a SMALL
