@@ -1,7 +1,7 @@
 # Sky Watch — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series E02 (AMBIENT 环境型， second of the group, series #47): you hang
+series AM02 (AMBIENT 环境型， second of the group, series #47): you hang
 laundry or bedding out, go out, and never notice when the sky clouds
 over — you come home to everything soaked. This agent takes the sky
 watch off your hands: it registers the drying area before you go out,
@@ -77,16 +77,16 @@ when the brightness drops a lot, and closes with a session summary.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `light-change` (E01) is timed camera metering
+- Attention-series `light-change` (AM01) is timed camera metering
   plus a below-threshold lamp reminder. Sky-watch reuses the
   same brightness grading but registers a drying area first,
   adds timed sky-check reminders, and warns only on a big
   two-step drop — it never mentions a lamp.
-- Attention-series `eye-rest` (B01) is near-vision timing plus
+- Attention-series `eye-rest` (BO01) is near-vision timing plus
   a 20-minute look-far reminder plus a look-up confirm.
   Sky-watch times no gaze and asks for no look-up: it meters
   the sky on a timer and warns on a big brightness drop.
-- Attention-series `snack-aware` (B05) is a registered snack
+- Attention-series `snack-aware` (BO05) is a registered snack
   direction plus silent look counts. Sky-watch registers a
   drying direction too, but its counts are readings, timed
   reminders, cloud warnings and marked look-backs — not looks
