@@ -34,4 +34,5 @@
 - GA47 [odd-one-out](odd-one-out/) — 摆3同类1异类，先猜位置再拍照揭晓判定
 - GA48 [size-sort](size-sort/) — 摆3个同类物先排大小顺序，再拍照判定全序比对
 - GA49 [texture-hunt](texture-hunt/) — 每轮出一种质地，凑近实物表面拍照判质地
+- GA50 [snap-diff](snap-diff/) — 同场景两拍，先声明改动类再双图判定（系列收官）
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。
