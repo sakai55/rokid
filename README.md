@@ -61,7 +61,7 @@ GUIDE，它按角度差找出离你当前朝向最近的已登记出口，用大
   `ImageCapture.takePhoto({mode:'telephoto'})` 长焦拍一张标志
   照片当视觉记录（标注 record only）。朝向来源如实标注
   `SENSOR / DEMO / NONE`；无传感器时 MARK 直接拒绝，
-  绝不编造一个角度（同 #07 的规则）。
+  绝不编造一个角度（同 DI07 的规则）。
 
 ## 功能流程
 
