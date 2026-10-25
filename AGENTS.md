@@ -1,11 +1,11 @@
 # Follow Dot （追光点） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G10, Group B (head-as-controller):
+Head-movement mini-game series GA10, Group B (head-as-controller):
 a follow-the-dot game. Extreme simplicity: 3 states only (ready /
 playing / done), one page, one main button.
 
-Distinct from G05: G05 follows VOICE cues for clock positions;
+Distinct from GA05: GA05 follows VOICE cues for clock positions;
 this game follows a VISUAL dot — the dot's position on screen is
 the cue, and the voice only names it ("光点在左").
 
@@ -58,11 +58,11 @@ text is here and in the README.
   BOTH axes) before the next dot appears. If not returned within
   4 seconds, TTS prompts "请回正" and the grace timer resets —
   the grace counts nothing and the next dot is NEVER announced
-  until the return actually happens. This differs from G09's
+  until the return actually happens. This differs from GA09's
   advance-anyway grace, deliberately: the return rule is what
   keeps this game segmented, not a sweep. The final dot ends the
   game at once: there is no next dot for a return to gate.
-- **Calibration is two prompts, inside the playing state (G05's
+- **Calibration is two prompts, inside the playing state (GA05's
   pattern).** It is not a fourth page state and not a menu:
   START calibrates the center (head straight at START), then
   the playing screen shows "请低一下头" as its first
@@ -105,7 +105,7 @@ text is here and in the README.
   - return grace: 4 s, then TTS "请回正" and the timer resets;
     the next dot is never announced until the return happens
   - calibration stall re-prompt: 8 s, once per calibration step
-- **Formulas (fleet-consistent, G05's):**
+- **Formulas (fleet-consistent, GA05's):**
   - pitch = asin(2*(w*x - y*z)), clamped
   - yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees
   - Only the RELATIVE pitch/yaw vs the calibrated center are
@@ -114,10 +114,10 @@ text is here and in the README.
   (device verification items).**
   - DOWN: the first calibration prompt records the sign the
     head actually moves when asked to look down as DOWN; UP is
-    the opposite pitch sign (G01/G04 pattern).
+    the opposite pitch sign (GA01/GA04 pattern).
   - LEFT: the second calibration prompt records the sign the
     head actually moves when asked to turn left as LEFT; RIGHT
-    is the opposite yaw sign (G02 pattern).
+    is the opposite yaw sign (GA02 pattern).
   - Residual caveats: calibration trusts the player to follow
     each prompt; looking up instead of down would learn the
     pitch signs backwards, and turning right instead of left
