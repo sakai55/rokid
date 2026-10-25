@@ -179,7 +179,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 <tr><td><img src="https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square" alt="游戏"></td><td>头部动作小游戏系列：用头部动作玩的极简小游戏（GA01–GA20）</td></tr>
 <tr><td><img src="https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square" alt="直接冲突"></td><td>与眼镜默认能力<strong>直接冲突</strong>（冲突排查第一档，共 14 个）：本体就是默认能力，只加了一层小扭转</td></tr>
 <tr><td><img src="https://img.shields.io/badge/%E9%AB%98%E5%BA%A6%E9%87%8D%E5%8F%A0-F9A825?style=flat-square" alt="高度重叠"></td><td>与眼镜默认能力<strong>高度重叠</strong>（冲突排查第二档，共 40 个）：默认功能能完成大半，只剩一层薄闭环</td></tr>
-<tr><td><img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试"></td><td>既不直接冲突、也不高度重叠的 Agent 都是<strong>待测试</strong>（共 68 个），冲突与否等真机测试确认</td></tr>
+<tr><td><img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试"></td><td>既不直接冲突、也不高度重叠的 Agent 都是<strong>待测试</strong>（共 88 个），冲突与否等真机测试确认</td></tr>
 </table>
 
 基础项（`my-agent`、`glasses-benchmark`）没有任何徽章。
@@ -200,6 +200,7 @@ aix preview .                               # 本地预览（起服务 / --html-
   - `AM` = **环境型 AMBIENT**：替你留意光线、天色、噪音等环境变化，目录 `ambient/`
 - **`CC01`–`CC20`**：**路缘坡系列**（20 个）——先为一类特殊人群解决一个具体难题，再溢出到处在情境性障碍中的普通人；编号取 Curb Cut 的首字母 **CC**。目录：`curb-cut/`
 - **`GA01`–`GA20`**：**头部动作小游戏系列**（20 个，编号取 Game 的前两个字母）——用头部动作玩的极简小游戏，含语音指导的颈部分段活动（只分段、必回正、不转圈）。目录：`games/`
+- **`JP01`–`JP10` / `KR01`–`KR10`**：**日韩本地化系列**（20 个）——按日本、韩国各自的在地制度与礼仪设计，编号取国家通行缩写 JP / KR。目录：`japan/`、`korea/`
 
 
 <table>
