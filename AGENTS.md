@@ -1,7 +1,7 @@
 # Last Glance — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series C01 (COVER 覆盖型， first of the group): the leave-the-room archive
+series CO01 (COVER 覆盖型， first of the group): the leave-the-room archive
 for the walk-away worry — hotel room, seat, campsite — where the question
 "did I leave anything / close the window" returns the moment you have
 walked too far to check cheaply.
