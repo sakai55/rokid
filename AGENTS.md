@@ -1,7 +1,7 @@
 # Light Change — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series E01 (AMBIENT 环境型， first of the group, series #46): you get so
+series AM01 (AMBIENT 环境型， first of the group, series #46): you get so
 absorbed in reading or handwork that night falls and you are still
 working in dim light without noticing. This agent takes the light
 watch off your hands: it meters the light on a timer, warns in view
@@ -58,15 +58,15 @@ when it drops below threshold, and closes with a session summary.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `room-sweep` (C02) is the pre-leaving room
+- Attention-series `room-sweep` (CO02) is the pre-leaving room
   sweep: look at each item in turn and confirm it before you
   go out. Light-change photographs nothing for confirmation:
   its only photo use is a brightness grade, discarded at once.
-- Attention-series `eye-rest` (B01) is near-vision timing plus
+- Attention-series `eye-rest` (BO01) is near-vision timing plus
   a 20-minute look-far reminder plus a look-up confirm.
   Light-change times no gaze and asks for no look-up: it
   meters light on a timer and reminds you to turn the lamp on.
-- Attention-series `snack-aware` (B05) is a registered snack
+- Attention-series `snack-aware` (BO05) is a registered snack
   direction plus silent look counts. Light-change registers
   no direction and counts no looks: it meters light and
   counts reminders and lamp confirms.
@@ -134,6 +134,6 @@ anyone is.
   a live watch — the timer is stopped in DEMO so staged
   frames cannot drift, and the readings are staged grades.
   Idle DEMO band probed at y170-185 (x=66); y150-165 miss and
-  y190 hits NEXT (EVT focus only, a fake hit). Unlike B01,
+  y190 hits NEXT (EVT focus only, a fake hit). Unlike BO01,
   the band did not shift across states here: y170 drove all
   six DEMO stages, each frame eye-verified.
