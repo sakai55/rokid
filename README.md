@@ -171,35 +171,35 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 **徽章说明**：
 
-<img src="https://img.shields.io/badge/DI01-24292F?style=flat-square" alt="DI01" height="30">
+<img src="assets/badges/badge-di01.svg" alt="DI01">
 
 唯一编号：前两个字母是分类，后两位是组内序号
 
-<img src="https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square" alt="指向性" height="30">
+<img src="assets/badges/badge-directional.svg" alt="指向性">
 
 指向性系列：用视线同轴、头部朝向解决生活问题
 
-<img src="https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square" alt="注意力" height="30">
+<img src="assets/badges/badge-attention.svg" alt="注意力">
 
 注意力外挂系列：把持续占用的注意力外包给眼镜
 
-<img src="https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square" alt="路缘坡" height="30">
+<img src="assets/badges/badge-curbcut.svg" alt="路缘坡">
 
 路缘坡系列：先为特殊人群解决难题，再溢出到普通人
 
-<img src="https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square" alt="游戏" height="30">
+<img src="assets/badges/badge-game.svg" alt="游戏">
 
 头部动作小游戏系列：用头部动作玩的极简小游戏
 
-<img src="https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square" alt="直接冲突" height="30">
+<img src="assets/badges/badge-conflict.svg" alt="直接冲突">
 
 与眼镜默认能力<strong>直接冲突</strong>：本体就是默认能力，只加了一层小扭转
 
-<img src="https://img.shields.io/badge/%E9%AB%98%E5%BA%A6%E9%87%8D%E5%8F%A0-F9A825?style=flat-square" alt="高度重叠" height="30">
+<img src="assets/badges/badge-overlap.svg" alt="高度重叠">
 
 与眼镜默认能力<strong>高度重叠</strong>：默认功能能完成大半，只剩一层薄闭环
 
-<img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试" height="30">
+<img src="assets/badges/badge-pending.svg" alt="待测试">
 
 既不直接冲突、也不高度重叠，冲突与否等真机测试确认
 
