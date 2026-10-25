@@ -1,7 +1,7 @@
 # Standup Echo — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series S04 (SOCIAL 社交型， fourth of the group, series #39): the daily
+series SO04 (SOCIAL 社交型， fourth of the group, series #39): the daily
 standup before your turn is mostly other people's progress, and the item
 that is actually related to you slips past unheard. This agent takes the
 filtering off your hands: it listens through the standup, lights up only
@@ -73,20 +73,20 @@ post-meeting review can show.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `meeting-filter` (F04) is the meeting
+- Attention-series `meeting-filter` (FI04) is the meeting
   keyword gate with a 10-second pre-hit replay buffer: it
   replays what was said just before a keyword hit. Standup-echo
   keeps no rolling buffer and replays nothing mid-meeting:
   its non-hits become one-line digest rows for a post-meeting
   review, and its hits are notes, not replay triggers.
-- Attention-series `elder-ear` (S03) is the elder-chat
+- Attention-series `elder-ear` (SO03) is the elder-chat
   reminder catcher: keyword hits become a list that is read
   aloud after the chat for confirmation. Standup-echo borrows
   the gate shape but is not a confirmation tool: its hits
   are module-related notes, its non-hits are kept (not
   discarded) as digest rows, and its close is a visual
   review, not a spoken replay.
-- Attention-series `chat-catchup` (S01) is the mid-conversation
+- Attention-series `chat-catchup` (SO01) is the mid-conversation
   silent catch-up: a rolling caption buffer served on HELP.
   Standup-echo keeps no rolling buffer and serves nothing
   mid-standup: it files hits and digest rows, stays silent
