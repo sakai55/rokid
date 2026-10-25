@@ -174,14 +174,14 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 | 徽章 | 种类 | 含义 |
 |---|---|
-| ![Z01](https://img.shields.io/badge/Z01-24292F?style=flat-square) | 编号徽章（深灰） | 这个 Agent 的唯一编号（此处以 `Z01` 为例），字母 = 系列 / 分组，数字 = 组内序号；每行第一个徽章 |
-| ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | 系列徽章（蓝） | 指向性系列：利用视线同轴、头部朝向等指向性能力解决生活问题（Z01–Z50） |
-| ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | 系列徽章（紫） | 注意力外挂系列：把持续占用的注意力外包给眼镜（W/H/C/F/D/R/P/S/B/E 各 01–05） |
-| ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) | 系列徽章（橙） | 路缘坡系列：先为一类特殊人群解决一个具体难题，再溢出到情境性障碍中的普通人（K01–K20） |
-| ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | 系列徽章（绿） | 头部动作小游戏系列：用头部动作玩的极简小游戏（G01–G20） |
-| ![直接冲突](https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square) | 冲突状态徽章（红） | 与眼镜默认能力**直接冲突**（冲突排查第一档，共 14 个）：本体就是默认能力，只加了一层小扭转 |
-| ![高度重叠](https://img.shields.io/badge/%E9%AB%98%E5%BA%A6%E9%87%8D%E5%8F%A0-F9A825?style=flat-square) | 冲突状态徽章（黄） | 与眼镜默认能力**高度重叠**（冲突排查第二档，共 40 个）：默认功能能完成大半，只剩一层薄闭环 |
-| ![待测试](https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square) | 冲突状态徽章（蓝灰） | 与上两行同一序列的第三种状态：既不直接冲突、也不高度重叠的 Agent 都是**待测试**（共 68 个），冲突与否等真机测试确认 |
+| ![Z01](https://img.shields.io/badge/Z01-24292F?style=flat-square) | 编号徽章 | 这个 Agent 的唯一编号（此处以 `Z01` 为例），字母 = 系列 / 分组，数字 = 组内序号；每行第一个徽章 |
+| ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | 系列徽章 | 指向性系列：利用视线同轴、头部朝向等指向性能力解决生活问题（Z01–Z50） |
+| ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | 系列徽章 | 注意力外挂系列：把持续占用的注意力外包给眼镜（W/H/C/F/D/R/P/S/B/E 各 01–05） |
+| ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) | 系列徽章 | 路缘坡系列：先为一类特殊人群解决一个具体难题，再溢出到情境性障碍中的普通人（K01–K20） |
+| ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | 系列徽章 | 头部动作小游戏系列：用头部动作玩的极简小游戏（G01–G20） |
+| ![直接冲突](https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square) | 冲突状态徽章 | 与眼镜默认能力**直接冲突**（冲突排查第一档，共 14 个）：本体就是默认能力，只加了一层小扭转 |
+| ![高度重叠](https://img.shields.io/badge/%E9%AB%98%E5%BA%A6%E9%87%8D%E5%8F%A0-F9A825?style=flat-square) | 冲突状态徽章 | 与眼镜默认能力**高度重叠**（冲突排查第二档，共 40 个）：默认功能能完成大半，只剩一层薄闭环 |
+| ![待测试](https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square) | 冲突状态徽章 | 与上两行同一序列的第三种状态：既不直接冲突、也不高度重叠的 Agent 都是**待测试**（共 68 个），冲突与否等真机测试确认 |
 
 基础项（`my-agent`、`glasses-benchmark`）没有任何徽章。
 读例：`gaze-translate` 行尾的 ![Z01](https://img.shields.io/badge/Z01-24292F?style=flat-square) ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) ![直接冲突](https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square) = 编号 Z01 · 指向性系列 · 与默认能力直接冲突；`drop-search` 行尾的 ![K01](https://img.shields.io/badge/K01-24292F?style=flat-square) ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) ![待测试](https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square) = 编号 K01 · 路缘坡系列 · 冲突与否待测试。
