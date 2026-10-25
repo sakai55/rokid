@@ -1,7 +1,7 @@
 # Code Hold — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series H02 (HOLD 默念型）: a hear-it-once keeper for the codes of daily
+series HO02 (HOLD 默念型）: a hear-it-once keeper for the codes of daily
 life — a friend's WiFi password, a temporary door-lock code, a meeting
 number — dictated to you once and gone from your head before you reach
 the keyboard.
@@ -50,7 +50,7 @@ the keyboard.
   once. Any other action (or 6 s) disarms. BURN on the confirm screen
   discards the unstored pending in one tap (it was never saved).
 - **Nod is SPEAK only in this agent — a deliberate difference from
-  H01.** number-catch's PLAN sanctioned a two-step nod clear; here the
+  HO01.** number-catch's PLAN sanctioned a two-step nod clear; here the
   brief and the stakes differ: a head movement must never delete a
   code the wearer may still need mid-typing. A steady nod reads the
   current chunk (show) or the label summary (list); in confirm it
