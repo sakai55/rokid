@@ -1,7 +1,7 @@
 # Door Watch — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series W05 (WATCH 守望型）: a door watcher for people working in an inner
+series WA05 (WATCH 守望型）: a door watcher for people working in an inner
 room or wearing headphones, who otherwise hear the doorbell, a knock or a
 delivery only by luck.
 
