@@ -1,6 +1,6 @@
 # 头部动作小游戏（games/）
 
-头部动作小游戏系列 · 编号 GA01–GA22，共 22 个。用头部动作玩的极简小游戏。
+头部动作 + 拍照现实交互小游戏系列 · 编号 GA01–GA50：头部动作 GA01–GA40 与拍照游戏 GA41–GA50。用头部动作或拍照与现实互动玩的极简小游戏。
 
 - GA01 [nod-count](nod-count/) — 语音指导10次慢速点头，低头回正算一次
 - GA02 [turn-count](turn-count/) — 语音指导左右转头交替，各5次满10次
@@ -24,5 +24,5 @@
 - GA20 [daily-routine](daily-routine/) — 点头转头贴耳仰低收下巴，一套2分钟走完
 - GA21 [angle-match](angle-match/) — 报一边一个角度，转进±5度带停稳算对上
 - GA22 [tilt-match](tilt-match/) — 贴耳对小角度，进±5度带停稳算对上
-
+- GA41 [snap-hunt](snap-hunt/) — 屏幕出目标物，在真实环境里找到拍照，大模型判有没有
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。
