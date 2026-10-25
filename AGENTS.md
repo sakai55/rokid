@@ -1,7 +1,7 @@
 # Day Lookback — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series R01 (REVIEW 回顾型， first of the group): in the evening, replay
+series RE01 (REVIEW 回顾型， first of the group): in the evening, replay
 the day as an attention timeline — every gaze you registered during the
 day (a scene, a number, a promise) with its time and the direction you
 were facing, in time order, filterable by type, then a summary.
@@ -65,18 +65,18 @@ were facing, in time order, filterable by type, then a summary.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `last-glance` (C01) is the leaving-archive
+- Attention-series `last-glance` (CO01) is the leaving-archive
   template: it photographs zones on leaving and replays them.
   Day-lookback photographs nothing: its "scenes" are sentences
   you picked, and its timeline covers the whole day, not one
   departure.
-- Attention-series `talk-replay` (R02, next) is the
+- Attention-series `talk-replay` (RE02, next) is the
   conversation-replay template: it will replay a talk's
   subtitles filtered to promises + numbers + deadlines.
   Day-lookback is not a talk: it has no subtitles, no speakers
   and no deadlines — its entries are gazes you marked, typed
   画面 / 数字 / 承诺.
-- Attention-series `queue-roam` (D05) is the sibling template:
+- Attention-series `queue-roam` (DU05) is the sibling template:
   same nod discipline, same zero-persistence rule, same DEMO
   five-stage arc, same button-band layout — but its gate is a
   ticket number and its reminder is a number gap. Day-lookback
