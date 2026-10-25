@@ -174,7 +174,7 @@ export default {
 
   // The talk clock runs on accumulated 500 ms ticks, not on repeated
   // Date samples (the preview host's clock drifts between samples -
-  // same discipline as #38 / #42). Elapsed and pace both read ticks.
+  // same discipline as DI38 / DI42). Elapsed and pace both read ticks.
   _startTimer() {
     if (this._timer) return;
     var self = this;
@@ -467,7 +467,7 @@ export default {
   },
 
   _appendDictated(txt) {
-    // Your words are stored VERBATIM (trimmed only, like #21/#36/#37):
+    // Your words are stored VERBATIM (trimmed only, like DI21/DI36/DI37):
     // the prompter must show exactly what you said, never a rewrite.
     var startedOwn = false;
     if (!this._ownScript) {
