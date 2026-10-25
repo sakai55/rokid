@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI probe - sustained video stream, recording and frame-to-LLM latency","main":"app.js","name":"stream-probe","version":"1.0.0"}
