@@ -1,11 +1,11 @@
 # Nod Catch （点头接球） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G08: a nod-catch timing game,
+Head-movement mini-game series GA08: a nod-catch timing game,
 Group B (head-as-controller). Extreme simplicity: 3 states only
 (ready / playing / done), one page, one main button.
 
-Distinct from Group A (G01–G06) and from G07: those games count
+Distinct from Group A (GA01–GA06) and from GA07: those games count
 head motions or stillness. This game times a nod against a
 falling ball — the head is a timing controller, not an exercise
 motion, and the only head action is one gentle nod per ball.
@@ -52,7 +52,7 @@ and in the README.
   `onHeadGesture('nod')`, officially documented for `'nod'` —
   this is the one game family where the nod event is the action,
   so it is the primary catch signal and it catches gentle nods.
-  FALLBACK: pitch from `AbsoluteOrientationSensor` (G01
+  FALLBACK: pitch from `AbsoluteOrientationSensor` (GA01
   formula, relative to the center calibrated at round start):
   pitch down past ~20 deg and back inside 10 deg counts as one
   fallback nod, for hosts that do not deliver the nod event. A
@@ -104,13 +104,13 @@ and in the README.
   verdict ALWAYS uses the exact progress window 35%–65%, never
   the row — the row is an approximation for the eye, not the
   judge.
-- **Pitch formula (same as G01, fleet-consistent):**
+- **Pitch formula (same as GA01, fleet-consistent):**
   `pitch = asin(2*(w*x - y*z))`, clamped, from the sensor
   quaternion, in degrees. Only the RELATIVE pitch vs the
   calibrated center is used, so the host's absolute zero never
   matters.
 - **DOWN-SIGN ASSUMPTION — device verification item (same as
-  G01).** Head-down is taken as negative relative pitch. If the
+  GA01).** Head-down is taken as negative relative pitch. If the
   first device test shows the sign inverted, the fallback
   simply never fires — it fails safe as "no fallback catch",
   never as a wrong catch — while the primary nod event still
