@@ -1,0 +1,7 @@
+{
+  "dependencies": {},
+  "description": "Size-sorting photo game GA48 for Rokid glasses: four rounds (cups, books, bottles, shoes). Line up three of a kind, first call their big-to-small order as a position sequence (locked before the photo), then snap: the host LLM returns the order it sees (ORDER) and a local exact compare scores the round. Camera only.",
+  "main": "app.js",
+  "name": "size-sort",
+  "version": "1.0.0"
+}
