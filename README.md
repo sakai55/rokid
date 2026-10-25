@@ -167,10 +167,10 @@ aix preview .                               # 本地预览（起服务 / --html-
 全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾，表格按完成顺序排列，不按编号排序）。
 每个 Agent 的真机状态、提审资料看它自己目录里的 README。
 
-**编号怎么读：数字前的字母 = 它所属的系列 / 分组，数字 = 该组内的序号。**
+**编号怎么读：数字前的字母 = 它所属的系列 / 分组，数字 = 该组内的序号。全表编号唯一：每个字母只属于一个系列，同一编号只出现一次**（基础项 `my-agent` / `glasses-benchmark` 不编号，记作 `—`）。
 
 - **无字母（`—`）**：基础项，不属于任何系列——`my-agent` 是官方脚手架示例，`glasses-benchmark` 是眼镜全功能自检工具。
-- **纯数字 `01`–`50`**：**指向性系列**（50 个）——利用眼镜的视线同轴、头部朝向等指向性能力，一个 Agent 解决一个生活问题；编号内部再分 A–J 十组生活场景，但编号本身不带字母。
+- **`Z01`–`Z50`**：**指向性系列**（50 个）——利用眼镜的视线同轴、头部朝向等指向性能力，一个 Agent 解决一个生活问题；`Z` 取「指向」拼音首字母（英文 Directional 的 `D` 已被注意力并行型占用，故不用 `D`），编号内部再分 A–J 十组生活场景。2026-10-25 由原纯数字 `01`–`50` 改为 Z 编号。
 - **字母 + `01`–`05`**：**注意力外挂系列**（50 个，10 组 × 5）——把人原本要持续占用的注意力外包给眼镜，字母是外包类型的英文首字母：
   - `W` = **守望型 WATCH**：替你持续盯着一个信号（锅、叫号、门铃）
   - `H` = **默念型 HOLD**：替你记住要反复默念的号码、口令、清单、路线
@@ -182,64 +182,63 @@ aix preview .                               # 本地预览（起服务 / --html-
   - `S` = **社交型 SOCIAL**：替你分担待客、倾听、记人情的社交注意力
   - `B` = **身体型 BODY**：替你留意眼睛、喝水、呼吸、久坐等身体信号
   - `E` = **环境型 AMBIENT**：替你留意光线、天色、噪音等环境变化（取 Environment 的 `E`）
-- **`C01`–`C20`（另一套）**：**路缘坡系列**（20 个）——先为一类特殊人群解决一个具体难题，再溢出到处在情境性障碍中的普通人；这里的 `C` 是 **Curb Cut（路缘坡）** 的首字母。
-  > ⚠️ **`C` 有重号**：注意力系列的覆盖型和路缘坡系列都用 `C` 开头，`C01`–`C05` 在表里各出现两次。同号时靠 slug 区分：`last-glance`、`room-sweep`、`proof-sweep`、`pack-sweep`、`shelf-sweep` 是注意力覆盖型；`drop-search`、`my-bus-watch` 等是路缘坡系列。`C06` 以后只有路缘坡系列。
+- **`K01`–`K20`**：**路缘坡系列**（20 个）——先为一类特殊人群解决一个具体难题，再溢出到处在情境性障碍中的普通人；`K` 取路缘的英式拼法 **Kerb**（Curb Cut 的 curb 英式拼作 kerb）。2026-10-25 由原 `C01`–`C20` 改为 K 编号——`C` 从此只属于注意力覆盖型，全表不再重号。
 - **`G01`–`G20`**：**头部动作小游戏系列**（20 个，`G` = Game）——用头部动作玩的极简小游戏，含语音指导的颈部分段活动（只分段、必回正、不转圈）。
 
 | # | Agent | 一句话说明 | 导入分支 |
 |---|---|---|---|
 | — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
 | — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-badge-reader` |
-| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-teleprompter-gaze` |
-| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-site-patrol` |
-| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-elder-day` |
+| Z01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-gaze-translate` |
+| Z02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-shelf-compare` |
+| Z03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-expiry-check` |
+| Z04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-plant-doctor` |
+| Z05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-manual-lens` |
+| Z06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-head-nav` |
+| Z07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-find-my-thing` |
+| Z08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-meet-point` |
+| Z09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-parking-return` |
+| Z10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-exit-radar` |
+| Z11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-cook-along` |
+| Z12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-repair-buddy` |
+| Z13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-assemble-guide` |
+| Z14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-garden-hands` |
+| Z15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-baby-care-hands` |
+| Z16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-sound-compass` |
+| Z17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-far-ear` |
+| Z18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-cry-watch` |
+| Z19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-name-call` |
+| Z20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-ambient-captions` |
+| Z21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-market-radar` |
+| Z22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-allergen-guard` |
+| Z23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-fresh-pick` |
+| Z24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-outfit-check` |
+| Z25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-receipt-keeper` |
+| Z26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-home-find` |
+| Z27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-meter-reader` |
+| Z28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-home-patrol` |
+| Z29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-parcel-sort` |
+| Z30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-clean-check` |
+| Z31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-med-look` |
+| Z32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-posture-guard` |
+| Z33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-fall-guard` |
+| Z34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-cross-street` |
+| Z35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-food-safe` |
+| Z36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-word-look` |
+| Z37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-story-look` |
+| Z38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-memory-anchor` |
+| Z39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-board-capture` |
+| Z40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-homework-lens` |
+| Z41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-sign-reader` |
+| Z42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-transit-direction` |
+| Z43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-hotel-checkin` |
+| Z44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-photo-level` |
+| Z45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-queue-sense` |
+| Z46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-speaker-focus` |
+| Z47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-badge-reader` |
+| Z48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-teleprompter-gaze` |
+| Z49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-site-patrol` |
+| Z50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-elder-day` |
 | W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-stove-watch` |
 | W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-bath-watch` |
 | W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-laundry-watch` |
@@ -250,7 +249,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 | H03 | [voice-list](voice-list/) | 复述成清单挂在视线里，看向货架逐项点头勾掉 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-voice-list` |
 | H04 | [route-hold](route-hold/) | 复述问路线路存步骤，走时只显示当前一步点头前进 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-route-hold` |
 | H05 | [seat-catch](seat-catch/) | 拍票根存座位号，逐排逐座只报相对差 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-seat-catch` |
-| C01 | [drop-search](drop-search/) | 掉落小物脚边 6 区逐区手摸，查完才报没找到 ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) | `agent-drop-search` |
+| K01 | [drop-search](drop-search/) | 掉落小物脚边 6 区逐区手摸，查完才报没找到 ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) | `agent-drop-search` |
 | C01 | [last-glance](last-glance/) | 离开前环视存档最后画面，焦虑时按区回放 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-last-glance` |
 | C02 | [room-sweep](room-sweep/) | 睡前逐项巡房确认打勾，漏项按方位提醒补看 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-room-sweep` |
 | C03 | [proof-sweep](proof-sweep/) | 逐行指读记进度，跳行漏段当场提醒给覆盖率 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-proof-sweep` |
@@ -277,7 +276,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 | P04 | [cue-bag](cue-bag/) | 看向要背的包触发清单，逐项看向格层确认装入 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-cue-bag` |
 | P05 | [cue-mirror](cue-mirror/) | 看向镜子亮三行，逐行确认已读，提前结束报未读 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-cue-mirror` |
 | S01 | [chat-catchup](chat-catchup/) | 谈话走神摇头求助，眼前给最近15秒要点摘要 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-chat-catchup` |
-| C02 | [my-bus-watch](my-bus-watch/) | 只守登记的一路公交，拍车头核线路号报上车与否 ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) | `agent-my-bus-watch` |
+| K02 | [my-bus-watch](my-bus-watch/) | 只守登记的一路公交，拍车头核线路号报上车与否 ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) | `agent-my-bus-watch` |
 | S02 | [guest-watch](guest-watch/) | 客人逐位看向登记座位，定时提醒回看茶水位 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-guest-watch` |
 | S03 | [elder-ear](elder-ear/) | 守听老人聊天，叮嘱句存清单聊完复述 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-elder-ear` |
 | S04 | [standup-echo](standup-echo/) | 守听站会只亮关联句，未命中默记摘要会后查 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-standup-echo` |
