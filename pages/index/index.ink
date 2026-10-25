@@ -120,7 +120,7 @@ export default {
   _pad2(n) { return (n < 10 ? '0' : '') + n; },
 
   // ONE clock snapshot -> {date, time} as pure strings (same lesson
-  // as #25/#38: the preview host's Date is virtualised and drifts
+  // as DI25/DI38: the preview host's Date is virtualised and drifts
   // between calls, so one capture's date + time come from one read).
   _stamp() {
     var d = new Date();
@@ -168,7 +168,7 @@ export default {
     ];
   },
 
-  // ---------- heading (AbsoluteOrientationSensor, same as #07/#26/#38) ----------
+  // ---------- heading (AbsoluteOrientationSensor, same as DI07/DI26/DI38) ----------
 
   _startHeading() {
     var Ctor = typeof AbsoluteOrientationSensor !== 'undefined' ? AbsoluteOrientationSensor : null;
@@ -551,7 +551,7 @@ export default {
     var self = this;
     this.setData({ busy: true, micLine: 'MIC CHECK: checking wearer mic...' });
     // Wearer-mode mic AVAILABILITY check (same documented pattern as
-    // #21/#36/#38): open the wearer-mode stream, read back its
+    // DI21/DI36/DI38): open the wearer-mode stream, read back its
     // settings, stop every track at once. The check stream is NOT
     // the recognition input and does not shape what recognition
     // hears - the host SpeechRecognition below listens on its own
@@ -703,7 +703,7 @@ export default {
       this._demo = true;
     }
     // Seed time derives from ONE Date snapshot as pure arithmetic,
-    // so it stays self-consistent on any host clock (#25 lesson).
+    // so it stays self-consistent on any host clock (DI25 lesson).
     var snap = new Date();
     var dateStr = snap.getFullYear() + '-' + this._pad2(snap.getMonth() + 1) + '-' + this._pad2(snap.getDate());
     var timeStr = this._pad2(snap.getHours()) + ':' + this._pad2(snap.getMinutes());
