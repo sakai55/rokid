@@ -190,114 +190,125 @@ aix preview .                               # 本地预览（起服务 / --html-
 |---|---|---|---|
 | — | [my-agent](my-agent/) | 官方脚手架示例，点击切换中英文问候 | `agent-my-agent` |
 | — | [glasses-benchmark](glasses-benchmark/) | 眼镜全功能自检，21 项一键跑完出结果 | `agent-glasses-benchmark` |
-| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 | `agent-gaze-translate` |
-| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 | `agent-shelf-compare` |
-| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 | `agent-expiry-check` |
-| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 | `agent-plant-doctor` |
-| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 | `agent-manual-lens` |
-| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 | `agent-head-nav` |
-| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 | `agent-find-my-thing` |
-| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 | `agent-meet-point` |
-| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 | `agent-parking-return` |
-| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 | `agent-exit-radar` |
-| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 | `agent-cook-along` |
-| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 | `agent-repair-buddy` |
-| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 | `agent-assemble-guide` |
-| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 | `agent-garden-hands` |
-| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 | `agent-baby-care-hands` |
-| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 | `agent-sound-compass` |
-| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 | `agent-far-ear` |
-| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 | `agent-cry-watch` |
-| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 | `agent-name-call` |
-| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 | `agent-ambient-captions` |
-| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 | `agent-market-radar` |
-| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 | `agent-allergen-guard` |
-| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 | `agent-fresh-pick` |
-| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 | `agent-outfit-check` |
-| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 | `agent-receipt-keeper` |
-| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 | `agent-home-find` |
-| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 | `agent-meter-reader` |
-| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 | `agent-home-patrol` |
-| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 | `agent-parcel-sort` |
-| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 | `agent-clean-check` |
-| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 | `agent-med-look` |
-| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 | `agent-posture-guard` |
-| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 | `agent-fall-guard` |
-| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 | `agent-cross-street` |
-| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 | `agent-food-safe` |
-| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 | `agent-word-look` |
-| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 | `agent-story-look` |
-| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 | `agent-memory-anchor` |
-| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 | `agent-board-capture` |
-| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 | `agent-homework-lens` |
-| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 | `agent-sign-reader` |
-| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 | `agent-transit-direction` |
-| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 | `agent-hotel-checkin` |
-| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 | `agent-photo-level` |
-| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 | `agent-queue-sense` |
-| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 | `agent-speaker-focus` |
-| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 | `agent-badge-reader` |
-| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 | `agent-teleprompter-gaze` |
-| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 | `agent-site-patrol` |
-| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 | `agent-elder-day` |
-| W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 | `agent-stove-watch` |
-| W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 | `agent-bath-watch` |
-| W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 | `agent-laundry-watch` |
-| W04 | [signal-watch](signal-watch/) | 医院/银行/取餐叫号，大屏节律提醒回看，差3号喊你准备 | `agent-signal-watch` |
-| W05 | [door-watch](door-watch/) | 里屋开会戴耳机，守听门铃敲门快递叫你回看 | `agent-door-watch` |
-| H01 | [number-catch](number-catch/) | 号码拍下放大核对，常驻视线内不用默念 | `agent-number-catch` |
-| H02 | [code-hold](code-hold/) | 临时码复述存住，要输入时逐段显示 | `agent-code-hold` |
-| H03 | [voice-list](voice-list/) | 复述成清单挂在视线里，看向货架逐项点头勾掉 | `agent-voice-list` |
-| H04 | [route-hold](route-hold/) | 复述问路线路存步骤，走时只显示当前一步点头前进 | `agent-route-hold` |
-| H05 | [seat-catch](seat-catch/) | 拍票根存座位号，逐排逐座只报相对差 | `agent-seat-catch` |
-| C01 | [drop-search](drop-search/) | 掉落小物脚边 6 区逐区手摸，查完才报没找到 | `agent-drop-search` |
-| C01 | [last-glance](last-glance/) | 离开前环视存档最后画面，焦虑时按区回放 | `agent-last-glance` |
-| C02 | [room-sweep](room-sweep/) | 睡前逐项巡房确认打勾，漏项按方位提醒补看 | `agent-room-sweep` |
-| C03 | [proof-sweep](proof-sweep/) | 逐行指读记进度，跳行漏段当场提醒给覆盖率 | `agent-proof-sweep` |
-| C04 | [pack-sweep](pack-sweep/) | 清单逐件看向登记，出门前点名没装的那几件 | `agent-pack-sweep` |
-| C05 | [shelf-sweep](shelf-sweep/) | 货架分层分段记已扫格，没扫的格点名提醒 | `agent-shelf-sweep` |
-| F01 | [focus-shield](focus-shield/) | 只放行白名单声音，其余只记时间线休息时摘要 | `agent-focus-shield` |
-| F02 | [sign-filter](sign-filter/) | 先声明目标，扫街只亮匹配的牌 | `agent-sign-filter` |
-| F03 | [buy-filter](buy-filter/) | 清单预算忌口三条件，只亮符合商品 | `agent-buy-filter` |
-| F04 | [meeting-filter](meeting-filter/) | 守听长会，命中名字关键词才亮屏 | `agent-meeting-filter` |
-| F05 | [lecture-filter](lecture-filter/) | 守听课堂，信号句命中即存笔记 | `agent-lecture-filter` |
-| D01 | [play-watch](play-watch/) | 游乐场副线定时提醒回看，未确认逐级升级 | `agent-play-watch` |
-| D02 | [bag-watch](bag-watch/) | 行李副线定时提醒回看，离开门未确认喊停 | `agent-bag-watch` |
-| D03 | [dog-walk](dog-walk/) | 遛狗副线狗停当场定性，回家门逐项核对才放行 | `agent-dog-walk` |
-| D04 | [tour-watch](tour-watch/) | 跟团副线只捞集合句，快到点按朝向提醒归队 | `agent-tour-watch` |
-| D05 | [queue-roam](queue-roam/) | 取号副线守听叫号，距5号内叫你回去等着 | `agent-queue-roam` |
-| R01 | [day-lookback](day-lookback/) | 白天凝视按时间朝向排线，晚上顺线复盘 | `agent-day-lookback` |
-| R02 | [talk-replay](talk-replay/) | 谈话字幕按说话方朝向，回放只列承诺数字期限 | `agent-talk-replay` |
-| R03 | [shop-replay](shop-replay/) | 犹豫商品按店面朝向存档，回放比价钉最便宜 | `agent-shop-replay` |
-| R04 | [route-replay](route-replay/) | 路上登记危险点，次日出门按序预告 | `agent-route-replay` |
-| R05 | [attention-diary](attention-diary/) | 一天注意力被谁偷走，一张账单说清 | `agent-attention-diary` |
-| P01 | [cue-door](cue-door/) | 看向大门触发清单，逐项确认全过才放行 | `agent-cue-door` |
-| P02 | [cue-fridge](cue-fridge/) | 看向冰箱触发清单，拿一样勾一样关门报漏拿 | `agent-cue-fridge` |
-| P03 | [cue-desk](cue-desk/) | 看向书桌亮今日三件事，起身按未完成给续接句 | `agent-cue-desk` |
-| P04 | [cue-bag](cue-bag/) | 看向要背的包触发清单，逐项看向格层确认装入 | `agent-cue-bag` |
-| P05 | [cue-mirror](cue-mirror/) | 看向镜子亮三行，逐行确认已读，提前结束报未读 | `agent-cue-mirror` |
-| S01 | [chat-catchup](chat-catchup/) | 谈话走神摇头求助，眼前给最近15秒要点摘要 | `agent-chat-catchup` |
-| C02 | [my-bus-watch](my-bus-watch/) | 只守登记的一路公交，拍车头核线路号报上车与否 | `agent-my-bus-watch` |
-| S02 | [guest-watch](guest-watch/) | 客人逐位看向登记座位，定时提醒回看茶水位 | `agent-guest-watch` |
-| S03 | [elder-ear](elder-ear/) | 守听老人聊天，叮嘱句存清单聊完复述 | `agent-elder-ear` |
-| S04 | [standup-echo](standup-echo/) | 守听站会只亮关联句，未命中默记摘要会后查 | `agent-standup-echo` |
-| S05 | [gift-clue](gift-clue/) | 日常聊天默记想要句成线索卡，按人回放 | `agent-gift-clue` |
-| B01 | [eye-rest](eye-rest/) | 头稳凝视近处满20分钟提醒远眺，抬头确认 | `agent-eye-rest` |
-| G01 | [nod-count](nod-count/) | 语音指导10次慢速点头，低头回正算一次 | `agent-nod-count` |
-| G02 | [turn-count](turn-count/) | 语音指导左右转头交替，各5次满10次 | `agent-turn-count` |
-| B02 | [water-watch](water-watch/) | 久未看向水杯亮屏提醒喝水，凝视确认 | `agent-water-watch` |
-| G03 | [ear-tilt](ear-tilt/) | 左右贴耳各3次，稳住5秒才算一次 | `agent-ear-tilt` |
-| G04 | [stretch-hold](stretch-hold/) | 仰头低头交替拉伸，各保持5秒各3次 | `agent-stretch-hold` |
-| B03 | [breath-pace](breath-pace/) | 视线内呼吸节拍光点，跟着看就行 | `agent-breath-pace` |
-| G05 | [neck-clock](neck-clock/) | 按报出的时钟点位转头，每点必回正 | `agent-neck-clock` |
-| B04 | [stand-move](stand-move/) | 久坐超阈值提醒起身，环视一圈作确认 | `agent-stand-move` |
-| G06 | [chin-tuck](chin-tuck/) | 下巴小幅后收保持5秒，8次收下巴操 | `agent-chin-tuck` |
-| B05 | [snack-aware](snack-aware/) | 看向零食先亮今天第几次，吃不吃你决定 | `agent-snack-aware` |
-| G07 | [steady-hold](steady-hold/) | 头稳住不动满10秒胜，动了重计 | `agent-steady-hold` |
-| E01 | [light-change](light-change/) | 相机定时测光，光线暗了提醒开灯 | `agent-light-change` |
-| G08 | [nod-catch](nod-catch/) | 10 个球下落，点头踩线接住计分 | `agent-nod-catch` |
-| E02 | [sky-watch](sky-watch/) | 登记晾晒区，定时回看天空云变预警 | `agent-sky-watch` |
-| G09 | [turn-dodge](turn-dodge/) | 障碍在左向右躲，10 回合回正计分 | `agent-turn-dodge` |
-| G10 | [follow-dot](follow-dot/) | 光点跳到哪就跟到哪，停稳算中 | `agent-follow-dot` |
-| E03 | [noise-map](noise-map/) | 转头扫 8 方向，报最安静的朝向 | `agent-noise-map` |
-| G11 | [rhythm-nod](rhythm-nod/) | 16 拍固定节拍，拍点点头打中计分 | `agent-rhythm-nod` |
+| 01 | [gaze-translate](gaze-translate/) | 看着外文稳头，长焦拍下翻译并朗读 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-gaze-translate` |
+| 02 | [shelf-compare](shelf-compare/) | 扫货架条码入表比价，点头加入清单 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-shelf-compare` |
+| 03 | [expiry-check](expiry-check/) | 读包装日期算剩余天数，临期语音警告 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-expiry-check` |
+| 04 | [plant-doctor](plant-doctor/) | 拍照识植物状态，养护步骤语音领做 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-plant-doctor` |
+| 05 | [manual-lens](manual-lens/) | 读铭牌故障码，给出下一步操作指引 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-manual-lens` |
+| 06 | [head-nav](head-nav/) | 导航箭头跟着头转，对准方向才走 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-head-nav` |
+| 07 | [find-my-thing](find-my-thing/) | 看向物品语音登记，回忆位置与朝向 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-find-my-thing` |
+| 08 | [meet-point](meet-point/) | 共享定位，转头就能对准走散的朋友 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-meet-point` |
+| 09 | [parking-return](parking-return/) | 存车位定位朝向，回程引导找车 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-parking-return` |
+| 10 | [exit-radar](exit-radar/) | 环视登记出口方向，紧急时播报最近出口 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-exit-radar` |
+| 11 | [cook-along](cook-along/) | 菜谱悬在眼前，点头翻步，油烟里只听你 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-cook-along` |
+| 12 | [repair-buddy](repair-buddy/) | 拍故障部位分步指导，点头确认每步 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-repair-buddy` |
+| 13 | [assemble-guide](assemble-guide/) | 对照图纸零件，按步引导组装纠错 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-assemble-guide` |
+| 14 | [garden-hands](garden-hands/) | 看着植物给修剪浇水指示，免手操作 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-garden-hands` |
+| 15 | [baby-care-hands](baby-care-hands/) | 抱娃免手语音问答，拍照问宝宝状态 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-baby-care-hands` |
+| 16 | [sound-compass](sound-compass/) | 转头扫描声源方向，报出声音在哪边 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-sound-compass` |
+| 17 | [far-ear](far-ear/) | 远场收音转实时字幕，听清远处人声 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-far-ear` |
+| 18 | [cry-watch](cry-watch/) | 守听婴儿房动静，哭声立刻语音提醒 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-cry-watch` |
+| 19 | [name-call](name-call/) | 听清谁在喊你，内容与方向一起报 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-name-call` |
+| 20 | [ambient-captions](ambient-captions/) | 全向收音实时字幕，对准谁增强谁 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-ambient-captions` |
+| 21 | [market-radar](market-radar/) | 按朝向登记摊位报价，转头亮价比价 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-market-radar` |
+| 22 | [allergen-guard](allergen-guard/) | 读配料表查忌口成分，命中立刻警告 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-allergen-guard` |
+| 23 | [fresh-pick](fresh-pick/) | 拍照判果蔬成熟新鲜，挑果有人指点 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-fresh-pick` |
+| 24 | [outfit-check](outfit-check/) | 拍照评衣物搭配与场合，照镜再评上身 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-outfit-check` |
+| 25 | [receipt-keeper](receipt-keeper/) | 看一眼小票入账，月度汇总语音播报 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-receipt-keeper` |
+| 26 | [home-find](home-find/) | 收纳时登记位置，找东西报方位线索 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-home-find` |
+| 27 | [meter-reader](meter-reader/) | 长焦读水电表数，自动记录比对异常 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-meter-reader` |
+| 28 | [home-patrol](home-patrol/) | 出门巡检门窗燃气，逐项看过才放行 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-home-patrol` |
+| 29 | [parcel-sort](parcel-sort/) | 扫快递单条码，按急缓语音分类堆放 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-parcel-sort` |
+| 30 | [clean-check](clean-check/) | 环视登记打扫覆盖，漏扫角落提醒你 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-clean-check` |
+| 31 | [med-look](med-look/) | 读药瓶标签对服药表，报剂量记已服 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-med-look` |
+| 32 | [posture-guard](posture-guard/) | 测低头时长，久低头语音轻提醒 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-posture-guard` |
+| 33 | [fall-guard](fall-guard/) | 跌倒无回应时，按预设联系紧急联系人 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-fall-guard` |
+| 34 | [cross-street](cross-street/) | 过街前左右转头停稳，双确认才报可通行 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-cross-street` |
+| 35 | [food-safe](food-safe/) | 看剩菜外观+登记日期给风险分级提示 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-food-safe` |
+| 36 | [word-look](word-look/) | 看着生词说出来，释义发音进生词本 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-word-look` |
+| 37 | [story-look](story-look/) | 绘本页拍照生成讲解词+提问，翻页续讲 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-story-look` |
+| 38 | [memory-anchor](memory-anchor/) | 「刚才那个想法/待办」转头就忘 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-memory-anchor` |
+| 39 | [board-capture](board-capture/) | 上课/开会黑板白板字远又擦得快 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-board-capture` |
+| 40 | [homework-lens](homework-lens/) | 孩子题目不会，家长讲不清步骤 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-homework-lens` |
+| 41 | [sign-reader](sign-reader/) | 站牌/登机口/菜单牌太远太小看不清 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-sign-reader` |
+| 42 | [transit-direction](transit-direction/) | 出了地铁站转头校准方向，偏离语音纠正 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-transit-direction` |
+| 43 | [hotel-checkin](hotel-checkin/) | 八检查点逐个看过打勾，漏看按方位领回 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-hotel-checkin` |
+| 44 | [photo-level](photo-level/) | 取景叠三分法+气泡水平仪，点头快门 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-photo-level` |
+| 45 | [queue-sense](queue-sense/) | 眼数人数镜测速度，估哪支队最快 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-queue-sense` |
+| 46 | [speaker-focus](speaker-focus/) | 多人会议跟不上谁说话，纪要按朝向标人 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-speaker-focus` |
+| 47 | [badge-reader](badge-reader/) | 看不清名牌忘了名字？长焦读牌悄悄报你听 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-badge-reader` |
+| 48 | [teleprompter-gaze](teleprompter-gaze/) | 演讲/录视频忘词，低头看稿不自然 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-teleprompter-gaze` |
+| 49 | [site-patrol](site-patrol/) | 工地/仓库巡检要逐项看、逐项记，双手拿工具 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-site-patrol` |
+| 50 | [elder-day](elder-day/) | 独居老人一日清单：吃药喝水出门逐项确认 ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | `agent-elder-day` |
+| W01 | [stove-watch](stove-watch/) | 多锅看向登记计时，沸腾溢锅叫你回看 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-stove-watch` |
+| W02 | [bath-watch](bath-watch/) | 浴缸放水登记守听，水满前叫你关水 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-bath-watch` |
+| W03 | [laundry-watch](laundry-watch/) | 洗衣结束蜂鸣守听，第一时间叫你晾衣 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-laundry-watch` |
+| W04 | [signal-watch](signal-watch/) | 医院/银行/取餐叫号，大屏节律提醒回看，差3号喊你准备 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-signal-watch` |
+| W05 | [door-watch](door-watch/) | 里屋开会戴耳机，守听门铃敲门快递叫你回看 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-door-watch` |
+| H01 | [number-catch](number-catch/) | 号码拍下放大核对，常驻视线内不用默念 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-number-catch` |
+| H02 | [code-hold](code-hold/) | 临时码复述存住，要输入时逐段显示 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-code-hold` |
+| H03 | [voice-list](voice-list/) | 复述成清单挂在视线里，看向货架逐项点头勾掉 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-voice-list` |
+| H04 | [route-hold](route-hold/) | 复述问路线路存步骤，走时只显示当前一步点头前进 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-route-hold` |
+| H05 | [seat-catch](seat-catch/) | 拍票根存座位号，逐排逐座只报相对差 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-seat-catch` |
+| C01 | [drop-search](drop-search/) | 掉落小物脚边 6 区逐区手摸，查完才报没找到 ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) | `agent-drop-search` |
+| C01 | [last-glance](last-glance/) | 离开前环视存档最后画面，焦虑时按区回放 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-last-glance` |
+| C02 | [room-sweep](room-sweep/) | 睡前逐项巡房确认打勾，漏项按方位提醒补看 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-room-sweep` |
+| C03 | [proof-sweep](proof-sweep/) | 逐行指读记进度，跳行漏段当场提醒给覆盖率 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-proof-sweep` |
+| C04 | [pack-sweep](pack-sweep/) | 清单逐件看向登记，出门前点名没装的那几件 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-pack-sweep` |
+| C05 | [shelf-sweep](shelf-sweep/) | 货架分层分段记已扫格，没扫的格点名提醒 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-shelf-sweep` |
+| F01 | [focus-shield](focus-shield/) | 只放行白名单声音，其余只记时间线休息时摘要 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-focus-shield` |
+| F02 | [sign-filter](sign-filter/) | 先声明目标，扫街只亮匹配的牌 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-sign-filter` |
+| F03 | [buy-filter](buy-filter/) | 清单预算忌口三条件，只亮符合商品 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-buy-filter` |
+| F04 | [meeting-filter](meeting-filter/) | 守听长会，命中名字关键词才亮屏 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-meeting-filter` |
+| F05 | [lecture-filter](lecture-filter/) | 守听课堂，信号句命中即存笔记 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-lecture-filter` |
+| D01 | [play-watch](play-watch/) | 游乐场副线定时提醒回看，未确认逐级升级 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-play-watch` |
+| D02 | [bag-watch](bag-watch/) | 行李副线定时提醒回看，离开门未确认喊停 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-bag-watch` |
+| D03 | [dog-walk](dog-walk/) | 遛狗副线狗停当场定性，回家门逐项核对才放行 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-dog-walk` |
+| D04 | [tour-watch](tour-watch/) | 跟团副线只捞集合句，快到点按朝向提醒归队 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-tour-watch` |
+| D05 | [queue-roam](queue-roam/) | 取号副线守听叫号，距5号内叫你回去等着 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-queue-roam` |
+| R01 | [day-lookback](day-lookback/) | 白天凝视按时间朝向排线，晚上顺线复盘 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-day-lookback` |
+| R02 | [talk-replay](talk-replay/) | 谈话字幕按说话方朝向，回放只列承诺数字期限 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-talk-replay` |
+| R03 | [shop-replay](shop-replay/) | 犹豫商品按店面朝向存档，回放比价钉最便宜 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-shop-replay` |
+| R04 | [route-replay](route-replay/) | 路上登记危险点，次日出门按序预告 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-route-replay` |
+| R05 | [attention-diary](attention-diary/) | 一天注意力被谁偷走，一张账单说清 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-attention-diary` |
+| P01 | [cue-door](cue-door/) | 看向大门触发清单，逐项确认全过才放行 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-cue-door` |
+| P02 | [cue-fridge](cue-fridge/) | 看向冰箱触发清单，拿一样勾一样关门报漏拿 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-cue-fridge` |
+| P03 | [cue-desk](cue-desk/) | 看向书桌亮今日三件事，起身按未完成给续接句 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-cue-desk` |
+| P04 | [cue-bag](cue-bag/) | 看向要背的包触发清单，逐项看向格层确认装入 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-cue-bag` |
+| P05 | [cue-mirror](cue-mirror/) | 看向镜子亮三行，逐行确认已读，提前结束报未读 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-cue-mirror` |
+| S01 | [chat-catchup](chat-catchup/) | 谈话走神摇头求助，眼前给最近15秒要点摘要 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-chat-catchup` |
+| C02 | [my-bus-watch](my-bus-watch/) | 只守登记的一路公交，拍车头核线路号报上车与否 ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) | `agent-my-bus-watch` |
+| S02 | [guest-watch](guest-watch/) | 客人逐位看向登记座位，定时提醒回看茶水位 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-guest-watch` |
+| S03 | [elder-ear](elder-ear/) | 守听老人聊天，叮嘱句存清单聊完复述 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-elder-ear` |
+| S04 | [standup-echo](standup-echo/) | 守听站会只亮关联句，未命中默记摘要会后查 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-standup-echo` |
+| S05 | [gift-clue](gift-clue/) | 日常聊天默记想要句成线索卡，按人回放 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-gift-clue` |
+| B01 | [eye-rest](eye-rest/) | 头稳凝视近处满20分钟提醒远眺，抬头确认 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-eye-rest` |
+| G01 | [nod-count](nod-count/) | 语音指导10次慢速点头，低头回正算一次 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-nod-count` |
+| G02 | [turn-count](turn-count/) | 语音指导左右转头交替，各5次满10次 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-turn-count` |
+| B02 | [water-watch](water-watch/) | 久未看向水杯亮屏提醒喝水，凝视确认 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-water-watch` |
+| G03 | [ear-tilt](ear-tilt/) | 左右贴耳各3次，稳住5秒才算一次 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-ear-tilt` |
+| G04 | [stretch-hold](stretch-hold/) | 仰头低头交替拉伸，各保持5秒各3次 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-stretch-hold` |
+| B03 | [breath-pace](breath-pace/) | 视线内呼吸节拍光点，跟着看就行 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-breath-pace` |
+| G05 | [neck-clock](neck-clock/) | 按报出的时钟点位转头，每点必回正 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-neck-clock` |
+| B04 | [stand-move](stand-move/) | 久坐超阈值提醒起身，环视一圈作确认 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-stand-move` |
+| G06 | [chin-tuck](chin-tuck/) | 下巴小幅后收保持5秒，8次收下巴操 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-chin-tuck` |
+| B05 | [snack-aware](snack-aware/) | 看向零食先亮今天第几次，吃不吃你决定 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-snack-aware` |
+| G07 | [steady-hold](steady-hold/) | 头稳住不动满10秒胜，动了重计 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-steady-hold` |
+| E01 | [light-change](light-change/) | 相机定时测光，光线暗了提醒开灯 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-light-change` |
+| G08 | [nod-catch](nod-catch/) | 10 个球下落，点头踩线接住计分 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-nod-catch` |
+| E02 | [sky-watch](sky-watch/) | 登记晾晒区，定时回看天空云变预警 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-sky-watch` |
+| G09 | [turn-dodge](turn-dodge/) | 障碍在左向右躲，10 回合回正计分 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-turn-dodge` |
+| G10 | [follow-dot](follow-dot/) | 光点跳到哪就跟到哪，停稳算中 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-follow-dot` |
+| E03 | [noise-map](noise-map/) | 转头扫 8 方向，报最安静的朝向 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-noise-map` |
+| G11 | [rhythm-nod](rhythm-nod/) | 16 拍固定节拍，拍点点头打中计分 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-rhythm-nod` |
+| E04 | [trail-back](trail-back/) | 沿途登记路口面包屑，返程反向逐点领回 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-trail-back` |
+| G12 | [memory-seq](memory-seq/) | 语音报出方向序列，记住并依次复现 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-memory-seq` |
+| E05 | [tomorrow-stage](tomorrow-stage/) | 睡前登记明早要用的物品，出门逐项确认带齐 ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | `agent-tomorrow-stage` |
+| G13 | [find-target](find-target/) | 语音报方向，转过去停稳算找到 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-find-target` |
+| G14 | [level-keep](level-keep/) | 头端平保持水平，歪了小球偏，满10秒胜 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-level-keep` |
+| G15 | [slow-scan](slow-scan/) | 从左到右慢速扫一遍，太快语音纠偏 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-slow-scan` |
+| G16 | [nod-quiz](nod-quiz/) | 是非题点头答是，侧转停稳答否计分 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-nod-quiz` |
+| G17 | [breathe-turn](breathe-turn/) | 吸气慢慢转头，呼气慢慢回正，左右各3次 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-breathe-turn` |
+| G18 | [guess-direction](guess-direction/) | 猜保密方向，语音报近了远了，转到算中 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-guess-direction` |
+| G19 | [traffic-light](traffic-light/) | 绿灯转向报出的方向，红灯稳住不动 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-traffic-light` |
+| G20 | [daily-routine](daily-routine/) | 点头转头贴耳仰低收下巴，一套2分钟走完 ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | `agent-daily-routine` |
