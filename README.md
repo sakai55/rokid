@@ -62,7 +62,7 @@ https://github.com/sakai55/rokid/tree/agent-clean-check
   SPEAK 随时朗读还差哪几处、最近的一处在哪个方向。
 - **不编朝向（诚实边界）**：朝向来源如实标注
   `SENSOR / DEMO / NONE`；无传感器时 SETUP 登记直接拒绝
-  （同 #07 的规则）。朝向只对你登记时站的位置成立——复查
+  （同 DI07 的规则）。朝向只对你登记时站的位置成立——复查
   时站回登记位置附近，锥形区才有意义。
 
 ## 功能流程
@@ -93,7 +93,7 @@ https://github.com/sakai55/rokid/tree/agent-clean-check
 |---|---|
 | （无） | 本 Agent 不声明任何权限：不用相机、不用麦克风、不用定位 |
 
-app.json 无 `permissions` 字段（同 #07 / #15 / #28）；头部朝向
+app.json 无 `permissions` 字段（同 DI07 / DI15 / DI28）；头部朝向
 传感器在 AIUI 里不需要单独的权限声明。
 
 ## 打包与预览
