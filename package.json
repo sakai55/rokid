@@ -1,0 +1,10 @@
+{
+  "name": "omiyage-cover",
+  "version": "1.0.2",
+  "description": "Omiyage obligation cover: the gift list as a grid of people, not products. Six recipients, one cell each - bought, or honestly marked later when stock runs out; it will not let you pretend. Scan a gift box to add stock (tentative), confirm each person yourself. Done only when every cell is covered.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
