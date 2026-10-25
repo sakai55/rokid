@@ -15,7 +15,7 @@ Rokid 眼镜出口雷达智能体（AIUI Agent）。
 
 - 朝向读取：AbsoluteOrientationSensor（约 5Hz）四元数算 yaw 朝向角，
   界面如实标注来源 SENSOR / DEMO / NONE；无传感器时不编造朝向，
-  MARK 会拒绝并说明原因（同 #07 find-my-thing）。
+  MARK 会拒绝并说明原因（同 DI07 find-my-thing）。
 - 登记（MARK 模式，默认）：LABEL 轮换标签（安全出口 / 楼梯间 /
   消防通道 / 大堂方向）；MARK（或头部稳定时点头、Enter）把
   {标签， 朝向°, 时间 HH:MM} 存入 wx 同步存储（key `exitRadar`，
