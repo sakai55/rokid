@@ -1,7 +1,7 @@
 # Snack Aware — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series B05 (BODY 身体型， fifth of the group, series #45, closing the
+series BO05 (BODY 身体型， fifth of the group, series #45, closing the
 group): you eat snacks without noticing — one hand keeps reaching while
 you work, and by the time you look up the bag is gone. This agent takes
 the counting off your hands: it registers the snack direction on a
@@ -66,18 +66,18 @@ summary.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `water-watch` (B02) is the cup-direction
+- Attention-series `water-watch` (BO02) is the cup-direction
   register plus a wall-clock drink interval plus a steady-gaze
   drink confirm. Snack-aware borrows the register shape but
   counts no habit and raises no reminder: its only input is a
   registered direction plus steady looks, its only output is
   the running count plus a session summary.
-- Attention-series `stand-move` (B04) is head-activity plus
+- Attention-series `stand-move` (BO04) is head-activity plus
   still-time monitoring with an over-threshold stand-up reminder
   and a look-around sweep confirm. Snack-aware watches no
   stillness and reminds nothing: it registers one snack
   direction and counts looks at it, silently.
-- Attention-series `guest-watch` (S02) is the guest seat register
+- Attention-series `guest-watch` (SO02) is the guest seat register
   plus timed tea-level glance-backs plus a door SCAN.
   Snack-aware registers no guests and scans nothing: it
   registers one snack direction and counts your own looks.
