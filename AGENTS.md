@@ -1,7 +1,7 @@
 # Stand Move — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series B04 (BODY 身体型， fourth of the group, series #44): you sit all
+series BO04 (BODY 身体型， fourth of the group, series #44): you sit all
 morning and only notice you never stood up when your back already aches.
 This agent takes the noticing off your hands: it watches head activity
 plus still time, reminds you to stand up once a still threshold is
@@ -73,20 +73,20 @@ closes with a session summary.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `eye-rest` (B01) is the near-gaze timer: it
+- Attention-series `eye-rest` (BO01) is the near-gaze timer: it
   counts steady near gaze and confirms a far look by head
   pitch. Stand-move borrows the timer shape but watches
   stillness, not gaze: its timer counts minutes since the
   last head movement, and its confirm is a yaw sweep, not a
   pitch-up.
-- Attention-series `water-watch` (B02) is the cup-direction
+- Attention-series `water-watch` (BO02) is the cup-direction
   register plus a wall-clock drink interval plus a steady-gaze
   drink confirm. Stand-move registers no direction and counts
   no habit: its only input is head movement, its only output
   is a stand-up reminder plus a session summary. Its interval
   is still-time (head movement resets it), not wall-clock
   time like water-watch.
-- Attention-series `breath-pace` (B03) is the in-view
+- Attention-series `breath-pace` (BO03) is the in-view
   inhale-hold-exhale beat: it plays a fixed rhythm and counts
   rounds. Stand-move plays no beat: it watches for the
   absence of movement and asks for one sweep.
