@@ -534,7 +534,7 @@ export default {
     this._dwellTicks = 0;
   },
 
-  // Coverage rule (same as #30/#43): gaze inside an unconfirmed
+  // Coverage rule (same as DI30/DI43): gaze inside an unconfirmed
   // point's +-25 deg cone AND head steady, continuously for
   // 2000ms = 8 ticks of 250ms, fills that point's CONFIRM part as
   // 'gaze'. Leaving the cone, switching points, or moving the head
@@ -745,7 +745,7 @@ export default {
     var self = this;
     this.setData({ busy: true, micLine: 'MIC CHECK: checking wearer mic...' });
     // Wearer-mode mic AVAILABILITY check (documented pattern, same
-    // as #21/#36/#41/#43): open the wearer-mode stream, read back
+    // as DI21/DI36/DI41/DI43): open the wearer-mode stream, read back
     // its settings, stop every track at once. This is a CHECK
     // only: the wearer mode does not denoise anything and does not
     // shape what recognition hears - the host SpeechRecognition
