@@ -170,6 +170,21 @@ aix preview .                               # 本地预览（起服务 / --html-
 **徽章怎么读：每行一句话说明的末尾是一串徽章——编号徽章（深灰）在最前，然后是系列徽章，有冲突标记的再跟一个冲突徽章。**
 编号 = 字母 + 数字：字母是它所属的系列 / 分组，数字是该组内的序号。**全表编号唯一：每个字母只属于一个系列，同一编号只出现一次**（基础项 `my-agent` / `glasses-benchmark` 不编号、无徽章）。
 
+**徽章说明**（徽章串从左到右依次是：编号 → 系列 → 冲突）：
+
+| 徽章 | 种类 | 含义 |
+|---|---|---|
+| ![Z01](https://img.shields.io/badge/Z01-24292F?style=flat-square) | 编号徽章（深灰） | 这个 Agent 的唯一编号（此处以 `Z01` 为例），字母 = 系列 / 分组，数字 = 组内序号；每行第一个徽章 |
+| ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | 系列徽章（蓝） | 指向性系列：利用视线同轴、头部朝向等指向性能力解决生活问题（Z01–Z50） |
+| ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | 系列徽章（紫） | 注意力外挂系列：把持续占用的注意力外包给眼镜（W/H/C/F/D/R/P/S/B/E 各 01–05） |
+| ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) | 系列徽章（橙） | 路缘坡系列：先为一类特殊人群解决一个具体难题，再溢出到情境性障碍中的普通人（K01–K20） |
+| ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | 系列徽章（绿） | 头部动作小游戏系列：用头部动作玩的极简小游戏（G01–G20） |
+| ![直接冲突](https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square) | 冲突徽章（红） | 与眼镜默认能力**直接冲突**（冲突排查第一档，共 14 个）：本体就是默认能力，只加了一层小扭转 |
+| ![高度重叠](https://img.shields.io/badge/%E9%AB%98%E5%BA%A6%E9%87%8D%E5%8F%A0-F9A825?style=flat-square) | 冲突徽章（黄） | 与眼镜默认能力**高度重叠**（冲突排查第二档，共 40 个）：默认功能能完成大半，只剩一层薄闭环 |
+
+没有冲突徽章 = 冲突排查第三档「不冲突」；基础项（`my-agent`、`glasses-benchmark`）没有任何徽章。
+读例：`gaze-translate` 行尾的 ![Z01](https://img.shields.io/badge/Z01-24292F?style=flat-square) ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) ![直接冲突](https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square) = 编号 Z01 · 指向性系列 · 与默认能力直接冲突。
+
 - **无字母（`—`）**：基础项，不属于任何系列——`my-agent` 是官方脚手架示例，`glasses-benchmark` 是眼镜全功能自检工具。
 - **`Z01`–`Z50`**：**指向性系列**（50 个）——利用眼镜的视线同轴、头部朝向等指向性能力，一个 Agent 解决一个生活问题；`Z` 取「指向」拼音首字母（英文 Directional 的 `D` 已被注意力并行型占用，故不用 `D`），编号内部再分 A–J 十组生活场景。2026-10-25 由原纯数字 `01`–`50` 改为 Z 编号。
 - **字母 + `01`–`05`**：**注意力外挂系列**（50 个，10 组 × 5）——把人原本要持续占用的注意力外包给眼镜，字母是外包类型的英文首字母：
