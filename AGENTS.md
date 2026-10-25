@@ -1,6 +1,6 @@
 # bath-watch
 
-Rokid 眼镜浴缸守望智能体（AIUI Agent），注意力外挂系列 W02
+Rokid 眼镜浴缸守望智能体（AIUI Agent），注意力外挂系列 WA02
 （守望型 WATCH）。
 
 ## 身份
