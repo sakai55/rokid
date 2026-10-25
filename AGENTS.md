@@ -1,7 +1,7 @@
 # Voice List — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series H03 (HOLD 默念型）: a say-it-once shopping/bring list for the
+series HO03 (HOLD 默念型）: a say-it-once shopping/bring list for the
 rapid-fire five things family fires at you on your way out — half of
 which are gone from your head by the door.
 
