@@ -24,5 +24,6 @@
 - GA20 [daily-routine](daily-routine/) — 点头转头贴耳仰低收下巴，一套2分钟走完
 - GA21 [angle-match](angle-match/) — 报一边一个角度，转进±5度带停稳算对上
 - GA22 [tilt-match](tilt-match/) — 贴耳对小角度，进±5度带停稳算对上
+- GA23 [pace-turn](pace-turn/) — 单次转头用时3到5秒算匀速，快慢都不算
 - GA41 [snap-hunt](snap-hunt/) — 屏幕出目标物，在真实环境里找到拍照，大模型判有没有
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。
