@@ -1,0 +1,7 @@
+{
+  "dependencies": {},
+  "description": "Photo text-hunt game GA43 for Rokid glasses: five target characters (digit 7, letter A, digit 3, the character for door, letter S) to find on real signs, doorplates and packaging. The host LLM image judge transcribes the visible text and answers VERDICT YES/NO; the transcription is shown so the player can cross-check. No OCR API exists on the platform - reading is photo plus LLM image input. Camera only.",
+  "main": "app.js",
+  "name": "word-spot",
+  "version": "1.0.0"
+}
