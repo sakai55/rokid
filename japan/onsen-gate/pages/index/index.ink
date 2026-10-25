@@ -174,14 +174,14 @@ export default {
 <style>
 .page { width: 480px; height: 352px; background-color: #000000; padding: 10px 14px; box-sizing: border-box; position: relative; }
 .ttl { color: #40ff5e; font-size: 19px; font-weight: bold; letter-spacing: 2px; }
-.status { color: #ffffff; font-size: 11px; line-height: 15px; margin-top: 2px; white-space: nowrap; overflow: hidden; }
+.status { color: #7dff9e; font-size: 11px; line-height: 15px; margin-top: 2px; white-space: nowrap; overflow: hidden; }
 .btnrow { display: flex; flex-direction: row; margin-top: 6px; }
 .btn { flex: 1; margin-right: 6px; background-color: #0d2812; color: #40ff5e; border: 1px solid rgba(64,255,94,0.72); font-size: 13px; padding: 5px 0; text-align: center; }
 .btnrow .btn:last-child { margin-right: 0; }
-.btn-main { background-color: #14541f; color: #ffffff; font-weight: bold; }
+.btn-main { background-color: #14541f; color: #7dff9e; font-weight: bold; }
 .guide { color: rgba(64,255,94,0.62); font-size: 10px; line-height: 13px; margin-top: 5px; white-space: nowrap; overflow: hidden; }
-.rline { color: #ffffff; font-size: 12px; line-height: 16px; margin-top: 3px; white-space: nowrap; overflow: hidden; }
-.dim { color: rgba(255,255,255,0.75); }
+.rline { color: #7dff9e; font-size: 12px; line-height: 16px; margin-top: 3px; white-space: nowrap; overflow: hidden; }
+.dim { color: rgba(125,255,158,0.75); }
 .center { text-align: center; }
 .mono { font-family: monospace; }
 .heroline { color: #40ff5e; font-size: 16px; font-weight: bold; line-height: 21px; margin-top: 5px; white-space: nowrap; overflow: hidden; }
@@ -191,5 +191,8 @@ export default {
 .gaterow { display: flex; flex-direction: row; margin-top: 10px; }
 .gate { flex: 1; margin-right: 8px; border: 2px solid rgba(64,255,94,0.6); border-bottom: none; height: 86px; padding: 8px 6px; box-sizing: border-box; }
 .gaterow .gate:last-child { margin-right: 0; }
-.gname { color: #ffffff; font-size: 12px; line-height: 17px; text-align: center; }
+.gname { color: #7dff9e; font-size: 12px; line-height: 17px; text-align: center; }
+.btn { border: 2px solid rgba(64,255,94,0.7); border-bottom: none; background-color: transparent; padding: 10px 0 6px; }
+.btn-main { border-color: #7dff9e; background-color: #0d2812; }
+.demobtn { border: 2px solid rgba(64,255,94,0.7); border-bottom: none; background-color: transparent; }
 </style>

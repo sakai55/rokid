@@ -1,6 +1,6 @@
 {
   "name": "konbini-basket",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Konbini basket ledger: your 4-item list as a receipt that fills itself in. Each item you grab gets checked off with its price; the total line always shows what is still missing. At the counter, four big phrase cards (chopsticks / bag / warm it up / as-is) replace live translation. Optional barcode scan is tentative until you confirm.",
   "main": "app.js",
   "keywords": [],

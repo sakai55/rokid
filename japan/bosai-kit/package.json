@@ -1,6 +1,6 @@
 {
   "name": "bosai-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Bosai disaster-kit coverage check: 8 kit categories as a grid that must be fully swept - checked, or flagged expired/to-replace - before it will say done. Photograph a date with the telephoto camera for a tentative expiry note, or flag it yourself. It proves the kit was checked today; it gives no disaster advice and no evacuation directions.",
   "main": "app.js",
   "keywords": [],

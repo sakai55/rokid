@@ -1,6 +1,6 @@
 {
   "name": "jjimjil-rest",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Jjimjilbang thermal cycle rings: 12 minutes hot, 8 minutes rest, two rings alternating with one spoken word at each switch. It keeps the rhythm of the bathhouse and makes zero health claims - no temperatures, no detox talk, just time, held in circles.",
   "main": "app.js",
   "keywords": [],

@@ -74,7 +74,7 @@ export default {
     const rows = 8;
     const filledRows = Math.round(s.filled / s.cap * rows);
     let g = '';
-    for (let i = rows - 1; i >= 0; i--) { g += (i < filledRows ? '▮▮▮▮▮' : '▯▯▯▯▯') + (i > 0 ? '\n' : ''); }
+    for (let i = rows - 1; i >= 0; i--) { g += (i < filledRows ? '█████' : '░░░░░') + (i > 0 ? '\n' : ''); }
     const fee = s.food * 60;
     this.setData({
       status: 'BAG: ' + s.cap + 'L 종량제 · 배출済み ' + s.bags + ' 袋' + (s.note ? ' · ' + s.note : ''),
@@ -223,14 +223,14 @@ export default {
 <style>
 .page { width: 480px; height: 352px; background-color: #000000; padding: 10px 14px; box-sizing: border-box; position: relative; }
 .ttl { color: #40ff5e; font-size: 19px; font-weight: bold; letter-spacing: 2px; }
-.status { color: #ffffff; font-size: 11px; line-height: 15px; margin-top: 2px; white-space: nowrap; overflow: hidden; }
+.status { color: #7dff9e; font-size: 11px; line-height: 15px; margin-top: 2px; white-space: nowrap; overflow: hidden; }
 .btnrow { display: flex; flex-direction: row; margin-top: 6px; }
 .btn { flex: 1; margin-right: 6px; background-color: #0d2812; color: #40ff5e; border: 1px solid rgba(64,255,94,0.72); font-size: 13px; padding: 5px 0; text-align: center; }
 .btnrow .btn:last-child { margin-right: 0; }
-.btn-main { background-color: #14541f; color: #ffffff; font-weight: bold; }
+.btn-main { background-color: #14541f; color: #7dff9e; font-weight: bold; }
 .guide { color: rgba(64,255,94,0.62); font-size: 10px; line-height: 13px; margin-top: 5px; white-space: nowrap; overflow: hidden; }
-.rline { color: #ffffff; font-size: 12px; line-height: 16px; margin-top: 3px; white-space: nowrap; overflow: hidden; }
-.dim { color: rgba(255,255,255,0.75); }
+.rline { color: #7dff9e; font-size: 12px; line-height: 16px; margin-top: 3px; white-space: nowrap; overflow: hidden; }
+.dim { color: rgba(125,255,158,0.75); }
 .center { text-align: center; }
 .mono { font-family: monospace; }
 .heroline { color: #40ff5e; font-size: 16px; font-weight: bold; line-height: 21px; margin-top: 5px; white-space: nowrap; overflow: hidden; }
@@ -240,4 +240,7 @@ export default {
 .gaugewrap { display: flex; flex-direction: row; margin-top: 8px; }
 .gaugecol { width: 96px; box-sizing: border-box; color: #40ff5e; font-family: monospace; font-size: 15px; line-height: 19px; border: 1px solid rgba(64,255,94,0.48); padding: 6px 10px; white-space: pre; }
 .gaugeside { flex: 1; margin-left: 14px; min-width: 0; }
+.btn { font-family: monospace; background-color: #0d2812; border: none; border-left: 5px solid #40ff5e; text-align: left; padding: 6px 0 6px 10px; }
+.btn-main { border-left-color: #7dff9e; background-color: #14541f; }
+.demobtn { font-family: monospace; background-color: #0d2812; border: none; border-left: 5px solid #40ff5e; }
 </style>

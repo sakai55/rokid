@@ -62,7 +62,7 @@ cd ~/workspace/rokid/noraebang-rotation
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | Noraebang Rotation（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Version / Build | 1.0.1 / 待导入后回填 |
 | App Category | Entertainment |
 | Intent Description | In a Korean noraebang: rotates singing turns fairly and holds song reservation numbers. |
 | Agent ID | 待导入后回填 |
@@ -102,3 +102,17 @@ cd ~/workspace/rokid/noraebang-rotation
 **Fixes**
 
 - 无（首个版本）
+
+### Change Log（Build 1.0.1）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+
+**Fixes**
+
+- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现

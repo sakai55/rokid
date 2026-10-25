@@ -1,6 +1,6 @@
 {
   "name": "noise-diary",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Inter-floor noise night diary for Korean apartments: it keeps only YOUR home's account. Armed at night, it pins loud moments onto a 22:00-06:00 arc - time and relative level, never recordings, never content. In the morning it reads the diary back once: how many peaks, the loudest at what time. It never points at the neighbours.",
   "main": "app.js",
   "keywords": [],

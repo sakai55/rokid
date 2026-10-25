@@ -1,6 +1,6 @@
 {
   "name": "nomikai-kanji",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The nomikai organizer's ledger: headcount, running total, per-person share auto-rounded up to the nearest 100 yen the warikan way, and a big last-train countdown - all on one izakaya slip. It never records or transcribes the table talk; ledgers hold money, people and time, nothing else.",
   "main": "app.js",
   "keywords": [],

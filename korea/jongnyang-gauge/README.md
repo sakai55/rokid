@@ -62,7 +62,7 @@ cd ~/workspace/rokid/jongnyang-gauge
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | Jongnyang Gauge（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Version / Build | 1.0.1 / 待导入后回填 |
 | App Category | Life |
 | Intent Description | At home in Korea: tracks standard trash-bag fill level and food-waste drop ledger. |
 | Agent ID | 待导入后回填 |
@@ -102,3 +102,18 @@ cd ~/workspace/rokid/jongnyang-gauge
 **Fixes**
 
 - 无（首个版本）
+
+### Change Log（Build 1.0.1）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+
+**Fixes**
+
+- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+- 量表刻度改用通用块字符（原字形在预览字体中缺字显示为方框）
