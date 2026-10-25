@@ -471,7 +471,7 @@ export default {
     this._dwellTicks = 0;
   },
 
-  // Coverage rule (same as #30): gaze inside an unchecked point's
+  // Coverage rule (same as DI30): gaze inside an unchecked point's
   // +-25 deg cone AND head steady, continuously for 2000ms = 8 ticks
   // of 250ms. Leaving the cone, switching points, or moving the head
   // resets the count - a fast sweep across the room earns nothing.
@@ -646,7 +646,7 @@ export default {
     var self = this;
     this.setData({ busy: true, micLine: 'MIC CHECK: checking wearer mic...' });
     // Wearer-mode mic AVAILABILITY check (documented pattern, same
-    // as #21/#36/#41): open the wearer-mode stream, read back its
+    // as DI21/DI36/DI41): open the wearer-mode stream, read back its
     // settings, stop every track at once. The check stream is NOT
     // the recognition input and does not shape what recognition
     // hears - the host SpeechRecognition below listens on its own
