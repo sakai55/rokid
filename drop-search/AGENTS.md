@@ -1,7 +1,7 @@
 # Drop Search — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Curb-Cut
-series C01 (COVER 覆盖型）: a floor-sector search for blind / low-vision
+series K01 (COVER 覆盖型）: a floor-sector search for blind / low-vision
 wearers who dropped a small item.
 
 ## Design contract
