@@ -61,7 +61,7 @@ https://github.com/sakai55/rokid/tree/agent-posture-guard
   最长一段、已提醒次数。
 - **不编读数（诚实边界）**：来源如实标注
   `SENSOR / DEMO / NONE`；没有读数时 CAL 直接拒绝，绝不
-  编造一个平视基准（同 #07 / #30 的规则）。
+  编造一个平视基准（同 DI07 / DI30 的规则）。
 
 ## 功能流程
 
@@ -88,7 +88,7 @@ https://github.com/sakai55/rokid/tree/agent-posture-guard
 |---|---|
 | （无） | 本 Agent 不声明任何权限：不用相机、不用麦克风、不用定位 |
 
-app.json 无 `permissions` 字段（同 #07 / #15 / #28 / #30）；头部
+app.json 无 `permissions` 字段（同 DI07 / DI15 / DI28 / DI30）；头部
 朝向传感器在 AIUI 里不需要单独的权限声明。
 
 ## 打包与预览
