@@ -1,0 +1,7 @@
+{
+  "dependencies": {},
+  "description": "Photo framing game GA46 for Rokid glasses: five composition tasks (book top-left, chair top-right, cup center, water bottle bottom-left, plant bottom-right). Move the object or your head until it sits in the highlighted grid cell, snap, and the host LLM reports the 3x3 zone it actually sees; a local compare scores the hit. Camera only.",
+  "main": "app.js",
+  "name": "frame-align",
+  "version": "1.0.0"
+}
