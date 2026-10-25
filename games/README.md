@@ -28,4 +28,5 @@
 - GA41 [snap-hunt](snap-hunt/) — 屏幕出目标物，在真实环境里找到拍照，大模型判有没有
 - GA42 [color-catch](color-catch/) — 每轮出一种颜色，拍主色相符的真实物体判定
 - GA43 [word-spot](word-spot/) — 在招牌包装上找目标字符拍照，判定带读出文字可核对
+- GA44 [barcode-bingo](barcode-bingo/) — 在实物上找不同码制条码扫进3x3宾果盘凑线
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。
