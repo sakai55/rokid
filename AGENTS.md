@@ -1,7 +1,7 @@
 # Tomorrow Stage — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series E05 (AMBIENT 环境型， last of the group, series #50 — the series
+series AM05 (AMBIENT 环境型， last of the group, series #50 — the series
 finale): tomorrow morning's first-task items are the ones you forget to
 stage tonight and then scramble for at the door. This agent takes the
 staging off your hands: the night before, you look steady at each item
@@ -24,7 +24,7 @@ anything is still missing.
   With unconfirmed items, END warns and names the missing items
   by name; only when every staged item is confirmed does the
   summary say 可以出门. This is the cue-door gate discipline
-  (P01), applied to the morning check.
+  (CU01), applied to the morning check.
 - **The gate does not stop you leaving.** It only refuses to say
   you may leave: there is no lock, no forced flow, no blocking.
   The final decision is always yours, and the README says so.
@@ -58,16 +58,16 @@ anything is still missing.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `cue-door` (P01) is the exit gate: items
+- Attention-series `cue-door` (CU01) is the exit gate: items
   confirmed before leaving, and it never says you may leave
   while anything is missing. Tomorrow-stage reuses that gate
   discipline, but its list is staged the night before by
   looking steady at each item — cue-door stages nothing.
-- Attention-series `cue-bag` (P04) is an exit luggage check:
+- Attention-series `cue-bag` (CU04) is an exit luggage check:
   items confirmed as packed into the bag. Tomorrow-stage
   checks nothing into a bag: it stages tomorrow's first-task
   items the night before and re-checks them at the door.
-- Attention-series `trail-back` (E04) records a way back with
+- Attention-series `trail-back` (AM04) records a way back with
   direction + photo crumbs. Tomorrow-stage records no route
   and takes no photos: its only input is your REG at an item
   and your CONFIRM in the morning.
@@ -97,7 +97,7 @@ anyone is.
   REG records, preset order 钥匙/工牌/雨伞/水杯/文件袋 then
   物品6, 8 item cap, 9th refused); focus walks rows with
   wrap, rowTap out-of-range and missing-dataset guards
-  (missing dataset keeps focus, never jumps to 0 — the B05
+  (missing dataset keeps focus, never jumps to 0 — the BO05
   page bug, fixed here by construction); BACK to idle keeps
   the session with START resume; CUE + confirm discipline
   (CUE speaks once, CUE refused while cue, double CONFIRM
