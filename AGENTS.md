@@ -1,7 +1,7 @@
 # Guest Watch — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series S02 (SOCIAL 社交型， second of the group, series #37): you are
+series SO02 (SOCIAL 社交型， second of the group, series #37): you are
 hosting guests at home, busy in the kitchen, and who needs a refill or
 a second helping is all peripheral vision. This agent takes the
 watching off your hands: register each guest seat by steady gaze,
@@ -69,18 +69,18 @@ preset door direction when you notice something at the door.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `play-watch` (D01) is the playground side-line:
+- Attention-series `play-watch` (DU01) is the playground side-line:
   a child activity direction registered, with timed look-back
   reminders and the same three-level escalation shape. Guest-watch
   borrows the ladder but is not a child watch: its units are
   guest seats at home, and it adds SCAN for the door.
-- Attention-series `bag-watch` (D02) is the in-transit luggage
+- Attention-series `bag-watch` (DU02) is the in-transit luggage
   side-line: a direction-registered bag watched while waiting,
   with a leave-gate that blocks on an unconfirmed bag. Guest-watch
   has no leave-gate: its close is a summary, not a block —
   hosting ends when you say so, and the summary records what
   was and was not looked back at.
-- Attention-series `chat-catchup` (S01) is the mid-conversation
+- Attention-series `chat-catchup` (SO01) is the mid-conversation
   silent catch-up: a rolling caption buffer served on HELP.
   Guest-watch listens to nothing and buffers nothing: it
   watches seats on a timer and reports a preset door direction.
