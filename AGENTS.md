@@ -1,7 +1,7 @@
 # Cue Door — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series P01 (CUE 提示型， first of the group, series #31): leaving the
+series CU01 (CUE 提示型， first of the group, series #31): leaving the
 house and forgetting something is daily, and a list taped to the door is
 easy to ignore. This agent takes the going-out check off your hands:
 look at the door and hold steady, and only then does the checklist
@@ -56,16 +56,16 @@ is confirmed does it release you.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `pack-sweep` (C04) is the at-home packing
+- Attention-series `pack-sweep` (CO04) is the at-home packing
   checklist: items packed before leaving, counted at home.
   Cue-door is not packing: its trigger is looking at the door
   itself, and its close is a release gate, not a packing count.
-- Attention-series `bag-watch` (D02) is the in-transit luggage
+- Attention-series `bag-watch` (DU02) is the in-transit luggage
   side-line: a direction-registered bag watched while waiting,
   with a leave-gate that blocks on an unconfirmed bag. Cue-door
   has no direction registration and no waiting watch: its gate
   is the going-out checklist at the door, confirmed item by item.
-- Attention-series `attention-diary` (R05) is the attention bill:
+- Attention-series `attention-diary` (RE05) is the attention bill:
   trigger entries grouped by category, closed with a counted
   verdict. Cue-door has no categories and no bill: its units are
   the five going-out items, and its close is a release verdict.
