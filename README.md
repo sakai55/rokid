@@ -35,10 +35,7 @@
 ```text
 rokid/
 ├── README.md                  # 本文件
-├── <分类>/<slug>/             # Agent 按编号首字母分类存放（分类 = 英文目录名，见文末清单说明）
-│   │                          #   directional/(Z) watch/(W) hold/(H) cover/(C) filter/(F)
-│   │                          #   dual/(D) review/(R) cue/(P) social/(S) body/(B) ambient/(E)
-│   │                          #   curb-cut/(K) games/(G) base/（无编号基础项）
+├── <分类>/<slug>/             # Agent 按编号首字母分类存放，映射见文末清单说明
 │   └── <slug>/                # 一个 Agent 一个目录（一套完整 AIUI 工程）
 │       ├── app.json  AGENTS.md  app.js  package.json
 │       ├── pages/             # .ink 页面
@@ -74,7 +71,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 </div>
 
-1. **本地开发** — 在 `<分类>/<slug>/` 目录里开发、改页面（分类按编号首字母，见文末清单说明）。
+1. **本地开发** — 在 `<分类>/<slug>/` 目录里开发、改页面。
 2. **预览** — `aix preview` 出该 Agent **所有页面**的预览图，存 `screenshots/<slug>/`。
 3. **推 GitHub** — 目录推 main；重打 `<slug>.aix` 放 `aix/` 目录；同一套文件同步到分支 `agent-<slug>` 的**根目录**。
 4. **Studio 导入** — 粘贴分支地址导入（见下节），一个分支导一个 Agent。
@@ -89,7 +86,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 | 地址形式 | 结果 |
 |---|---|
-| ✅ `…/tree/agent-<slug>`（专属分支） | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
+| ✅ `…/tree/agent-<slug>` | **唯一可用**：导入该分支根目录 = 一个完整 Agent，文件树完整；已实测可运行、可打包 |
 | ❌ `…/tree/main/<slug>`（子目录） | `GitHub ref not found: main/<slug>`（官方仓库 `JellyFlow/AIUI/tree/main/samples/scanner` 同样失败） |
 | ❌ `…/tree/<完整 commit SHA>/<slug>` | 同样 ref not found |
 | ❌ 仓库根地址 | 能导入，但是**空心 Agent**（Code 文件树为空） |
@@ -108,7 +105,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 2. Global AIUI Studio → New Agent → **Import from AIX**，上传该文件。
 3. 导入后生成 Draft，文件树即包内完整工程；后续同样走 Device Debug 打包 → 真机测试。
 
-不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法（直接对应最新代码）。
+不依赖 GitHub 地址解析，赶时间或 GitHub 导入异常时用它；日常首选分支法。
 
 </details>
 
@@ -123,12 +120,12 @@ aix preview .                               # 本地预览（起服务 / --html-
 | 账号 | [account-web.rokid.com](https://account-web.rokid.com/) **英文版**注册（本项目地区：Japan） | 国内版注册的账号 |
 | Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
 | 下发 | Studio 打包保存 → **云端下发**到眼镜 | ADB / 数据线直装 |
-| 手机 App | **Hi Rokid**（Google Play，包名 `com.rokid.sprite.global.aiapp`，Rokid International） | 国内版 Rokid Ai App |
+| 手机 App | **Hi Rokid**（包名 `com.rokid.sprite.global.aiapp`） | 国内版 Rokid Ai App |
 
 ## 真机测试（云端下发）
 
 <details>
-<summary><b>展开完整步骤</b>（在 Global AIUI Studio 里打开该 Agent 后）</summary>
+<summary><b>展开完整步骤</b></summary>
 
 1. 进 **Device Debug** 页签，填 **Basic Information**：
    - Agent Icon（建议 1:1）、**Agent Name**（必填）
@@ -148,67 +145,65 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 ## 提交审核
 
-真机测试全部通过后（以维护者确认「真机测试完成」为准）：
+真机测试全部通过、维护者确认「真机测试完成」后：
 
 1. 在 **Submit** 页签填 **Review Information**：Feature Description、Opening Message、
    Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
-   (Review Submission)」章节里，分段写好，整段复制**（Feature Description ≤500 字；
-   Opening Message ≤500 字、支持 Markdown；Preview Media 需 3–5 个 JPG/PNG/MP4
-   且 ≥1 图 ≥1 视频，每次提交前重新确认）。
-2. 权限声明与代码一致：`app.json.permissions` 里声明实际用到的能力
-   （如 `GEOLOCATION` / `CAMERA` / `RECORD_AUDIO`）。
+   (Review Submission)」章节里，分段写好，整段复制**：Feature Description ≤500 字，
+   Opening Message ≤500 字、支持 Markdown，Preview Media 3–5 个文件、≥1 图 ≥1 视频。
+2. 权限声明与代码一致；可用权限只有 `GEOLOCATION`、`CAMERA`、`RECORD_AUDIO` 三种。
 3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
 
 ## 维护约定
 
-- **一个 Agent 一个目录**（main 上按编号首字母放进英文分类目录），**一个 Agent 一个分支**（`agent-<slug>`，分支根 = 工程根）。
-- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图（嵌入 `../../../screenshots/<slug>/…`）。
+- **一个 Agent 一个目录**：main 上按编号首字母放进英文分类目录；**一个 Agent 一个分支**：`agent-<slug>`，分支根 = 工程根。
+- 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图，截图嵌入路径 `../../screenshots/<slug>/…`。
 - 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
-- GitHub 操作走终端 `gh` / `git`（已登录 sakai55），含二进制与分支维护。
+- GitHub 操作走终端 `gh` / `git`，含二进制与分支维护。
 
 ## Agent 清单
 
-全部 Agent 一览（持续增长中，新 Agent 完成即追加到表尾，表格按完成顺序排列，不按编号排序；表格已取消单独的编号列）。
+全部 Agent 一览，按完成顺序排列，新 Agent 完成即追加到表尾。
 每个 Agent 的真机状态、提审资料看它自己目录里的 README。
 
 **徽章怎么读：每行一句话说明的末尾是一串徽章——编号徽章在最前，然后是系列徽章，最后是一个冲突状态徽章（三选一：直接冲突 / 高度重叠 / 待测试）。**
 编号 = 字母 + 数字：字母是它所属的系列 / 分组，数字是该组内的序号。**全表编号唯一：每个字母只属于一个系列，同一编号只出现一次**（基础项 `my-agent` / `glasses-benchmark` 不编号、无徽章）。
 
-**徽章说明**（徽章串从左到右依次是：编号 → 系列 → 冲突状态，三种状态只居其一）：
+**徽章说明**：
 
 | 徽章 | 种类 | 含义 |
 |---|---|
-| ![Z01](https://img.shields.io/badge/Z01-24292F?style=flat-square) | 编号徽章 | 这个 Agent 的唯一编号（此处以 `Z01` 为例），字母 = 系列 / 分组，数字 = 组内序号；每行第一个徽章 |
+| ![Z01](https://img.shields.io/badge/Z01-24292F?style=flat-square) | 编号徽章 | 这个 Agent 的唯一编号，字母 = 系列 / 分组，数字 = 组内序号 |
 | ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) | 系列徽章 | 指向性系列：利用视线同轴、头部朝向等指向性能力解决生活问题（Z01–Z50） |
 | ![注意力](https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square) | 系列徽章 | 注意力外挂系列：把持续占用的注意力外包给眼镜（W/H/C/F/D/R/P/S/B/E 各 01–05） |
 | ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) | 系列徽章 | 路缘坡系列：先为一类特殊人群解决一个具体难题，再溢出到情境性障碍中的普通人（K01–K20） |
 | ![游戏](https://img.shields.io/badge/%E6%B8%B8%E6%88%8F-00C853?style=flat-square) | 系列徽章 | 头部动作小游戏系列：用头部动作玩的极简小游戏（G01–G20） |
 | ![直接冲突](https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square) | 冲突状态徽章 | 与眼镜默认能力**直接冲突**（冲突排查第一档，共 14 个）：本体就是默认能力，只加了一层小扭转 |
 | ![高度重叠](https://img.shields.io/badge/%E9%AB%98%E5%BA%A6%E9%87%8D%E5%8F%A0-F9A825?style=flat-square) | 冲突状态徽章 | 与眼镜默认能力**高度重叠**（冲突排查第二档，共 40 个）：默认功能能完成大半，只剩一层薄闭环 |
-| ![待测试](https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square) | 冲突状态徽章 | 与上两行同一序列的第三种状态：既不直接冲突、也不高度重叠的 Agent 都是**待测试**（共 68 个），冲突与否等真机测试确认 |
+| ![待测试](https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square) | 冲突状态徽章 | 既不直接冲突、也不高度重叠的 Agent 都是**待测试**（共 68 个），冲突与否等真机测试确认 |
 
 基础项（`my-agent`、`glasses-benchmark`）没有任何徽章。
 读例：`gaze-translate` 行尾的 ![Z01](https://img.shields.io/badge/Z01-24292F?style=flat-square) ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) ![直接冲突](https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square) = 编号 Z01 · 指向性系列 · 与默认能力直接冲突；`drop-search` 行尾的 ![K01](https://img.shields.io/badge/K01-24292F?style=flat-square) ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) ![待测试](https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square) = 编号 K01 · 路缘坡系列 · 冲突与否待测试。
 
-- **无字母（`—`）**：基础项，不属于任何系列——`my-agent` 是官方脚手架示例，`glasses-benchmark` 是眼镜全功能自检工具。（目录：`base/`）
-- **`Z01`–`Z50`**：**指向性系列**（50 个）——利用眼镜的视线同轴、头部朝向等指向性能力，一个 Agent 解决一个生活问题；`Z` 取「指向」拼音首字母（英文 Directional 的 `D` 已被注意力并行型占用，故不用 `D`），编号内部再分 A–J 十组生活场景。2026-10-25 由原纯数字 `01`–`50` 改为 Z 编号。（目录：`directional/`）
+- **无字母（`—`）**：基础项，不属于任何系列——`my-agent` 是官方脚手架示例，`glasses-benchmark` 是眼镜全功能自检工具。目录：`base/`
+- **`Z01`–`Z50`**：**指向性系列**（50 个）——利用眼镜的视线同轴、头部朝向等指向性能力，一个 Agent 解决一个生活问题；`Z` 取「指向」拼音首字母，编号内部再分 A–J 十组生活场景。原纯数字 `01`–`50` 于 2026-10-25 改为 Z 编号。目录：`directional/`
 - **字母 + `01`–`05`**：**注意力外挂系列**（50 个，10 组 × 5）——把人原本要持续占用的注意力外包给眼镜，字母是外包类型的英文首字母：
-  - `W` = **守望型 WATCH**：替你持续盯着一个信号（锅、叫号、门铃）（目录：`watch/`）
-  - `H` = **默念型 HOLD**：替你记住要反复默念的号码、口令、清单、路线（目录：`hold/`）
-  - `C` = **覆盖型 COVER**：替你证明「都看过了」，防漏检、漏扫、漏装（目录：`cover/`）
-  - `F` = **过滤型 FILTER**：只放行你声明要的那类信息，其余挡住（目录：`filter/`）
-  - `D` = **并行型 DUAL**：主线你做，副线（孩子、行李、排队号）它替你管（目录：`dual/`）
-  - `R` = **回放型 REVIEW**：替你回答「刚才……」，事后按记录复盘（目录：`review/`）
-  - `P` = **提示型 CUE**：看向某个场景才触发对应的提醒（`C` 已被覆盖型占用，故用 `P`）（目录：`cue/`）
-  - `S` = **社交型 SOCIAL**：替你分担待客、倾听、记人情的社交注意力（目录：`social/`）
-  - `B` = **身体型 BODY**：替你留意眼睛、喝水、呼吸、久坐等身体信号（目录：`body/`）
-  - `E` = **环境型 AMBIENT**：替你留意光线、天色、噪音等环境变化（取 Environment 的 `E`）（目录：`ambient/`）
-- **`K01`–`K20`**：**路缘坡系列**（20 个）——先为一类特殊人群解决一个具体难题，再溢出到处在情境性障碍中的普通人；`K` 取路缘的英式拼法 **Kerb**（Curb Cut 的 curb 英式拼作 kerb）。2026-10-25 由原 `C01`–`C20` 改为 K 编号——`C` 从此只属于注意力覆盖型，全表不再重号。（目录：`curb-cut/`）
-- **`G01`–`G20`**：**头部动作小游戏系列**（20 个，`G` = Game）——用头部动作玩的极简小游戏，含语音指导的颈部分段活动（只分段、必回正、不转圈）。（目录：`games/`）
+  - `W` = **守望型 WATCH**：替你持续盯着一个信号（锅、叫号、门铃），目录 `watch/`
+  - `H` = **默念型 HOLD**：替你记住要反复默念的号码、口令、清单、路线，目录 `hold/`
+  - `C` = **覆盖型 COVER**：替你证明「都看过了」，防漏检、漏扫、漏装，目录 `cover/`
+  - `F` = **过滤型 FILTER**：只放行你声明要的那类信息，其余挡住，目录 `filter/`
+  - `D` = **并行型 DUAL**：主线你做，副线（孩子、行李、排队号）它替你管，目录 `dual/`
+  - `R` = **回放型 REVIEW**：替你回答「刚才……」，事后按记录复盘，目录 `review/`
+  - `P` = **提示型 CUE**：看向某个场景才触发对应的提醒，目录 `cue/`
+  - `S` = **社交型 SOCIAL**：替你分担待客、倾听、记人情的社交注意力，目录 `social/`
+  - `B` = **身体型 BODY**：替你留意眼睛、喝水、呼吸、久坐等身体信号，目录 `body/`
+  - `E` = **环境型 AMBIENT**：替你留意光线、天色、噪音等环境变化，目录 `ambient/`
+- **`K01`–`K20`**：**路缘坡系列**（20 个）——先为一类特殊人群解决一个具体难题，再溢出到处在情境性障碍中的普通人；`K` 取路缘的英式拼法 **Kerb**。原 `C01`–`C20` 于 2026-10-25 改为 K 编号，`C` 只属于注意力覆盖型。目录：`curb-cut/`
+- **`G01`–`G20`**：**头部动作小游戏系列**（20 个，`G` = Game）——用头部动作玩的极简小游戏，含语音指导的颈部分段活动（只分段、必回正、不转圈）。目录：`games/`
 
-**冲突状态徽章**（据《眼镜默认能力冲突排查报告》2026-10-25，对照眼镜自带七项默认能力逐个排查；紧跟在系列徽章之后，三种状态只居其一）：
+**冲突状态徽章**：据《眼镜默认能力冲突排查报告》（2026-10-25）逐个对照眼镜自带七项默认能力排查，三种状态只居其一。
 
-- **直接冲突**（第一档，共 14 个）：本体就是默认能力（实时翻译 / 实时字幕 / 会议转写 / 提词器 / 慧眼读牌 / AR 导航 / AI 问答），只加了一层小扭转。报告建议停提审 / 下架，待裁决，尚未执行。
+- **直接冲突**（第一档，共 14 个）：本体就是默认能力——实时翻译、实时字幕、会议转写、提词器、慧眼读牌、AR 导航、AI 问答——只加了一层小扭转。报告建议停提审 / 下架，待裁决，尚未执行。
 - **高度重叠**（第二档，共 40 个）：默认功能问一句 / 开一下就能完成大半，只剩一层薄闭环，待逐簇裁决。
 - **待测试**（共 68 个）：既非直接冲突、也非高度重叠的统一记为待测试——不在纸面排查里先下「不冲突」结论，冲突与否等真机测试确认。
 
