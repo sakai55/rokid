@@ -1,0 +1,10 @@
+{
+  "name": "taxfree-ledger",
+  "version": "1.0.0",
+  "description": "Japan tax-free shopping ledger: per store, general goods and consumables are tallied separately against a 5,000 yen line, and once the line is met you confirm the sealed bag yourself before leaving the store. Stores are counted only when they meet the line. It never judges tax-free eligibility - the shop register does - and it never scans or identifies goods.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

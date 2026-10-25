@@ -1,0 +1,10 @@
+{
+  "name": "hanbok-rental",
+  "version": "1.0.0",
+  "description": "Hanbok rental checklist for palace-area rental shops: four rented pieces - top, skirt, accessory, bag - are checked one by one with a focus marker, remaining rental time is shown big, and extensions add 30 minutes at a time. When all four are checked, GO marks the set ready to return. It never photographs or identifies garments; it only counts what you confirmed.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
