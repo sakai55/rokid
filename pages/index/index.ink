@@ -451,7 +451,7 @@ export default {
     var self = this;
     this.setData({ busy: true, heardLine: 'HEARD: checking wearer mic...' });
     // Wearer-mode mic check (documented getUserMedia audio constraints,
-    // same pattern as cook-along #11 / market-radar #21): the 4-mic
+    // same pattern as cook-along DI11 / market-radar DI21): the 4-mic
     // array in 'wearer' mode prioritises YOUR voice. The stream only
     // verifies the mode opens; recognition uses SpeechRecognition.
     var micNote = 'wearer mic not checked';
