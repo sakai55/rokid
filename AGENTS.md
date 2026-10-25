@@ -1,12 +1,12 @@
 # Chin Tuck （收下巴） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G06: a chin-tuck hold exercise,
+Head-movement mini-game series GA06: a chin-tuck hold exercise,
 voice guided, closing Group A (neck exercises). Extreme
 simplicity: 3 states only (ready / playing / done), one page, one
 main button.
 
-Distinct from G01 `nod-count` and G04 `stretch-hold`: those games
+Distinct from GA01 `nod-count` and GA04 `stretch-hold`: those games
 count FULL head motions (a nod, an up/down stretch at ~27 deg).
 This game counts a SMALL motion only — the chin gliding straight
 back — and its whole design is the tuck-vs-nod distinction: a
@@ -87,7 +87,7 @@ in-game ready screen; the full text is here and in the README.
   cannot count even by accident.
 - **Thresholds (encoded and documented here):**
   - calibration look-down: ~25-30 deg pitch — coded as 27 deg
-    (the G01/G04 exercise range; calibration is a real look-down,
+    (the GA01/GA04 exercise range; calibration is a real look-down,
     not a tuck)
   - tuck reached: ~12-15 deg pitch-down-equivalent — coded as
     14 deg. SMALLER than the 25-30 deg exercise range because a
@@ -97,7 +97,7 @@ in-game ready screen; the full text is here and in the README.
     "幅度小一点" correction. The 14-20 deg band is deliberately
     narrow: below it is "not yet tucked", above it is "a nod,
     not a tuck".
-  - return-to-center: <8 deg pitch (tighter than G01/G04's 10
+  - return-to-center: <8 deg pitch (tighter than GA01/GA04's 10
     deg, because the whole motion is smaller — a 10 deg return
     band would nearly overlap the 14 deg tuck band)
   - hold: full 5 s (5000 ms), spoken countdown 5-4-3-2-1; the hold
@@ -108,7 +108,7 @@ in-game ready screen; the full text is here and in the README.
   - early-release cut: dropping below 11 deg (tuck minus 3 deg)
     before the full hold voids the rep
   - rep-stall re-prompt: 8 s, once per step
-- **Pitch formula (same as G01/G04, fleet-consistent):**
+- **Pitch formula (same as GA01/GA04, fleet-consistent):**
   `pitch = asin(2*(w*x - y*z))`, clamped, from the sensor
   quaternion, in degrees. Only the RELATIVE pitch vs the
   calibrated center is used, so the host's absolute zero never
