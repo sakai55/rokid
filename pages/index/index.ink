@@ -324,7 +324,7 @@ export default {
     var self = this;
     this.setData({ busy: true, noteLine: 'NOTE: checking wearer mic mode...' });
     // Wearer-mode mic AVAILABILITY check (documented getUserMedia audio
-    // constraints, same pattern as cook-along #11): the stream only
+    // constraints, same pattern as cook-along DI11): the stream only
     // verifies the wearer mode opens and reads back its settings, then
     // stops at once. Recognition itself runs on the host
     // SpeechRecognition with its OWN microphone - the checked wearer
