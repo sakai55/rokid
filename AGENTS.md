@@ -17,7 +17,7 @@ Rokid 眼镜快递分拣智能体（AIUI Agent）。
 - 逐个看来单（GAZE 串行）：一次只处理眼前这一件。看着它的
   面单点 SCAN，用 `getUserMedia` 取流后以
   `ImageCapture.takePhoto({mode:'wide'})` 广角拍下面单，
-  再按 #02 shelf-compare 的同一套路用 `BarcodeDetector`
+  再按 DI02 shelf-compare 的同一套路用 `BarcodeDetector`
   解条码（不可用时回退 wx.media CameraContext）。解出的
   字符串原样显示为这件的**记录号**。
 - 收件人由你申报（WHO）：我 / 配偶 / 孩子 / 父母 / 全家
