@@ -17,10 +17,10 @@ OCR；而且机器读数永远要过你这道核对。
 
 - 拍（SNAP）：看向牌子点 SNAP，用
   `ImageCapture.takePhoto({mode:'telephoto'})` 长焦拍下牌子
-  （不可用时回退 wx.media CameraContext，同 #01/#39）。同时
+  （不可用时回退 wx.media CameraContext，同 DI01/DI39）。同时
   记录当时的头部朝向（AbsoluteOrientationSensor 四元数算
   yaw，无传感器时如实记 `---`，不编造）与时间（一处快照取
-  日期 + 时间，同 #38/#39 的时钟纪律）。照片 Blob 只留在内
+  日期 + 时间，同 DI38/DI39 的时钟纪律）。照片 Blob 只留在内
   存里等 READ，**从不落盘**，本 Agent 也**不写任何存储**——
   牌子是当下的事，会话结束一切消失。
 - 类型（TYPE）：READ 之前先选牌子类型——站牌 / 登机口 /
