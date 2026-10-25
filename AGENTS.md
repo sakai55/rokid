@@ -1,7 +1,7 @@
 # Number Catch — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series H01 (HOLD 默念型， first of the group): a glance-and-hold keeper for
+series HO01 (HOLD 默念型， first of the group): a glance-and-hold keeper for
 the short-lived numbers of daily life — hotel room, parcel locker, food
 pickup, parking bay — that you otherwise mutter to yourself all the way
 there and lose the moment someone talks to you.
