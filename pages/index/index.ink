@@ -8,7 +8,7 @@
 import wx from 'wx';
 
 // -------------------------------------------------------------------
-// Drop Search (Curb-Cut C01, COVER family): a floor-sector search for
+// Drop Search (Curb-Cut K01, COVER family): a floor-sector search for
 // blind / low-vision wearers who dropped a small item.
 // The problem it outsources is NOT "what is in front of me" (that is
 // Huiyan territory) but "which patches of floor around my feet have I
