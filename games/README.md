@@ -31,4 +31,5 @@
 - GA44 [barcode-bingo](barcode-bingo/) — 在实物上找不同码制条码扫进3x3宾果盘凑线
 - GA45 [scene-memory](scene-memory/) — 拍一张全景照出3道记忆题，转头凭记忆答题
 - GA46 [frame-align](frame-align/) — 把指定物挪进九宫格指定格拍照，判定报位置比对
+- GA47 [odd-one-out](odd-one-out/) — 摆3同类1异类，先猜位置再拍照揭晓判定
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。
