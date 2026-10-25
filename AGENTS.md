@@ -1,13 +1,13 @@
 # Memory Seq （方向记忆） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G12, closing Group B
+Head-movement mini-game series GA12, closing Group B
 (head-as-controller): a direction-memory game. Extreme
 simplicity: 3 states only (ready / playing / done), one page,
 one main button.
 
-Distinct from G05/G10: those follow cues in real time (G05 voice
-cues for clock positions, G10 a visual dot). This game requires
+Distinct from GA05/GA10: those follow cues in real time (GA05 voice
+cues for clock positions, GA10 a visual dot). This game requires
 REMEMBERING a sequence after it is announced, with NO cue on
 screen during recall — the screen shows only "听" / "做", the
 step within the round, and rounds won x/3, never a direction.
@@ -72,7 +72,7 @@ ready screen; the full text is here and in the README.
   step's return is the round's completion: a won round goes
   straight to the next round's announce, and a failed last
   round ends the set at once (no return is needed to end).
-- **Calibration is two prompts, inside the playing state (G05's
+- **Calibration is two prompts, inside the playing state (GA05's
   pattern).** It is not a fourth page state and not a menu:
   START calibrates the center (head straight at START), then
   the playing screen shows "请低一下头" as its first
@@ -117,7 +117,7 @@ ready screen; the full text is here and in the README.
     fallback, not a fake stable)
   - announce spacing: 1 s between spoken directions
   - recall stall re-prompt: 8 s, once per step, never auto-fail
-- **Formulas (fleet-consistent, G05's):**
+- **Formulas (fleet-consistent, GA05's):**
   - pitch = asin(2*(w*x - y*z)), clamped
   - yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees
   - Only the RELATIVE pitch/yaw vs the calibrated center are
@@ -126,10 +126,10 @@ ready screen; the full text is here and in the README.
   (device verification items).**
   - DOWN: the first calibration prompt records the sign the
     head actually moves when asked to look down as DOWN; UP is
-    the opposite pitch sign (G01/G04 pattern).
+    the opposite pitch sign (GA01/GA04 pattern).
   - LEFT: the second calibration prompt records the sign the
     head actually moves when asked to turn left as LEFT; RIGHT
-    is the opposite yaw sign (G02 pattern).
+    is the opposite yaw sign (GA02 pattern).
   - Residual caveats: calibration trusts the player to follow
     each prompt; looking up instead of down would learn the
     pitch signs backwards, and turning right instead of left
