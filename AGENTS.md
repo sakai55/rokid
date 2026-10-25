@@ -1,7 +1,7 @@
 # Nod Count （点头操） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G01: a slow nod-count exercise, voice
+Head-movement mini-game series GA01: a slow nod-count exercise, voice
 guided. Extreme simplicity: 3 states only (ready / playing / done),
 one page, one main button.
 
