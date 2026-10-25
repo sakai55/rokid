@@ -1,17 +1,17 @@
 # Traffic Light （红绿灯） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G19, Group D (fun finale):
+Head-movement mini-game series GA19, Group D (fun finale):
 a traffic-light game. Extreme simplicity: 3 states only (ready /
 playing / done), one page, one main button.
 
-Distinct from G07: G07 is pure stillness (one 10-second hold,
+Distinct from GA07: GA07 is pure stillness (one 10-second hold,
 no turning at all). This game ALTERNATES motion and stillness
 on command — green rounds turn, red rounds freeze — so the
 skill is obeying the light, not just holding still. Distinct
-from G13: G13 always names a direction to find; here red rounds
-name NO direction and forbid ALL movement. Distinct from G09:
-G09 dodges by turning away from obstacles; here the light
+from GA13: GA13 always names a direction to find; here red rounds
+name NO direction and forbid ALL movement. Distinct from GA09:
+GA09 dodges by turning away from obstacles; here the light
 itself is the only instruction.
 
 ## Series constitution — neck safety (GO's rule)
@@ -52,9 +52,9 @@ in-game ready screen; the full text is here and in the README.
   the clock, not the wrong turn.
 - **RED round.** TTS "红灯，别动". Surviving 3 seconds with
   total angular change under 5 deg from the round-start
-  reference (G07's quaternion-angle metric) = pass (+1, voice
+  reference (GA07's quaternion-angle metric) = pass (+1, voice
   "稳住了"). Moving to 5 deg or beyond at ANY point during the
-  3 s = fail at once (voice "动了"). Unlike G07 there is NO
+  3 s = fail at once (voice "动了"). Unlike GA07 there is NO
   0.3 s grace on red, because freezing instantly is the whole
   point of red. Stability events are a supporting signal only:
   where the host reports instability, accumulation pauses but
@@ -68,10 +68,10 @@ in-game ready screen; the full text is here and in the README.
   within 4 seconds, TTS prompts "请回正" and the grace timer
   resets — the grace counts nothing and the next round is
   NEVER announced until the return actually happens. This is
-  G10/G13's stricter rule, deliberately NOT G09's
+  GA10/GA13's stricter rule, deliberately NOT GA09's
   advance-anyway grace. The final round ends the game at once:
   there is no next round for a return to gate.
-- **Calibration is two prompts, inside the playing state (G05's
+- **Calibration is two prompts, inside the playing state (GA05's
   pattern).** It is not a fourth page state and not a menu:
   START calibrates the center (head straight at START), then
   the playing screen shows "请低一下头" as its first
@@ -126,7 +126,7 @@ one rule instead of two.
     left/right) — coded as 27 deg
   - green clock: 4 s, no reach = fail
   - red stillness: total angular change < 5 deg from the
-    round-start reference quaternion (G07's metric:
+    round-start reference quaternion (GA07's metric:
     `2*acos(|dot(q, qRef)|)` in degrees); ≥ 5 deg at any point
     = fail at once, no grace
   - red survival: 3 s accumulated inside the still band
@@ -135,7 +135,7 @@ one rule instead of two.
   - return grace: 4 s, then TTS "请回正" and the timer resets;
     the next round is never announced until the return happens
   - calibration stall re-prompt: 8 s, once per step
-- **Formulas (fleet-consistent, G05's):**
+- **Formulas (fleet-consistent, GA05's):**
   - pitch = asin(2*(w*x - y*z)), clamped
   - yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z)), in degrees
   - Only the RELATIVE pitch/yaw vs the calibrated center are
@@ -144,10 +144,10 @@ one rule instead of two.
   (device verification items).**
   - DOWN: the first calibration prompt records the sign the
     head actually moves when asked to look down as DOWN; UP is
-    the opposite pitch sign (G01/G04 pattern).
+    the opposite pitch sign (GA01/GA04 pattern).
   - LEFT: the second calibration prompt records the sign the
     head actually moves when asked to turn left as LEFT; RIGHT
-    is the opposite yaw sign (G02 pattern).
+    is the opposite yaw sign (GA02 pattern).
   - Residual caveats: calibration trusts the player to follow
     each prompt; looking up instead of down would learn the
     pitch signs backwards, and turning right instead of left
