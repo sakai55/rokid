@@ -1,6 +1,6 @@
 # 头部动作小游戏（games/）
 
-头部动作小游戏系列 · 编号 GA01–GA21，共 21 个。用头部动作玩的极简小游戏。
+头部动作小游戏系列 · 编号 GA01–GA22，共 22 个。用头部动作玩的极简小游戏。
 
 - GA01 [nod-count](nod-count/) — 语音指导10次慢速点头，低头回正算一次
 - GA02 [turn-count](turn-count/) — 语音指导左右转头交替，各5次满10次
@@ -23,5 +23,6 @@
 - GA19 [traffic-light](traffic-light/) — 绿灯转向报出的方向，红灯稳住不动
 - GA20 [daily-routine](daily-routine/) — 点头转头贴耳仰低收下巴，一套2分钟走完
 - GA21 [angle-match](angle-match/) — 报一边一个角度，转进±5度带停稳算对上
+- GA22 [tilt-match](tilt-match/) — 贴耳对小角度，进±5度带停稳算对上
 
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。
