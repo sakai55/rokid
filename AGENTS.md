@@ -1,20 +1,20 @@
 # Level Keep （端水平） — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`).
-Head-movement mini-game series G14, Group C
+Head-movement mini-game series GA14, Group C
 (observation/control): a level-hold game. Extreme simplicity:
 3 states only (ready / playing / done), one page, one main
 button.
 
-Distinct from G07 and from photo-level:
-- G07 steady-hold counts the ABSENCE of motion in ANY direction
+Distinct from GA07 and from photo-level:
+- GA07 steady-hold counts the ABSENCE of motion in ANY direction
   (total angular change from the settle reference, <5 deg).
   This game counts ROLL ONLY: pitch/yaw drift alone does NOT
   break level. The player can look slightly up/down or turn
   slightly and still be level, as long as the head is not
   tilted sideways. Level is shown as a visual ball on a track
-  (centered = level, offset left/right with roll) — G07 has no
-  ball, because G07 has no axis to display.
+  (centered = level, offset left/right with roll) — GA07 has no
+  ball, because GA07 has no axis to display.
 - photo-level levels a CAMERA photo. This game levels the HEAD
   (roll from the orientation sensor), with no camera at all.
 
@@ -84,7 +84,7 @@ ready screen; the full text is here and in the README.
   quaternion alone.
 - **Roll metric (exact, as implemented):** roll from the sensor
   quaternion, `roll = atan2(2*(w*x + y*z), 1 - 2*(x*x + y*y))`,
-  in degrees (the G03 ear-tilt formula). The level reference
+  in degrees (the GA03 ear-tilt formula). The level reference
   is the roll captured at the end of the settle, and the
   judged value is the RELATIVE roll: the wrapped difference
   of the current roll and the reference roll, in [-180, 180].
