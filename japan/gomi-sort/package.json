@@ -1,0 +1,10 @@
+{
+  "name": "gomi-sort",
+  "version": "1.0.0",
+  "description": "Home trash-sorting referee for Japan: pick your ward rule card first - the card, not the AI, is the law. You call each item, it judges against the card and names the right branch and collection day when you miss. A photo+LLM hint is labelled tentative and never decides. Built for the strictest recycling rules in daily life.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

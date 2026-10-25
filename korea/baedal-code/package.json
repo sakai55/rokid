@@ -1,0 +1,10 @@
+{
+  "name": "baedal-code",
+  "version": "1.0.0",
+  "description": "Delivery code vault for Korean apartment life: your gate code lives behind four digit windows, revealed one digit at a time and auto-masked after 8 seconds. GO speaks guidance but never the digits. WIPE destroys it, nothing is ever stored - close the page and the code is gone by design.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

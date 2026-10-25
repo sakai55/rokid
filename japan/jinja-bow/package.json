@@ -1,0 +1,10 @@
+{
+  "name": "jinja-bow",
+  "version": "1.0.0",
+  "description": "Shrine visit sequence coach for Rokid glasses: torii bow, temizuya, bell, two bows, two claps, one bow. Your bow is the button - head-pitch sensing confirms each bow, nod or tap confirms the rest. One step on screen at a time, hands free, eyes on the shrine. Claps are self-confirmed and labelled as such.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

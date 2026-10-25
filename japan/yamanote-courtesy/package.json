@@ -1,0 +1,10 @@
+{
+  "name": "yamanote-courtesy",
+  "version": "1.0.0",
+  "description": "Commute courtesy cues on a station line: register your fixed 6-station run and I advance only on your tap - there is no train API, and I say so. One stop before your destination I light the courtesy set: backpack to the front, phone on manner mode, move toward the door. I never navigate; timing the manners is the whole job.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
