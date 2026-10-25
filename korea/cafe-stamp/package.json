@@ -1,0 +1,10 @@
+{
+  "name": "cafe-stamp",
+  "version": "1.0.0",
+  "description": "Cafe stamp card: one card, ten stamps, one free drink. STAMP adds a stamp per coffee, the ten-cell card fills in plain sight, FREE redeems only at ten stamps and clears the card, and UNDO takes back a mistaken stamp. It never scans, never connects to any shop system, and the shop's own sign decides the rule.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

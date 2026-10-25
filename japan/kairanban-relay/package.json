@@ -1,0 +1,10 @@
+{
+  "name": "kairanban-relay",
+  "version": "1.0.0",
+  "description": "Kairanban relay: the neighbourhood circular notice board, kept on track. Four houses in order on one line, the current holder shown large, a stamp recorded when a house receives it, and the board only moves on when the stamp is done. It never reads what is on the board, and the schedule belongs to the neighbourhood association, not to it.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
