@@ -43,7 +43,7 @@ https://github.com/sakai55/rokid/tree/agent-cross-street
 |---|---|
 | （无） | 本 Agent 不申请任何权限 |
 
-不用相机、不用麦克风、不用定位；头部朝向传感器在 AIUI 里不需要单独的权限声明，故 app.json 无 `permissions` 字段（同 #07 / #15 / #28 / #30）。
+不用相机、不用麦克风、不用定位；头部朝向传感器在 AIUI 里不需要单独的权限声明，故 app.json 无 `permissions` 字段（同 DI07 / DI15 / DI28 / DI30）。
 
 ## 打包与预览
 
