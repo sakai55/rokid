@@ -1,7 +1,7 @@
 # Breath Pace — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series B03 (BODY 身体型， third of the group, series #43): when you are
+series BO03 (BODY 身体型， third of the group, series #43): when you are
 nervous or anxious your breathing falls apart, and counting the beats
 yourself only makes you panic more. This agent takes the counting off
 your hands: it shows an in-view breathing beat (inhale-hold-exhale),
@@ -54,17 +54,17 @@ with a session summary.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `eye-rest` (B01) is the near-gaze timer: it
+- Attention-series `eye-rest` (BO01) is the near-gaze timer: it
   counts steady near gaze and confirms a far look by head pitch.
   Breath-pace borrows the timer shape but paces a body rhythm,
   not a gaze: its timer plays a fixed inhale-hold-exhale beat
   and its only output is the beat plus a session summary.
-- Attention-series `water-watch` (B02) is the cup-direction
+- Attention-series `water-watch` (BO02) is the cup-direction
   register plus a wall-clock drink interval plus a steady-gaze
   drink confirm. Breath-pace registers no direction and counts
   no habit: its only input is START/PAUSE/MODE/MUTE, its only
   output is the beat.
-- Attention-series `standup-echo` (S04) is the standup module-
+- Attention-series `standup-echo` (SO04) is the standup module-
   keyword gate: hits become notes, non-hits become digest rows.
   Breath-pace has no keywords and no notes: it plays a beat.
 
