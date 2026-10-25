@@ -1,7 +1,7 @@
 # Dog Walk — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series D03 (DUAL 并行型， third of the group): walking the dog, the
+series DU03 (DUAL 并行型， third of the group): walking the dog, the
 wearer's main line is the road and the dog at their feet and the side
 line is "did I bring everything, what did the dog just do, and did I
 miss anything before going home". Both hands are on the leash, so the
@@ -99,21 +99,21 @@ attestation.
 
 ## Relation to the neighbours (kept distinct on purpose)
 
-- Attention-series `play-watch` (D01) is the sibling template:
+- Attention-series `play-watch` (DU01) is the sibling template:
   same nod discipline, same zero-persistence rule — but its side
   line is a play area watched on a timer, and it has no gate at
   all. Dog-walk adds the going-out checklist, the on-the-spot
   stop resolution and the home gate, because "forgot to bring",
   "forgot to pick up" and "forgot to check" are three different
   failures.
-- Attention-series `bag-watch` (D02) is the gate template: same
+- Attention-series `bag-watch` (DU02) is the gate template: same
   blocked-count + banner + one-TTS stop, same "never says you may
   go" rule — but its gate is a heading gate (turn to the
   registered direction and attest "I have it"). Dog-walk's gate
   is a checklist gate (bags, water, every pending point
   confirmed one by one); the two gates answer different
   questions, and neither reuses the other's attestation.
-- Attention-series `pack-sweep` (C04) is **packing at home
+- Attention-series `pack-sweep` (CO04) is **packing at home
   before leaving**: a checklist of items to put in the bag,
   confirmed one by one while packing. Dog-walk's going-out list
   covers only the three walk items (bags, water, leash) and the
