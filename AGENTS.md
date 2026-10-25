@@ -1,7 +1,7 @@
 # Signal Watch — Agent Notes
 
 AIUI Agent for Rokid glasses (single page, `pages/index/index`). Attention
-series W04 (WATCH 守望型）: a queue-number look-back watcher for clinics,
+series WA04 (WATCH 守望型）: a queue-number look-back watcher for clinics,
 banks and food counters.
 
 ## Design contract
