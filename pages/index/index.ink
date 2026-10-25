@@ -439,7 +439,7 @@ export default {
     if (this.data.busy) return;
     if (typeof SpeechRecognition === 'undefined') {
       // Honest SKIP: no recogniser on this host - cycle the presets
-      // instead of pretending to listen (same pattern as #03/#21).
+      // instead of pretending to listen (same pattern as DI03/DI21).
       this._presetIdx = ((this._presetIdx || 0) + 1) % this._presets().length;
       this._draft.name = this._presets()[this._presetIdx];
       this.setData({
@@ -463,7 +463,7 @@ export default {
     var self = this;
     this.setData({ busy: true, status: 'NAME: checking wearer mic...' });
     // Wearer-mode mic check (documented getUserMedia audio constraints,
-    // same pattern as #11/#21): the stream only verifies the mode opens;
+    // same pattern as DI11/DI21): the stream only verifies the mode opens;
     // recognition uses the benchmark SpeechRecognition.
     var micNote = 'wearer mic not checked';
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
