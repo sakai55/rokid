@@ -22,10 +22,10 @@ Rokid 眼镜名牌识人智能体（AIUI Agent）。
 
 - 拍（SNAP）：看向名牌点 SNAP，用
   `ImageCapture.takePhoto({mode:'telephoto'})` 长焦拍下名牌
-  （不可用时回退 wx.media CameraContext，同 #01/#41）。拍
+  （不可用时回退 wx.media CameraContext，同 DI01/DI41）。拍
   照那一瞬间同步冻结当时的头部朝向（AbsoluteOrientationSensor
   四元数算 yaw，无传感器时如实记 `---`，不编造）与时间
-  （一处快照取日期 + 时间，同 #38/#41 的时钟纪律）——这个
+  （一处快照取日期 + 时间，同 DI38/DI41 的时钟纪律）——这个
   朝向就是「刚才在你正前方的人」的方向。照片 Blob 只留
   在内存里等 READ，**从不落盘**。
 - 读（READ）：把照片 Blob 经 `FileReader.readAsDataURL` 编
@@ -64,7 +64,7 @@ Rokid 眼镜名牌识人智能体（AIUI Agent）。
   或没有拍/口述那一刻的朝向，SAVE 如实拒绝，绝不编造姓
   名或朝向。
 - 再遇（RE-MEET）：Agent 打开期间，每 500 ms 一拍（tick
-  累计计时、不反复采样 Date，同 #38 纪律）检查你的朝向：
+  累计计时、不反复采样 Date，同 DI38 纪律）检查你的朝向：
   落入某个已登记者的朝向 ±15° 内并**连续停满 2 秒**，他
   的卡片大字弹出、名字 + 公司悄悄朗读**一次**；同一段面
   对里不重复念；朝向离开锥形区满 5 秒才重新布防，来回瞥
