@@ -26,13 +26,14 @@ export default {
     stateText: '待命 · 点头开始说话',
     heardText: '',
     heardCls: 'heard heard-dim',
+    boxLabel: '待命，点头开始录入',
     slots: [],
     resTitle: '',
     resBody: '',
     resItems: [],
     choiceLine: '',
     hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着',
-    appVersion: 'v2.1.1'
+    appVersion: 'v2.1.2'
   },
 
   onLoad() {
@@ -197,6 +198,7 @@ export default {
   _syncUI() {
     if (this._demo) return;
     var patch = { slots: this._slotsData() };
+    patch.boxLabel = this.data.phase === 'idle' ? '待命，点头开始录入' : '你说的是';
     var ph = this.data.phase;
     var finals = this._finals();
     if (ph === 'idle') {
@@ -343,6 +345,7 @@ export default {
       var mk = function (kind, i) { return { kind: kind, dots: this._dotsFor(kind, i) }; }.bind(this);
       this.setData({
         phase: 'idle',
+        boxLabel: '待命，点头开始录入',
         stateText: '已发送 3 条 · 下面可以继续说下一条',
         heardText: '', heardCls: 'heard heard-dim',
         slots: [mk('d', 0), mk('w', 1), mk('q', 2)],
@@ -354,6 +357,7 @@ export default {
     if (mode === 'list') {
       this.setData({
         phase: 'inbox',
+        boxLabel: '你说的是',
         stateText: '第 1 / 2 条（发送顺序） · 转头或滑动翻条',
         heardText: '列出今天的开发清单', heardCls: 'heard',
         resTitle: '今日开发清单', resBody: '今天完成的三批：',
@@ -366,6 +370,7 @@ export default {
     if (mode === 'text') {
       this.setData({
         phase: 'inbox',
+        boxLabel: '你说的是',
         stateText: '第 2 / 2 条（发送顺序） · 转头或滑动翻条',
         heardText: '用一句话说说今天的天气', heardCls: 'heard',
         resTitle: '今日天气',
@@ -378,6 +383,7 @@ export default {
     this._demo = false;
     this.setData({
       phase: 'idle',
+      boxLabel: '待命，点头开始录入',
       stateText: '待命 · 点头开始说话',
       heardText: '', heardCls: 'heard heard-dim',
       resTitle: '', resBody: '', resItems: [], choiceLine: '',
@@ -488,6 +494,7 @@ export default {
     this._restarts = 0;
     this.setData({
       phase: 'listening',
+      boxLabel: '你说的是',
       stateText: '正在听 · 说吧，停顿没关系',
       heardText: '',
       heardCls: 'heard',
@@ -735,6 +742,7 @@ export default {
     this._notice = { title: title, body: body };
     this.setData({
       phase: 'idle',
+      boxLabel: '待命，点头开始录入',
       stateText: title,
       resTitle: title,
       resBody: body,
@@ -770,7 +778,7 @@ export default {
       <text class="state">{{stateText}}</text>
     </view>
     <view class="heard-box">
-      <text class="heard-label">你说的是</text>
+      <text class="heard-label">{{boxLabel}}</text>
       <text class="{{heardCls}}">{{heardText}}</text>
       <text class="box-hint">{{hint}}</text>
     </view>
