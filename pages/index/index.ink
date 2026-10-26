@@ -33,7 +33,7 @@ export default {
     resItems: [],
     choiceLine: '',
     hint: '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着',
-    appVersion: 'v2.1.5'
+    appVersion: 'v2.1.6'
   },
 
   onLoad() {
@@ -715,7 +715,7 @@ export default {
       var item = pending[i++];
       if (Date.now() - item.at >= TIMEOUT_MS) {
         item.st = 'timeout';
-        item.env = { type: 'text', title: '还在处理中', body: '这一条等了 300 秒还没回（单子不会丢，Muse 办完后下次打开还能补收——若一直没回，多半是队列堵住了）。点头看完后可重新问。', speak: '' };
+        item.env = { type: 'text', title: '还在处理中', body: '这一条等了 300 秒还没回（单子不会丢，处理服务办完后下次打开还能补收——若一直没回，多半是队列堵住了）。点头看完后可重新问。', speak: '' };
         self._onFinal(item);
         step();
         return;
@@ -733,11 +733,11 @@ export default {
           self._onFinal(item);
         } else if (st === 'needs-approval') {
           item.st = 'approval';
-          item.env = { type: 'text', title: '需要你批准', body: '这件事要你在手机上批准，已挂起：到 RokidRelay 聊里看工单卡处理。', speak: '' };
+          item.env = { type: 'text', title: '需要你批准', body: '这件事需要你批准，已挂起：请到你的处理服务那边批准这张单。', speak: '' };
           self._onFinal(item);
         } else if (st === 'error') {
           item.st = 'error';
-          item.env = { type: 'text', title: '处理失败', body: 'Muse 那边没能办成（' + String(b.error || 'error').slice(0, 40) + '）。', speak: '' };
+          item.env = { type: 'text', title: '处理失败', body: '处理服务那边没能办成（' + String(b.error || 'error').slice(0, 40) + '）。', speak: '' };
           self._onFinal(item);
         } else if (st === 'working' && item.st !== 'working') {
           item.st = 'working';
