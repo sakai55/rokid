@@ -33,7 +33,7 @@ export default {
     resItems: [],
     choiceLine: '',
     hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着',
-    appVersion: 'v2.1.2'
+    appVersion: 'v2.1.3'
   },
 
   onLoad() {
@@ -335,7 +335,7 @@ export default {
   // queue and never submit; any primary action exits demo mode.
 
   onDemo() {
-    var order = ['queue', 'list', 'text', 'idle'];
+    var order = ['queue', 'listening', 'list', 'text', 'idle'];
     var idx = this._demoIdx || 0;
     this._demoIdx = idx + 1;
     this._demo = true;
@@ -351,6 +351,22 @@ export default {
         slots: [mk('d', 0), mk('w', 1), mk('q', 2)],
         resTitle: '', resBody: '', resItems: [], choiceLine: '',
         hint: '演示（示例） · 全点满=已完成 · 小蛇=处理中 · 边框点=待处理'
+      });
+      return;
+    }
+    if (mode === 'listening') {
+      var mk2 = function (kind, i) { return { kind: kind, dots: this._dotsFor(kind, i) }; }.bind(this);
+      this.setData({
+        phase: 'listening',
+        boxLabel: '你说的是',
+        stateText: '正在听 · 说吧，停顿没关系',
+        heardText: '帮我查一下明天去大阪的电车，嗯……还有最早一班是几点',
+        heardCls: 'heard',
+        slots: [mk2('d', 0)],
+        resTitle: '今日天气',
+        resBody: '东京今天晴，最高 21 度，傍晚起风，出门加件外套。',
+        resItems: [], choiceLine: '',
+        hint: '说完以「大表哥」结尾发送（「表哥」也认） · 点头取消'
       });
       return;
     }
