@@ -33,12 +33,12 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填（导入名默认为仓库名，Studio 内改「大表哥」） |
-| Version（Build） | 待回填（本地 package.json 1.0.0） |
+| Version（Build） | 待回填（本地 package.json 1.0.2） |
 | App Category | 待回填（建议 Work） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
 | AIX Package Size | 约 13 KB（本地 pack；Studio 打包值待回填） |
-| 状态 | 本地已打包 · 待 GO 在 Studio 导入、填钥匙并真机运行 |
+| 状态 | v1.0.0 已真机全链跑通（2026-10-26）；v1.0.2 待 GO 在 Studio 重新导入、填钥匙并打包 |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
@@ -46,9 +46,9 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 | 步 | 发生什么 |
 |---|---|
-| 说话 | 点头 / 单击开始 → 宿主 ASR 识别，文字实时上屏 → 最终文字自动投单 |
+| 说话 | 点头 / 单击开始 → 宿主 ASR 识别，文字分段攒起来实时上屏（停顿不截断）→ 以「大表哥」结尾、或单击立即发送，结束词剥掉不进正文 |
 | 投单 | POST 前门 `/submit`（`{session, kind:"ask", text}`，session 本地持久化） |
-| 等待 | 每 4 秒查一次单，总超时 150 秒；状态行显示已排队 / Muse 正在处理 |
+| 等待 | 每 4 秒查一次单，总超时 300 秒（v1.0.2 起，原 150 秒）；状态行显示已排队 / Muse 正在处理 |
 | 结果 | 信封按 type 渲染：text（标题+正文）、list（+逐行条目）、choices（只展示）、card（标题+正文）；speak 与正文不同时朗读 speak |
 | 批准 | 回单 needs-approval 时显示「这件事要你在手机上批准，已挂起」，眼镜侧对话当场结束，批准在 Muse App 里做 |
 | 补收 | ticket 存本地；关掉眼镜不丢单，下次打开先查未完成单，办完的直接显示 |
@@ -57,7 +57,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 | 手势 | 键事件 | 作用 |
 |---|---|---|
-| 单击 | Enter / GlobalHook | 开始说话；说话中单击 = 说完了；结果页单击 = 再问一句（400ms 去重） |
+| 单击 | Enter / GlobalHook | 开始说话；说话中单击 = 立即发送已攒文字；结果页单击 = 再问一句（400ms 去重） |
 | 点头 | onHeadGesture 'nod' | 与单击同效；处理中忽略 |
 | 滑动 | ArrowUp / ArrowDown | 本页未占用 |
 | 双击 | Backspace | 交给系统：返回 / 退出（页面不拦截） |
@@ -81,11 +81,12 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 - [ ] **真机网络链**：填钥匙打包并下发后，眼镜上说一句提问，Muse 侧 `/feed` 立刻出现该单（眼镜 → 手机代理 → 前门全链通）
 - [ ] **ASR 文字显示**：识别文字实时出现在「你说的是」框里，听错可见
+- [ ] **结束词发送**（v1.0.2 新增）：说话中途停顿多次不截断、不投单；最后说「大表哥」才投单且正文不含结束词；只说「大表哥」时不投单并提示先说事；说话中单击可立即发送已攒文字
 - [ ] **信封四态显示**：text / list / choices / card 四种回单各显示一次，版式正确不溢出
 - [ ] **speak 朗读**：speak 与 body 不同时朗读 speak；两者相同时不重复念正文
 - [ ] **needs-approval 提示**：2 级单回来时显示「这件事要你在手机上批准，已挂起」
 - [ ] **关后再开补收**：处理中退出大表哥，单子办完后重开，自动显示结果
-- [ ] **超时表现**：断网或 150 秒无回时显示超时文案，单子不丢、下次打开续收
+- [ ] **超时表现**：断网或 300 秒无回时显示超时文案，单子不丢、下次打开续收
 - [ ] **钥匙未填**：占位符状态打包打开时显示「钥匙未填」提示，不崩溃
 
 ## 提审资料 (Review Submission)
@@ -96,7 +97,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ### Opening Message
 
-你好，我是大表哥。点头或单击镜腿，把问题说给我听——我先把听到的文字显示在屏上，再送给 Muse 处理；答案回来后，屏上显示、摘要朗读给你。
+你好，我是大表哥。点头或单击镜腿，把问题说给我听，说完最后加一句「大表哥」——我把听到的文字攒着显示在屏上，听到结束词再送给 Muse 处理；答案回来后，屏上显示、摘要朗读给你。
 
 ### Preview Media
 
@@ -104,6 +105,12 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 - 视频：真机阶段补录（核心流程：说话提问 → 等待 → 结果显示与朗读，≤60 秒）
 
 ### Change Log
+
+#### v1.0.2
+
+- Features added：结束词发送机制——识别文字先分段攒着上屏（宿主按停顿分段也不截断），攒到的文字以「大表哥」结尾时剥掉结束词投单；说话中单击 / 点头 = 立即发送已攒文字；只说结束词不投单并提示先说事；攒满 500 字自动发送
+- Improvements：识别在宿主每次停顿收尾后自动续听，直到发送为止；说话中按钮文案改「发送」；待命与聆听提示写明结束词用法；等待上限 150 → 300 秒（配合哨兵侧延迟调优：退避封顶 60 秒 + 对话保温窗）
+- Fixes：修复 v1.0.0「话没说完、稍一停顿就被宿主收尾、半句话被投单」（GO 真机反馈）
 
 #### v1.0.0
 

@@ -9,7 +9,9 @@ import { CHANNEL_KEY } from '../../channel.js';
 
 var BASE = 'https://rokidp.datumoj.com';
 var POLL_MS = 4000;
-var TIMEOUT_MS = 150000;
+var TIMEOUT_MS = 300000;
+var END_WORD = '大表哥';
+var MAX_CHARS = 500;
 
 export default {
   data: {
@@ -21,9 +23,9 @@ export default {
     resBody: '',
     resItems: [],
     choiceLine: '',
-    hint: '说完自动发送 · 识别文字会显示在屏上，听错当场可见',
+    hint: '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着',
     sayLabel: '开始说话',
-    appVersion: 'v1.0.0'
+    appVersion: 'v1.0.2'
   },
 
   onLoad() {
@@ -32,6 +34,11 @@ export default {
     this._pollStart = 0;
     this._rec = null;
     this._submitted = false;
+    this._buffer = '';
+    this._wantListen = false;
+    this._tapFinish = false;
+    this._restarts = 0;
+    this._gotFinal = false;
     try { this.enableWorldAwareness(); } catch (e) { /* optional */ }
     this._ensureSession();
     this._resume();
@@ -39,6 +46,7 @@ export default {
 
   onUnload() {
     this._pollStop = true;
+    this._wantListen = false;
     if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
   },
 
@@ -126,7 +134,7 @@ export default {
       heardCls: 'heard heard-dim',
       resTitle: '', resBody: '', resItems: [], choiceLine: '',
       sayLabel: '开始说话',
-      hint: '说完自动发送 · 识别文字会显示在屏上，听错当场可见'
+      hint: '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着'
     });
   },
 
@@ -158,7 +166,14 @@ export default {
     // working: ignore - the poll owns the screen until done/timeout
   },
 
-  // ---------- ASR ----------
+  // ---------- ASR (accumulate + end word) ----------
+  // The host ASR endpoints on ITS OWN silence rule, which the app
+  // cannot tune: a mid-sentence pause would cut the user off. So a
+  // final segment no longer submits. Segments accumulate on screen
+  // and are sent only when the accumulated text ends with the end
+  // word (END_WORD, stripped before submit), or when the user
+  // taps/nods to send now. After each host endpoint the recognizer
+  // restarts itself while listening is still wanted.
 
   _startListening() {
     var SR = typeof SpeechRecognition !== 'undefined' ? SpeechRecognition : null;
@@ -167,15 +182,25 @@ export default {
       return;
     }
     this._submitted = false;
+    this._buffer = '';
+    this._wantListen = true;
+    this._tapFinish = false;
+    this._restarts = 0;
     this.setData({
       phase: 'listening',
-      stateText: '正在听 · 请说话',
+      stateText: '正在听 · 说吧，停顿没关系',
       heardText: '',
       heardCls: 'heard',
       resTitle: '', resBody: '', resItems: [], choiceLine: '',
-      sayLabel: '说完了',
-      hint: '识别文字实时显示 · 单击或点头结束'
+      sayLabel: '发送',
+      hint: '说完最后说「大表哥」自动发送 · 或单击镜腿发送'
     });
+    this._launchRec();
+  },
+
+  _launchRec() {
+    var SR = typeof SpeechRecognition !== 'undefined' ? SpeechRecognition : null;
+    if (!SR) return;
     var self = this;
     var rec = null;
     try {
@@ -184,60 +209,144 @@ export default {
       rec.interimResults = true;
       rec.maxAlternatives = 1;
     } catch (e) {
+      this._wantListen = false;
       this._showPlain('无法开始识别', '语音识别启动失败：' + this._err(e), '');
       return;
     }
     this._rec = rec;
-    rec.onresult = function (ev) {
-      var finalText = '', interim = '';
-      try {
-        for (var i = ev.resultIndex; i < ev.results.length; i++) {
-          var r = ev.results[i];
-          var t = (r && r[0]) ? String(r[0].transcript || '') : '';
-          if (r && r.isFinal) finalText += t; else interim += t;
-        }
-      } catch (e) {}
-      if (interim) self.setData({ heardText: interim });
-      if (finalText) self._onHeard(finalText);
-    };
+    this._gotFinal = false;
+    rec.onresult = function (ev) { self._onResult(ev); };
     rec.onerror = function (ev) {
       if (self._submitted) return;
       self._rec = null;
-      self._showPlain('识别失败', '没能听清（' + String((ev && ev.error) || 'error') + '）。回待命后单击再试。', '');
-    };
-    rec.onend = function () {
-      if (self._submitted) return;
-      if (self.data.phase === 'listening') {
-        self.setData({
-          phase: 'idle',
-          stateText: '待命 · 点头或单击镜腿开始说话',
-          sayLabel: '开始说话',
-          hint: '刚才没听到完整的话 · 单击再试'
-        });
+      if (self._tapFinish) {
+        self._tapFinish = false;
+        self._finishBuffer();
+        return;
       }
+      self._wantListen = false;
+      self._showPlain('识别失败', '没能听清（' + String((ev && ev.error) || 'error') + '）。已攒到的文字还留在屏上，单击再试。', '');
     };
+    rec.onend = function () { self._onRecEnd(); };
     try {
       rec.start();
     } catch (e) {
       this._rec = null;
-      this._showPlain('无法开始识别', '语音识别启动失败：' + this._err(e), '');
+      if (this._wantListen && !this._submitted) {
+        this._wantListen = false;
+        this._showPlain('无法开始识别', '语音识别启动失败：' + this._err(e), '');
+      }
     }
   },
 
-  _stopListening() {
-    if (this._rec) { try { this._rec.stop(); } catch (e) {} }
+  _onResult(ev) {
+    if (this._submitted) return;
+    var finalText = '', interim = '';
+    try {
+      for (var i = ev.resultIndex; i < ev.results.length; i++) {
+        var r = ev.results[i];
+        var t = (r && r[0]) ? String(r[0].transcript || '') : '';
+        if (r && r.isFinal) finalText += t; else interim += t;
+      }
+    } catch (e) {}
+    if (interim) {
+      this.setData({ heardText: (this._buffer || '') + interim });
+    }
+    if (finalText) {
+      this._gotFinal = true;
+      this._restarts = 0;
+      this._buffer = (this._buffer || '') + finalText;
+      this.setData({ heardText: this._buffer });
+      this._checkEnd();
+    }
   },
 
-  // Final ASR text: it STAYS on screen (the user sees what was heard)
-  // and is submitted as-is. No audio ever leaves the glasses.
-  _onHeard(text) {
+  _onRecEnd() {
+    this._rec = null;
+    if (this._submitted) return;
+    if (this._tapFinish) {
+      this._tapFinish = false;
+      this._finishBuffer();
+      return;
+    }
+    if (!this._wantListen) return;
+    if (this.data.phase !== 'listening') return;
+    if (!this._gotFinal) {
+      this._restarts = (this._restarts || 0) + 1;
+      if (this._restarts >= 6) {
+        this._wantListen = false;
+        this.setData({
+          phase: 'idle',
+          stateText: '待命 · 点头或单击镜腿开始说话',
+          sayLabel: '开始说话',
+          hint: '一直没听到声音 · 单击再试'
+        });
+        return;
+      }
+    }
+    this._launchRec();
+  },
+
+  _stopListening() {
+    // Tap/nod while listening = send now. stop() lets the host
+    // flush its pending final segment first; _onRecEnd then
+    // finishes with whatever has accumulated on screen.
+    this._tapFinish = true;
+    if (this._rec) {
+      try { this._rec.stop(); } catch (e) { this._tapFinish = false; this._finishBuffer(); }
+    } else {
+      this._tapFinish = false;
+      this._finishBuffer();
+    }
+  },
+
+  // Strip trailing punctuation/whitespace for end-word tests.
+  _trimTail(s) {
+    return String(s || '').replace(/[\s，。！？、；：,.!?;:]+$/, '');
+  },
+
+  _checkEnd() {
+    var tail = this._trimTail(this._buffer);
+    if (tail.slice(-END_WORD.length) === END_WORD) {
+      var body = this._trimTail(tail.slice(0, tail.length - END_WORD.length));
+      if (!body) {
+        // Only the end word so far: keep listening, ask for content.
+        this._buffer = '';
+        this.setData({
+          heardText: '',
+          stateText: '正在听 · 先说事，最后再说「大表哥」',
+          hint: '刚才只有结束词，还没攒到内容'
+        });
+        return;
+      }
+      this._finish(body);
+      return;
+    }
+    if (this._buffer.length >= MAX_CHARS) {
+      this._finish(this._trimTail(this._buffer));
+    }
+  },
+
+  _finishBuffer() {
+    var text = this._trimTail(this._buffer);
+    if (text.slice(-END_WORD.length) === END_WORD) {
+      text = this._trimTail(text.slice(0, text.length - END_WORD.length));
+    }
+    this._finish(text);
+  },
+
+  // The text that is sent STAYS on screen (the user sees exactly
+  // what was heard and sent). No audio ever leaves the glasses.
+  _finish(text) {
     if (this._submitted) return;
     this._submitted = true;
+    this._wantListen = false;
+    this._tapFinish = false;
     var clean = String(text || '').trim();
     this.setData({ heardText: clean, heardCls: 'heard' });
     if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
     if (!clean) {
-      this._showPlain('没听清', '识别结果是空的。回待命后单击再说一遍。', '');
+      this._showPlain('没听清', '还没有攒到内容。回待命后单击再说一遍。', '');
       return;
     }
     this._submit(clean);
@@ -308,7 +417,7 @@ export default {
       // queued | working | unknown -> keep waiting
       var waited = Math.round((Date.now() - self._pollStart) / 1000);
       if (waited * 1000 >= TIMEOUT_MS) {
-        self._showPlain('还在处理中', '等了 150 秒还没回。单子不会丢：退出后下次打开大表哥会自动补收。', '');
+        self._showPlain('还在处理中', '等了 300 秒还没回。单子不会丢：退出后下次打开大表哥会自动补收。', '');
         return;
       }
       self.setData({

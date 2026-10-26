@@ -10,7 +10,7 @@ rokidpost 通道的眼镜侧薄客户端（AIUI Agent）。眼镜只负责三件
 
 过通道的永远是文字，没有录音离开眼镜：
 
-1. **说话**：点头（`onHeadGesture 'nod'`）或单击镜腿（Enter / GlobalHook，400ms 去重）开始；宿主 `SpeechRecognition` 识别，**识别文字实时显示在「你说的是」框里**（听错当场可见），最终结果一出自动投单。
+1. **说话**：点头（`onHeadGesture 'nod'`）或单击镜腿（Enter / GlobalHook，400ms 去重）开始；宿主 `SpeechRecognition` 识别，**识别文字分段攒起来实时显示在「你说的是」框里**（听错当场可见，停顿不截断）；攒到的文字以结束词「大表哥」结尾时剥掉结束词投单，单击/点头也可立即发送已攒文字。宿主 ASR 按自身停顿规则分段收尾（其停顿判定应用改不了），每段结束后自动续听；连续 6 次续听无新段则回待命；只说了结束词不投单并提示先说事；攒满 500 字自动发送。
 2. **投单**：`POST https://rokidp.datumoj.com/submit`，header `x-channel-key` 带钥匙，正文 `{session, kind:"ask", text}`。session id 首次随机生成、`localStorage` 持久化。
 3. **等单**：每 4 秒 `GET /ticket/<id>` 查一次，总超时 150 秒；按 status 显示进度（queued=已排队 / working=Muse 正在处理）。ticket id 存 `localStorage`。
 4. **回单渲染**：done 后按信封渲染——text 显示 title+body；list 显示 title+body+items 逐行；choices 只展示选项（v1 不回传）；card 按 title+body 显示。speak 非空且与 body 不同才 TTS 朗读（相同不重复念）。
@@ -25,8 +25,8 @@ rokidpost 通道的眼镜侧薄客户端（AIUI Agent）。眼镜只负责三件
 
 ## 操作（镜腿手势优先）
 
-- 界面只有一个主按钮（胶囊形，随状态变文案：开始说话 / 说完了 / 处理中… / 再问一句），同时保留 bindtap 供模拟器点按。
-- 点头 = 与单击同效（开始说话 / 结束说话 / 再问一句），处理中点头忽略。
+- 界面只有一个主按钮（胶囊形，随状态变文案：开始说话 / 发送 / 处理中… / 再问一句），同时保留 bindtap 供模拟器点按。
+- 点头 = 与单击同效（开始说话 / 立即发送已攒文字 / 再问一句），处理中点头忽略。
 - 滑动未占用；双击（Backspace）交给系统（返回/退出），页面不拦截。
 - 页脚「演示」小钮循环切换示例三态（处理中 / 列表结果 / 文字结果 → 回待命），供预览截图与真机对照版式；示例数据在屏上标注「演示状态」，演示路径永不投单。
 
