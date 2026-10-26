@@ -1,1 +1,1 @@
-{"dependencies":{},"description":"Dabiaoge - glasses-side thin client of the rokidpost channel to Muse: speak a question, ASR text is submitted, the shaped reply envelope renders on screen and speaks via TTS","main":"app.js","name":"dabiaoge","version":"1.0.4"}
+{"dependencies":{},"description":"Dabiaoge - glasses-side thin client of the rokidpost channel to Muse: speak a question, ASR text is submitted, the shaped reply envelope renders on screen and speaks via TTS","main":"app.js","name":"dabiaoge","version":"2.0.0"}

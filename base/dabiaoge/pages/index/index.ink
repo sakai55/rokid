@@ -9,11 +9,16 @@ import { CHANNEL_KEY, BASE_URL } from '../../channel.js';
 
 var POLL_MS = 4000;
 var TIMEOUT_MS = 300000;
+var MAX_INFLIGHT = 5;
 var END_WORD = '大表哥';
-// v1.0.3 tolerance: ASR may drop the first syllable ("大表哥" heard as
-// "表哥"); a trailing short form also ends the utterance.
+// ASR may drop the first syllable ("大表哥" heard as "表哥"); a
+// trailing short form also ends the utterance (v1.0.3).
 var END_WORD_SHORT = '表哥';
 var MAX_CHARS = 500;
+var QUEUE_KEY = 'dabiaoge_queue_v2';
+// Snake loop on the 5x5 dot grid (irregular turns, wraps around):
+// the working slot shows 4 connected cells of this loop, head first.
+var SNAKE_LOOP = [[0,2],[1,2],[2,2],[2,1],[2,0],[3,0],[4,0],[4,1],[4,2],[3,2],[3,3],[3,4],[2,4],[1,4],[0,4],[0,3]];
 
 export default {
   data: {
@@ -21,38 +26,53 @@ export default {
     stateText: '待命 · 点头或单击镜腿开始说话',
     heardText: '',
     heardCls: 'heard heard-dim',
+    slots: [],
     resTitle: '',
     resBody: '',
     resItems: [],
     choiceLine: '',
     hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着',
     sayLabel: '开始说话',
-    appVersion: 'v1.0.4'
+    appVersion: 'v2.0.0'
   },
 
   onLoad() {
     this._lastKeyAt = 0;
-    this._pollStop = false;
-    this._pollStart = 0;
     this._rec = null;
+    this._notice = null;
     this._submitted = false;
     this._buffer = '';
     this._wantListen = false;
     this._tapFinish = false;
     this._restarts = 0;
     this._gotFinal = false;
+    this._queue = [];
+    this._viewIdx = -1;
+    this._pollTimer = null;
+    this._polling = false;
+    this._tick = 0;
+    this._demo = false;
     try { this.enableWorldAwareness(); } catch (e) { /* optional */ }
     this._ensureSession();
-    this._resume();
+    this._restoreQueue();
+    var self = this;
+    this._snakeTimer = setInterval(function () { self._snakeStep(); }, 300);
+    this._syncUI();
+    this._ensurePolling();
   },
 
   onUnload() {
-    this._pollStop = true;
+    this._polling = false;
     this._wantListen = false;
     if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
+    if (this._pollTimer) { clearTimeout(this._pollTimer); this._pollTimer = null; }
+    if (this._snakeTimer) { clearInterval(this._snakeTimer); this._snakeTimer = null; }
   },
 
-  // ---------- session / storage ----------
+  // ---------- session / queue storage ----------
+  // v2: the whole queue (sent / in-flight / finished-unread) is
+  // persisted, so closing the agent never loses a ticket and a
+  // cold start resumes polling every unfinished one.
 
   _ensureSession() {
     var sid = '';
@@ -64,89 +84,272 @@ export default {
     this._session = sid;
   },
 
-  _storeTicket(tid) {
-    try {
-      if (tid) localStorage.setItem('dabiaoge_ticket', tid);
-      else localStorage.removeItem('dabiaoge_ticket');
-    } catch (e) {}
+  _saveQueue() {
+    try { localStorage.setItem(QUEUE_KEY, JSON.stringify(this._queue)); } catch (e) {}
   },
 
-  // Cold start: an unfinished ticket from last time is checked once
-  // before idling - the channel never loses a ticket when the
-  // glasses close mid-wait.
-  _resume() {
-    var tid = '';
-    try { tid = localStorage.getItem('dabiaoge_ticket') || ''; } catch (e) {}
-    if (!tid) return;
-    this._pollStart = Date.now();
-    this._poll(tid, true);
+  _restoreQueue() {
+    var q = [];
+    try { q = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch (e) { q = []; }
+    if (!Array.isArray(q)) q = [];
+    this._queue = q.filter(function (it) { return it && it.id; });
+    // Upgrade path: a v1 single in-flight ticket becomes a queue item.
+    if (!this._queue.length) {
+      var old = '';
+      try { old = localStorage.getItem('dabiaoge_ticket') || ''; } catch (e) {}
+      if (old) {
+        this._queue.push({ id: old, text: '上次的问题', st: 'queued', at: Date.now(), env: null });
+        this._saveQueue();
+      }
+    }
+    try { localStorage.removeItem('dabiaoge_ticket'); } catch (e) {}
+  },
+
+  _unfinished() {
+    return this._queue.filter(function (it) { return it.st === 'queued' || it.st === 'working'; });
+  },
+
+  _finals() {
+    return this._queue
+      .filter(function (it) { return it.st !== 'queued' && it.st !== 'working'; })
+      .sort(function (a, b) { return (a.doneAt || 0) - (b.doneAt || 0); });
+  },
+
+  // ---------- life slots (dot matrix in the title row) ----------
+  // One 5x5 dot slot per queue item, in send order, height matched
+  // to the title text (x0.618). queued = border dots, working = a
+  // little snake with a tail running the loop, finished-unread =
+  // all dots lit. Nothing at all when the queue is empty.
+
+  _dotsFor(kind, slotIdx) {
+    var dots = [];
+    var x, y, i;
+    if (kind === 'd') {
+      for (i = 0; i < 25; i++) dots.push(2);
+      return dots;
+    }
+    if (kind === 'q') {
+      for (y = 0; y < 5; y++) for (x = 0; x < 5; x++) {
+        dots.push((x === 0 || x === 4 || y === 0 || y === 4) ? 1 : 0);
+      }
+      return dots;
+    }
+    // working: snake = 4 consecutive loop cells, head brightest
+    for (i = 0; i < 25; i++) dots.push(0);
+    var head = ((this._tick + slotIdx * 5) % SNAKE_LOOP.length + SNAKE_LOOP.length) % SNAKE_LOOP.length;
+    for (var k = 0; k < 4; k++) {
+      var cell = SNAKE_LOOP[((head - k) % SNAKE_LOOP.length + SNAKE_LOOP.length) % SNAKE_LOOP.length];
+      dots[cell[1] * 5 + cell[0]] = (k === 0) ? 2 : 1;
+    }
+    return dots;
+  },
+
+  _slotsData() {
+    var self = this;
+    return this._queue.map(function (it, i) {
+      var kind = it.st === 'queued' ? 'q' : (it.st === 'working' ? 'w' : 'd');
+      return { kind: kind, dots: self._dotsFor(kind, i) };
+    });
+  },
+
+  _snakeStep() {
+    this._tick = (this._tick || 0) + 1;
+    if (this._demo) return;
+    var hasWorking = this._queue.some(function (it) { return it.st === 'working'; });
+    if (hasWorking) this.setData({ slots: this._slotsData() });
+  },
+
+  // ---------- central UI sync ----------
+
+  _syncUI() {
+    if (this._demo) return;
+    var patch = { slots: this._slotsData() };
+    var ph = this.data.phase;
+    var finals = this._finals();
+    if (ph === 'idle') {
+      if (this._notice) {
+        patch.stateText = this._notice.title;
+        patch.resTitle = this._notice.title;
+        patch.resBody = this._notice.body;
+        patch.resItems = []; patch.choiceLine = '';
+        patch.sayLabel = '开始说话';
+        this.setData(patch);
+        return;
+      }
+      var un = this._unfinished().length;
+      if (finals.length) {
+        patch.stateText = '有 ' + finals.length + ' 条结果没看' + (un ? ' · 另有 ' + un + ' 条在处理' : '');
+        patch.hint = '滑动镜腿看结果 · 点头或单击继续提问';
+      } else if (un) {
+        patch.stateText = '已发送 ' + un + ' 条 · 下面可以继续说下一条';
+        patch.hint = '滑动镜腿翻看已完成 · 还能再发 ' + (MAX_INFLIGHT - this._queue.length) + ' 条';
+      } else {
+        patch.stateText = '待命 · 点头或单击镜腿开始说话';
+        patch.hint = '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着';
+      }
+      patch.sayLabel = '开始说话';
+      patch.resTitle = ''; patch.resBody = ''; patch.resItems = []; patch.choiceLine = '';
+    } else if (ph === 'inbox') {
+      var item = finals[this._viewIdx];
+      if (item) {
+        var env = item.env || {};
+        patch.stateText = '已完成 ' + (this._viewIdx + 1) + ' / ' + finals.length + ' · 前后滑动翻条';
+        patch.resTitle = String(env.title || '');
+        patch.resBody = String(env.body || '');
+        patch.resItems = (env.type === 'list' && env.items) ? env.items.map(function (s) { return '· ' + String(s); }) : [];
+        patch.choiceLine = (env.type === 'choices' && env.choices && env.choices.length)
+          ? env.choices.map(function (s) { return String(s); }).join('  ·  ') : '';
+        patch.sayLabel = '朗读本条';
+        patch.hint = '单击朗读 · 点头看完（出队） · 滑动翻条';
+      }
+    }
+    this.setData(patch);
+  },
+
+  // ---------- inbox ----------
+
+  _openInbox(idx, speakIt) {
+    this._notice = null;
+    var finals = this._finals();
+    if (!finals.length) return;
+    this._viewIdx = Math.max(0, Math.min(idx || 0, finals.length - 1));
+    this.setData({ phase: 'inbox' });
+    this._syncUI();
+    if (speakIt) {
+      var env = finals[this._viewIdx].env || {};
+      if (env.speak) this._announce(String(env.speak));
+    }
+  },
+
+  // Dismiss the item being viewed (it leaves the queue and frees
+  // its slot), then show the next unread or fall back to compose.
+  _dismissCurrent() {
+    var finals = this._finals();
+    var item = finals[this._viewIdx];
+    if (!item) { this.setData({ phase: 'idle' }); this._syncUI(); return; }
+    this._queue = this._queue.filter(function (it) { return it.id !== item.id; });
+    this._saveQueue();
+    var rest = this._finals();
+    if (rest.length) {
+      this._viewIdx = Math.min(this._viewIdx, rest.length - 1);
+      this._syncUI();
+      var env = rest[this._viewIdx].env || {};
+      if (env.speak) this._announce(String(env.speak));
+    } else {
+      this._viewIdx = -1;
+      this.setData({ phase: 'idle' });
+      this._syncUI();
+    }
+  },
+
+  _flip(delta) {
+    if (this.data.phase === 'listening') return;
+    var finals = this._finals();
+    if (!finals.length) return;
+    if (this.data.phase !== 'inbox') { this._openInbox(delta > 0 ? 0 : finals.length - 1, false); return; }
+    var n = this._viewIdx + delta;
+    if (n < 0) n = 0;
+    if (n > finals.length - 1) n = finals.length - 1;
+    if (n !== this._viewIdx) { this._viewIdx = n; this._syncUI(); }
+  },
+
+  // A ticket reached a final state. While the user is speaking it
+  // is banked silently (a footer note only); while composing, the
+  // earliest unread result surfaces and is read aloud.
+  _onFinal(item) {
+    item.doneAt = Date.now();
+    this._saveQueue();
+    var ph = this.data.phase;
+    if (ph === 'listening') {
+      var n = this._finals().length;
+      this.setData({
+        slots: this._slotsData(),
+        hint: '✓ ' + n + ' 条刚完成，先存着 · 发完这条再给你看'
+      });
+      return;
+    }
+    if (ph === 'idle') { this._openInbox(0, true); return; }
+    this._syncUI();
   },
 
   // ---------- demo states (preview / screenshot only) ----------
-  // The footer demo button cycles sample states so previews and the
-  // device checklist can show every screen without real ASR/network.
-  // Samples are labelled as demo data on screen; the default entry
-  // is always the real idle state and no demo path ever submits.
-  onDemo() { this._cycleDemo(); },
+  // The footer demo button cycles sample screens (queue + slots,
+  // inbox list, inbox text, idle). Samples never touch the real
+  // queue and never submit; any primary action exits demo mode.
 
-  _cycleDemo() {
-    var order = ['working', 'list', 'text', 'idle'];
+  onDemo() {
+    var order = ['queue', 'list', 'text', 'idle'];
     var idx = this._demoIdx || 0;
     this._demoIdx = idx + 1;
-    this._applyDemo(order[idx % order.length]);
-  },
-
-  _applyDemo(mode) {
-    if (mode === 'working') {
+    this._demo = true;
+    var mode = order[idx % order.length];
+    if (mode === 'queue') {
+      this._tick = 6;
+      var mk = function (kind, i) { return { kind: kind, dots: this._dotsFor(kind, i) }; }.bind(this);
       this.setData({
-        phase: 'working',
-        stateText: 'Muse 正在处理 · 已等 24s',
-        heardText: '今天有什么值得看的新闻',
-        heardCls: 'heard',
+        phase: 'idle',
+        stateText: '已发送 3 条 · 下面可以继续说下一条',
+        heardText: '', heardCls: 'heard heard-dim',
+        slots: [mk('d', 0), mk('w', 1), mk('q', 2)],
         resTitle: '', resBody: '', resItems: [], choiceLine: '',
-        sayLabel: '处理中…',
-        hint: '演示状态（示例数据） · 再点演示看下一态'
+        sayLabel: '开始说话',
+        hint: '演示（示例） · 全点满=已完成 · 小蛇=处理中 · 边框点=待处理'
       });
       return;
     }
     if (mode === 'list') {
-      this.setData({ heardText: '列出今天的开发清单', heardCls: 'heard' });
-      this._showEnvelope({
-        type: 'list', title: '今日开发清单', body: '今天完成的三批：',
-        items: ['路缘坡 CC06–CC08', '头动游戏 GA24–GA26', '日韩新批 3 个'],
-        choices: [], speak: '三批都完成了。'
-      }, false);
-      this.setData({ hint: '演示状态（示例数据） · 再点演示看下一态' });
+      this.setData({
+        phase: 'inbox',
+        stateText: '已完成 1 / 2 · 前后滑动翻条',
+        heardText: '列出今天的开发清单', heardCls: 'heard',
+        resTitle: '今日开发清单', resBody: '今天完成的三批：',
+        resItems: ['· 路缘坡 CC06–CC08', '· 头动游戏 GA24–GA26', '· 日韩新批 3 个'],
+        choiceLine: '',
+        sayLabel: '朗读本条',
+        hint: '演示状态（示例数据） · 再点演示看下一态'
+      });
       return;
     }
     if (mode === 'text') {
-      this.setData({ heardText: '用一句话说说今天的天气', heardCls: 'heard' });
-      this._showEnvelope({
-        type: 'text', title: '今日天气',
-        body: '东京今天晴，最高 21 度，傍晚起风，出门加件外套。',
-        items: [], choices: [], speak: '今天晴，最高二十一度。'
-      }, false);
-      this.setData({ hint: '演示状态（示例数据） · 再点演示回待命' });
+      this.setData({
+        phase: 'inbox',
+        stateText: '已完成 2 / 2 · 前后滑动翻条',
+        heardText: '用一句话说说今天的天气', heardCls: 'heard',
+        resTitle: '今日天气',
+        resBody: '东京今天晴，最高 21 度，傍晚起风，出门加件外套。',
+        resItems: [], choiceLine: '',
+        sayLabel: '朗读本条',
+        hint: '演示状态（示例数据） · 再点演示回待命'
+      });
       return;
     }
+    this._demo = false;
     this.setData({
       phase: 'idle',
       stateText: '待命 · 点头或单击镜腿开始说话',
-      heardText: '',
-      heardCls: 'heard heard-dim',
+      heardText: '', heardCls: 'heard heard-dim',
       resTitle: '', resBody: '', resItems: [], choiceLine: '',
       sayLabel: '开始说话',
       hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着'
     });
+    this._syncUI();
   },
 
   // ---------- gestures ----------
+  // tap (Enter) = the main button's action for the current screen;
+  // nod = the "advance" action (start / send / mark-read);
+  // temple swipe (Arrow keys) = flip through finished results.
 
   onKeyDown(event) {
     var code = event && event.code;
-    if (code !== 'Enter' && code !== 'GlobalHook') return;
     var now = Date.now();
     if (now - this._lastKeyAt < 400) return;
+    if (code === 'ArrowDown' || code === 'ArrowUp') {
+      this._lastKeyAt = now;
+      if (!this._demo) this._flip(code === 'ArrowDown' ? 1 : -1);
+      return;
+    }
+    if (code !== 'Enter' && code !== 'GlobalHook') return;
     this._lastKeyAt = now;
     this._primary();
   },
@@ -156,16 +359,36 @@ export default {
     var now = Date.now();
     if (now - this._lastKeyAt < 400) return;
     this._lastKeyAt = now;
-    this._primary();
+    this._advance();
   },
 
   onPrimary() { this._primary(); },
 
   _primary() {
+    if (this._demo) { this._exitDemo(); return; }
     var ph = this.data.phase;
-    if (ph === 'idle' || ph === 'result') this._startListening();
+    if (ph === 'idle') this._startListening();
     else if (ph === 'listening') this._stopListening();
-    // working: ignore - the poll owns the screen until done/timeout
+    else if (ph === 'inbox') {
+      var finals = this._finals();
+      var env = (finals[this._viewIdx] || {}).env || {};
+      if (env.speak) this._announce(String(env.speak));
+    }
+  },
+
+  _advance() {
+    if (this._demo) { this._exitDemo(); return; }
+    var ph = this.data.phase;
+    if (ph === 'idle') this._startListening();
+    else if (ph === 'listening') this._stopListening();
+    else if (ph === 'inbox') this._dismissCurrent();
+  },
+
+  _exitDemo() {
+    this._demo = false;
+    this._demoIdx = 0;
+    this.setData({ phase: 'idle', heardText: '', heardCls: 'heard heard-dim' });
+    this._syncUI();
   },
 
   // ---------- ASR (accumulate + end word) ----------
@@ -173,16 +396,17 @@ export default {
   // cannot tune: a mid-sentence pause would cut the user off. So a
   // final segment no longer submits. Segments accumulate on screen
   // and are sent only when the accumulated text ends with the end
-  // word (END_WORD, stripped before submit), or when the user
-  // taps/nods to send now. After each host endpoint the recognizer
-  // restarts itself while listening is still wanted.
+  // word (stripped before submit), or when the user taps/nods to
+  // send now. After each host endpoint the recognizer restarts
+  // itself while listening is still wanted.
 
   _startListening() {
     var SR = typeof SpeechRecognition !== 'undefined' ? SpeechRecognition : null;
     if (!SR) {
-      this._showPlain('无法开始识别', '这台设备没有可用的语音识别（SpeechRecognition 不可用）。', '');
+      this._noteAsResult('无法开始识别', '这台设备没有可用的语音识别（SpeechRecognition 不可用）。');
       return;
     }
+    this._notice = null;
     this._submitted = false;
     this._buffer = '';
     this._wantListen = true;
@@ -212,7 +436,7 @@ export default {
       rec.maxAlternatives = 1;
     } catch (e) {
       this._wantListen = false;
-      this._showPlain('无法开始识别', '语音识别启动失败：' + this._err(e), '');
+      this._noteAsResult('无法开始识别', '语音识别启动失败：' + this._err(e));
       return;
     }
     this._rec = rec;
@@ -227,7 +451,7 @@ export default {
         return;
       }
       self._wantListen = false;
-      self._showPlain('识别失败', '没能听清（' + String((ev && ev.error) || 'error') + '）。已攒到的文字还留在屏上，单击再试。', '');
+      self._noteAsResult('识别失败', '没能听清（' + String((ev && ev.error) || 'error') + '）。已攒到的文字还留在屏上，单击再试。');
     };
     rec.onend = function () { self._onRecEnd(); };
     try {
@@ -236,7 +460,7 @@ export default {
       this._rec = null;
       if (this._wantListen && !this._submitted) {
         this._wantListen = false;
-        this._showPlain('无法开始识别', '语音识别启动失败：' + this._err(e), '');
+        this._noteAsResult('无法开始识别', '语音识别启动失败：' + this._err(e));
       }
     }
   },
@@ -277,12 +501,9 @@ export default {
       this._restarts = (this._restarts || 0) + 1;
       if (this._restarts >= 6) {
         this._wantListen = false;
-        this.setData({
-          phase: 'idle',
-          stateText: '待命 · 点头或单击镜腿开始说话',
-          sayLabel: '开始说话',
-          hint: '一直没听到声音 · 单击再试'
-        });
+        this.setData({ phase: 'idle', sayLabel: '开始说话' });
+        this._syncUI();
+        if (this._finals().length) this._openInbox(0, true);
         return;
       }
     }
@@ -347,36 +568,37 @@ export default {
     this._finish(text);
   },
 
-  // The text that is sent STAYS on screen (the user sees exactly
-  // what was heard and sent). No audio ever leaves the glasses.
+  // The finished utterance joins the queue and the screen returns
+  // to compose at once - sending never waits for processing. Any
+  // results banked during listening surface right after the send.
   _finish(text) {
     if (this._submitted) return;
     this._submitted = true;
     this._wantListen = false;
     this._tapFinish = false;
     var clean = String(text || '').trim();
-    this.setData({ heardText: clean, heardCls: 'heard' });
     if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
+    this.setData({ phase: 'idle', heardText: '', heardCls: 'heard heard-dim', sayLabel: '开始说话' });
     if (!clean) {
-      this._showPlain('没听清', '还没有攒到内容。回待命后单击再说一遍。', '');
+      this._noteAsResult('没听清', '还没有攒到内容。单击再说一遍。');
+      return;
+    }
+    if (this._queue.length >= MAX_INFLIGHT) {
+      this._noteAsResult('队列满了', '已经有 5 条在途（标题后的方块）。先滑动镜腿看完几条结果，腾出位置再发。刚才这句是：' + clean.slice(0, 60));
       return;
     }
     this._submit(clean);
+    if (this._finals().length) this._openInbox(0, true);
+    else this._syncUI();
   },
 
   // ---------- channel ----------
 
   _submit(text) {
     if (!CHANNEL_KEY || CHANNEL_KEY === 'PASTE_CHANNEL_KEY_HERE') {
-      this._showPlain('钥匙未填', 'channel.js 里还是占位符：打包前要在 Studio 里把占位符换成真钥匙（见 README）。', '');
+      this._noteAsResult('钥匙未填', 'channel.js 里还是占位符：打包前要在 Studio 里把占位符换成真钥匙（见 README）。');
       return;
     }
-    this.setData({
-      phase: 'working',
-      stateText: '已发送 · 等 Muse 接单',
-      sayLabel: '处理中…',
-      hint: '单子已进队列 · 可以放下眼镜，回来自动补收结果'
-    });
     var self = this;
     fetch(BASE_URL + '/submit', {
       method: 'POST',
@@ -386,112 +608,96 @@ export default {
       return resp.json().then(function (j) { return { status: resp.status, body: j }; });
     }).then(function (r) {
       if (r.status === 401) {
-        self._showPlain('钥匙不对', '前门拒绝了这把钥匙（401）。检查 channel.js 里填的钥匙是否正确。', '');
+        self._noteAsResult('钥匙不对', '前门拒绝了这把钥匙（401）。检查 channel.js 里填的钥匙是否正确。');
         return;
       }
       if (!r.body || !r.body.ticket) {
-        self._showPlain('投单失败', '前门没有返回单号。稍后单击再问一句重试。', '');
+        self._noteAsResult('投单失败', '前门没有返回单号。稍后单击再问一句重试。');
         return;
       }
-      self._storeTicket(r.body.ticket);
-      self._pollStart = Date.now();
-      self._poll(r.body.ticket, false);
+      self._queue.push({ id: r.body.ticket, text: text, st: 'queued', at: Date.now(), env: null });
+      self._saveQueue();
+      self._syncUI();
+      self._ensurePolling();
     }).catch(function (e) {
-      self._showPlain('网络没通', '投单没发出去（' + self._err(e) + '）。检查眼镜与手机的连接后重试。', '');
+      self._noteAsResult('网络没通', '投单没发出去（' + self._err(e) + '）。检查眼镜与手机的连接后重试。');
     });
   },
 
-  _poll(tid, isResume) {
-    if (this._pollStop) return;
+  // One polling loop serves the whole queue: every cycle checks
+  // each unfinished ticket once. A ticket that reaches a final
+  // state (done / needs-approval / error) or its own 300s limit
+  // lands in the inbox; the others keep waiting independently.
+  _ensurePolling() {
+    if (this._polling) return;
+    if (!this._unfinished().length) return;
+    this._polling = true;
+    this._pollCycle();
+  },
+
+  _pollCycle() {
+    if (!this._polling) return;
     var self = this;
-    fetch(BASE_URL + '/ticket/' + encodeURIComponent(tid), {
-      headers: { 'x-channel-key': CHANNEL_KEY }
-    }).then(function (resp) {
-      return resp.json().then(function (j) { return { status: resp.status, body: j }; });
-    }).then(function (r) {
-      var b = r.body || {};
-      var st = b.status || '';
-      if (st === 'done') {
-        self._storeTicket('');
-        self._showEnvelope(b.result || {}, true);
+    var pending = this._unfinished().slice();
+    if (!pending.length) { this._polling = false; return; }
+    var i = 0;
+    var step = function () {
+      if (!self._polling) return;
+      if (i >= pending.length) {
+        self._pollTimer = setTimeout(function () { self._pollCycle(); }, POLL_MS);
         return;
       }
-      if (st === 'needs-approval') {
-        self._storeTicket('');
-        self._showPlain('需要你批准', '这件事要你在手机上批准，已挂起。', '');
+      var item = pending[i++];
+      if (Date.now() - item.at >= TIMEOUT_MS) {
+        item.st = 'timeout';
+        item.env = { type: 'text', title: '还在处理中', body: '这一条等了 300 秒还没回（单子不会丢，Muse 办完后下次打开还能补收——若一直没回，多半是队列堵住了）。点头看完后可重新问。', speak: '' };
+        self._onFinal(item);
+        step();
         return;
       }
-      if (st === 'error') {
-        self._storeTicket('');
-        self._showPlain('处理失败', 'Muse 那边没能办成（' + String(b.error || 'error').slice(0, 40) + '）。单击再问一句。', '');
-        return;
-      }
-      // queued | working | unknown -> keep waiting
-      var waited = Math.round((Date.now() - self._pollStart) / 1000);
-      if (waited * 1000 >= TIMEOUT_MS) {
-        self._showPlain('还在处理中', '等了 300 秒还没回。单子不会丢：退出后下次打开大表哥会自动补收。', '');
-        return;
-      }
-      self.setData({
-        phase: 'working',
-        stateText: (st === 'working' ? 'Muse 正在处理' : '已排队') + ' · 已等 ' + waited + 's',
-        sayLabel: '处理中…',
-        hint: isResume ? '正在补收上次的单子…' : '单子已进队列 · 可以放下眼镜，回来自动补收结果'
-      });
-      setTimeout(function () { self._poll(tid, isResume); }, POLL_MS);
-    }).catch(function (e) {
-      var waited2 = Math.round((Date.now() - self._pollStart) / 1000);
-      if (waited2 * 1000 >= TIMEOUT_MS) {
-        self._showPlain('还在处理中', '网络多次不通，先等到这里。单子不会丢，下次打开会自动补收。', '');
-        return;
-      }
-      setTimeout(function () { self._poll(tid, isResume); }, POLL_MS);
-    });
+      fetch(BASE_URL + '/ticket/' + encodeURIComponent(item.id), {
+        headers: { 'x-channel-key': CHANNEL_KEY }
+      }).then(function (resp) {
+        return resp.json().then(function (j) { return { status: resp.status, body: j }; });
+      }).then(function (r) {
+        var b = r.body || {};
+        var st = b.status || '';
+        if (st === 'done') {
+          item.st = 'done';
+          item.env = b.result || {};
+          self._onFinal(item);
+        } else if (st === 'needs-approval') {
+          item.st = 'approval';
+          item.env = { type: 'text', title: '需要你批准', body: '这件事要你在手机上批准，已挂起：到 RokidRelay 聊里看工单卡处理。', speak: '' };
+          self._onFinal(item);
+        } else if (st === 'error') {
+          item.st = 'error';
+          item.env = { type: 'text', title: '处理失败', body: 'Muse 那边没能办成（' + String(b.error || 'error').slice(0, 40) + '）。', speak: '' };
+          self._onFinal(item);
+        } else if (st === 'working' && item.st !== 'working') {
+          item.st = 'working';
+          self._saveQueue();
+          self._syncUI();
+        }
+        step();
+      }).catch(function () { step(); });
+    };
+    step();
   },
 
-  // ---------- rendering ----------
+  // ---------- rendering helpers ----------
 
-  _showEnvelope(env, speakIt) {
-    var title = String(env.title || '');
-    var body = String(env.body || '');
-    var items = [];
-    if (env.type === 'list' && env.items) {
-      items = env.items.map(function (s) { return '· ' + String(s); });
-    }
-    var choices = '';
-    if (env.type === 'choices' && env.choices && env.choices.length) {
-      choices = env.choices.map(function (s) { return String(s); }).join('  ·  ');
-    }
+  // Local notices (no network, no ticket) reuse the compose area.
+  _noteAsResult(title, body) {
+    this._notice = { title: title, body: body };
     this.setData({
-      phase: 'result',
-      stateText: '已完成',
-      resTitle: title,
-      resBody: body,
-      resItems: items,
-      choiceLine: choices,
-      sayLabel: '再问一句',
-      hint: '单击或点头再问一句'
-    });
-    // v1.0.3: a non-empty speak is ALWAYS read once. The front door
-    // fills an empty speak with the body, so "speak === body" is the
-    // normal short-answer case (read the body once), not a duplicate.
-    if (speakIt && env.speak) {
-      this._announce(String(env.speak));
-    }
-  },
-
-  _showPlain(title, body, speak) {
-    this.setData({
-      phase: 'result',
+      phase: 'idle',
       stateText: title,
       resTitle: title,
       resBody: body,
-      resItems: [],
-      choiceLine: '',
-      sayLabel: '再问一句',
-      hint: '单击或点头再问一句'
+      resItems: [], choiceLine: '',
+      sayLabel: '开始说话'
     });
-    if (speak) this._announce(speak);
   },
 
   _announce(text) {
@@ -511,7 +717,14 @@ export default {
 <page>
   <view class="page">
     <view class="head">
-      <text class="title">大表哥</text>
+      <view class="title-row">
+        <text class="title">大表哥</text>
+        <view class="slots">
+          <view ink:for="{{slots}}" class="slot">
+            <view ink:for="{{item.dots}}" class="dot dot-{{item}}"></view>
+          </view>
+        </view>
+      </view>
       <text class="state">{{stateText}}</text>
     </view>
     <view class="heard-box">
@@ -550,11 +763,45 @@ export default {
   flex-direction: column;
   margin-bottom: 8px;
 }
+.title-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 .title {
   color: #7dff9e;
   font-size: 22px;
   font-weight: 500;
   line-height: 26px;
+}
+.slots {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 8px;
+}
+.slot {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+}
+.dot {
+  width: 2px;
+  height: 2px;
+  border-radius: 1px;
+  margin: 0.4px;
+}
+.dot-0 {
+  background-color: rgba(125,255,158,0.07);
+}
+.dot-1 {
+  background-color: rgba(125,255,158,0.55);
+}
+.dot-2 {
+  background-color: #7dff9e;
 }
 .state {
   color: rgba(125,255,158,0.72);
