@@ -7,148 +7,64 @@
 <script setup>
 import wx from 'wx';
 
-// CC10 freeze-step-cue - 步态冻结节律外挂 Step Cue
-const ITEMS = [{"label": "家门口", "sub": ""}, {"label": "电梯口", "sub": ""}, {"label": "狭窄通道", "sub": ""}, {"label": "斑马线口", "sub": ""}, {"label": "商场门口", "sub": ""}];
-const DEMO_S = [{"idx": 0, "done": [true, false, false, false, false], "cycles": 0}, {"idx": 1, "done": [true, true, false, false, false], "cycles": 0}, {"idx": 4, "done": [true, true, true, true, true], "cycles": 1}];
-const N_KIND = "done";
-const DONE_T = "已走起来";
-const TODO_T = "节拍中";
+// CC10 freeze-step-cue v2 - rhythm home page.
+// Four rhythm sets (content set); pick one and go to the cue page.
+// Session history persists in wx storage 'freezeStepCueV2'.
+// Life aid only - no medical judgement (see AGENTS.md).
+const KEY = 'freezeStepCueV2';
+const RHYTHMS = [
+  { name: '慢稳', bpm: 50, target: 16, note: '刚起步、家里门口' },
+  { name: '日常', bpm: 60, target: 20, note: '平时过门厅、进电梯' },
+  { name: '门口短程', bpm: 72, target: 12, note: '只差几步到门口' },
+  { name: '长廊', bpm: 56, target: 24, note: '走廊一段、步数多' }
+];
 
 export default {
-  data: { status: '', hero: '', heroSub: '', r1: '', r2: '', marks: '', guide: '', evt: 'EVT: ready' },
+  data: { status: '', r0: '', r1: '', r2: '', r3: '', summary: '', evt: 'EVT: ready' },
 
-  onLoad() {
-    this._s = {"idx": 0, "done": ITEMS.map(() => false), "cycles": 0};
-    this._demoIdx = -1; this._savedS = null; this._busy = false; this._steady = false;
-    this._timer = null; this._micTimer = null; this._stream = null; this._ac = null;
-    try { this.enableWorldAwareness(); } catch (e) {}
-    this._recompute();
-  },
+  onLoad() { this._sel = 0; try { this.enableWorldAwareness(); } catch (e) {} this._recompute(); },
+  onShow() { this._recompute(); },
+  _load() { try { const v = wx.getStorageSync(KEY); if (v) return (typeof v === 'string') ? JSON.parse(v) : v; } catch (e) {} return { sessions: [], totalSteps: 0, rhythm: 1 }; },
+  _save(st) { try { wx.setStorageSync(KEY, st); } catch (e) {} },
 
-  onHide() { this._stopTimers(); },
-  onUnload() { this._stopTimers(); },
-
-  _nodAction() { this._checkOrSpeak(); },
-  _swipe(dir) {
-    this.setData({ evt: 'EVT: swipe' });
-  },
-  goTap() {
-    if (this._demoIdx >= 0) return;
-    this._checkOrSpeak();
-  },
-  _checkOrSpeak() {
-    const s = this._s;
-    if (!s.done[s.idx]) {
-      s.done[s.idx] = true;
-      this._speak(ITEMS[s.idx].label + '，走起来了。');
-      this.setData({ evt: 'EVT: checked - ' + ITEMS[s.idx].label });
-      if (s.done.every(Boolean)) { s.cycles++; }
-    } else {
-      this.speakTap();
-    }
-    this._recompute();
-  },
-  act1Tap() {
-    if (this._demoIdx >= 0) return;
-    const s = this._s;
-    s.idx = (s.idx + 1) % ITEMS.length;
-    this.setData({ evt: 'EVT: next -> ' + ITEMS[s.idx].label });
-    this._recompute();
-  },
-  act2Tap() {
-    if (this._demoIdx >= 0) return;
-    this._checkOrSpeak();
-  },
-  act3Tap() {
-    if (this._demoIdx >= 0) return;
-    const s = this._s;
-    s.idx = (s.idx + ITEMS.length - 1) % ITEMS.length;
-    this.setData({ evt: 'EVT: prev -> ' + ITEMS[s.idx].label });
-    this._recompute();
-  },
-  speakTap() {
-    const s = this._s;
-    const t = s.done[s.idx] ? ITEMS[s.idx].label + '已经走起来了。' : '节拍开始，' + ITEMS[s.idx].label + '，一步一拍，慢慢走。';
-    const ok = this._speak(t);
-    this.setData({ evt: 'EVT: SPEAK ' + (ok ? 'spoken' : 'FAIL') });
-    this._recompute();
-  },
   _recompute() {
-    const s = this._s;
-    let marks = '';
-    for (let i = 0; i < ITEMS.length; i++) marks += (s.done[i] ? '█' : '░');
-    const doneCount = s.done.filter(Boolean).length;
+    const rows = RHYTHMS.map(function (r, i) {
+      return (i === this._sel ? '▶ ' : '· ') + r.name + ' · ' + r.bpm + ' 拍/分 · 目标 ' + r.target + ' 步 · ' + r.note;
+    }.bind(this));
+    const st = this._load();
+    const walked = (st.sessions || []).filter(function (s) { return s.result === '走起来了'; }).length;
     this.setData({
-      status: '步态节律：当前' + ITEMS[s.idx].label + '·' + (s.done[s.idx] ? DONE_T : TODO_T) + '·已完成' + (N_KIND === 'cycles' ? s.cycles : s.done.filter(Boolean).length) + '次',
-      hero: ITEMS[s.idx].label,
-      heroSub: ITEMS[s.idx].sub,
-      r1: ITEMS.map((it, i) => (i === s.idx ? '▶' : '·') + it.label).join(' '),
-      r2: 'PROGRESS ' + doneCount + '/' + ITEMS.length + ' · CYCLES ' + s.cycles,
-      marks: marks,
-      guide: "NEXT 下一场景 · WALKED 走起来了 · PREV 上一场景 · GO=走起来/播报 · 点头=走起来"
+      status: '步态冻结节律提示 v2：先选一组节律，再开始一步一拍',
+      r0: rows[0], r1: rows[1], r2: rows[2], r3: rows[3],
+      summary: '已记录 ' + (st.sessions || []).length + ' 次 · 走起来 ' + walked + ' 次 · 累计 ' + (st.totalSteps || 0) + ' 步'
     });
   },
+  nextTap() { this._sel = (this._sel + 1) % RHYTHMS.length; this._recompute(); },
+  prevTap() { this._sel = (this._sel + RHYTHMS.length - 1) % RHYTHMS.length; this._recompute(); },
+  goTap() {
+    const st = this._load(); st.rhythm = this._sel; this._save(st);
+    try { wx.navigateTo({ url: '/pages/cue/index' }); } catch (e) {}
+  },
+  recordTap() { try { wx.navigateTo({ url: '/pages/record/index' }); } catch (e) {} },
+  speakTap() { const r = RHYTHMS[this._sel]; this._speak('当前节律是' + r.name + '，每分钟' + r.bpm + '拍，目标' + r.target + '步。'); },
   _speak(text) {
     try {
       if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return false;
-      const u = new SpeechSynthesisUtterance(text);
-      speechSynthesis.speak(u, 'immediate');
+      speechSynthesis.speak(new SpeechSynthesisUtterance(text), 'immediate');
       return true;
     } catch (e) { return false; }
   },
-
-  onOrientationStabilityChange(event) {
-    const d = (event && event.detail) || {};
-    this._steady = d.isStable === true || d.stable === true;
-  },
-
   onHeadGesture(event) {
-    const d = (event && event.detail) || {};
-    const g = d.gesture || d.type || d.name || '';
-    if (g !== 'nod') return;
-    if (!this._steady) return;
-    if (this._demoIdx >= 0) return;
-    this._nodAction();
+    const d = (event && event.detail) || {}; const g = d.gesture || d.type || d.name || '';
+    if (g === 'nod') this.goTap();
   },
-
   onKeyDown(event) {
     const key = event.key;
     if (key === 'Enter' || key === 'GlobalHook') { event.preventDefault(); this.goTap(); return; }
-    if (key === 'ArrowUp') { event.preventDefault(); this._swipe(1); return; }
-    if (key === 'ArrowDown') { event.preventDefault(); this._swipe(-1); return; }
+    if (key === 'ArrowUp') { event.preventDefault(); this.nextTap(); return; }
+    if (key === 'ArrowDown') { event.preventDefault(); this.prevTap(); return; }
   },
-
-  onKeyUp(event) {
-    const key = event.key;
-    if (key === 'ArrowUp' || key === 'ArrowDown' || key === 'Enter') event.preventDefault();
-  },
-
-  demoTap() {
-    if (this._busy) return;
-    if (this._demoIdx < 0) {
-      this._savedS = JSON.parse(JSON.stringify(this._s));
-      this._demoIdx = 0;
-      this._stopTimers();
-    } else {
-      this._demoIdx++;
-    }
-    if (this._demoIdx >= DEMO_S.length) {
-      this._s = this._savedS; this._savedS = null; this._demoIdx = -1;
-      this._recompute();
-      this.setData({ evt: 'EVT: DEMO off - real state restored' });
-      return;
-    }
-    this._s = JSON.parse(JSON.stringify(DEMO_S[this._demoIdx]));
-    this._recompute();
-    this.setData({ evt: 'EVT: DEMO ' + (this._demoIdx + 1) + '/' + DEMO_S.length + ' (seeded, in-memory)' });
-  },
-
-  _stopTimers() {
-    if (this._timer) { try { clearInterval(this._timer); } catch (e) {} this._timer = null; }
-    if (this._micTimer) { try { clearInterval(this._micTimer); } catch (e) {} this._micTimer = null; }
-    if (this._stream) { try { this._stream.getTracks().forEach((t) => { try { t.stop(); } catch (e) {} }); } catch (e) {} this._stream = null; }
-    if (this._ac) { try { this._ac.close(); } catch (e) {} this._ac = null; }
-  }
+  onKeyUp(event) { if (['ArrowUp', 'ArrowDown', 'Enter'].indexOf(event.key) >= 0) event.preventDefault(); }
 };
 </script>
 
@@ -156,45 +72,36 @@ export default {
   <div class="page">
     <div class="ttl">Freeze Step Cue</div>
     <div class="status">{{ status }}</div>
-    <div class="linebox">
-      <div class="dots">{{ marks }}</div>
-      <div class="stations">{{ r1 }}</div>
+    <div class="cards">
+      <div class="rcard">{{ r0 }}</div>
+      <div class="rcard">{{ r1 }}</div>
+      <div class="rcard">{{ r2 }}</div>
+      <div class="rcard">{{ r3 }}</div>
     </div>
-    <div class="heroline">{{ hero }}</div>
-    <div class="rline dim">{{ heroSub }}</div>
-    <div class="rline dim">{{ r2 }}</div>
+    <div class="summary">{{ summary }}</div>
     <div class="btnrow">
-      <button class="btn" bindtap="act1Tap">NEXT</button>
-      <button class="btn" bindtap="act2Tap">WALKED</button>
-      <button class="btn" bindtap="act3Tap">PREV</button>
+      <button class="rbtn" bindtap="prevTap">PREV</button>
+      <button class="rbtn rbtn-main" bindtap="goTap">START</button>
+      <button class="rbtn" bindtap="nextTap">NEXT</button>
     </div>
     <div class="btnrow">
-      <button class="btn btn-main" bindtap="goTap">GO ✓</button>
-      <button class="btn" bindtap="speakTap">SPEAK</button>
+      <button class="rbtn" bindtap="recordTap">RECORD</button>
+      <button class="rbtn" bindtap="speakTap">SPEAK</button>
     </div>
-    <div class="guide">{{ guide }}</div>
     <div class="foot">{{ evt }}</div>
-    <button class="demobtn" bindtap="demoTap">DEMO</button>
   </div>
 </template>
 
 <style>
-.page { width: 480px; height: 352px; background-color: #000000; padding: 10px 14px; box-sizing: border-box; position: relative; }
+.page { width: 480px; height: 352px; background-color: #000000; padding: 12px 16px; box-sizing: border-box; position: relative; }
 .ttl { color: #40ff5e; font-size: 19px; font-weight: bold; letter-spacing: 2px; }
-.status { color: #7dff9e; font-size: 11px; line-height: 15px; margin-top: 2px; white-space: nowrap; overflow: hidden; }
-.btnrow { display: flex; flex-direction: row; margin-top: 6px; }
-.btn { flex: 1; margin-right: 6px; background-color: #0d2812; color: #40ff5e; border: 1px solid rgba(64,255,94,0.72); font-size: 13px; padding: 5px 0; text-align: center; border-radius: 50%; }
-.btnrow .btn:last-child { margin-right: 0; }
-.btn-main { background-color: #14541f; color: #7dff9e; font-weight: bold; }
-.guide { color: rgba(64,255,94,0.62); font-size: 10px; line-height: 13px; margin-top: 5px; white-space: nowrap; overflow: hidden; }
-.rline { color: #7dff9e; font-size: 12px; line-height: 16px; margin-top: 3px; white-space: nowrap; overflow: hidden; }
-.dim { color: rgba(125,255,158,0.75); }
-.center { text-align: center; }
-.mono { font-family: monospace; }
-.heroline { color: #40ff5e; font-size: 16px; font-weight: bold; line-height: 21px; margin-top: 5px; white-space: nowrap; overflow: hidden; }
-.foot { position: absolute; left: 14px; top: 322px; width: 350px; color: rgba(64,255,94,0.66); font-family: monospace; font-size: 9px; line-height: 12px; white-space: nowrap; overflow: hidden; }
-.demobtn { position: absolute; left: 388px; top: 312px; width: 78px; height: 28px; background-color: #0d2812; color: #40ff5e; border: 1px solid rgba(64,255,94,0.72); font-size: 12px; text-align: center; border-radius: 50%; }
-.linebox { margin-top: 12px; border-top: 2px solid rgba(64,255,94,0.6); padding-top: 8px; }
-.dots { color: #40ff5e; font-family: monospace; font-size: 19px; letter-spacing: 2px; text-align: center; }
-.stations { color: #7dff9e; font-size: 11px; text-align: center; margin-top: 4px; white-space: nowrap; overflow: hidden; }
+.status { color: #7dff9e; font-size: 11px; margin-top: 2px; white-space: nowrap; overflow: hidden; }
+.cards { margin-top: 10px; }
+.rcard { color: #7dff9e; font-size: 13px; line-height: 20px; border-left: 4px solid rgba(64,255,94,0.7); padding: 4px 8px; margin-top: 6px; background-color: #061a0b; white-space: nowrap; overflow: hidden; }
+.summary { color: #40ff5e; font-size: 12px; margin-top: 10px; white-space: nowrap; overflow: hidden; }
+.btnrow { display: flex; flex-direction: row; margin-top: 9px; }
+.rbtn { flex: 1; margin-right: 8px; background-color: #0d2812; color: #40ff5e; border: 1px solid rgba(64,255,94,0.8); font-size: 13px; padding: 6px 0; text-align: center; border-radius: 4px; }
+.btnrow .rbtn:last-child { margin-right: 0; }
+.rbtn-main { background-color: #14541f; color: #7dff9e; font-weight: bold; }
+.foot { position: absolute; left: 16px; top: 326px; width: 440px; color: rgba(64,255,94,0.6); font-family: monospace; font-size: 9px; white-space: nowrap; overflow: hidden; }
 </style>

@@ -1,10 +1,1 @@
-{
-  "name": "freeze-step-cue",
-  "version": "1.0.0",
-  "description": "Freeze step cue: a rhythm aid for gait freezing at doorways and lift entrances. One beat, one step, in sight and aloud, until the user reports walking again or the session times out to rest. It is a life aid, not a medical judgement.",
-  "main": "app.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {}
-}
+{"author":"","dependencies":{},"description":"Freeze step cue v2: a rhythm aid for gait freezing at doorways and lift entrances, rebuilt as a three-page agent. Four rhythm sets (50-72 BPM, 12-24 step targets); the cue page runs a visible rhythm line with TTS counting, counts steps from head pitch dips on the orientation sensor (temple tap when no sensor), and settles honestly - target reached means walking, time limit means hold on and rest. Sessions persist across launches. A life aid, not a medical judgement.","keywords":[],"license":"ISC","main":"app.js","name":"freeze-step-cue","version":"2.0.0"}

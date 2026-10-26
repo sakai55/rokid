@@ -1,8 +1,1 @@
-{
-  "pages": [
-    "pages/index/index"
-  ],
-  "window": {
-    "navigationBarTitleText": "Freeze Step Cue"
-  }
-}
+{"pages":["pages/index/index","pages/cue/index","pages/record/index"],"window":{"navigationBarTitleText":"Freeze Step Cue"}}
