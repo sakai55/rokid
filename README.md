@@ -23,7 +23,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 截图统一存放于仓库根目录 `screenshots/dabiaoge/`。预览环境没有真 ASR 与真通道：待命态是真实界面；队列与收件箱由页脚「演示」按钮切换的**示例数据**呈现（屏上标注「演示」），真链路以文末真机验收清单为准。
 
-![待命态：虚线框里写着「待命，点头开始录入」；队列空时标题后什么都不跟](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-idle.png)
+![待命态：虚线框里只有一行发送提示，不换行；队列空时标题后不跟槽，点头即可说第一条](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-idle.png)
 
 ![队列（演示数据）：标题「大表哥」右侧的点阵生命槽——全点满=已完成、小蛇=处理中、边框点=待处理；发送不等待，可继续说下一条](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-queue.png)
 
@@ -38,7 +38,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填（导入名默认为仓库名，Studio 内改「大表哥」） |
-| Version（Build） | 待回填（本地 package.json 2.1.4） |
+| Version（Build） | 待回填（本地 package.json 2.1.5） |
 | App Category | 待回填（建议 Work） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
@@ -82,7 +82,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ## 版本归档（.aix）
 
-- `aix/dabiaoge.aix`：最新版（当前 v2.1.4）。
+- `aix/dabiaoge.aix`：最新版（当前 v2.1.5）。
 - `aix/dabiaoge-v<版本>.aix`：每个历史版本一份，与最新版并排存放在仓库 `aix/` 目录里，可直接下载上传 Studio 回退或对照。
 
 ## 本地命令
@@ -133,6 +133,10 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 - 视频：真机阶段补录（核心流程：连发两条 → 标题槽状态变化 → 收件箱翻看与朗读，≤60 秒）
 
 ### Change Log
+
+#### v2.1.5
+
+- Improvements：待命时虚线框只留一行——删去「待命，点头开始录入」一行，发送提示缩短为单行不再换行（取代 v2.1.2 的框内待命文案）
 
 #### v2.1.4
 

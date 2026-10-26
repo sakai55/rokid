@@ -26,14 +26,14 @@ export default {
     stateText: '待命 · 点头开始说话',
     heardText: '',
     heardCls: 'heard heard-dim',
-    boxLabel: '待命，点头开始录入',
+    boxLabel: '',
     slots: [],
     resTitle: '',
     resBody: '',
     resItems: [],
     choiceLine: '',
-    hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着',
-    appVersion: 'v2.1.4'
+    hint: '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着',
+    appVersion: 'v2.1.5'
   },
 
   onLoad() {
@@ -198,7 +198,7 @@ export default {
   _syncUI() {
     if (this._demo) return;
     var patch = { slots: this._slotsData() };
-    patch.boxLabel = this.data.phase === 'idle' ? '待命，点头开始录入' : '你说的是';
+    patch.boxLabel = this.data.phase === 'idle' ? '' : '你说的是';
     var ph = this.data.phase;
     var finals = this._finals();
     if (ph === 'idle') {
@@ -219,7 +219,7 @@ export default {
         patch.hint = '左右转头或滑动翻看已完成 · 还能再发 ' + (MAX_INFLIGHT - this._queue.length) + ' 条';
       } else {
         patch.stateText = '待命 · 点头开始说话';
-        patch.hint = '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着';
+        patch.hint = '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着';
       }
       if (this._lastEnv) {
         var le = this._lastEnv;
@@ -345,7 +345,7 @@ export default {
       var mk = function (kind, i) { return { kind: kind, dots: this._dotsFor(kind, i) }; }.bind(this);
       this.setData({
         phase: 'idle',
-        boxLabel: '待命，点头开始录入',
+        boxLabel: '',
         stateText: '已发送 3 条 · 下面可以继续说下一条',
         heardText: '', heardCls: 'heard heard-dim',
         slots: [mk('d', 0), mk('w', 1), mk('q', 2)],
@@ -399,11 +399,11 @@ export default {
     this._demo = false;
     this.setData({
       phase: 'idle',
-      boxLabel: '待命，点头开始录入',
+      boxLabel: '',
       stateText: '待命 · 点头开始说话',
       heardText: '', heardCls: 'heard heard-dim',
       resTitle: '', resBody: '', resItems: [], choiceLine: '',
-      hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着'
+      hint: '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着'
     });
     this._syncUI();
   },
@@ -758,7 +758,7 @@ export default {
     this._notice = { title: title, body: body };
     this.setData({
       phase: 'idle',
-      boxLabel: '待命，点头开始录入',
+      boxLabel: '',
       stateText: title,
       resTitle: title,
       resBody: body,
@@ -794,7 +794,7 @@ export default {
       <text class="state">{{stateText}}</text>
     </view>
     <view class="heard-box">
-      <text class="heard-label">{{boxLabel}}</text>
+      <text class="heard-label" ink:if="{{boxLabel}}">{{boxLabel}}</text>
       <text class="{{heardCls}}">{{heardText}}</text>
       <text class="box-hint">{{hint}}</text>
     </view>
