@@ -1,0 +1,10 @@
+{
+  "name": "matsuri-taiko",
+  "version": "1.0.0",
+  "description": "Matsuri taiko: festival drum rhythms played with head movement only. Pick a song, beat it in segments with a return to centre between moves, and clear songs one by one. No circling the neck, ever.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

@@ -1,0 +1,10 @@
+{
+  "name": "kotowaza-quiz",
+  "version": "1.0.0",
+  "description": "Kotowaza quiz: Japanese proverbs as a head-movement quiz for waiting time. A proverb appears, the player answers in their head, confirms with a nod, and hears the meaning. Progress and score are kept across the set.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

@@ -1,0 +1,10 @@
+{
+  "name": "kasa-share",
+  "version": "1.0.0",
+  "description": "Kasa share: a borrowed station umbrella, kept on track. Register the return station, watch the return deadline, and mark it returned only when it is really back. It never guesses a station and never auto-returns anything.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

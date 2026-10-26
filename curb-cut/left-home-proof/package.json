@@ -1,0 +1,10 @@
+{
+  "name": "left-home-proof",
+  "version": "1.0.0",
+  "description": "Left home proof: for people who loop back home doubting the gas or the lock. Check each point before leaving, then replay one dated proof in sight afterwards: you saw it, it was off. Evidence ends the loop, not another reminder.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

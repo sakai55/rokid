@@ -1,0 +1,10 @@
+{
+  "name": "freeze-step-cue",
+  "version": "1.0.0",
+  "description": "Freeze step cue: a rhythm aid for gait freezing at doorways and lift entrances. One beat, one step, in sight and aloud, until the user reports walking again or the session times out to rest. It is a life aid, not a medical judgement.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
