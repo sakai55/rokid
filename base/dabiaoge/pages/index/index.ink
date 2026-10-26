@@ -33,7 +33,7 @@ export default {
     resItems: [],
     choiceLine: '',
     hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着',
-    appVersion: 'v2.1.3'
+    appVersion: 'v2.1.4'
   },
 
   onLoad() {

@@ -3,10 +3,12 @@
 // can run this agent against their own rokidpost front door by editing
 // just this file.
 //
-// BASE_URL: address of the rokidpost front door (Cloudflare Worker).
+// BASE_URL: the COMPLETE URL of the rokidpost front door (Cloudflare
+//   Worker) - including the https:// protocol, with NO trailing slash
+//   and NO path (the code appends /submit and /ticket/<id> itself).
 //   The value below is the default public front door. If you deploy
 //   your own front door (see the rokidpost repo), replace it with your
-//   own Worker address.
+//   own Worker address, in the same complete-URL form.
 // CHANNEL_KEY: the glasses-side key of YOUR front door. The repo
 //   stores a placeholder only. Before packaging, open this file in
 //   Global AIUI Studio and replace the placeholder with the real key,
