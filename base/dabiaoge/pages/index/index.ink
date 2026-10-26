@@ -5,9 +5,8 @@
 </script>
 
 <script setup>
-import { CHANNEL_KEY } from '../../channel.js';
+import { CHANNEL_KEY, BASE_URL } from '../../channel.js';
 
-var BASE = 'https://rokidp.datumoj.com';
 var POLL_MS = 4000;
 var TIMEOUT_MS = 300000;
 var END_WORD = '大表哥';
@@ -28,7 +27,7 @@ export default {
     choiceLine: '',
     hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着',
     sayLabel: '开始说话',
-    appVersion: 'v1.0.3'
+    appVersion: 'v1.0.4'
   },
 
   onLoad() {
@@ -379,7 +378,7 @@ export default {
       hint: '单子已进队列 · 可以放下眼镜，回来自动补收结果'
     });
     var self = this;
-    fetch(BASE + '/submit', {
+    fetch(BASE_URL + '/submit', {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-channel-key': CHANNEL_KEY },
       body: JSON.stringify({ session: this._session, kind: 'ask', text: text })
@@ -405,7 +404,7 @@ export default {
   _poll(tid, isResume) {
     if (this._pollStop) return;
     var self = this;
-    fetch(BASE + '/ticket/' + encodeURIComponent(tid), {
+    fetch(BASE_URL + '/ticket/' + encodeURIComponent(tid), {
       headers: { 'x-channel-key': CHANNEL_KEY }
     }).then(function (resp) {
       return resp.json().then(function (j) { return { status: resp.status, body: j }; });
