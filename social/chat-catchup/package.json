@@ -1,1 +1,0 @@
-{"dependencies":{},"description":"Rokid Glasses AIUI Agent - chat catchup: far-field listening buffers conversation captions into a rolling ~15 s window; shake or HELP shows the recent points in silence so you can rejoin without asking the other person to repeat; buffer expires, session memory only.","main":"app.js","name":"chat-catchup","version":"1.0.0"}
