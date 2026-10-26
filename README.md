@@ -38,7 +38,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填（导入名默认为仓库名，Studio 内改「大表哥」） |
-| Version（Build） | 待回填（本地 package.json 2.1.6） |
+| Version（Build） | 待回填（本地 package.json 2.1.7） |
 | App Category | 待回填（建议 Work） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
@@ -82,7 +82,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ## 版本归档（.aix）
 
-- `aix/dabiaoge.aix`：最新版（当前 v2.1.6）。
+- `aix/dabiaoge.aix`：最新版（当前 v2.1.7）。
 - `aix/dabiaoge-v<版本>.aix`：每个历史版本一份，与最新版并排存放在仓库 `aix/` 目录里，可直接下载上传 Studio 回退或对照。
 
 ## 本地命令
@@ -133,6 +133,10 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 - 视频：真机阶段补录（核心流程：连发两条 → 标题槽状态变化 → 收件箱翻看与朗读，≤60 秒）
 
 ### Change Log
+
+#### v2.1.7
+
+- Improvements：移除虚线框上方的「你说的是」标签行——框里直接是说的话和提示，不再加标题
 
 #### v2.1.6
 

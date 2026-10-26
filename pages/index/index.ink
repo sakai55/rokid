@@ -33,7 +33,7 @@ export default {
     resItems: [],
     choiceLine: '',
     hint: '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着',
-    appVersion: 'v2.1.6'
+    appVersion: 'v2.1.7'
   },
 
   onLoad() {
@@ -198,7 +198,7 @@ export default {
   _syncUI() {
     if (this._demo) return;
     var patch = { slots: this._slotsData() };
-    patch.boxLabel = this.data.phase === 'idle' ? '' : '你说的是';
+    patch.boxLabel = '';
     var ph = this.data.phase;
     var finals = this._finals();
     if (ph === 'idle') {
@@ -358,7 +358,7 @@ export default {
       var mk2 = function (kind, i) { return { kind: kind, dots: this._dotsFor(kind, i) }; }.bind(this);
       this.setData({
         phase: 'listening',
-        boxLabel: '你说的是',
+        boxLabel: '',
         stateText: '正在听 · 说吧，停顿没关系',
         heardText: '帮我查一下明天去大阪的电车，嗯……还有最早一班是几点',
         heardCls: 'heard',
@@ -373,7 +373,7 @@ export default {
     if (mode === 'list') {
       this.setData({
         phase: 'inbox',
-        boxLabel: '你说的是',
+        boxLabel: '',
         stateText: '第 1 / 2 条（发送顺序） · 转头或滑动翻条',
         heardText: '列出今天的开发清单', heardCls: 'heard',
         resTitle: '今日开发清单', resBody: '今天完成的三批：',
@@ -386,7 +386,7 @@ export default {
     if (mode === 'text') {
       this.setData({
         phase: 'inbox',
-        boxLabel: '你说的是',
+        boxLabel: '',
         stateText: '第 2 / 2 条（发送顺序） · 转头或滑动翻条',
         heardText: '用一句话说说今天的天气', heardCls: 'heard',
         resTitle: '今日天气',
@@ -510,7 +510,7 @@ export default {
     this._restarts = 0;
     this.setData({
       phase: 'listening',
-      boxLabel: '你说的是',
+      boxLabel: '',
       stateText: '正在听 · 说吧，停顿没关系',
       heardText: '',
       heardCls: 'heard',
