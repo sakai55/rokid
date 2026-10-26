@@ -5,7 +5,24 @@ description: "Produce one Rokid AIUI Agent end-to-end for the sakai55/rokid repo
 
 # Rokid Agent Production SOP
 
-One agent = one life problem, glasses-directionality first. Walk all 9 steps; an agent is not done until step 8 is registered.
+One agent = one complete scenario (see the governing rule below — it overrides the older "one life problem" framing). Walk all 9 steps; an agent is not done until step 8 is registered.
+
+## Governing rule — one complete scenario per agent (GO, 2026-10-26)
+
+Set after Rokid's official dev team reviewed the repo and the full overseas Agent Store catalog (~32 listings) was analysed. **Build only "one complete scenario per agent" — never "one feature point per agent".** Official verdict on the old fleet's shape: a feature that small basically cannot pass review, one small point per agent likely passes zero, thin scenarios risk post-listing system bans and user complaints. The store's survivors confirm the bar: complete games with a full play loop, collections under one hub (the store's #2 by usage is a mini-games collection), daily-decision scenarios (what to eat / wear / train today), data-backed services, and content sets — never a single action.
+
+A concept must pass ALL THREE GATES before step 1 design work starts; failing any gate kills the concept on the spot (do not "build it first and see"):
+
+1. **Scenario gate.** One sentence names who opens it, at what moment, to accomplish what — a moment and a task, not an action or a feature. If the scenario cannot be stated, do not build it.
+2. **Loop gate.** A full loop: entry → process → result/settlement, repeatable across uses. Single-action, single-page, single-prompt agents fail. Games are the one relaxation (store-proven): a single mechanic is allowed ONLY with a complete play loop (start, win/lose, score).
+3. **Thickness gate.** At least two of: real data source, a content set, a multi-step flow, cross-session memory, a collection hub. Same-body-as-a-built-in fails outright (conflict-audit tier 1 — do not regroup, do not submit).
+
+Execution rules:
+
+- **Existing fleet (170+ thin agents).** Never submit them one by one; never delete them. Regroup by scenario — merge the single-point agents of one scenario into one scenario agent; whatever cannot be merged stays archived in the repo.
+- **Submission order.** First submission is a gate-passing sample only: (1) the head-games collection hub — ONE monolithic agent containing all the games (agents cannot invoke each other, so a hub is a single agent with the games inside, NOT a router); (2) dabiaoge. Nothing else goes to review until a sample has passed and the real bar is known.
+- **Volume production runs under this rule, not the old one (GO, 2026-10-26: update the daily lines with the new rule, do NOT cancel them).** The daily batch crons (curb-cut / JP-KR / head-games) keep running, but every concept they touch must pass the three gates first: a concept that fails is not built as-is — it is thickened (merged with same-scenario neighbours, or given a second thickness element) or skipped with the verdict reported. The head-games line no longer ships standalone mini-games: its batches now fold finished games into the single collection-hub agent, three at a time.
+- **Device-test gate unchanged.** Submission still happens only after GO's real-device testing is complete and GO says 「真机测试完成了」 (step 9).
 
 ## Capability red lines (official-source verified, 2026-10-24)
 
