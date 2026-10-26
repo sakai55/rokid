@@ -32,7 +32,7 @@ export default {
     resItems: [],
     choiceLine: '',
     hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着',
-    appVersion: 'v2.1.0'
+    appVersion: 'v2.1.1'
   },
 
   onLoad() {
@@ -422,8 +422,7 @@ export default {
     this._buffer = '';
     if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
     this.setData({ phase: 'idle', heardText: '', heardCls: 'heard heard-dim' });
-    if (this._finals().length) this._openInbox(0, true);
-    else this._syncUI();
+    this._syncUI();
   },
 
   _exitDemo() {
@@ -566,7 +565,6 @@ export default {
         this._wantListen = false;
         this.setData({ phase: 'idle' });
         this._syncUI();
-        if (this._finals().length) this._openInbox(0, true);
         return;
       }
     }
@@ -628,8 +626,11 @@ export default {
       return;
     }
     this._submit(clean);
-    if (this._finals().length) this._openInbox(0, true);
-    else this._syncUI();
+    // After sending, the screen returns to the initial compose
+    // state: a nod starts the next voice input. Results that
+    // arrived quietly stay visible in the reply area below; the
+    // inbox is never auto-opened from here.
+    this._syncUI();
   },
 
   // ---------- channel ----------
