@@ -13,7 +13,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 全部部署配置只放在工程的一个文件 **`channel.js`** 里，页面代码没有任何写死的域名或钥匙。**在 Studio 里打包前**：
 
 1. 打开本工程的 **`channel.js`**；
-2. `BASE_URL`（前门地址）：填**完整 URL**——带 `https://` 协议、末尾不带斜杠、不带路径（代码会自己拼 `/submit`、`/ticket/…`；只填域名会当成相对路径投不出去）。默认值是公共前门 `https://rokidp.datumoj.com`，用它就不用动；**自建前门的人**（按 rokidpost 仓库自部署）把这一行换成自己的 Worker 完整地址；
+2. `BASE_URL`（前门地址）：填**完整 URL**——带 `https://` 协议、末尾不带斜杠、不带路径（代码会自己拼 `/submit`、`/ticket/…`；只填域名会当成相对路径投不出去）。默认值是 `https://post.rokid`，用默认前门就不用动；**自建前门的人**（按 rokidpost 仓库自部署）把这一行换成自己的 Worker 完整地址；
 3. `CHANNEL_KEY`（投单钥匙）：把 `PASTE_CHANNEL_KEY_HERE` 换成你自己前门的钥匙；
 4. 然后打包。
 
@@ -38,7 +38,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填（导入名默认为仓库名，Studio 内改「大表哥」） |
-| Version（Build） | 待回填（本地 package.json 2.1.7） |
+| Version（Build） | 待回填（本地 package.json 2.1.8） |
 | App Category | 待回填（建议 Work） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
@@ -77,12 +77,12 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 - 权限：`RECORD_AUDIO` 一项（宿主 ASR 开麦；平台没有独立的 ASR 权限）。不用 CAMERA、GEOLOCATION。
 - 通道只收文字：v1 不传录音、不传图片。识别在眼镜宿主完成，发送的是识别文字。
-- 网络：仅 HTTPS 访问 `channel.js` 中 `BASE_URL` 配置的前门域名（默认 `rokidp.datumoj.com`）；提审前该域名需在开发者后台报备白名单。
+- 网络：仅 HTTPS 访问 `channel.js` 中 `BASE_URL` 配置的前门地址（默认 `post.rokid`）；提审前该域名需在开发者后台报备白名单。
 - 钥匙纪律见上节；本 Agent 不预埋任何动作类能力（发信等按授权章程后续接入）。
 
 ## 版本归档（.aix）
 
-- `aix/dabiaoge.aix`：最新版（当前 v2.1.7）。
+- `aix/dabiaoge.aix`：最新版（当前 v2.1.8）。
 - `aix/dabiaoge-v<版本>.aix`：每个历史版本一份，与最新版并排存放在仓库 `aix/` 目录里，可直接下载上传 Studio 回退或对照。
 
 ## 本地命令
@@ -133,6 +133,10 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 - 视频：真机阶段补录（核心流程：连发两条 → 标题槽状态变化 → 收件箱翻看与朗读，≤60 秒）
 
 ### Change Log
+
+#### v2.1.8
+
+- Improvements：默认前门地址统一改为 `https://post.rokid`（`channel.js` 的 `BASE_URL` 及文档口径）；自建前门者仍可自行替换
 
 #### v2.1.7
 
