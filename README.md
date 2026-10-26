@@ -6,7 +6,7 @@
 https://github.com/sakai55/rokid/tree/agent-dabiaoge
 ```
 
-大表哥是 rokidpost 通道的眼镜侧薄客户端：眼镜只管采集、发送、显示与朗读，推理和办事全在 Muse 侧。你在眼镜上开口提问，宿主先把语音转成文字并**显示在屏上**（听错当场可见），文字投给前门，Muse 处理后回一张给小屏的字幕卡——屏上显示、摘要朗读。v1 只走文字（过通道的永远是文字，没有录音离开眼镜）；拍照提问等文字链打通后再加。
+大表哥是 rokidpost 通道的眼镜侧薄客户端：眼镜只管采集、发送、显示与朗读，推理和办事全在 Muse 侧。你在眼镜上开口提问，宿主先把语音转成文字并**显示在屏上**（听错当场可见），文字投给前门，Muse 处理后回一张给小屏的字幕卡——屏上显示、摘要朗读。只走文字（过通道的永远是文字，没有录音离开眼镜）；拍照提问等文字链打通后再加。**v2.0.0 起是流水线模式**：发送不等处理，最多 5 条在途连着发，结果进收件箱慢慢看（详见「工作流程」）。
 
 ## 打包前必做：填配置（域名 + 钥匙）
 
@@ -21,25 +21,27 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ## 预览截图
 
-截图统一存放于仓库根目录 `screenshots/dabiaoge/`。预览环境没有真 ASR 与真通道：待命态是真实界面；处理中与结果态由页脚「演示」按钮切换的**示例数据**呈现（屏上标注「演示状态」），真链路以文末真机验收清单为准。
+截图统一存放于仓库根目录 `screenshots/dabiaoge/`。预览环境没有真 ASR 与真通道：待命态是真实界面；队列与收件箱由页脚「演示」按钮切换的**示例数据**呈现（屏上标注「演示」），真链路以文末真机验收清单为准。
 
-![待命态：点头或单击镜腿开始说话](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-idle.png)
+![待命态：队列空时标题后什么都不跟，点头或单击镜腿开始说话](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-idle.png)
 
-![处理中（演示数据）：识别文字留在屏上，状态行显示 Muse 正在处理](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-working.png)
+![队列（演示数据）：标题「大表哥」右侧的点阵生命槽——全点满=已完成、小蛇=处理中、边框点=待处理；发送不等待，可继续说下一条](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-queue.png)
 
-![结果态（演示数据）：list 信封按字幕卡版式逐行显示](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-result.png)
+![收件箱（演示数据）：list 信封按字幕卡版式逐行显示，前后滑动翻条，单击朗读本条，点头看完出队](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-inbox.png)
+
+![收件箱（演示数据）：text 信封，标题加正文](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-inbox-text.png)
 
 ## 真机测试信息（Global AIUI Studio · Device Debug）
 
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填（导入名默认为仓库名，Studio 内改「大表哥」） |
-| Version（Build） | 待回填（本地 package.json 1.0.4） |
+| Version（Build） | 待回填（本地 package.json 2.0.0） |
 | App Category | 待回填（建议 Work） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
 | AIX Package Size | 约 13 KB（本地 pack；Studio 打包值待回填） |
-| 状态 | v1.0.0 / v1.0.2 已真机跑通（2026-10-26）；v1.0.4 待 GO 在 Studio 重新导入、填钥匙并打包 |
+| 状态 | v1.0.0 / v1.0.2 已真机跑通（2026-10-26）；v2.0.0 待 GO 在 Studio 重新导入、填钥并打包，按文末验收清单真机验（v1.0.3 / v1.0.4 的修改随 v2 一并验证） |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
@@ -47,22 +49,25 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 | 步 | 发生什么 |
 |---|---|
-| 说话 | 点头 / 单击开始 → 宿主 ASR 识别，文字分段攒起来实时上屏（停顿不截断）→ 以「大表哥」结尾（v1.0.3 起识别成「表哥」也认）、或单击立即发送，结束词剥掉不进正文 |
-| 投单 | POST 前门 `/submit`（`{session, kind:"ask", text}`，session 本地持久化） |
-| 等待 | 每 4 秒查一次单，总超时 300 秒（v1.0.2 起，原 150 秒）；状态行显示已排队 / Muse 正在处理 |
-| 结果 | 信封按 type 渲染：text（标题+正文）、list（+逐行条目）、choices（只展示）、card（标题+正文）；speak 与正文不同时朗读 speak |
-| 批准 | 回单 needs-approval 时显示「这件事要你在手机上批准，已挂起」，眼镜侧对话当场结束，批准在 Muse App 里做 |
-| 补收 | ticket 存本地；关掉眼镜不丢单，下次打开先查未完成单，办完的直接显示 |
+| 说话 | 点头 / 单击开始 → 宿主 ASR 识别，文字分段攒起来实时上屏（停顿不截断）→ 以「大表哥」结尾（识别成「表哥」也认）、或单击立即发送，结束词剥掉不进正文 |
+| 投单 | POST 前门 `/submit`（`{session, kind:"ask", text}`，session 本地持久化）；发送后**立即回待命**，不等处理——可连着说下一条 |
+| 队列 | 在途上限 **5 条**（标题点阵槽满格）；满了再发会被拦下并提示先看结果。整队由一条轮询循环服务（每轮逐条查状态） |
+| 生命槽 | 标题「大表哥」右侧的点阵小方块（5×5 点阵绘制，槽高 = 标题字高 ×0.618）：一个方块 = 一条在途，按发送顺序排；**边框点 = 待处理、连点小蛇（带尾巴游走）= 处理中、全点满 = 已完成**；没有在途时标题后什么都不跟 |
+| 结果 | 完成的单进**收件箱**（按完成顺序）：空闲时最早一条自动顶到主屏并朗读摘要；**说话期间有单完成不抢屏、不朗读**，只在页脚留一行「✓ N 条刚完成，先存着」，发完当前条才顶出 |
+| 翻看 | 收件箱里前后滑动逐条翻（第几 / 共几显示在状态行）；单击朗读本条；点头 = 这条看完，出队腾位、对应方块消失，其余自动补位 |
+| 批准 | 回单 needs-approval 作为一条收件箱消息显示「需要你批准……到 RokidRelay 聊里看工单卡处理」，眼镜侧到此为止 |
+| 超时 | 单条等满 300 秒只标这一条（收件箱里显示超时说明），不堵后面的单 |
+| 补收 | 整个队列（含未读结果）存本地；关掉眼镜不丢单，下次打开恢复整队、未完成的继续查、未读的还在收件箱 |
 
 ## 操作方式（镜腿手势映射）
 
 | 手势 | 键事件 | 作用 |
 |---|---|---|
-| 单击 | Enter / GlobalHook | 开始说话；说话中单击 = 立即发送已攒文字；结果页单击 = 再问一句（400ms 去重） |
-| 点头 | onHeadGesture 'nod' | 与单击同效；处理中忽略 |
-| 滑动 | ArrowUp / ArrowDown | 本页未占用 |
+| 单击 | Enter / GlobalHook | 当前屏的主动作：待命 = 开始说话；说话中 = 立即发送已攒文字；收件箱 = 朗读本条（400ms 去重） |
+| 点头 | onHeadGesture 'nod' | 推进动作：待命 = 开始说话；说话中 = 立即发送；收件箱 = 这条看完（出队，有下一条未读则跳到它） |
+| 前后滑动 | ArrowUp / ArrowDown | 翻收件箱：待命时滑动打开收件箱，收件箱里滑动翻条（不删）；说话中不响应 |
 | 双击 | Backspace | 交给系统：返回 / 退出（页面不拦截） |
-| 页脚「演示」钮 | bindtap | 循环示例三态（处理中 / 列表结果 / 文字结果），供截图与版式对照，永不投单 |
+| 页脚「演示」钮 | bindtap | 循环示例四态（队列 / 收件箱列表 / 收件箱文字 / 待命），供截图与版式对照，永不投单、不动真队列 |
 
 ## 权限与边界
 
@@ -88,15 +93,20 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 - [ ] **信封四态显示**：text / list / choices / card 四种回单各显示一次，版式正确不溢出
 - [ ] **speak 朗读**：speak 与 body 不同时朗读 speak；两者相同时不重复念正文
 - [ ] **needs-approval 提示**：2 级单回来时显示「这件事要你在手机上批准，已挂起」
-- [ ] **关后再开补收**：处理中退出大表哥，单子办完后重开，自动显示结果
-- [ ] **超时表现**：断网或 300 秒无回时显示超时文案，单子不丢、下次打开续收
+- [ ] **关后再开补收**：有在途与未读结果时退出大表哥，重开后整队恢复（槽还在、未读还在、未完成的继续等）
+- [ ] **超时表现**：某条等满 300 秒时只标该条进收件箱，后面的单照常办、照常回
+- [ ] **连发不等**（v2.0.0 新增）：连着发 3 条，每条发出后立刻能说下一条，不等任何一条办完
+- [ ] **生命槽**（v2.0.0 新增）：标题后的方块与单子一一对应、顺序对得上；处理中的槽里小蛇在游走、看得清；看完一条出队，方块消失、其余左移补位
+- [ ] **第 6 条拦截**（v2.0.0 新增）：在途满 5 条时再发被拦下，提示先看结果腾位，文字不丢（屏上可见刚才那句）
+- [ ] **说话时不打扰**（v2.0.0 新增）：正在说下一条时有单完成，只在页脚出现「先存着」，不抢屏不朗读；发完当前条后最早一条未读顶出并朗读
+- [ ] **收件箱翻看**（v2.0.0 新增）：滑动按完成顺序翻条（不是发送顺序）；单击重读本条；点头出队后自动跳下一条未读
 - [ ] **钥匙未填**：占位符状态打包打开时显示「钥匙未填」提示，不崩溃
 
 ## 提审资料 (Review Submission)
 
 ### Feature Description
 
-大表哥是 Rokid 眼镜直连 Muse 的通道客户端：点头或单击镜腿开口提问，眼镜先把语音转成文字并显示在屏上，文字经通道送达 Muse 处理，回单按眼镜小屏的字幕卡格式显示并朗读摘要。关掉眼镜不丢单，下次打开自动补收结果。
+大表哥是 Rokid 眼镜直连 Muse 的通道客户端（流水线版）：点头或单击镜腿开口提问，眼镜先把语音转成文字显示在屏上，文字经通道送达 Muse；发送不等处理，最多 5 条在途连着问，标题旁的点阵小方块实时显示每条的状态，结果按完成顺序进收件箱，滑动镜腿逐条翻看朗读。关掉眼镜不丢单，下次打开整队补收。
 
 ### Opening Message
 
@@ -104,10 +114,15 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ### Preview Media
 
-- 图片：`screenshots/dabiaoge/preview-dabiaoge-idle.png`、`preview-dabiaoge-working.png`、`preview-dabiaoge-result.png`
-- 视频：真机阶段补录（核心流程：说话提问 → 等待 → 结果显示与朗读，≤60 秒）
+- 图片：`screenshots/dabiaoge/preview-dabiaoge-idle.png`、`preview-dabiaoge-queue.png`、`preview-dabiaoge-inbox.png`、`preview-dabiaoge-inbox-text.png`
+- 视频：真机阶段补录（核心流程：连发两条 → 标题槽状态变化 → 收件箱翻看与朗读，≤60 秒）
 
 ### Change Log
+
+#### v2.0.0
+
+- Features added：流水线模式——发送与处理彻底解耦，在途上限 5 条连发不等；标题点阵生命槽（5×5 点阵绘制、槽高 = 标题字高 ×0.618：边框点 = 待处理、连点小蛇带尾巴游走 = 处理中、全点满 = 已完成，无在途时不显示）；结果收件箱（按完成顺序排队、滑动翻条、单击朗读、点头看完出队）；整队本地持久化、冷启动全量补收（v1 在途单自动迁移进队列）
+- Improvements：说话期间有单完成不抢屏不朗读（页脚一行提示），发完当前条才顶出最早一条未读并朗读；单条 300 秒超时只标该条不堵整队；needs-approval / error / 超时统一作为收件箱条目呈现
 
 #### v1.0.4
 
