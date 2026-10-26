@@ -23,7 +23,7 @@ var SNAKE_LOOP = [[0,2],[1,2],[2,2],[2,1],[2,0],[3,0],[4,0],[4,1],[4,2],[3,2],[3
 export default {
   data: {
     phase: 'idle',
-    stateText: '待命 · 点头或单击镜腿开始说话',
+    stateText: '待命 · 点头开始说话',
     heardText: '',
     heardCls: 'heard heard-dim',
     slots: [],
@@ -32,8 +32,7 @@ export default {
     resItems: [],
     choiceLine: '',
     hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着',
-    sayLabel: '开始说话',
-    appVersion: 'v2.0.0'
+    appVersion: 'v2.1.0'
   },
 
   onLoad() {
@@ -43,7 +42,6 @@ export default {
     this._submitted = false;
     this._buffer = '';
     this._wantListen = false;
-    this._tapFinish = false;
     this._restarts = 0;
     this._gotFinal = false;
     this._queue = [];
@@ -57,6 +55,7 @@ export default {
     this._restoreQueue();
     var self = this;
     this._snakeTimer = setInterval(function () { self._snakeStep(); }, 300);
+    this._initHeadTurn();
     this._syncUI();
     this._ensurePolling();
   },
@@ -67,6 +66,7 @@ export default {
     if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
     if (this._pollTimer) { clearTimeout(this._pollTimer); this._pollTimer = null; }
     if (this._snakeTimer) { clearInterval(this._snakeTimer); this._snakeTimer = null; }
+    if (this._sensor) { try { this._sensor.stop(); } catch (e) {} this._sensor = null; }
   },
 
   // ---------- session / queue storage ----------
@@ -103,16 +103,49 @@ export default {
       }
     }
     try { localStorage.removeItem('dabiaoge_ticket'); } catch (e) {}
+    this._trimQueue();
+  },
+
+  // Retention: only the newest MAX_INFLIGHT tickets exist at all.
+  // Older finished ones fall off (history cannot be paged back);
+  // unfinished ones are never evicted.
+  _trimQueue() {
+    while (this._queue.length > MAX_INFLIGHT) {
+      var idx = -1;
+      for (var i = 0; i < this._queue.length; i++) {
+        if (this._queue[i].st !== 'queued' && this._queue[i].st !== 'working') { idx = i; break; }
+      }
+      if (idx < 0) break;
+      this._queue.splice(idx, 1);
+    }
   },
 
   _unfinished() {
     return this._queue.filter(function (it) { return it.st === 'queued' || it.st === 'working'; });
   },
 
+  // Presentation is strictly in SEND order: walk the queue from
+  // the front and stop at the first unfinished ticket - finals
+  // behind it have arrived but are HELD (not shown, not spoken)
+  // until every earlier ticket is final too.
   _finals() {
-    return this._queue
-      .filter(function (it) { return it.st !== 'queued' && it.st !== 'working'; })
-      .sort(function (a, b) { return (a.doneAt || 0) - (b.doneAt || 0); });
+    var out = [];
+    for (var i = 0; i < this._queue.length; i++) {
+      var it = this._queue[i];
+      if (it.st === 'queued' || it.st === 'working') break;
+      out.push(it);
+    }
+    return out;
+  },
+
+  _heldCount() {
+    var seenGap = false, n = 0;
+    for (var i = 0; i < this._queue.length; i++) {
+      var it = this._queue[i];
+      if (it.st === 'queued' || it.st === 'working') seenGap = true;
+      else if (seenGap) n++;
+    }
+    return n;
   },
 
   // ---------- life slots (dot matrix in the title row) ----------
@@ -172,35 +205,42 @@ export default {
         patch.resTitle = this._notice.title;
         patch.resBody = this._notice.body;
         patch.resItems = []; patch.choiceLine = '';
-        patch.sayLabel = '开始说话';
         this.setData(patch);
         return;
       }
       var un = this._unfinished().length;
       if (finals.length) {
-        patch.stateText = '有 ' + finals.length + ' 条结果没看' + (un ? ' · 另有 ' + un + ' 条在处理' : '');
-        patch.hint = '滑动镜腿看结果 · 点头或单击继续提问';
+        patch.stateText = '有 ' + finals.length + ' 条结果可看' + (un ? ' · 另有 ' + un + ' 条在处理' : '');
+        patch.hint = '左右转头或滑动镜腿看结果 · 点头继续提问';
       } else if (un) {
         patch.stateText = '已发送 ' + un + ' 条 · 下面可以继续说下一条';
-        patch.hint = '滑动镜腿翻看已完成 · 还能再发 ' + (MAX_INFLIGHT - this._queue.length) + ' 条';
+        patch.hint = '左右转头或滑动翻看已完成 · 还能再发 ' + (MAX_INFLIGHT - this._queue.length) + ' 条';
       } else {
-        patch.stateText = '待命 · 点头或单击镜腿开始说话';
+        patch.stateText = '待命 · 点头开始说话';
         patch.hint = '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着';
       }
-      patch.sayLabel = '开始说话';
-      patch.resTitle = ''; patch.resBody = ''; patch.resItems = []; patch.choiceLine = '';
+      if (this._lastEnv) {
+        var le = this._lastEnv;
+        patch.resTitle = String(le.title || '');
+        patch.resBody = String(le.body || '');
+        patch.resItems = (le.type === 'list' && le.items) ? le.items.map(function (x) { return '· ' + String(x); }) : [];
+        patch.choiceLine = (le.type === 'choices' && le.choices && le.choices.length)
+          ? le.choices.map(function (x) { return String(x); }).join('  ·  ') : '';
+      } else {
+        patch.resTitle = ''; patch.resBody = ''; patch.resItems = []; patch.choiceLine = '';
+      }
     } else if (ph === 'inbox') {
       var item = finals[this._viewIdx];
       if (item) {
         var env = item.env || {};
-        patch.stateText = '已完成 ' + (this._viewIdx + 1) + ' / ' + finals.length + ' · 前后滑动翻条';
+        var held = this._heldCount();
+        patch.stateText = '第 ' + (this._viewIdx + 1) + ' / ' + finals.length + ' 条（发送顺序）' + (held ? ' · ' + held + ' 条已回在排队' : '') + ' · 转头或滑动翻条';
         patch.resTitle = String(env.title || '');
         patch.resBody = String(env.body || '');
         patch.resItems = (env.type === 'list' && env.items) ? env.items.map(function (s) { return '· ' + String(s); }) : [];
         patch.choiceLine = (env.type === 'choices' && env.choices && env.choices.length)
           ? env.choices.map(function (s) { return String(s); }).join('  ·  ') : '';
-        patch.sayLabel = '朗读本条';
-        patch.hint = '单击朗读 · 点头看完（出队） · 滑动翻条';
+        patch.hint = '转头 / 滑动翻条（翻到即朗读） · 点头问下一条';
       }
     }
     this.setData(patch);
@@ -215,30 +255,12 @@ export default {
     this._viewIdx = Math.max(0, Math.min(idx || 0, finals.length - 1));
     this.setData({ phase: 'inbox' });
     this._syncUI();
+    this._lastEnv = finals[this._viewIdx].env || {};
+    finals[this._viewIdx].shown = true;
+    this._saveQueue();
     if (speakIt) {
       var env = finals[this._viewIdx].env || {};
       if (env.speak) this._announce(String(env.speak));
-    }
-  },
-
-  // Dismiss the item being viewed (it leaves the queue and frees
-  // its slot), then show the next unread or fall back to compose.
-  _dismissCurrent() {
-    var finals = this._finals();
-    var item = finals[this._viewIdx];
-    if (!item) { this.setData({ phase: 'idle' }); this._syncUI(); return; }
-    this._queue = this._queue.filter(function (it) { return it.id !== item.id; });
-    this._saveQueue();
-    var rest = this._finals();
-    if (rest.length) {
-      this._viewIdx = Math.min(this._viewIdx, rest.length - 1);
-      this._syncUI();
-      var env = rest[this._viewIdx].env || {};
-      if (env.speak) this._announce(String(env.speak));
-    } else {
-      this._viewIdx = -1;
-      this.setData({ phase: 'idle' });
-      this._syncUI();
     }
   },
 
@@ -246,11 +268,19 @@ export default {
     if (this.data.phase === 'listening') return;
     var finals = this._finals();
     if (!finals.length) return;
-    if (this.data.phase !== 'inbox') { this._openInbox(delta > 0 ? 0 : finals.length - 1, false); return; }
+    if (this.data.phase !== 'inbox') { this._openInbox(delta > 0 ? 0 : finals.length - 1, true); return; }
     var n = this._viewIdx + delta;
     if (n < 0) n = 0;
     if (n > finals.length - 1) n = finals.length - 1;
-    if (n !== this._viewIdx) { this._viewIdx = n; this._syncUI(); }
+    if (n !== this._viewIdx) {
+      this._viewIdx = n;
+      this._lastEnv = finals[n].env || {};
+      finals[n].shown = true;
+      this._saveQueue();
+      this._syncUI();
+      var env = finals[n].env || {};
+      if (env.speak) this._announce(String(env.speak));
+    }
   },
 
   // A ticket reached a final state. While the user is speaking it
@@ -260,16 +290,41 @@ export default {
     item.doneAt = Date.now();
     this._saveQueue();
     var ph = this.data.phase;
-    if (ph === 'listening') {
-      var n = this._finals().length;
-      this.setData({
-        slots: this._slotsData(),
-        hint: '✓ ' + n + ' 条刚完成，先存着 · 发完这条再给你看'
-      });
+    var finals = this._finals();
+    var candidate = null;
+    for (var i = 0; i < finals.length; i++) {
+      if (!finals[i].shown) { candidate = finals[i]; break; }
+    }
+    if (!candidate) {
+      // Arrived out of order and is held behind an earlier ticket,
+      // or everything presentable was already shown: update slots only.
+      this.setData({ slots: this._slotsData() });
+      if (ph === 'inbox') this._syncUI();
       return;
     }
-    if (ph === 'idle') { this._openInbox(0, true); return; }
+    this._lastEnv = candidate.env || {};
+    if (ph === 'listening') {
+      // Never interrupt dictation: the result appears quietly in
+      // the reply area below - no screen switch, no TTS.
+      candidate.shown = true;
+      this._saveQueue();
+      this.setData({ slots: this._slotsData() });
+      this._renderEnv(this._lastEnv);
+      return;
+    }
+    if (ph === 'idle') { this._openInbox(finals.indexOf(candidate), true); return; }
     this._syncUI();
+  },
+
+  _renderEnv(env) {
+    env = env || {};
+    this.setData({
+      resTitle: String(env.title || ''),
+      resBody: String(env.body || ''),
+      resItems: (env.type === 'list' && env.items) ? env.items.map(function (x) { return '· ' + String(x); }) : [],
+      choiceLine: (env.type === 'choices' && env.choices && env.choices.length)
+        ? env.choices.map(function (x) { return String(x); }).join('  ·  ') : ''
+    });
   },
 
   // ---------- demo states (preview / screenshot only) ----------
@@ -292,7 +347,6 @@ export default {
         heardText: '', heardCls: 'heard heard-dim',
         slots: [mk('d', 0), mk('w', 1), mk('q', 2)],
         resTitle: '', resBody: '', resItems: [], choiceLine: '',
-        sayLabel: '开始说话',
         hint: '演示（示例） · 全点满=已完成 · 小蛇=处理中 · 边框点=待处理'
       });
       return;
@@ -300,12 +354,11 @@ export default {
     if (mode === 'list') {
       this.setData({
         phase: 'inbox',
-        stateText: '已完成 1 / 2 · 前后滑动翻条',
+        stateText: '第 1 / 2 条（发送顺序） · 转头或滑动翻条',
         heardText: '列出今天的开发清单', heardCls: 'heard',
         resTitle: '今日开发清单', resBody: '今天完成的三批：',
         resItems: ['· 路缘坡 CC06–CC08', '· 头动游戏 GA24–GA26', '· 日韩新批 3 个'],
         choiceLine: '',
-        sayLabel: '朗读本条',
         hint: '演示状态（示例数据） · 再点演示看下一态'
       });
       return;
@@ -313,12 +366,11 @@ export default {
     if (mode === 'text') {
       this.setData({
         phase: 'inbox',
-        stateText: '已完成 2 / 2 · 前后滑动翻条',
+        stateText: '第 2 / 2 条（发送顺序） · 转头或滑动翻条',
         heardText: '用一句话说说今天的天气', heardCls: 'heard',
         resTitle: '今日天气',
         resBody: '东京今天晴，最高 21 度，傍晚起风，出门加件外套。',
         resItems: [], choiceLine: '',
-        sayLabel: '朗读本条',
         hint: '演示状态（示例数据） · 再点演示回待命'
       });
       return;
@@ -326,32 +378,29 @@ export default {
     this._demo = false;
     this.setData({
       phase: 'idle',
-      stateText: '待命 · 点头或单击镜腿开始说话',
+      stateText: '待命 · 点头开始说话',
       heardText: '', heardCls: 'heard heard-dim',
       resTitle: '', resBody: '', resItems: [], choiceLine: '',
-      sayLabel: '开始说话',
       hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着'
     });
     this._syncUI();
   },
 
   // ---------- gestures ----------
-  // tap (Enter) = the main button's action for the current screen;
-  // nod = the "advance" action (start / send / mark-read);
-  // temple swipe (Arrow keys) = flip through finished results.
+  // Temple touch has exactly ONE job: previous / next (the swipe
+  // keys). There is deliberately NO tap action anywhere - taps on
+  // the temple misfire too easily (interrupting dictation or
+  // sending half a sentence). Input is head-driven: a nod starts
+  // listening (and cancels it), the end word sends. Turning the
+  // head left / right mirrors the temple swipe.
 
   onKeyDown(event) {
     var code = event && event.code;
+    if (code !== 'ArrowDown' && code !== 'ArrowUp') return;
     var now = Date.now();
     if (now - this._lastKeyAt < 400) return;
-    if (code === 'ArrowDown' || code === 'ArrowUp') {
-      this._lastKeyAt = now;
-      if (!this._demo) this._flip(code === 'ArrowDown' ? 1 : -1);
-      return;
-    }
-    if (code !== 'Enter' && code !== 'GlobalHook') return;
     this._lastKeyAt = now;
-    this._primary();
+    if (!this._demo) this._flip(code === 'ArrowDown' ? 1 : -1);
   },
 
   onHeadGesture(event) {
@@ -359,29 +408,22 @@ export default {
     var now = Date.now();
     if (now - this._lastKeyAt < 400) return;
     this._lastKeyAt = now;
-    this._advance();
+    this._nod();
   },
 
-  onPrimary() { this._primary(); },
-
-  _primary() {
+  _nod() {
     if (this._demo) { this._exitDemo(); return; }
-    var ph = this.data.phase;
-    if (ph === 'idle') this._startListening();
-    else if (ph === 'listening') this._stopListening();
-    else if (ph === 'inbox') {
-      var finals = this._finals();
-      var env = (finals[this._viewIdx] || {}).env || {};
-      if (env.speak) this._announce(String(env.speak));
-    }
+    if (this.data.phase === 'listening') { this._cancelListening(); return; }
+    this._startListening();
   },
 
-  _advance() {
-    if (this._demo) { this._exitDemo(); return; }
-    var ph = this.data.phase;
-    if (ph === 'idle') this._startListening();
-    else if (ph === 'listening') this._stopListening();
-    else if (ph === 'inbox') this._dismissCurrent();
+  _cancelListening() {
+    this._wantListen = false;
+    this._buffer = '';
+    if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
+    this.setData({ phase: 'idle', heardText: '', heardCls: 'heard heard-dim' });
+    if (this._finals().length) this._openInbox(0, true);
+    else this._syncUI();
   },
 
   _exitDemo() {
@@ -389,6 +431,40 @@ export default {
     this._demoIdx = 0;
     this.setData({ phase: 'idle', heardText: '', heardCls: 'heard heard-dim' });
     this._syncUI();
+  },
+
+  // Head turns (yaw from the orientation sensor) = temple swipes.
+  // Baseline recentres whenever the head settles back inside the
+  // dead zone; a turn past 22 degrees flips once per excursion.
+  _initHeadTurn() {
+    this._yawBase = null;
+    this._turnArmed = true;
+    var S = typeof AbsoluteOrientationSensor !== 'undefined' ? AbsoluteOrientationSensor : null;
+    if (!S) return;
+    var self = this;
+    var sensor = null;
+    try {
+      sensor = new S({ frequency: 30 });
+    } catch (e) { return; }
+    this._sensor = sensor;
+    sensor.onreading = function () { self._onYaw(sensor); };
+    sensor.onerror = function () { /* sensor optional - swipes still work */ };
+    try { sensor.start(); } catch (e) {}
+  },
+
+  _onYaw(sensor) {
+    var q = sensor.quaternion;
+    if (!q || q.length < 4) return;
+    var x = q[0], y = q[1], z = q[2], w = q[3];
+    var yaw = Math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)) * 180 / Math.PI;
+    if (this._yawBase === null) { this._yawBase = yaw; return; }
+    var rel = yaw - this._yawBase;
+    while (rel > 180) rel -= 360;
+    while (rel < -180) rel += 360;
+    if (this.data.phase === 'listening' || this._demo) { this._yawBase = yaw; return; }
+    if (this._turnArmed && rel >= 22) { this._turnArmed = false; if (!this._demo) this._flip(1); }
+    else if (this._turnArmed && rel <= -22) { this._turnArmed = false; if (!this._demo) this._flip(-1); }
+    else if (!this._turnArmed && Math.abs(rel) <= 9) { this._turnArmed = true; this._yawBase = yaw; }
   },
 
   // ---------- ASR (accumulate + end word) ----------
@@ -410,16 +486,13 @@ export default {
     this._submitted = false;
     this._buffer = '';
     this._wantListen = true;
-    this._tapFinish = false;
     this._restarts = 0;
     this.setData({
       phase: 'listening',
       stateText: '正在听 · 说吧，停顿没关系',
       heardText: '',
       heardCls: 'heard',
-      resTitle: '', resBody: '', resItems: [], choiceLine: '',
-      sayLabel: '发送',
-      hint: '说完最后说「大表哥」自动发送 · 或单击镜腿发送'
+      hint: '说完以「大表哥」结尾发送（「表哥」也认） · 点头取消'
     });
     this._launchRec();
   },
@@ -445,13 +518,8 @@ export default {
     rec.onerror = function (ev) {
       if (self._submitted) return;
       self._rec = null;
-      if (self._tapFinish) {
-        self._tapFinish = false;
-        self._finishBuffer();
-        return;
-      }
       self._wantListen = false;
-      self._noteAsResult('识别失败', '没能听清（' + String((ev && ev.error) || 'error') + '）。已攒到的文字还留在屏上，单击再试。');
+      self._noteAsResult('识别失败', '没能听清（' + String((ev && ev.error) || 'error') + '）。已攒到的文字还留在屏上，点头再试。');
     };
     rec.onend = function () { self._onRecEnd(); };
     try {
@@ -490,37 +558,19 @@ export default {
   _onRecEnd() {
     this._rec = null;
     if (this._submitted) return;
-    if (this._tapFinish) {
-      this._tapFinish = false;
-      this._finishBuffer();
-      return;
-    }
     if (!this._wantListen) return;
     if (this.data.phase !== 'listening') return;
     if (!this._gotFinal) {
       this._restarts = (this._restarts || 0) + 1;
       if (this._restarts >= 6) {
         this._wantListen = false;
-        this.setData({ phase: 'idle', sayLabel: '开始说话' });
+        this.setData({ phase: 'idle' });
         this._syncUI();
         if (this._finals().length) this._openInbox(0, true);
         return;
       }
     }
     this._launchRec();
-  },
-
-  _stopListening() {
-    // Tap/nod while listening = send now. stop() lets the host
-    // flush its pending final segment first; _onRecEnd then
-    // finishes with whatever has accumulated on screen.
-    this._tapFinish = true;
-    if (this._rec) {
-      try { this._rec.stop(); } catch (e) { this._tapFinish = false; this._finishBuffer(); }
-    } else {
-      this._tapFinish = false;
-      this._finishBuffer();
-    }
   },
 
   // Strip trailing punctuation/whitespace for end-word tests.
@@ -559,15 +609,6 @@ export default {
     }
   },
 
-  _finishBuffer() {
-    var text = this._trimTail(this._buffer);
-    var hit = this._endHit(text);
-    if (hit > 0) {
-      text = this._trimTail(text.slice(0, text.length - hit));
-    }
-    this._finish(text);
-  },
-
   // The finished utterance joins the queue and the screen returns
   // to compose at once - sending never waits for processing. Any
   // results banked during listening surface right after the send.
@@ -575,16 +616,15 @@ export default {
     if (this._submitted) return;
     this._submitted = true;
     this._wantListen = false;
-    this._tapFinish = false;
     var clean = String(text || '').trim();
     if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
-    this.setData({ phase: 'idle', heardText: '', heardCls: 'heard heard-dim', sayLabel: '开始说话' });
+    this.setData({ phase: 'idle', heardText: '', heardCls: 'heard heard-dim' });
     if (!clean) {
-      this._noteAsResult('没听清', '还没有攒到内容。单击再说一遍。');
+      this._noteAsResult('没听清', '还没有攒到内容。点头再说一遍。');
       return;
     }
-    if (this._queue.length >= MAX_INFLIGHT) {
-      this._noteAsResult('队列满了', '已经有 5 条在途（标题后的方块）。先滑动镜腿看完几条结果，腾出位置再发。刚才这句是：' + clean.slice(0, 60));
+    if (this._unfinished().length >= MAX_INFLIGHT) {
+      this._noteAsResult('都在处理中', '最新 5 条都还在处理，先等一条回来再问。刚才这句是：' + clean.slice(0, 60));
       return;
     }
     this._submit(clean);
@@ -612,10 +652,11 @@ export default {
         return;
       }
       if (!r.body || !r.body.ticket) {
-        self._noteAsResult('投单失败', '前门没有返回单号。稍后单击再问一句重试。');
+        self._noteAsResult('投单失败', '前门没有返回单号。稍后点头再问一句重试。');
         return;
       }
       self._queue.push({ id: r.body.ticket, text: text, st: 'queued', at: Date.now(), env: null });
+      self._trimQueue();
       self._saveQueue();
       self._syncUI();
       self._ensurePolling();
@@ -689,6 +730,7 @@ export default {
 
   // Local notices (no network, no ticket) reuse the compose area.
   _noteAsResult(title, body) {
+    this._lastEnv = null;
     this._notice = { title: title, body: body };
     this.setData({
       phase: 'idle',
@@ -696,7 +738,6 @@ export default {
       resTitle: title,
       resBody: body,
       resItems: [], choiceLine: '',
-      sayLabel: '开始说话'
     });
   },
 
@@ -730,6 +771,7 @@ export default {
     <view class="heard-box">
       <text class="heard-label">你说的是</text>
       <text class="{{heardCls}}">{{heardText}}</text>
+      <text class="box-hint">{{hint}}</text>
     </view>
     <view class="reply">
       <text class="res-title">{{resTitle}}</text>
@@ -739,11 +781,7 @@ export default {
       </view>
       <text class="choices">{{choiceLine}}</text>
     </view>
-    <view class="actions">
-      <button class="btn-say" bindtap="onPrimary">{{sayLabel}}</button>
-    </view>
     <view class="foot-row">
-      <text class="foot">{{hint}}</text>
       <button class="btn-demo" bindtap="onDemo">演示</button>
       <text class="ver">{{appVersion}}</text>
     </view>
@@ -802,6 +840,13 @@ export default {
 }
 .dot-2 {
   background-color: #7dff9e;
+}
+.box-hint {
+  color: rgba(125,255,158,0.6);
+  font-family: monospace;
+  font-size: 10px;
+  line-height: 14px;
+  margin-top: 3px;
 }
 .state {
   color: rgba(125,255,158,0.72);
@@ -868,22 +913,11 @@ export default {
   line-height: 16px;
   margin-top: 6px;
 }
-.btn-say {
-  width: 100%;
-  color: #7dff9e;
-  background-color: rgba(125,255,158,0.10);
-  border: 2px solid #7dff9e;
-  border-radius: 999px;
-  padding: 9px 8px;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 19px;
-  text-align: center;
-}
 .foot-row {
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
   margin-top: 8px;
 }
 .btn-demo {
