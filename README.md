@@ -206,7 +206,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 <table>
 <tr><td><a href="base/my-agent/">my-agent</a></td><td>官方脚手架示例，点击切换中英文问候</td><td></td></tr>
 <tr><td><a href="base/glasses-benchmark/">glasses-benchmark</a></td><td>眼镜全功能自检，21 项一键跑完出结果</td><td></td></tr>
-<tr><td><a href="base/dabiaoge/">dabiaoge</a></td><td>眼镜直连 Muse 的通道客户端，说话提问屏上答</td><td></td></tr>
+<tr><td><a href="base/dabiaoge/">dabiaoge</a></td><td>通用消息隧道的眼镜客户端，说话提问屏上答</td><td></td></tr>
 <tr><td><a href="directional/gaze-translate/">gaze-translate</a></td><td>看着外文稳头，长焦拍下翻译并朗读</td><td><img src="https://img.shields.io/badge/DI01-24292F?style=flat-square" alt="DI01"> <img src="https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square" alt="指向性"> <img src="https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square" alt="直接冲突" title="直接冲突：本体就是眼镜默认能力，只加了一层小扭转（冲突排查第一档）"></td></tr>
 <tr><td><a href="directional/shelf-compare/">shelf-compare</a></td><td>扫货架条码入表比价，点头加入清单</td><td><img src="https://img.shields.io/badge/DI02-24292F?style=flat-square" alt="DI02"> <img src="https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square" alt="指向性"> <img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试"></td></tr>
 <tr><td><a href="directional/expiry-check/">expiry-check</a></td><td>读包装日期算剩余天数，临期语音警告</td><td><img src="https://img.shields.io/badge/DI03-24292F?style=flat-square" alt="DI03"> <img src="https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square" alt="指向性"> <img src="https://img.shields.io/badge/%E9%AB%98%E5%BA%A6%E9%87%8D%E5%8F%A0-F9A825?style=flat-square" alt="高度重叠" title="高度重叠：默认功能能完成大半，只剩一层薄闭环（冲突排查第二档）"></td></tr>
