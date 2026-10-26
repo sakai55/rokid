@@ -11,6 +11,9 @@ var BASE = 'https://rokidp.datumoj.com';
 var POLL_MS = 4000;
 var TIMEOUT_MS = 300000;
 var END_WORD = '大表哥';
+// v1.0.3 tolerance: ASR may drop the first syllable ("大表哥" heard as
+// "表哥"); a trailing short form also ends the utterance.
+var END_WORD_SHORT = '表哥';
 var MAX_CHARS = 500;
 
 export default {
@@ -23,9 +26,9 @@ export default {
     resBody: '',
     resItems: [],
     choiceLine: '',
-    hint: '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着',
+    hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着',
     sayLabel: '开始说话',
-    appVersion: 'v1.0.2'
+    appVersion: 'v1.0.3'
   },
 
   onLoad() {
@@ -134,7 +137,7 @@ export default {
       heardCls: 'heard heard-dim',
       resTitle: '', resBody: '', resItems: [], choiceLine: '',
       sayLabel: '开始说话',
-      hint: '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着'
+      hint: '说完以「大表哥」结尾发送（「表哥」也认） · 停顿没关系，文字都攒着'
     });
   },
 
@@ -305,10 +308,19 @@ export default {
     return String(s || '').replace(/[\s，。！？、；：,.!?;:]+$/, '');
   },
 
+  // Length of the end word at the tail (0 = none). Accepts the full
+  // end word and its short form (see END_WORD_SHORT).
+  _endHit(tail) {
+    if (tail.slice(-END_WORD.length) === END_WORD) return END_WORD.length;
+    if (tail.slice(-END_WORD_SHORT.length) === END_WORD_SHORT) return END_WORD_SHORT.length;
+    return 0;
+  },
+
   _checkEnd() {
     var tail = this._trimTail(this._buffer);
-    if (tail.slice(-END_WORD.length) === END_WORD) {
-      var body = this._trimTail(tail.slice(0, tail.length - END_WORD.length));
+    var hit = this._endHit(tail);
+    if (hit > 0) {
+      var body = this._trimTail(tail.slice(0, tail.length - hit));
       if (!body) {
         // Only the end word so far: keep listening, ask for content.
         this._buffer = '';
@@ -329,8 +341,9 @@ export default {
 
   _finishBuffer() {
     var text = this._trimTail(this._buffer);
-    if (text.slice(-END_WORD.length) === END_WORD) {
-      text = this._trimTail(text.slice(0, text.length - END_WORD.length));
+    var hit = this._endHit(text);
+    if (hit > 0) {
+      text = this._trimTail(text.slice(0, text.length - hit));
     }
     this._finish(text);
   },
@@ -460,7 +473,10 @@ export default {
       sayLabel: '再问一句',
       hint: '单击或点头再问一句'
     });
-    if (speakIt && env.speak && String(env.speak) !== body) {
+    // v1.0.3: a non-empty speak is ALWAYS read once. The front door
+    // fills an empty speak with the body, so "speak === body" is the
+    // normal short-answer case (read the body once), not a duplicate.
+    if (speakIt && env.speak) {
       this._announce(String(env.speak));
     }
   },
