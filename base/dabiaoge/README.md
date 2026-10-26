@@ -33,12 +33,12 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填（导入名默认为仓库名，Studio 内改「大表哥」） |
-| Version（Build） | 待回填（本地 package.json 1.0.2） |
+| Version（Build） | 待回填（本地 package.json 1.0.3） |
 | App Category | 待回填（建议 Work） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
 | AIX Package Size | 约 13 KB（本地 pack；Studio 打包值待回填） |
-| 状态 | v1.0.0 已真机全链跑通（2026-10-26）；v1.0.2 待 GO 在 Studio 重新导入、填钥匙并打包 |
+| 状态 | v1.0.0 / v1.0.2 已真机跑通（2026-10-26）；v1.0.3 待 GO 在 Studio 重新导入、填钥匙并打包 |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
@@ -46,7 +46,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 | 步 | 发生什么 |
 |---|---|
-| 说话 | 点头 / 单击开始 → 宿主 ASR 识别，文字分段攒起来实时上屏（停顿不截断）→ 以「大表哥」结尾、或单击立即发送，结束词剥掉不进正文 |
+| 说话 | 点头 / 单击开始 → 宿主 ASR 识别，文字分段攒起来实时上屏（停顿不截断）→ 以「大表哥」结尾（v1.0.3 起识别成「表哥」也认）、或单击立即发送，结束词剥掉不进正文 |
 | 投单 | POST 前门 `/submit`（`{session, kind:"ask", text}`，session 本地持久化） |
 | 等待 | 每 4 秒查一次单，总超时 300 秒（v1.0.2 起，原 150 秒）；状态行显示已排队 / Muse 正在处理 |
 | 结果 | 信封按 type 渲染：text（标题+正文）、list（+逐行条目）、choices（只展示）、card（标题+正文）；speak 与正文不同时朗读 speak |
@@ -82,6 +82,8 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 - [ ] **真机网络链**：填钥匙打包并下发后，眼镜上说一句提问，Muse 侧 `/feed` 立刻出现该单（眼镜 → 手机代理 → 前门全链通）
 - [ ] **ASR 文字显示**：识别文字实时出现在「你说的是」框里，听错可见
 - [ ] **结束词发送**（v1.0.2 新增）：说话中途停顿多次不截断、不投单；最后说「大表哥」才投单且正文不含结束词；只说「大表哥」时不投单并提示先说事；说话中单击可立即发送已攒文字
+- [ ] **结束词容错**（v1.0.3 新增）：结束词被识别成「表哥」（落了「大」）时同样触发发送并剥词
+- [ ] **短答案朗读**（v1.0.3 新增）：短回单回来时正文被朗读一遍（不再无声）；长回单只读摘要、不读正文
 - [ ] **信封四态显示**：text / list / choices / card 四种回单各显示一次，版式正确不溢出
 - [ ] **speak 朗读**：speak 与 body 不同时朗读 speak；两者相同时不重复念正文
 - [ ] **needs-approval 提示**：2 级单回来时显示「这件事要你在手机上批准，已挂起」
@@ -105,6 +107,11 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 - 视频：真机阶段补录（核心流程：说话提问 → 等待 → 结果显示与朗读，≤60 秒）
 
 ### Change Log
+
+#### v1.0.3
+
+- Improvements：结束词容错——宿主识别把「大表哥」听落成「表哥」时也认作结束词（剥词发送），待命提示已同步注明
+- Fixes：修复短回单不朗读——原规则「speak 与 body 不同才朗读」与前门口径冲突（前门把空 speak 回落成 body，短回单必然同文被跳过）；改为 speak 非空即朗读一遍（同文即短答案本身、异文即摘要）
 
 #### v1.0.2
 
