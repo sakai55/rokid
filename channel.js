@@ -15,5 +15,5 @@
 //   then package. Never push the filled file back to GitHub, and refill
 //   after every fresh GitHub import (imports are snapshots).
 // Steps: README section "打包前必做：填配置（域名 + 钥匙）".
-export const BASE_URL = "https://rokidp.datumoj.com";
+export const BASE_URL = "https://post.rokid";
 export const CHANNEL_KEY = "PASTE_CHANNEL_KEY_HERE";
