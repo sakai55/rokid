@@ -13,7 +13,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 全部部署配置只放在工程的一个文件 **`channel.js`** 里，页面代码没有任何写死的域名或钥匙。**在 Studio 里打包前**：
 
 1. 打开本工程的 **`channel.js`**；
-2. `BASE_URL`（前门域名）：默认值是公共前门 `https://rokidp.datumoj.com`，用它就不用动；**自建前门的人**（按 rokidpost 仓库自部署）把这一行换成自己的 Worker 地址；
+2. `BASE_URL`（前门地址）：填**完整 URL**——带 `https://` 协议、末尾不带斜杠、不带路径（代码会自己拼 `/submit`、`/ticket/…`；只填域名会当成相对路径投不出去）。默认值是公共前门 `https://rokidp.datumoj.com`，用它就不用动；**自建前门的人**（按 rokidpost 仓库自部署）把这一行换成自己的 Worker 完整地址；
 3. `CHANNEL_KEY`（投单钥匙）：把 `PASTE_CHANNEL_KEY_HERE` 换成你自己前门的钥匙；
 4. 然后打包。
 
@@ -38,7 +38,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填（导入名默认为仓库名，Studio 内改「大表哥」） |
-| Version（Build） | 待回填（本地 package.json 2.1.3） |
+| Version（Build） | 待回填（本地 package.json 2.1.4） |
 | App Category | 待回填（建议 Work） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
@@ -82,7 +82,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ## 版本归档（.aix）
 
-- `aix/dabiaoge.aix`：最新版（当前 v2.1.3）。
+- `aix/dabiaoge.aix`：最新版（当前 v2.1.4）。
 - `aix/dabiaoge-v<版本>.aix`：每个历史版本一份，与最新版并排存放在仓库 `aix/` 目录里，可直接下载上传 Studio 回退或对照。
 
 ## 本地命令
@@ -133,6 +133,10 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 - 视频：真机阶段补录（核心流程：连发两条 → 标题槽状态变化 → 收件箱翻看与朗读，≤60 秒）
 
 ### Change Log
+
+#### v2.1.4
+
+- Improvements：`channel.js` 与 README 把 `BASE_URL` 的填法写死为完整 URL（带 `https://`、无尾斜杠、无路径），免得自建前门的人填错；功能与 v2.1.3 相同
 
 #### v2.1.3
 
