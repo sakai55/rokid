@@ -27,6 +27,8 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ![队列（演示数据）：标题「大表哥」右侧的点阵生命槽——全点满=已完成、小蛇=处理中、边框点=待处理；发送不等待，可继续说下一条](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-queue.png)
 
+![聆听（演示数据）：框里是正在说的文字与发送提示；一条已完成的结果安静地躺在下方回复区域，不打断输入](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-listening.png)
+
 ![收件箱（演示数据）：list 信封按字幕卡版式逐行显示，转头或滑动翻条、翻到即朗读，点头问下一条](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-inbox.png)
 
 ![收件箱（演示数据）：text 信封，标题加正文](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-inbox-text.png)
@@ -36,7 +38,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填（导入名默认为仓库名，Studio 内改「大表哥」） |
-| Version（Build） | 待回填（本地 package.json 2.1.2） |
+| Version（Build） | 待回填（本地 package.json 2.1.3） |
 | App Category | 待回填（建议 Work） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
@@ -80,7 +82,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ## 版本归档（.aix）
 
-- `aix/dabiaoge.aix`：最新版（当前 v2.1.2）。
+- `aix/dabiaoge.aix`：最新版（当前 v2.1.3）。
 - `aix/dabiaoge-v<版本>.aix`：每个历史版本一份，与最新版并排存放在仓库 `aix/` 目录里，可直接下载上传 Studio 回退或对照。
 
 ## 本地命令
@@ -127,10 +129,14 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ### Preview Media
 
-- 图片：`screenshots/dabiaoge/preview-dabiaoge-idle.png`、`preview-dabiaoge-queue.png`、`preview-dabiaoge-inbox.png`、`preview-dabiaoge-inbox-text.png`
+- 图片：`screenshots/dabiaoge/preview-dabiaoge-idle.png`、`preview-dabiaoge-queue.png`、`preview-dabiaoge-listening.png`、`preview-dabiaoge-inbox.png`、`preview-dabiaoge-inbox-text.png`
 - 视频：真机阶段补录（核心流程：连发两条 → 标题槽状态变化 → 收件箱翻看与朗读，≤60 秒）
 
 ### Change Log
+
+#### v2.1.3
+
+- Improvements：演示循环补入聆听态（五态齐全：队列 / 聆听 / 收件箱列表 / 收件箱文字 / 待命），预览截图可一次看全所有页面；功能与 v2.1.2 相同
 
 #### v2.1.2
 
