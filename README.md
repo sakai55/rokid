@@ -171,37 +171,16 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 **徽章说明**：
 
-<img src="assets/badges/badge-di01.svg" alt="DI01">
-
-唯一编号：前两个字母是分类，后两位是组内序号
-
-<img src="assets/badges/badge-directional.svg" alt="指向性">
-
-指向性系列：用视线同轴、头部朝向解决生活问题
-
-<img src="assets/badges/badge-attention.svg" alt="注意力">
-
-注意力外挂系列：把持续占用的注意力外包给眼镜
-
-<img src="assets/badges/badge-curbcut.svg" alt="路缘坡">
-
-路缘坡系列：先为特殊人群解决难题，再溢出到普通人
-
-<img src="assets/badges/badge-game.svg" alt="游戏">
-
-头部动作小游戏系列：用头部动作玩的极简小游戏
-
-<img src="assets/badges/badge-conflict.svg" alt="直接冲突">
-
-与眼镜默认能力<strong>直接冲突</strong>：本体就是默认能力，只加了一层小扭转
-
-<img src="assets/badges/badge-overlap.svg" alt="高度重叠">
-
-与眼镜默认能力<strong>高度重叠</strong>：默认功能能完成大半，只剩一层薄闭环
-
-<img src="assets/badges/badge-pending.svg" alt="待测试">
-
-既不直接冲突、也不高度重叠，冲突与否等真机测试确认
+<table>
+<tr><td><img src="assets/badges/badge-di01.svg" alt="DI01"><br>唯一编号：前两个字母是分类，后两位是组内序号</td></tr>
+<tr><td><img src="assets/badges/badge-directional.svg" alt="指向性"><br>指向性系列：用视线同轴、头部朝向解决生活问题</td></tr>
+<tr><td><img src="assets/badges/badge-attention.svg" alt="注意力"><br>注意力外挂系列：把持续占用的注意力外包给眼镜</td></tr>
+<tr><td><img src="assets/badges/badge-curbcut.svg" alt="路缘坡"><br>路缘坡系列：先为特殊人群解决难题，再溢出到普通人</td></tr>
+<tr><td><img src="assets/badges/badge-game.svg" alt="游戏"><br>头部动作小游戏系列：用头部动作玩的极简小游戏</td></tr>
+<tr><td><img src="assets/badges/badge-conflict.svg" alt="直接冲突"><br>与眼镜默认能力<strong>直接冲突</strong>：本体就是默认能力，只加了一层小扭转</td></tr>
+<tr><td><img src="assets/badges/badge-overlap.svg" alt="高度重叠"><br>与眼镜默认能力<strong>高度重叠</strong>：默认功能能完成大半，只剩一层薄闭环</td></tr>
+<tr><td><img src="assets/badges/badge-pending.svg" alt="待测试"><br>既不直接冲突、也不高度重叠，冲突与否等真机测试确认</td></tr>
+</table>
 
 基础项（`my-agent`、`glasses-benchmark`）没有任何徽章。
 读例：`gaze-translate` 行尾的 ![DI01](https://img.shields.io/badge/DI01-24292F?style=flat-square) ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) ![直接冲突](https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E5%86%B2%E7%AA%81-C62828?style=flat-square) = 编号 DI01 · 指向性系列 · 与默认能力直接冲突；`drop-search` 行尾的 ![CC01](https://img.shields.io/badge/CC01-24292F?style=flat-square) ![路缘坡](https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square) ![待测试](https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square) = 编号 CC01 · 路缘坡系列 · 冲突与否待测试。
