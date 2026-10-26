@@ -1,1 +1,1 @@
-{"dependencies":{},"description":"Dabiaoge - glasses-side client of the rokidpost msg tunnel: speak a question, ASR text is submitted to your processing service, the shaped reply envelope renders on screen and speaks via TTS","main":"app.js","name":"dabiaoge","version":"2.1.9"}
+{"dependencies":{},"description":"Dabiaoge - glasses-side client of the rokidpost msg tunnel: speak a question, ASR text is submitted to your processing service, the shaped reply envelope renders on screen and speaks via TTS","main":"app.js","name":"dabiaoge","version":"2.1.10"}
