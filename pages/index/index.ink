@@ -33,7 +33,7 @@ export default {
     resItems: [],
     choiceLine: '',
     hint: '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着',
-    appVersion: 'v2.1.8'
+    appVersion: 'v2.1.9'
   },
 
   onLoad() {
@@ -83,6 +83,31 @@ export default {
       try { localStorage.setItem('dabiaoge_session', sid); } catch (e) {}
     }
     this._session = sid;
+  },
+
+  // Today's sent count, in localStorage 'dabiaoge_day_count' as
+  // {date: 'YYYY-MM-DD' (local), n}. Only a fresh successful
+  // /submit bumps it - tickets restored on a cold start are old
+  // sends and never count. A record from any other day reads 0.
+
+  _dayStr() {
+    var d = new Date();
+    var m = d.getMonth() + 1;
+    var day = d.getDate();
+    return d.getFullYear() + '-' + (m < 10 ? '0' + m : m) + '-' + (day < 10 ? '0' + day : day);
+  },
+
+  _dayCount() {
+    var rec = null;
+    try { rec = JSON.parse(localStorage.getItem('dabiaoge_day_count') || 'null'); } catch (e) { rec = null; }
+    if (!rec || rec.date !== this._dayStr()) return 0;
+    return rec.n || 0;
+  },
+
+  _bumpDayCount() {
+    try {
+      localStorage.setItem('dabiaoge_day_count', JSON.stringify({ date: this._dayStr(), n: this._dayCount() + 1 }));
+    } catch (e) {}
   },
 
   _saveQueue() {
@@ -151,9 +176,13 @@ export default {
 
   // ---------- life slots (dot matrix in the title row) ----------
   // One 5x5 dot slot per queue item, in send order, height matched
-  // to the title text (x0.618). queued = border dots, working = a
-  // little snake with a tail running the loop, finished-unread =
-  // all dots lit. Nothing at all when the queue is empty.
+  // to the title text (x0.618). Display mapping (NOT the raw
+  // server state): the FIRST unfinished item shows the snake,
+  // every other unfinished item shows border dots with a breathing
+  // centre dot, finished-unread = all dots lit. Exactly one snake
+  // animates at a time even though the backend works tickets in
+  // parallel; when everything is final, nothing animates.
+  // Nothing at all when the queue is empty.
 
   _dotsFor(kind, slotIdx) {
     var dots = [];
@@ -166,6 +195,9 @@ export default {
       for (y = 0; y < 5; y++) for (x = 0; x < 5; x++) {
         dots.push((x === 0 || x === 4 || y === 0 || y === 4) ? 1 : 0);
       }
+      // Breathing centre dot: a queued slot is WAITING, not empty -
+      // slow-blink the middle cell on the shared tick.
+      dots[12] = (this._tick % 6 < 3) ? 1 : 0;
       return dots;
     }
     // working: snake = 4 consecutive loop cells, head brightest
@@ -180,8 +212,13 @@ export default {
 
   _slotsData() {
     var self = this;
+    var headUsed = false;
     return this._queue.map(function (it, i) {
-      var kind = it.st === 'queued' ? 'q' : (it.st === 'working' ? 'w' : 'd');
+      var kind;
+      if (it.st === 'queued' || it.st === 'working') {
+        if (!headUsed) { kind = 'w'; headUsed = true; }
+        else kind = 'q';
+      } else kind = 'd';
       return { kind: kind, dots: self._dotsFor(kind, i) };
     });
   },
@@ -189,8 +226,10 @@ export default {
   _snakeStep() {
     this._tick = (this._tick || 0) + 1;
     if (this._demo) return;
-    var hasWorking = this._queue.some(function (it) { return it.st === 'working'; });
-    if (hasWorking) this.setData({ slots: this._slotsData() });
+    // Redraw while anything is unfinished: the head slot's snake
+    // and the waiting slots' breathing centre dots both animate.
+    var hasAnim = this._queue.some(function (it) { return it.st === 'working' || it.st === 'queued'; });
+    if (hasAnim) this.setData({ slots: this._slotsData() });
   },
 
   // ---------- central UI sync ----------
@@ -211,14 +250,16 @@ export default {
         return;
       }
       var un = this._unfinished().length;
+      var dayN = this._dayCount();
+      var dayPrefix = dayN > 0 ? '今日已发 ' + dayN + ' 条 · ' : '';
       if (finals.length) {
-        patch.stateText = '有 ' + finals.length + ' 条结果可看' + (un ? ' · 另有 ' + un + ' 条在处理' : '');
+        patch.stateText = dayPrefix + '有 ' + finals.length + ' 条结果可看' + (un ? ' · 另有 ' + un + ' 条在处理' : '');
         patch.hint = '左右转头或滑动镜腿看结果 · 点头继续提问';
       } else if (un) {
-        patch.stateText = '已发送 ' + un + ' 条 · 下面可以继续说下一条';
+        patch.stateText = dayPrefix + '已发送 ' + un + ' 条 · 下面可以继续说下一条';
         patch.hint = '左右转头或滑动翻看已完成 · 还能再发 ' + (MAX_INFLIGHT - this._queue.length) + ' 条';
       } else {
-        patch.stateText = '待命 · 点头开始说话';
+        patch.stateText = dayPrefix + '待命 · 点头开始说话';
         patch.hint = '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着';
       }
       if (this._lastEnv) {
@@ -366,7 +407,7 @@ export default {
         resTitle: '今日天气',
         resBody: '东京今天晴，最高 21 度，傍晚起风，出门加件外套。',
         resItems: [], choiceLine: '',
-        hint: '说完以「大表哥」结尾发送（「表哥」也认） · 点头取消'
+        hint: '说完以「大表哥」结尾发送（「表哥」也认） · 抬头两次取消'
       });
       return;
     }
@@ -435,7 +476,10 @@ export default {
 
   _nod() {
     if (this._demo) { this._exitDemo(); return; }
-    if (this.data.phase === 'listening') { this._cancelListening(); return; }
+    // Nodding while listening does NOTHING on purpose: cancelling
+    // by nod was too easy to trigger by accident mid-sentence.
+    // Cancelling is the double look-up (see _onPitch).
+    if (this.data.phase === 'listening') return;
     this._startListening();
   },
 
@@ -455,11 +499,24 @@ export default {
   },
 
   // Head turns (yaw from the orientation sensor) = temple swipes.
-  // Baseline recentres whenever the head settles back inside the
-  // dead zone; a turn past 22 degrees flips once per excursion.
+  // Settle-follow recentring: wherever the head comes to rest
+  // (10 near-identical readings in a row) becomes the new centre
+  // and re-arms the flip, so turns work from any facing - the old
+  // fixed baseline meant that after one flip the user had to turn
+  // back near the ORIGINAL heading before anything could trigger
+  // again. A turn past 22 degrees flips once per excursion;
+  // settling, or returning inside 9 degrees, re-arms.
   _initHeadTurn() {
     this._yawBase = null;
     this._turnArmed = true;
+    this._yawPrev = null;
+    this._yawStill = 0;
+    this._pitchBase = null;
+    this._pitchPrev = null;
+    this._pitchStill = 0;
+    this._raiseOut = false;
+    this._raiseCount = 0;
+    this._raiseAt = 0;
     var S = typeof AbsoluteOrientationSensor !== 'undefined' ? AbsoluteOrientationSensor : null;
     if (!S) return;
     var self = this;
@@ -478,14 +535,78 @@ export default {
     if (!q || q.length < 4) return;
     var x = q[0], y = q[1], z = q[2], w = q[3];
     var yaw = Math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)) * 180 / Math.PI;
-    if (this._yawBase === null) { this._yawBase = yaw; return; }
+    var sp = 2 * (w * y - z * x);
+    if (sp > 1) sp = 1; else if (sp < -1) sp = -1;
+    var pitch = Math.asin(sp) * 180 / Math.PI;
+    this._onPitch(pitch);
+    if (this._yawBase === null) { this._yawBase = yaw; this._yawPrev = yaw; return; }
+    // Stillness tracking between consecutive readings (same +-180
+    // wrap normalisation as the baseline delta below).
+    var step = yaw - this._yawPrev;
+    while (step > 180) step -= 360;
+    while (step < -180) step += 360;
+    this._yawPrev = yaw;
+    if (Math.abs(step) <= 1.5) this._yawStill = (this._yawStill || 0) + 1;
+    else this._yawStill = 0;
+    if (this.data.phase === 'listening' || this._demo) { this._yawBase = yaw; return; }
+    if (this._yawStill >= 10) {
+      // Head settled (~0.35s at 30Hz): recentre HERE and re-arm.
+      this._yawBase = yaw;
+      this._turnArmed = true;
+      return;
+    }
     var rel = yaw - this._yawBase;
     while (rel > 180) rel -= 360;
     while (rel < -180) rel += 360;
-    if (this.data.phase === 'listening' || this._demo) { this._yawBase = yaw; return; }
     if (this._turnArmed && rel >= 22) { this._turnArmed = false; if (!this._demo) this._flip(1); }
     else if (this._turnArmed && rel <= -22) { this._turnArmed = false; if (!this._demo) this._flip(-1); }
     else if (!this._turnArmed && Math.abs(rel) <= 9) { this._turnArmed = true; this._yawBase = yaw; }
+  },
+
+  // Double look-up = cancel, listening phase only. Pitch (asin
+  // form, same quaternion as yaw) is tracked against a settle-
+  // follow centre like the yaw baseline: the centre recentres
+  // wherever the head rests, and stays put during an excursion.
+  // Rising +18 degrees above centre is an excursion out; coming
+  // back inside +-8 degrees completes ONE raise. Two raises
+  // completed within 1.5s cancel the input. Pitch never wraps
+  // (+-90 range), so no +-180 normalisation applies; the positive
+  // side of the asin pitch is the look-up side.
+  _onPitch(pitch) {
+    if (this._pitchBase === null) { this._pitchBase = pitch; this._pitchPrev = pitch; return; }
+    var step = pitch - this._pitchPrev;
+    this._pitchPrev = pitch;
+    if (Math.abs(step) <= 1.5) this._pitchStill = (this._pitchStill || 0) + 1;
+    else this._pitchStill = 0;
+    if (this._demo || this.data.phase !== 'listening') {
+      // Outside listening the centre simply follows and the
+      // raise counters stay cleared.
+      this._pitchBase = pitch;
+      this._raiseOut = false;
+      this._raiseCount = 0;
+      this._raiseAt = 0;
+      return;
+    }
+    var rel = pitch - this._pitchBase;
+    if (!this._raiseOut) {
+      if (rel >= 18) { this._raiseOut = true; }
+      else if (this._pitchStill >= 10) { this._pitchBase = pitch; }
+      return;
+    }
+    if (Math.abs(rel) <= 8) {
+      // Back inside the dead zone: one raise completed.
+      this._raiseOut = false;
+      this._pitchBase = pitch;
+      var now = Date.now();
+      if (this._raiseCount > 0 && now - this._raiseAt <= 1500) {
+        this._raiseCount = 0;
+        this._raiseAt = 0;
+        this._cancelListening();
+        return;
+      }
+      this._raiseCount = 1;
+      this._raiseAt = now;
+    }
   },
 
   // ---------- ASR (accumulate + end word) ----------
@@ -500,7 +621,7 @@ export default {
   _startListening() {
     var SR = typeof SpeechRecognition !== 'undefined' ? SpeechRecognition : null;
     if (!SR) {
-      this._noteAsResult('无法开始识别', '这台设备没有可用的语音识别（SpeechRecognition 不可用）。');
+      this._noteAsResult('无法开始识别', '这台设备没有可用的语音识别。');
       return;
     }
     this._notice = null;
@@ -514,7 +635,7 @@ export default {
       stateText: '正在听 · 说吧，停顿没关系',
       heardText: '',
       heardCls: 'heard',
-      hint: '说完以「大表哥」结尾发送（「表哥」也认） · 点头取消'
+      hint: '说完以「大表哥」结尾发送（「表哥」也认） · 抬头两次取消'
     });
     this._launchRec();
   },
@@ -531,7 +652,8 @@ export default {
       rec.maxAlternatives = 1;
     } catch (e) {
       this._wantListen = false;
-      this._noteAsResult('无法开始识别', '语音识别启动失败：' + this._err(e));
+      this._diag('rec create failed: ' + this._err(e));
+      this._noteAsResult('无法开始识别', '语音识别启动失败。点头再试一次。');
       return;
     }
     this._rec = rec;
@@ -541,7 +663,8 @@ export default {
       if (self._submitted) return;
       self._rec = null;
       self._wantListen = false;
-      self._noteAsResult('识别失败', '没能听清（' + String((ev && ev.error) || 'error') + '）。已攒到的文字还留在屏上，点头再试。');
+      self._diag('asr error: ' + String((ev && ev.error) || 'error'));
+      self._noteAsResult('识别失败', '没能听清。已攒到的文字还留在屏上，点头再试。');
     };
     rec.onend = function () { self._onRecEnd(); };
     try {
@@ -550,7 +673,8 @@ export default {
       this._rec = null;
       if (this._wantListen && !this._submitted) {
         this._wantListen = false;
-        this._noteAsResult('无法开始识别', '语音识别启动失败：' + this._err(e));
+        this._diag('rec start failed: ' + this._err(e));
+        this._noteAsResult('无法开始识别', '语音识别启动失败。点头再试一次。');
       }
     }
   },
@@ -672,7 +796,8 @@ export default {
       return resp.json().then(function (j) { return { status: resp.status, body: j }; });
     }).then(function (r) {
       if (r.status === 401) {
-        self._noteAsResult('钥匙不对', '前门拒绝了这把钥匙（401）。检查 channel.js 里填的钥匙是否正确。');
+        self._diag('submit rejected: bad key');
+        self._noteAsResult('钥匙不对', '前门拒绝了这把钥匙。检查 channel.js 里填的钥匙是否正确。');
         return;
       }
       if (!r.body || !r.body.ticket) {
@@ -680,12 +805,14 @@ export default {
         return;
       }
       self._queue.push({ id: r.body.ticket, text: text, st: 'queued', at: Date.now(), env: null });
+      self._bumpDayCount();
       self._trimQueue();
       self._saveQueue();
       self._syncUI();
       self._ensurePolling();
     }).catch(function (e) {
-      self._noteAsResult('网络没通', '投单没发出去（' + self._err(e) + '）。检查眼镜与手机的连接后重试。');
+      self._diag('submit failed: ' + self._err(e));
+      self._noteAsResult('网络没通', '投单没发出去。检查眼镜与手机的连接后重试。');
     });
   },
 
@@ -737,7 +864,8 @@ export default {
           self._onFinal(item);
         } else if (st === 'error') {
           item.st = 'error';
-          item.env = { type: 'text', title: '处理失败', body: '处理服务那边没能办成（' + String(b.error || 'error').slice(0, 40) + '）。', speak: '' };
+          self._diag('ticket error: ' + String(b.error || 'error'));
+          item.env = { type: 'text', title: '处理失败', body: '处理服务那边没能办成。', speak: '' };
           self._onFinal(item);
         } else if (st === 'working' && item.st !== 'working') {
           item.st = 'working';
@@ -771,6 +899,12 @@ export default {
       if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return;
       speechSynthesis.speak(new SpeechSynthesisUtterance(text));
     } catch (e) { /* TTS must never break the flow */ }
+  },
+
+  // Diagnostics go to the console ONLY - never to the screen and
+  // never into a spoken reply (no raw error codes on the UI).
+  _diag(msg) {
+    try { console.log('[dabiaoge] ' + msg); } catch (e) {}
   },
 
   _err(e) {
