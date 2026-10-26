@@ -32,8 +32,9 @@ export default {
     resBody: '',
     resItems: [],
     choiceLine: '',
+    scrollTop: 0,
     hint: '说完以「大表哥」结尾发送 · 停顿没关系，文字都攒着',
-    appVersion: 'v2.1.9'
+    appVersion: 'v2.1.10'
   },
 
   onLoad() {
@@ -51,6 +52,12 @@ export default {
     this._polling = false;
     this._tick = 0;
     this._demo = false;
+    this._scrollTimer = null;
+    this._scrollSig = null;
+    this._scrollPos = 0;
+    this._scrollMax = 0;
+    this._scrollState = 'top';
+    this._scrollWait = 0;
     try { this.enableWorldAwareness(); } catch (e) { /* optional */ }
     this._ensureSession();
     this._restoreQueue();
@@ -67,6 +74,7 @@ export default {
     if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
     if (this._pollTimer) { clearTimeout(this._pollTimer); this._pollTimer = null; }
     if (this._snakeTimer) { clearInterval(this._snakeTimer); this._snakeTimer = null; }
+    this._stopScroll();
     if (this._sensor) { try { this._sensor.stop(); } catch (e) {} this._sensor = null; }
   },
 
@@ -247,6 +255,7 @@ export default {
         patch.resBody = this._notice.body;
         patch.resItems = []; patch.choiceLine = '';
         this.setData(patch);
+        this._refreshScroll();
         return;
       }
       var un = this._unfinished().length;
@@ -287,6 +296,125 @@ export default {
       }
     }
     this.setData(patch);
+    this._refreshScroll();
+  },
+
+  // ---------- reply auto-scroll ----------
+  // The reply body / items / choices live in a <scroll-view>
+  // under the fixed reply title; the page itself never overflows.
+  // When the content is taller than the visible area it scrolls
+  // in a loop: rest at the top ~1.2s, glide down ~1px per 50ms,
+  // rest at the bottom ~1.2s, jump back to the top. A newly shown
+  // reply restarts the cycle from the top. While listening the
+  // reply renders quietly below and NEVER scrolls - dictation
+  // must not compete for attention. Driven by a dedicated 50ms
+  // timer writing scroll-top (the snake timer is untouched).
+  // The runtime exposes no layout measurement to the page, so
+  // overflow is judged by a text estimate against the fixed
+  // 480x352 frame using the page's own CSS metrics below; the
+  // estimates lean conservative so a borderline reply scrolls a
+  // little rather than clipping its last line.
+
+  // Wrapped-line count for a text: 'cap' is how many full-width
+  // glyphs fit one line, 'asciiW' the width of a narrow glyph in
+  // full-width units.
+  _linesFor(text, cap, asciiW) {
+    if (!text) return 0;
+    var lines = 0;
+    var segs = String(text).split('\n');
+    for (var i = 0; i < segs.length; i++) {
+      var u = 0;
+      var s = segs[i];
+      for (var j = 0; j < s.length; j++) u += (s.charCodeAt(j) > 0xff ? 1 : asciiW);
+      lines += Math.max(1, Math.ceil(u / cap));
+    }
+    return lines;
+  },
+
+  // Visible height of the scroll-view: frame 352 minus page
+  // padding (24), head (51), the heard box (its height follows
+  // the heard text: border+padding 14, 20px per heard line, hint
+  // 17, bottom margin 8), the footer row (28) and the fixed
+  // reply title (22).
+  _scrollViewH() {
+    var heardLines = this._linesFor(this.data.heardText, 28, 0.52);
+    var heardBox = 14 + (heardLines ? heardLines * 20 + 2 : 0) + 17 + 8;
+    var h = 352 - 24 - 51 - heardBox - 28 - 22;
+    return h < 120 ? 120 : h;
+  },
+
+  // Height of the scrollable content itself: body 14px/19px at
+  // 32 full-width glyphs per 448px line, items 13px/18px at 34,
+  // choices 12px monospace/16px at 37 (narrow glyphs count 0.85
+  // in a monospace face).
+  _scrollContentH() {
+    var h = 0;
+    if (this.data.resBody) h += 3 + this._linesFor(this.data.resBody, 32, 0.52) * 19;
+    var items = this.data.resItems || [];
+    if (items.length) {
+      h += 4;
+      for (var i = 0; i < items.length; i++) h += this._linesFor(items[i], 34, 0.52) * 18;
+    }
+    if (this.data.choiceLine) h += 6 + this._linesFor(this.data.choiceLine, 37, 0.85) * 16;
+    return h;
+  },
+
+  // Called after every reply render. A changed signature (the
+  // shown reply or the phase) restarts the cycle from the top;
+  // no overflow or the listening phase parks the view at the top.
+  _refreshScroll() {
+    var sig = [this.data.phase, this.data.resTitle, this.data.resBody,
+      (this.data.resItems || []).join('\n'), this.data.choiceLine].join('|');
+    if (sig === this._scrollSig) return;
+    this._scrollSig = sig;
+    this._stopScroll();
+    this._scrollPos = 0;
+    if (this.data.scrollTop !== 0) this.setData({ scrollTop: 0 });
+    if (this.data.phase === 'listening') return;
+    var max = this._scrollContentH() - this._scrollViewH();
+    if (max <= 4) return;
+    // A small overshoot so the last line fully enters view even
+    // when the estimate runs a few px short; the runtime clamps
+    // scroll-top at the true bottom anyway.
+    this._scrollMax = max + 8;
+    this._scrollState = 'top';
+    this._scrollWait = 24;
+    var self = this;
+    this._scrollTimer = setInterval(function () { self._scrollStep(); }, 50);
+  },
+
+  _scrollStep() {
+    if (this._scrollState === 'down') {
+      this._scrollPos += 1;
+      if (this._scrollPos >= this._scrollMax) {
+        this._scrollPos = this._scrollMax;
+        this._scrollState = 'bottom';
+        this._scrollWait = 24;
+      }
+      this.setData({ scrollTop: this._scrollPos });
+      return;
+    }
+    // Resting at the top or the bottom. The position is still
+    // re-asserted on every tick: should the scroll-view ever
+    // consume the arrow keys itself, the driver wins the scroll
+    // position back within one frame.
+    if (this.data.scrollTop !== this._scrollPos) this.setData({ scrollTop: this._scrollPos });
+    this._scrollWait--;
+    if (this._scrollWait > 0) return;
+    if (this._scrollState === 'top') {
+      this._scrollState = 'down';
+    } else {
+      this._scrollPos = 0;
+      this._scrollState = 'top';
+      this._scrollWait = 24;
+      this.setData({ scrollTop: 0 });
+    }
+  },
+
+  _stopScroll() {
+    if (this._scrollTimer) { clearInterval(this._scrollTimer); this._scrollTimer = null; }
+    this._scrollState = 'top';
+    this._scrollWait = 0;
   },
 
   // ---------- inbox ----------
@@ -368,6 +496,7 @@ export default {
       choiceLine: (env.type === 'choices' && env.choices && env.choices.length)
         ? env.choices.map(function (x) { return String(x); }).join('  ·  ') : ''
     });
+    this._refreshScroll();
   },
 
   // ---------- demo states (preview / screenshot only) ----------
@@ -376,7 +505,7 @@ export default {
   // queue and never submit; any primary action exits demo mode.
 
   onDemo() {
-    var order = ['queue', 'listening', 'list', 'text', 'idle'];
+    var order = ['queue', 'listening', 'list', 'text', 'long', 'idle'];
     var idx = this._demoIdx || 0;
     this._demoIdx = idx + 1;
     this._demo = true;
@@ -393,6 +522,7 @@ export default {
         resTitle: '', resBody: '', resItems: [], choiceLine: '',
         hint: '演示（示例） · 全点满=已完成 · 小蛇=处理中 · 边框点=待处理'
       });
+      this._refreshScroll();
       return;
     }
     if (mode === 'listening') {
@@ -409,6 +539,7 @@ export default {
         resItems: [], choiceLine: '',
         hint: '说完以「大表哥」结尾发送（「表哥」也认） · 抬头两次取消'
       });
+      this._refreshScroll();
       return;
     }
     if (mode === 'list') {
@@ -422,6 +553,7 @@ export default {
         choiceLine: '',
         hint: '演示状态（示例数据） · 再点演示看下一态'
       });
+      this._refreshScroll();
       return;
     }
     if (mode === 'text') {
@@ -433,8 +565,24 @@ export default {
         resTitle: '今日天气',
         resBody: '东京今天晴，最高 21 度，傍晚起风，出门加件外套。',
         resItems: [], choiceLine: '',
-        hint: '演示状态（示例数据） · 再点演示回待命'
+        hint: '演示状态（示例数据） · 再点演示看长文'
       });
+      this._refreshScroll();
+      return;
+    }
+    if (mode === 'long') {
+      this.setData({
+        phase: 'inbox',
+        boxLabel: '',
+        stateText: '第 2 / 2 条（发送顺序） · 转头或滑动翻条',
+        heardText: '把这周的安排从头到尾完整说一遍', heardCls: 'heard',
+        resTitle: '本周安排（长文示例）',
+        resBody: '本周安排从周一说起。周一上午九点半开部门例会，十一点和客户通电话确认需求，下午整理纪要并发给全组，傍晚把第二天的出差材料备齐。周二去大阪出差，坐早上七点的新干线，中午和供应商吃饭，下午看新样品并拍照留档，晚上回东京。周三全天在公司，上午评审新版本，下午和设计师对稿，四点开周会过进度。周四上午去仓库盘点，下午写周报初稿，顺便把报销单据整理好。周五上午把周报定稿发出，中午和同事聚餐，下午四点提前走，去车站接人。周六上午睡个懒觉，下午去超市采购一周的食材。周日暂无安排，留白休息。以上如有变动，会另行通知。',
+        resItems: ['· 周二大阪出差记得带样品单', '· 周五周报定稿别拖到下班', '· 周三评审材料提前一天发'],
+        choiceLine: '',
+        hint: '演示状态（示例数据） · 长回复自动滚动显示 · 再点演示回待命'
+      });
+      this._refreshScroll();
       return;
     }
     this._demo = false;
@@ -638,6 +786,7 @@ export default {
       hint: '说完以「大表哥」结尾发送（「表哥」也认） · 抬头两次取消'
     });
     this._launchRec();
+    this._refreshScroll();
   },
 
   _launchRec() {
@@ -892,6 +1041,7 @@ export default {
       resBody: body,
       resItems: [], choiceLine: '',
     });
+    this._refreshScroll();
   },
 
   _announce(text) {
@@ -934,11 +1084,13 @@ export default {
     </view>
     <view class="reply">
       <text class="res-title">{{resTitle}}</text>
-      <text class="res-body">{{resBody}}</text>
-      <view class="items">
-        <text ink:for="{{resItems}}" class="res-item">{{item}}</text>
-      </view>
-      <text class="choices">{{choiceLine}}</text>
+      <scroll-view class="res-scroll" scroll-y="true" scroll-top="{{scrollTop}}">
+        <text class="res-body">{{resBody}}</text>
+        <view class="items">
+          <text ink:for="{{resItems}}" class="res-item">{{item}}</text>
+        </view>
+        <text class="choices">{{choiceLine}}</text>
+      </scroll-view>
     </view>
     <view class="foot-row">
       <button class="btn-demo" bindtap="onDemo">演示</button>
@@ -1048,6 +1200,10 @@ export default {
   font-size: 17px;
   font-weight: 500;
   line-height: 22px;
+}
+.res-scroll {
+  height: 0;
+  flex-grow: 1;
 }
 .res-body {
   color: rgba(125,255,158,0.88);

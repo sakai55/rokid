@@ -33,17 +33,19 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ![收件箱（演示数据）：text 信封，标题加正文](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-inbox-text.png)
 
+![收件箱（演示数据）：长回复滚动中——正文超过回复区高度时在区内自动滚动（顶部停一会儿、匀速下滚、到底再停、循环回顶），标题固定不动，页面不溢出](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/dabiaoge/preview-dabiaoge-long.png)
+
 ## 真机测试信息（Global AIUI Studio · Device Debug）
 
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填（导入名默认为仓库名，Studio 内改「大表哥」） |
-| Version（Build） | 待回填（本地 package.json 2.1.9） |
+| Version（Build） | 待回填（本地 package.json 2.1.10） |
 | App Category | 待回填（建议 Work） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
-| AIX Package Size | 约 22 KB（本地 pack；Studio 打包值待回填） |
-| 状态 | v1.0.0 / v1.0.2 已真机跑通（2026-10-26）；v2.1.0 待 GO 在 Studio 重新导入、填钥并打包，按文末验收清单真机验（v1.0.3 起的修改随本版一并验证） |
+| AIX Package Size | 约 29 KB（本地 pack；Studio 打包值待回填） |
+| 状态 | v1.0.0 / v1.0.2 已真机跑通（2026-10-26）；v2.1.10 待 GO 在 Studio 重新导入、填钥并打包，按文末验收清单真机验（v1.0.3 起的修改随本版一并验证） |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
@@ -56,6 +58,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 | 队列 | 只保留**最新 5 条**（标题点阵槽满格）：第 6 条进来时，最老的一条已完成的自动让位（之前的历史不回看）；5 条全在处理中时才拦下新的一句。整队由一条轮询循环服务（每轮逐条查状态） |
 | 生命槽 | 标题「大表哥」右侧的点阵小方块（5×5 点阵绘制，槽高 = 标题字高 ×0.618）：一个方块 = 一条在途，按发送顺序排；**边框点 = 待处理、连点小蛇（带尾巴游走）= 处理中、全点满 = 已完成**；处理中动画同时只出现在一条上（排最前的未完成条目，后台实际是并行处理，显示只挑一条动），其余待处理槽是边框点 + 中心呼吸点；没有在途时标题后什么都不跟 |
 | 结果 | 呈现**严格按发送顺序**：后发的先办完也**先压着**，等排在前面的都办完才轮到它显示、朗读（槽上全点满只表示它已回来）。轮到的结果进**收件箱**：空闲时自动顶到主屏并朗读摘要；**说话期间轮到的结果不打断输入**——不切屏、不朗读，安静地出现在下方回复区域，输入照常进行 |
+| 长回复 | 正文 + 条目 + 选项超过回复区高度时，在回复区内**自动循环滚动**显示（标题固定不动）：顶部停留约 1.2 秒 → 匀速向下滚 → 底部停留约 1.2 秒 → 回到顶部重来；换一条新回复从顶部重新开始；聆听期间不滚动。页面整体永不溢出 |
 | 翻看 | **左右转头**与**镜腿前后滑动**同效，逐条翻（第几 / 共几显示在状态行），**翻到即朗读**那一条；点头 = 问下一条（开始说话）。看过的条目不单独出队，靠最新 5 条的规则自然新陈代谢 |
 | 批准 | 回单 needs-approval 按发送顺序轮到时作为一条收件箱消息显示「需要你批准……到处理服务那边批准」，眼镜侧到此为止 |
 | 超时 | 单条等满 300 秒只标这一条（收件箱里显示超时说明），不堵后面的单；它在顺序里占住自己的位置 |
@@ -72,7 +75,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 | 前后滑动 | 镜腿触控（ArrowUp / ArrowDown） | 上一条 / 下一条，**镜腿的唯一功能**；待命时滑动打开收件箱，说话中不响应 |
 | 单击 | Enter / GlobalHook | **无功能**（刻意禁用：单击容易误触、中断输入、误发） |
 | 双击 | Backspace | 交给系统：返回 / 退出（页面不拦截） |
-| 页脚「演示」钮 | 预览鼠标点按 | 循环示例四态（队列 / 收件箱列表 / 收件箱文字 / 待命），供截图与版式对照；真机上没有点按入口，不影响使用 |
+| 页脚「演示」钮 | 预览鼠标点按 | 循环示例六态（队列 / 聆听 / 收件箱列表 / 收件箱文字 / 收件箱长文 / 待命），供截图与版式对照；真机上没有点按入口，不影响使用 |
 
 ## 权限与边界
 
@@ -83,7 +86,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ## 版本归档（.aix）
 
-- `aix/dabiaoge.aix`：最新版（当前 v2.1.9）。
+- `aix/dabiaoge.aix`：最新版（当前 v2.1.10）。
 - `aix/dabiaoge-v<版本>.aix`：每个历史版本一份，与最新版并排存放在仓库 `aix/` 目录里，可直接下载上传 Studio 回退或对照。
 
 ## 本地命令
@@ -101,6 +104,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 - [ ] **结束词容错**（v1.0.3 新增）：结束词被识别成「表哥」（落了「大」）时同样触发发送并剥词
 - [ ] **短答案朗读**（v1.0.3 新增）：短回单回来时正文被朗读一遍（不再无声）；长回单只读摘要、不读正文
 - [ ] **信封四态显示**：text / list / choices / card 四种回单各显示一次，版式正确不溢出
+- [ ] **长回复滚动**（v2.1.10 新增）：回复超过一屏时在回复区内自动滚动（顶部停约 1.2 秒、匀速下滚、到底停约 1.2 秒、循环回顶），回复标题不跟着滚；转头 / 滑动翻到下一条时从顶部重新滚，翻条不受滚动影响；聆听期间回复不滚动
 - [ ] **speak 朗读**：speak 与 body 不同时朗读 speak；两者相同时不重复念正文
 - [ ] **needs-approval 提示**：2 级单回来时显示「这件事要你在手机上批准，已挂起」
 - [ ] **关后再开补收**：有在途与未读结果时退出大表哥，重开后整队恢复（槽还在、未读还在、未完成的继续等）
@@ -131,10 +135,14 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 ### Preview Media
 
-- 图片：`screenshots/dabiaoge/preview-dabiaoge-idle.png`、`preview-dabiaoge-queue.png`、`preview-dabiaoge-listening.png`、`preview-dabiaoge-inbox.png`、`preview-dabiaoge-inbox-text.png`
+- 图片：`screenshots/dabiaoge/preview-dabiaoge-idle.png`、`preview-dabiaoge-queue.png`、`preview-dabiaoge-listening.png`、`preview-dabiaoge-inbox.png`、`preview-dabiaoge-inbox-text.png`、`preview-dabiaoge-long.png`
 - 视频：真机阶段补录（核心流程：连发两条 → 标题槽状态变化 → 收件箱翻看与朗读，≤60 秒）
 
 ### Change Log
+
+#### v2.1.10
+
+- Improvements：回复超页自动滚动显示——正文、条目与选项放进回复标题下方的滚动区（标题固定不动），内容超过一屏时自动循环滚动：顶部停留约 1.2 秒、匀速向下滚、到底停留约 1.2 秒、回到顶部重来；新回复上屏从顶部重新开始，翻条换条即复位；聆听期间不滚动、不打断输入；页面整体不再溢出（此前长回复会把页面顶出画面、末尾被裁掉）
 
 #### v2.1.9
 
