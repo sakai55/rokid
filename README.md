@@ -8,15 +8,16 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 大表哥是 rokidpost 通道的眼镜侧薄客户端：眼镜只管采集、发送、显示与朗读，推理和办事全在 Muse 侧。你在眼镜上开口提问，宿主先把语音转成文字并**显示在屏上**（听错当场可见），文字投给前门，Muse 处理后回一张给小屏的字幕卡——屏上显示、摘要朗读。v1 只走文字（过通道的永远是文字，没有录音离开眼镜）；拍照提问等文字链打通后再加。
 
-## 打包前必做：填钥匙
+## 打包前必做：填配置（域名 + 钥匙）
 
-投单钥匙（CHANNEL_KEY）只放在工程的一个文件里，仓库中只有占位符。**在 Studio 里打包前**：
+全部部署配置只放在工程的一个文件 **`channel.js`** 里，页面代码没有任何写死的域名或钥匙。**在 Studio 里打包前**：
 
 1. 打开本工程的 **`channel.js`**；
-2. 把 `PASTE_CHANNEL_KEY_HERE` 换成真钥匙（就这一行，别的不用动）；
-3. 然后打包。
+2. `BASE_URL`（前门域名）：默认值是公共前门 `https://rokidp.datumoj.com`，用它就不用动；**自建前门的人**（按 rokidpost 仓库自部署）把这一行换成自己的 Worker 地址；
+3. `CHANNEL_KEY`（投单钥匙）：把 `PASTE_CHANNEL_KEY_HERE` 换成你自己前门的钥匙；
+4. 然后打包。
 
-注意：填了真钥匙的 Studio 工程**不要回传 GitHub**（仓库公开，钥匙会外泄）；每次从 GitHub 重新导入都是快照，必须重填这一行。没填钥匙时大表哥会显示「钥匙未填」而不是崩溃；填没填对不用猜——投一张单，Muse 侧看前门清单里有没有新单即可验证。
+注意：填了真钥匙的 Studio 工程**不要回传 GitHub**（钥匙会外泄）；每次从 GitHub 重新导入都是快照，必须重填钥匙。没填钥匙时大表哥会显示「钥匙未填」而不是崩溃；填没填对不用猜——投一张单，Muse 侧看前门清单里有没有新单即可验证。
 
 ## 预览截图
 
@@ -33,12 +34,12 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填（导入名默认为仓库名，Studio 内改「大表哥」） |
-| Version（Build） | 待回填（本地 package.json 1.0.3） |
+| Version（Build） | 待回填（本地 package.json 1.0.4） |
 | App Category | 待回填（建议 Work） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
 | AIX Package Size | 约 13 KB（本地 pack；Studio 打包值待回填） |
-| 状态 | v1.0.0 / v1.0.2 已真机跑通（2026-10-26）；v1.0.3 待 GO 在 Studio 重新导入、填钥匙并打包 |
+| 状态 | v1.0.0 / v1.0.2 已真机跑通（2026-10-26）；v1.0.4 待 GO 在 Studio 重新导入、填钥匙并打包 |
 | Studio | aiui-global.rokid.com（en-US） |
 | 下发方式 | 云端下发 → Hi Rokid（海外版）更新眼镜资源包 |
 
@@ -67,7 +68,7 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 
 - 权限：`RECORD_AUDIO` 一项（宿主 ASR 开麦；平台没有独立的 ASR 权限）。不用 CAMERA、GEOLOCATION。
 - 通道只收文字：v1 不传录音、不传图片。识别在眼镜宿主完成，发送的是识别文字。
-- 网络：仅 HTTPS 访问 `rokidp.datumoj.com`；提审前该域名需在开发者后台报备白名单。
+- 网络：仅 HTTPS 访问 `channel.js` 中 `BASE_URL` 配置的前门域名（默认 `rokidp.datumoj.com`）；提审前该域名需在开发者后台报备白名单。
 - 钥匙纪律见上节；本 Agent 不预埋任何动作类能力（发信等按授权章程后续接入）。
 
 ## 本地命令
@@ -107,6 +108,10 @@ https://github.com/sakai55/rokid/tree/agent-dabiaoge
 - 视频：真机阶段补录（核心流程：说话提问 → 等待 → 结果显示与朗读，≤60 秒）
 
 ### Change Log
+
+#### v1.0.4
+
+- Improvements：配置集中——前门域名从页面代码里的写死值移入 `channel.js`，与钥匙同文件（`BASE_URL` + `CHANNEL_KEY` 两项）；页面代码零硬编码部署值，自建前门的人只改这一个文件即可分发使用
 
 #### v1.0.3
 
