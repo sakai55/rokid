@@ -172,14 +172,14 @@ aix preview .                               # 本地预览（起服务 / --html-
 **徽章说明**：
 
 <table>
-<tr><td><img src="assets/badges/badge-di01.svg" alt="DI01"><br>唯一编号：前两个字母是分类，后两位是组内序号</td></tr>
-<tr><td><img src="assets/badges/badge-directional.svg" alt="指向性"><br>指向性系列：用视线同轴、头部朝向解决生活问题</td></tr>
-<tr><td><img src="assets/badges/badge-attention.svg" alt="注意力"><br>注意力外挂系列：把持续占用的注意力外包给眼镜</td></tr>
-<tr><td><img src="assets/badges/badge-curbcut.svg" alt="路缘坡"><br>路缘坡系列：先为特殊人群解决难题，再溢出到普通人</td></tr>
-<tr><td><img src="assets/badges/badge-game.svg" alt="游戏"><br>头部动作小游戏系列：用头部动作玩的极简小游戏</td></tr>
-<tr><td><img src="assets/badges/badge-conflict.svg" alt="直接冲突"><br>与眼镜默认能力<strong>直接冲突</strong>：本体就是默认能力，只加了一层小扭转</td></tr>
-<tr><td><img src="assets/badges/badge-overlap.svg" alt="高度重叠"><br>与眼镜默认能力<strong>高度重叠</strong>：默认功能能完成大半，只剩一层薄闭环</td></tr>
-<tr><td><img src="assets/badges/badge-pending.svg" alt="待测试"><br>既不直接冲突、也不高度重叠，冲突与否等真机测试确认</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-di01.svg" alt="DI01"></td><td>唯一编号：前两个字母是分类，后两位是组内序号</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-directional.svg" alt="指向性"></td><td>指向性系列：用视线同轴、头部朝向解决生活问题</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-attention.svg" alt="注意力"></td><td>注意力外挂系列：把持续占用的注意力外包给眼镜</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-curbcut.svg" alt="路缘坡"></td><td>路缘坡系列：先为特殊人群解决难题，再溢出到普通人</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-game.svg" alt="游戏"></td><td>头部动作小游戏系列：用头部动作玩的极简小游戏</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-conflict.svg" alt="直接冲突"></td><td>与眼镜默认能力<strong>直接冲突</strong>：本体就是默认能力，只加了一层小扭转</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-overlap.svg" alt="高度重叠"></td><td>与眼镜默认能力<strong>高度重叠</strong>：默认功能能完成大半，只剩一层薄闭环</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-pending.svg" alt="待测试"></td><td>既不直接冲突、也不高度重叠，冲突与否等真机测试确认</td></tr>
 </table>
 
 基础项（`my-agent`、`glasses-benchmark`）没有任何徽章。
