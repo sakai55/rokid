@@ -25,6 +25,9 @@
 - GA21 [angle-match](angle-match/) — 报一边一个角度，转进±5度带停稳算对上
 - GA22 [tilt-match](tilt-match/) — 贴耳对小角度，进±5度带停稳算对上
 - GA23 [pace-turn](pace-turn/) — 单次转头用时3到5秒算匀速，快慢都不算
+- GA24 [stop-center](stop-center/) — 从一侧回正停在±5度内，过冲判错，左右交替8次
+- GA25 [hold-ramp](hold-ramp/) — 低头保持2/3/4/5/6秒逐级爬，每级回正
+- GA26 [memory-six](memory-six/) — 六向序列3/4/5步，记住并依次复现
 - GA41 [snap-hunt](snap-hunt/) — 屏幕出目标物，在真实环境里找到拍照，大模型判有没有
 - GA42 [color-catch](color-catch/) — 每轮出一种颜色，拍主色相符的真实物体判定
 - GA43 [word-spot](word-spot/) — 在招牌包装上找目标字符拍照，判定带读出文字可核对
