@@ -1,1 +1,0 @@
-{"dependencies":{},"description":"Rokid Glasses AIUI Agent - breath pace: in-view inhale-hold-exhale light beat you follow with your eyes, the beat is counted for you, session summary at the end; it cannot measure your breathing, it is only a metronome, not medical advice, session memory only.","main":"app.js","name":"breath-pace","version":"1.0.0"}

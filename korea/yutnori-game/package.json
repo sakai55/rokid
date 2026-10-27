@@ -1,1 +1,0 @@
-{"author":"","dependencies":{},"description":"Family yutnori played with head motion only: 5 stick results and a 20-cell board, nod or Enter throws, first to the goal wins, wins and throws persist across sessions. The throw is a stated demo random number, not physical stick recognition.","keywords":[],"license":"ISC","main":"app.js","name":"yutnori-game","version":"1.0.0"}
