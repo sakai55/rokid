@@ -1,7 +1,7 @@
 ---
 name: "rokid-boutique-acceptance"
 description: "Acceptance check for Rokid boutique-line batches in the sakai55/rokid repo: verify a batch from the built files, not from ledger prose — page counts, skeleton isomorphism, counted content sets, API wiring per claimed loop step, persistence code for cross-session claims, placeholders never counted, and only passing agents counted toward the batch. Use after building and before packing, pushing, or registering any boutique batch."
-version: "1.0.0"
+version: "1.1.0"
 ---
 
 # Rokid Boutique Batch Acceptance
@@ -16,6 +16,7 @@ Run it after building, **before** packing counts as done, before pushing, and be
 - Fail any non-game agent that has only one page, because a single page cannot carry entry → process → result. (Games follow the SOP loop-gate relaxation, but a boutique game still needs its thickness: levels/progress/content set must be in the files.)
 - Compare page lists and built file sizes across the whole batch, and flag agents that share the same skeleton with only labels changed as **isomorphic — fail**. Ten near-identical `.ink` sizes are evidence, not coincidence.
 - Treat every ledger claim and design note as unproven until the built files show the same fact.
+- **Heavy agents — count distinct pages.** An agent designated heavy (the daily batch carries 2) must show **20 or more distinct pages** in the built files: reconcile the `app.json` page list against the `pages/` tree, one entry each, every page functionally different in content and wiring. States of one page, demo steps, and screenshot variants never count as pages. Spot-check 5 pages for genuine difference; merge look-alike pages in the count and recheck the total. Under 20 after merging — fail, do not count.
 
 ## Verify each claimed gate in code
 
@@ -42,4 +43,5 @@ Every change: bump `version:` above, append a Change Log entry below (date, what
 
 ## Change Log
 
+- **1.1.0 (2026-10-28)** — Minor: new check. GO added a heavy quota to the daily batch （每日 2 个重度 Agent, each 20+ distinct pages); acceptance now reconciles the built `app.json` page list against the `pages/` tree for heavy-designated agents, states/demo steps never count as pages, and look-alike pages are merged before recounting.
 - **1.0.0 (2026-10-28)** — Landed as a skill at GO's instruction. Distilled from the boutique line's first week: the 2026-10-27 first batch passed its three gates in ledger prose but was, in built files, 10/10 single-page with near-identical 8.35–8.57 KB `.ink` files — GO's verdict 「还是老问题」; the same-day merge-redo (JP20/JP21/JP22/KR15 + CC10 v2, three to four pages each, counted sets, visible persistence keys) supplied the passing shape; the checks were then patched into the daily cron and the 2026-10-28 batch (10 agents, 3 pages each) was the first run accepted under them.
