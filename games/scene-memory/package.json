@@ -1,7 +1,0 @@
-{
-  "dependencies": {},
-  "description": "Scene memory game GA45 for Rokid glasses: photograph one real scene (wide photo), and the host LLM fixes three memory questions and their answers from that first photo. Turn away and answer from memory: each question offers the three correct answers rotated, so the test is matching the right answer to the right question. Scoring is local against the answers fixed at photo time. Camera only.",
-  "main": "app.js",
-  "name": "scene-memory",
-  "version": "1.0.0"
-}
