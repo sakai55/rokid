@@ -1,0 +1,1 @@
+{"author":"","dependencies":{},"description":"お薬手帳：高齢者の服薬を眼鏡で守る。今日の服薬チェック（6種の薬・服用時刻・用法付き）、残量と次回受診の一括管理、服薬の音声案内。チェックと残量・受診日は端末に保存され、翌日も引き継がれます。","keywords":[],"license":"ISC","main":"app.js","name":"okusuri-techou","version":"1.0.0"}

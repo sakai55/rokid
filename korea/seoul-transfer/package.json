@@ -1,0 +1,1 @@
+{"author":"","dependencies":{},"description":"Seoul subway transfer guide: 8 transfer stations with line and platform-direction notes, head-yaw platform confirmation with nod lock, and a guarded last-train countdown whose transfer records persist across sessions.","keywords":[],"license":"ISC","main":"app.js","name":"seoul-transfer","version":"1.0.0"}
