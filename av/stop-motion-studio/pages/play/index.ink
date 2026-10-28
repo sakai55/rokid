@@ -7,7 +7,7 @@
 <script setup>
 import wx from 'wx';
 import { store } from '../../store.js';
-import { errLine, fullCode } from '../../err.js';
+import { errLine } from '../../err.js';
 
 var WORKSKEY = 'av11_works';
 var FPS = 12;
@@ -38,7 +38,7 @@ function frameUrl(fr) {
 export default {
   data: {
     evt: 'EVT: play ready',
-    ver: 'v1.1.2',
+    ver: 'v1.1.3',
     status: '合成 = 按 12 帧/秒逐帧播放帧序列（不是生成视频文件）',
     progLine: '帧 0/0',
     failLine: '',
@@ -71,13 +71,13 @@ export default {
   // Same error-code plumbing as the shoot page (err.js definitions).
   _recordErr(code, e, silent) {
     var raw = e ? errText(e).slice(0, 40) : '';
-    store.lastError = { code: fullCode(code), text: raw, at: Date.now() };
+    store.lastError = { code: code, text: raw, at: Date.now() };
     if (this._errCode === code) this._errCount++;
     else { this._errCode = code; this._errCount = 1; }
     if (!silent) {
       this.setData({
         failLine: errLine(code) + (this._errCount > 1 ? ' ×' + this._errCount : ''),
-        evt: 'EVT: ' + fullCode(code)
+        evt: 'EVT: ' + code
       });
     }
   },
@@ -192,7 +192,7 @@ export default {
     } catch (e) {
       var code = (fr && fr.kind === 'url' || typeof fr === 'string') && stage === 'decode' ? 'E4002' : 'E4003';
       this._recordErr(code, e);
-      this.setData({ status: '帧绘制失败（如实）：' + errText(e).slice(0, 40), evt: 'EVT: draw fail ' + fullCode(code) });
+      this.setData({ status: '帧绘制失败（如实）：' + errText(e).slice(0, 40), evt: 'EVT: draw fail ' + code });
     } finally {
       if (bmp) { try { bmp.close(); } catch (e) {} }
       this._decBusy = false;

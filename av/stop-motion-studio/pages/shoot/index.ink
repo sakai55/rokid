@@ -7,7 +7,7 @@
 <script setup>
 import wx from 'wx';
 import { store, resetSession } from '../../store.js';
-import { errLine, fullCode, codedError } from '../../err.js';
+import { errLine, codedError } from '../../err.js';
 
 var WORKSKEY = 'av11_works';
 var FPS = 12;
@@ -40,7 +40,7 @@ function isQuota(e) { var s = errText(e) + ' ' + ((e && e.name) || ''); return /
 export default {
   data: {
     evt: 'EVT: shoot ready',
-    ver: 'v1.1.2',
+    ver: 'v1.1.3',
     status: '取景启动中…',
     bigLine: '已拍 0 / 120 张',
     filmLine: '预估成片 0 秒',
@@ -93,18 +93,18 @@ export default {
   },
   // Error-code plumbing (err.js is the only definition site). Records
   // store.lastError with the FULL prefixed code; unless silent, shows
-  // "AVE#### 说明" in the big fail area; consecutive same-code hits
+  // "E#### 说明" in the big fail area; consecutive same-code hits
   // only bump the ×N counter instead of spamming.
   _recordErr(code, e, silent, keepLast) {
     var raw = e ? errText(e).slice(0, 40) : '';
     this._lastErrRaw = raw;
-    if (!keepLast) store.lastError = { code: fullCode(code), text: raw, at: Date.now() };
+    if (!keepLast) store.lastError = { code: code, text: raw, at: Date.now() };
     if (this._errCode === code) this._errCount++;
     else { this._errCode = code; this._errCount = 1; }
     if (!silent) {
       this.setData({
         failLine: errLine(code) + (this._errCount > 1 ? ' ×' + this._errCount : ''),
-        evt: 'EVT: ' + fullCode(code)
+        evt: 'EVT: ' + code
       });
     }
   },
@@ -212,7 +212,7 @@ export default {
   },
   async _blobToDataUrl(blob) {
     // This runtime has NO blob-text reader API (the v1.1.0/v1.1.1 field
-    // failure, code AVE2005). Documented path instead:
+    // failure, code E2005). Documented path instead:
     // blob.arrayBuffer() -> chunked base64 via btoa (window reference).
     // Covered by the same 600 ms breaker as the rest of the encode chain
     // (the caller races it). Any failure here throws E2005.
@@ -320,7 +320,7 @@ export default {
     this.setData({
       modeLine: errLine(code) + '，已切内存帧模式 · 目标降为 40 张',
       status: '编码链失败/超时（如实）：' + (store.encodeError || '').slice(0, 44),
-      evt: 'EVT: memory mode ' + fullCode(code)
+      evt: 'EVT: memory mode ' + code
     });
     this._speak('编码不可用，已切内存帧模式');
     this._render();
@@ -441,7 +441,7 @@ export default {
     this._asrDead = true;
     this._recordErr(code, e, true);
     if (this._phase === 'shooting') {
-      this.setData({ hintLine: errLine(code) + ' · 语音退出不可用，请用双击结束', evt: 'EVT: asr fail ' + fullCode(code) });
+      this.setData({ hintLine: errLine(code) + ' · 语音退出不可用，请用双击结束', evt: 'EVT: asr fail ' + code });
     }
   },
   _stopAsr() {
@@ -482,7 +482,7 @@ export default {
     // shoot page, show E2010 big with the primary code, speak the code.
     // store.lastError deliberately keeps the PRIMARY error (the table
     // says for E2010: 主码见 lastError), so E2010 is display-only here.
-    var primary = (store.lastError && store.lastError.code) || fullCode('E9001');
+    var primary = (store.lastError && store.lastError.code) || 'E9001';
     this._phase = 'done';
     store.stopReason = 'errors';
     store.shootSec = Math.floor(this._elapsed);
@@ -490,12 +490,12 @@ export default {
     this._stopAll();
     this._writeWork();
     this._recordErr('E2010', new Error('10 consecutive frame failures'), false, true);
-    this._speak('错误 ' + fullCode('E2010'));
+    this._speak('错误 ' + 'E2010');
     this.setData({
       bigLine: errLine('E2010'),
       hintLine: '主错误 ' + primary + ' · 点头或单击重新开始',
       status: '连续失败 10 次自动停拍 · 最近原文：' + this._lastErrRaw,
-      evt: 'EVT: auto stop ' + fullCode('E2010')
+      evt: 'EVT: auto stop ' + 'E2010'
     });
     this._phase = 'wait';
     this._startCamera();
@@ -520,7 +520,7 @@ export default {
         bigLine: errLine('E4001'),
         hintLine: primary ? ('主错误 ' + primary + ' · 点头或单击重新开始') : '一张都没拍成 · 点头或单击重新开始',
         status: '已停：' + reasonLabel(reason) + ' · 0 帧留在拍摄页，不跳合成',
-        evt: 'EVT: finish 0 frames ' + fullCode('E4001')
+        evt: 'EVT: finish 0 frames ' + 'E4001'
       });
       this._phase = 'wait';
       this._startCamera();
@@ -550,7 +550,7 @@ export default {
       speechSynthesis.speak(new SpeechSynthesisUtterance(text), 'immediate');
       return true;
     } catch (e) {
-      if (!store.lastError || store.lastError.code !== fullCode('E3005')) this._recordErr('E3005', e, true);
+      if (!store.lastError || store.lastError.code !== 'E3005') this._recordErr('E3005', e, true);
       return false;
     }
   },
