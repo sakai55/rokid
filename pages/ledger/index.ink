@@ -21,7 +21,7 @@ export default {
     voiceLine: '语音：待命（说「重跑核验」跳回核验页）',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.0.1'
   },
   onLoad() { this._focus = 0; this._steady = false; this._rec = null; this._render(); },
   onShow() { this._render(); },

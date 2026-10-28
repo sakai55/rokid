@@ -24,7 +24,7 @@ export default {
     menu: [],
     noteLine: '与慧眼区别：单拍不给结论，必须双拍配对＋分歧结算后才可落账',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.0.1'
   },
   onLoad() {
     this._sel = 0; this._busy = false; this._steady = false; this._rec = null;
@@ -50,10 +50,22 @@ export default {
     });
   },
 
-  _blobToDataUrl(blob) {
-    return new Promise((resolve, reject) => {
-      try { const r = new FileReader(); r.onload = () => resolve(r.result); r.onerror = () => reject(new Error('read fail')); r.readAsDataURL(blob); } catch (e) { reject(e); }
-    });
+  async _blobToDataUrl(blob) {
+    // This runtime has NO blob-text reader API (fleet error E2005).
+    // Documented path:
+    // blob.arrayBuffer() -> chunked base64 via btoa.
+    try {
+      if (!blob || typeof blob.arrayBuffer !== 'function') throw new Error('E2005: blob.arrayBuffer unavailable');
+      const buf = await blob.arrayBuffer();
+      const bytes = new Uint8Array(buf);
+      let bin = '';
+      const CH = 0x8000;
+      for (let i = 0; i < bytes.length; i += CH) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+      return 'data:' + (blob.type || 'image/jpeg') + ';base64,' + btoa(bin);
+    } catch (e) {
+      if (e && /^E2005/.test(e.message || '')) throw e;
+      throw new Error('E2005: ' + this._err(e));
+    }
   },
   async _shrink(blob) {
     // Shrink to width 480 via canvas; any failure falls back to the
