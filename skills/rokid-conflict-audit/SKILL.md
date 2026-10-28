@@ -1,12 +1,12 @@
 ---
 name: "rokid-conflict-audit"
 description: "Audit Rokid AIUI Agents against the glasses' built-in (default) capabilities: any agent whose core mechanic IS a built-in feature is a conflict, no matter how it is dressed up. Produces the three-tier verdict （直接冲突 / 高度重叠 / 待测试） that drives the root README conflict badges and the SOP thickness gate. Use when tiering a new agent, re-auditing the fleet, or before any submission."
-version: "1.0.0"
+version: "1.0.1"
 ---
 
 # Rokid 默认能力冲突排查 (Built-in Capability Conflict Audit)
 
-**Version: 1.0.0** — 版本迭代规则见文末。首版源头：2026-10-25 对全舰队 122 个 Agent 的首次排查（GO 指令），完整报告在 Muse 工作区 `~/workspace/rokid/audit-builtin-conflicts/REPORT.md`。
+**Version: 1.0.1** — 版本迭代规则见文末。首版源头：2026-10-25 对全舰队 122 个 Agent 的首次排查（GO 指令），完整报告在维护方工作区 `~/workspace/rokid/audit-builtin-conflicts/REPORT.md`。
 
 ## 为什么有这个 skill
 
@@ -62,4 +62,5 @@ version: "1.0.0"
 
 ## 变更日志 (Changelog)
 
+- **v1.0.1（2026-10-29）**：通用化措辞——去除特定 AI 助手的指向（报告出处改称维护方工作区），使任何 AI agent 可直接采用。判定口径、基线与档位一字未变（PATCH）。
 - **v1.0.0（2026-10-28）**：首版落地。内容源自 2026-10-25 首次全舰队排查（122 个 Agent，报告 `~/workspace/rokid/audit-builtin-conflicts/REPORT.md`）：七项默认能力基线、三档判定口径、排查六步、当前档位（14 / 40 / 68）。此前该方法只存在于一次性报告与记忆条目中，本版起固化为 skill 维护。

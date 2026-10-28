@@ -7,7 +7,7 @@ Model Context Protocol 服务器与连接方式的登记目录：本项目实际
 
 | MCP | 用途 | 接入方式 | 状态 |
 |---|---|---|---|
-| GitHub 官方 MCP Server | 仓库读写（文件、分支、提交查询） | Muse 的 GitHub 连接器（OAuth，账号 `sakai55`） | 在用（只读查询与文本文件场景） |
+| GitHub 官方 MCP Server | 仓库读写（文件、分支、提交查询） | GitHub 连接器（OAuth，账号 `sakai55`） | 在用（只读查询与文本文件场景） |
 
 > 说明：日常 GitHub 操作（含二进制 .aix / PNG、分支清理等）现在以**终端 `gh` / `git`**
 > 为准（已登录 sakai55，见根 README「维护约定」）；GitHub MCP 作为连接器能力保留，
