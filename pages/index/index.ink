@@ -232,6 +232,23 @@ export default {
     return null;
   },
 
+  async _blobToDataUrl(blob) {
+    // This runtime has NO blob-text reader API (fleet error E2005).
+    // Documented path: blob.arrayBuffer() -> chunked base64 via btoa.
+    try {
+      if (!blob || typeof blob.arrayBuffer !== 'function') throw new Error('E2005: blob.arrayBuffer unavailable');
+      const buf = await blob.arrayBuffer();
+      const bytes = new Uint8Array(buf);
+      let bin = '';
+      const CH = 0x8000;
+      for (let i = 0; i < bytes.length; i += CH) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+      return 'data:' + (blob.type || 'image/jpeg') + ';base64,' + btoa(bin);
+    } catch (e) {
+      if (e && /^E2005/.test(e.message || '')) throw e;
+      throw new Error('E2005: blob read fail');
+    }
+  },
+
   async checkTap() {
     if (this._busy) return null;
     if (this._phase === 'idle') {
@@ -276,12 +293,7 @@ export default {
         return null;
       }
       const session = await LanguageModel.create({ initialPrompts: [{ role: 'system', content: '只回答坡道、台阶或看不清三者之一，不要解释。' }] });
-      const dataUrl = await new Promise((resolve, reject) => {
-        const r = new FileReader();
-        r.onload = () => resolve(r.result);
-        r.onerror = () => reject(new Error('blob read fail'));
-        r.readAsDataURL(blob);
-      });
+      const dataUrl = await this._blobToDataUrl(blob);
       const ans = await session.prompt([
         { type: 'text', text: '画面正前方路缘是坡道还是台阶？只回答坡道、台阶或看不清。' },
         { type: 'image_url', image_url: { url: dataUrl } }
