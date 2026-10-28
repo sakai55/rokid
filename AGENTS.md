@@ -28,7 +28,9 @@ and the stub gets checked again and again with your head down.
   times.** SNAP/ROW/SEAT each take a telephoto photo
   (`ImageCapture.takePhoto({mode:'telephoto'})`, wx camera-context
   fallback like the siblings); the Blob becomes a data: URL via
-  `FileReader` and goes to the host `LanguageModel` as an `image_url`
+  `blob.arrayBuffer()` + chunked `String.fromCharCode` + `btoa`
+  (conversion failure surfaces as E2005) and goes to the host
+  `LanguageModel` as an `image_url`
   part of ONE user message (system prompt via `initialPrompts` only,
   `availability()` first, session `destroy()`ed after — dossier
   §2.9). Three strict reply formats (`SEAT: <zone>|<row>|<seat>`,
@@ -62,7 +64,8 @@ and the stub gets checked again and again with your head down.
   （未经读数核对）, never as a detected arrival.
 - **Every read failure lands on a usable manual path.** No camera,
   no model, model unavailable/empty/error, unreadable photo,
-  FileReader missing, wx-fallback photo with no Blob: the ticket
+  data-URL conversion failure (E2005), wx-fallback photo with
+  no Blob: the ticket
   stage lands on the confirm screen empty with the reason stated —
   steppers fill row/seat and OK still starts the hunt. The row and
   seat stages fall back to +1/−1 as a manual current-row/seat report,
