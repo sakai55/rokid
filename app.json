@@ -1,1 +1,15 @@
-{"description":"Verification build of the core stop-motion chain: pick a speed word and a length word, shoot frame by frame with an onion-skin overlay, then play the sequence back in the glasses at the chosen frame rate with the measured playback rate and per-frame size readings shown. Shooting stops by itself at the target frame count or at three minutes, and says why.","name":"Stop Motion Studio","pages":["pages/index/index","pages/shoot/index","pages/play/index"],"permissions":["CAMERA","RECORD_AUDIO"],"window":{"navigationBarTitleText":"Stop Motion Studio"}}
+{
+  "description": "Minimal capability-verification build of the stop-motion chain: open it, nod to start auto-shooting one frame per second at a fixed 12 fps up to 120 frames (about 10 seconds of film) with an onion-skin overlay, say the exit word to finish and composite, and watch the looped playback with measured readings. Two operations only: nod, and speak to stop.",
+  "name": "Stop Motion Studio",
+  "pages": [
+    "pages/shoot/index",
+    "pages/play/index"
+  ],
+  "permissions": [
+    "CAMERA",
+    "RECORD_AUDIO"
+  ],
+  "window": {
+    "navigationBarTitleText": "Stop Motion Studio"
+  }
+}

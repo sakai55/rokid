@@ -8,21 +8,11 @@
 import wx from 'wx';
 import { store, resetSession } from '../../store.js';
 
-var CFGKEY = 'av11_cfg';
 var WORKSKEY = 'av11_works';
-var SPEEDS = [
-  { key: 'slow', label: '慢速', fps: 5 },
-  { key: 'mid', label: '中速', fps: 8 },
-  { key: 'fast', label: '快速', fps: 12 }
-];
-var LENS = [
-  { key: 'short', label: '短', sec: 5 },
-  { key: 'mid', label: '中', sec: 10 },
-  { key: 'long', label: '长', sec: 15 }
-];
-var CAP_FRAMES = 120;
+var FPS = 12;
+var TARGET = 120;
+var IV_MS = 1000;
 var SAFETY_SEC = 180;
-var AUTO_IV = 2;
 
 function sget(k) {
   try { if (typeof localStorage !== 'undefined') { var v = localStorage.getItem(k); if (v) return JSON.parse(v); } } catch (e) {}
@@ -34,56 +24,36 @@ function sset(k, v) {
   try { wx.setStorageSync(k, v); return true; } catch (e) {}
   return false;
 }
-function defCfg() { return { name: '未命名定格', speedKey: 'mid', lenKey: 'mid', mode: 'manual' }; }
-function speedOf(c) { for (var i = 0; i < SPEEDS.length; i++) if (SPEEDS[i].key === c.speedKey) return SPEEDS[i]; return SPEEDS[1]; }
-function lenOf(c) { for (var i = 0; i < LENS.length; i++) if (LENS[i].key === c.lenKey) return LENS[i]; return LENS[1]; }
-function targetOf(c) { return Math.min(speedOf(c).fps * lenOf(c).sec, CAP_FRAMES); }
-function reasonLabel(r) { return r === 'target' ? '拍够了' : (r === 'time' ? '满 3 分钟了' : (r === 'user' ? '手动结束' : '')); }
-var MENU = [
-  { name: '拍一帧', act: 'cap' },
-  { name: '自动开关', act: 'timer' },
-  { name: '洋葱皮开关', act: 'onion' },
-  { name: '清空重拍', act: 'clear' },
-  { name: '完成去合成', act: 'done' }
-];
+function reasonLabel(r) {
+  return r === 'voice' ? '说「退出」结束' : (r === 'target' ? '拍够了' : (r === 'time' ? '满 3 分钟了' : (r === 'back' ? '双击结束' : '')));
+}
 
 export default {
   data: {
     evt: 'EVT: shoot ready',
-    ver: 'v1.0.0',
+    ver: 'v1.1.0',
     status: '取景启动中…',
-    countLine: '帧 0/80 · 已拍 0s/180s 安全上限 · 手动',
-    onionLine: '洋葱皮：开（上一帧半透明叠加）',
-    rows: []
+    bigLine: '已拍 0 / 120 张',
+    filmLine: '预估成片 0 秒',
+    hintLine: '点头开始拍摄',
+    infoLine: '12 帧/秒 · 满 120 张约 10 秒 · 点头开始 · 说退出合成'
   },
   onLoad() {
     try { this.enableWorldAwareness(); } catch (e) {}
-    this._sel = 0; this._stream = null; this._cap = null; this._ctx = null;
+    resetSession(); // entering the shoot page always starts a fresh sequence
+    store.target = TARGET;
+    this._phase = 'wait'; // 'wait' | 'shooting' | 'done'
+    this._stream = null; this._cap = null; this._ctx = null;
     this._prevBmp = null; this._busy = false;
     this._pvTimer = null; this._capTimer = null; this._elTimer = null;
-    this._baseSec = 0; this._startTs = 0; this._elapsed = 0; this._onion = true; this._pvFail = 0;
-    this._cfg = sget(CFGKEY) || defCfg();
-    this._fps = speedOf(this._cfg).fps;
-    this._target = targetOf(this._cfg);
-    if (store.stopReason) resetSession(); // a finished sequence starts fresh
-    if (store.frames.length) {
-      this._baseSec = store.shootSec || 0;
-      this._elapsed = this._baseSec;
-      this.setData({ status: '补拍模式：会话内已有 ' + store.frames.length + ' 帧，接着拍' });
-    }
-    store.target = this._target;
+    this._startTs = 0; this._elapsed = 0; this._pvFail = 0;
+    this._rec = null; this._asrDead = false; this._backUsed = false;
     this._render();
   },
   onReady() { this._initCanvas(); this._startCamera(); },
   onShow() {
-    this._render();
-    // Returning via navigateBack: page instance survived but onHide stopped
-    // the camera. Restart it; a finished sequence re-entered this way is a
-    // retake continuation, not a reset.
-    if (this._wasLive && !this._cap) {
-      if (store.stopReason) { store.stopReason = ''; this._baseSec = store.shootSec || 0; this._elapsed = this._baseSec; }
-      this._startCamera();
-    }
+    // Same instance returning to the foreground: camera was stopped on hide.
+    if (this._wasLive && !this._cap && this._phase !== 'done') this._startCamera();
   },
   onHide() { this._stopAll(); },
   onUnload() { this._stopAll(); },
@@ -91,14 +61,10 @@ export default {
     try { if (typeof wx !== 'undefined' && wx.createCanvasContext) this._ctx = wx.createCanvasContext('viewCanvas'); } catch (e) { this._ctx = null; }
   },
   _render() {
-    var sel = this._sel || 0;
-    var rows = MENU.map(function (m, i) {
-      return { name: m.name, cls: i === sel ? 'mrow mrow-sel' : 'mrow', mark: i === sel ? '▸' : '·' };
-    });
+    var n = store.frames.length;
     this.setData({
-      rows: rows,
-      countLine: '帧 ' + store.frames.length + '/' + this._target + ' · 已拍 ' + Math.floor(this._elapsed) + 's/' + SAFETY_SEC + 's 安全上限 · ' + (this._cfg.mode === 'auto' ? '自动 2s/张' : '手动'),
-      onionLine: '洋葱皮：' + (this._onion ? '开（上一帧半透明叠加在取景上）' : '关')
+      bigLine: '已拍 ' + n + ' / 120 张',
+      filmLine: '预估成片 ' + (Math.round((n / FPS) * 10) / 10) + ' 秒'
     });
   },
   async _startCamera() {
@@ -112,19 +78,22 @@ export default {
       if (!track) throw new Error('no video track');
       this._cap = new ImageCapture(track);
       this._wasLive = true;
-      this._startTs = Date.now() - this._baseSec * 1000;
-      if (!store.frames.length) this.setData({ status: '取景中：摆好物件，单击或点头拍一帧', evt: 'EVT: camera on' });
+      if (this._phase === 'wait') this.setData({ status: '取景中：摆好物件，点头开始自动拍摄', evt: 'EVT: camera on' });
       var self = this;
-      this._pvTimer = setInterval(function () { self._previewTick(); }, 350);
-      this._elTimer = setInterval(function () {
-        if (self._startTs) self._elapsed = (Date.now() - self._startTs) / 1000;
-        store.shootSec = Math.floor(self._elapsed);
-        self._render();
-        if (self._elapsed >= SAFETY_SEC) self._finish('time');
-      }, 500);
+      if (!this._pvTimer) this._pvTimer = setInterval(function () { self._previewTick(); }, 350);
+      if (this._phase === 'shooting') this._startShootTimers();
     } catch (e) {
       this.setData({ status: '相机启动失败（如实）：' + String((e && e.message) || e).slice(0, 44), evt: 'EVT: camera fail' });
     }
+  },
+  _startShootTimers() {
+    var self = this;
+    if (!this._capTimer) this._capTimer = setInterval(function () { self._capture(); }, IV_MS);
+    if (!this._elTimer) this._elTimer = setInterval(function () {
+      if (self._startTs) self._elapsed = (Date.now() - self._startTs) / 1000;
+      store.shootSec = Math.floor(self._elapsed);
+      if (self._elapsed >= SAFETY_SEC) self._finish('time');
+    }, 500);
   },
   async _previewTick() {
     if (!this._cap || this._busy) return;
@@ -132,10 +101,10 @@ export default {
     try {
       bmp = await this._cap.grabFrame();
       if (this._ctx) {
-        this._ctx.drawImage(bmp, 0, 0, 448, 196);
-        if (this._onion && this._prevBmp) {
+        this._ctx.drawImage(bmp, 0, 0, 448, 198);
+        if (this._prevBmp) {
           this._ctx.globalAlpha = 0.45;
-          this._ctx.drawImage(this._prevBmp, 0, 0, 448, 196);
+          this._ctx.drawImage(this._prevBmp, 0, 0, 448, 198);
           this._ctx.globalAlpha = 1;
         }
         if (this._ctx.flush) this._ctx.flush();
@@ -143,7 +112,7 @@ export default {
       this._pvFail = 0;
     } catch (e) {
       this._pvFail++;
-      if (this._pvFail === 3) this.setData({ status: '取景绘制失败（grabFrame/画布不可用，如实）：仍可尝试拍帧', evt: 'EVT: preview draw fail' });
+      if (this._pvFail === 3) this.setData({ status: '取景绘制失败（grabFrame/画布不可用，如实）', evt: 'EVT: preview draw fail' });
     } finally { if (bmp && bmp !== this._prevBmp) { try { bmp.close(); } catch (e) {} } }
   },
   _blobToDataUrl(blob) {
@@ -182,9 +151,9 @@ export default {
     throw new Error('no jpeg output path (canvas/createImageBlob)');
   },
   async _capture() {
-    if (this._busy) return;
-    if (!this._cap) { this.setData({ status: '相机未就绪，待真机拍摄（不生成假帧）', evt: 'EVT: cap n/a' }); return; }
-    if (store.frames.length >= this._target) { this._finish('target'); return; }
+    if (this._busy || this._phase !== 'shooting') return;
+    if (!this._cap) return;
+    if (store.frames.length >= TARGET) { this._finish('target'); return; }
     this._busy = true;
     var bmp = null;
     try {
@@ -196,11 +165,10 @@ export default {
       if (this._prevBmp) { try { this._prevBmp.close(); } catch (e) {} }
       this._prevBmp = bmp; bmp = null;
       var n = store.frames.length;
-      this.setData({ evt: 'EVT: frame ' + n, status: '已拍第 ' + n + ' 帧 · JPEG 入会话内存（单帧 ' + Math.round(enc.bytes / 102.4) / 10 + ' KB）' });
-      if (n % 10 === 0) this._speak('已拍 ' + n + ' 帧，还剩 ' + (this._target - n) + ' 帧');
-      else this._speak(n + '帧');
+      this.setData({ evt: 'EVT: frame ' + n });
       this._render();
-      if (n >= this._target) this._finish('target');
+      if (n === 60) this._speak('已拍一半');
+      if (n >= TARGET) this._finish('target');
     } catch (e) {
       this.setData({ status: '拍帧失败（如实）：' + String((e && e.message) || e).slice(0, 44), evt: 'EVT: cap fail' });
     } finally {
@@ -208,13 +176,60 @@ export default {
       this._busy = false;
     }
   },
-  _toggleTimer() {
+  _begin() {
+    if (this._phase !== 'wait') return;
+    this._phase = 'shooting';
+    this._startTs = Date.now();
+    this._elapsed = 0;
+    if (!store.startedAt) store.startedAt = Date.now();
+    this._startAsr();
+    this._startShootTimers();
+    this._speak('开始拍摄，说退出结束合成');
+    this.setData({ status: '自动拍摄中：每秒一张', hintLine: '说「退出」结束合成', evt: 'EVT: shooting' });
+    this._capture();
+  },
+  _startAsr() {
     var self = this;
-    if (this._capTimer) { clearInterval(this._capTimer); this._capTimer = null; this.setData({ status: '自动拍摄已停', evt: 'EVT: auto off' }); return; }
-    if (this._cfg.mode !== 'auto') { this.setData({ status: '当前是手动拍法：到设置页切「自动」后可用', evt: 'EVT: auto manual-mode' }); return; }
-    this._capTimer = setInterval(function () { self._capture(); }, AUTO_IV * 1000);
-    this.setData({ status: '自动拍摄中：每 2 秒一张', evt: 'EVT: auto on' });
-    this._speak('自动拍摄开始');
+    try {
+      if (typeof SpeechRecognition === 'undefined') { this._asrFail(); return; }
+      var rec = new SpeechRecognition();
+      rec.continuous = true;
+      rec.interimResults = true;
+      try { rec.lang = 'zh-CN'; } catch (e) {}
+      rec.onresult = function (ev) { self._onAsrResult(ev); };
+      rec.onerror = function () { self._asrFail(); };
+      rec.onend = function () {
+        // Host ended the session mid-shoot: restart unless we are done.
+        if (self._phase === 'shooting' && !self._asrDead) { try { rec.start(); } catch (e) {} }
+      };
+      this._rec = rec;
+      rec.start();
+    } catch (e) { this._asrFail(); }
+  },
+  _onAsrResult(ev) {
+    if (this._phase !== 'shooting') return;
+    try {
+      var rs = ev.results;
+      var from = ev.resultIndex || 0;
+      for (var i = from; i < rs.length; i++) {
+        var t = rs[i] && rs[i][0] && rs[i][0].transcript;
+        if (t && String(t).indexOf('退出') >= 0) { this._finish('voice'); return; }
+      }
+    } catch (e) {}
+  },
+  _asrFail() {
+    if (this._asrDead) return;
+    this._asrDead = true;
+    if (this._phase === 'shooting') {
+      this.setData({ hintLine: '语音退出不可用，请用双击结束', evt: 'EVT: asr fail' });
+    }
+  },
+  _stopAsr() {
+    this._asrDead = true; // blocks the onend restart
+    if (this._rec) {
+      try { this._rec.abort(); } catch (e) { try { this._rec.stop(); } catch (e2) {} }
+      this._rec = null;
+    }
   },
   _writeWork() {
     if (!store.frames.length) return;
@@ -222,15 +237,14 @@ export default {
     store.sizes.forEach(function (s) { total += s || 0; });
     var entry = {
       id: store.startedAt || Date.now(),
-      name: this._cfg.name || '未命名定格',
-      fps: this._fps,
+      fps: FPS,
       frames: store.frames.length,
-      target: this._target,
+      target: TARGET,
       stopReason: store.stopReason,
       shootSec: Math.floor(this._elapsed),
       avgKB: Math.round((total / store.frames.length / 102.4)) / 10,
       totalKB: Math.round((total / 102.4)) / 10,
-      filmSec: Math.round((store.frames.length / this._fps) * 10) / 10,
+      filmSec: Math.round((store.frames.length / FPS) * 10) / 10,
       measuredFps: null,
       at: Date.now()
     };
@@ -239,15 +253,18 @@ export default {
     sset(WORKSKEY, works);
   },
   _finish(reason) {
-    if (store.stopReason) return;
+    if (this._phase === 'done') return;
+    this._phase = 'done';
     store.stopReason = reason;
     store.shootSec = Math.floor(this._elapsed);
+    this._stopAsr();
     this._stopAll();
     this._writeWork();
     var n = store.frames.length;
-    if (reason === 'target') this._speak('拍够了，共 ' + n + ' 张，去合成');
-    else if (reason === 'time') this._speak('满 3 分钟了，共 ' + n + ' 张，去合成');
-    else this._speak('拍摄结束，共 ' + n + ' 张，去合成');
+    if (reason === 'target') this._speak('拍够了，共 ' + n + ' 张，开始合成');
+    else if (reason === 'time') this._speak('满 3 分钟了，共 ' + n + ' 张，开始合成');
+    else if (reason === 'voice') this._speak('好的，共 ' + n + ' 张，开始合成');
+    else this._speak('拍摄结束，共 ' + n + ' 张，开始合成');
     this.setData({ status: '已停：' + reasonLabel(reason) + ' · 共 ' + n + ' 张', evt: 'EVT: finish ' + reason });
     try { wx.navigateTo({ url: '/pages/play/index' }); } catch (e) {}
   },
@@ -258,28 +275,6 @@ export default {
     if (this._stream) { try { this._stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {} this._stream = null; }
     this._cap = null;
   },
-  _activate(i) {
-    var d = MENU[i]; if (!d) return;
-    this._sel = i; this._render();
-    if (d.act === 'cap') this._capture();
-    else if (d.act === 'timer') this._toggleTimer();
-    else if (d.act === 'onion') { this._onion = !this._onion; this._render(); this.setData({ evt: 'EVT: onion ' + this._onion }); }
-    else if (d.act === 'clear') {
-      resetSession();
-      store.target = this._target;
-      if (this._prevBmp) { try { this._prevBmp.close(); } catch (e) {} this._prevBmp = null; }
-      this._baseSec = 0; this._elapsed = 0; this._startTs = Date.now();
-      this.setData({ status: '已清空，从第 1 帧重拍', evt: 'EVT: clear' }); this._render();
-    }
-    else if (d.act === 'done') this._finish('user');
-  },
-  onRowTap(e) {
-    var i = this._sel || 0;
-    try { i = Number(e.currentTarget.dataset.idx); } catch (err) {}
-    if (isNaN(i)) i = this._sel || 0;
-    this._activate(i);
-  },
-  _move(dir) { this._sel = ((this._sel || 0) + dir + MENU.length) % MENU.length; this._render(); },
   _speak(text) {
     try {
       if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return false;
@@ -289,27 +284,34 @@ export default {
   },
   onKeyDown(event) {
     var k = event.key || event.code;
-    if (k === 'Enter' || k === 'GlobalHook') this._activate(this._sel || 0);
-    else if (k === 'ArrowDown') this._move(1);
-    else if (k === 'ArrowUp') this._move(-1);
+    if (k === 'Backspace' && this._phase === 'shooting') {
+      this._backUsed = true; // consumed: onKeyUp swallows the default back
+      this._finish('back');
+    }
   },
-  onKeyUp(event) { if (['ArrowUp', 'ArrowDown', 'Enter'].indexOf(event.key || event.code) >= 0) event.preventDefault(); },
-  onHeadGesture(event) { if (event && event.gesture === 'nod') this._capture(); }
+  onKeyUp(event) {
+    var k = event.key || event.code;
+    if (k === 'Backspace' && this._backUsed) { this._backUsed = false; event.preventDefault(); }
+  },
+  onHeadGesture(event) {
+    if (event && event.gesture === 'nod') {
+      if (this._phase === 'wait') this._begin();
+      // While shooting a nod does NOTHING on purpose (speech moves the
+      // head; a nod must never stop or alter the take).
+    }
+  }
 };
 </script>
 
 <page>
   <view class="page">
-    <text class="ttl">SHOOT · 拍摄</text>
-    <canvas id="viewCanvas" width="448" height="196" class="viewcv"></canvas>
-    <text class="count">{{countLine}}</text>
-    <text class="onion">{{onionLine}}</text>
+    <text class="ttl">SHOOT · 定格拍摄</text>
+    <canvas id="viewCanvas" width="448" height="198" class="viewcv"></canvas>
+    <text class="big">{{bigLine}}</text>
+    <text class="film">{{filmLine}}</text>
+    <text class="hint">{{hintLine}}</text>
     <text class="status">{{status}}</text>
-    <view class="mlist">
-      <view ink:for="{{rows}}" class="{{item.cls}}" bindtap="onRowTap" data-idx="{{index}}">
-        <text class="mname">{{item.mark}} {{item.name}}</text>
-      </view>
-    </view>
+    <text class="info">{{infoLine}}</text>
     <view class="footrow">
       <text class="evt">{{evt}}</text>
       <text class="ver">{{ver}}</text>
@@ -320,15 +322,13 @@ export default {
 <style>
 .page { display: flex; flex-direction: column; height: 100vh; padding: 8px 14px; background-color: #000000; }
 .ttl { color: #7dff9e; font-size: 15px; font-weight: 500; }
-.viewcv { width: 448px; height: 196px; margin-top: 4px; border: 1px solid rgba(64,255,94,0.7); background-color: #021007; }
-.count { color: #40ff5e; font-family: monospace; font-size: 11px; margin-top: 4px; }
-.onion { color: rgba(125,255,158,0.85); font-size: 10px; margin-top: 2px; }
-.status { color: rgba(125,255,158,0.9); font-size: 10px; margin-top: 2px; }
-.mlist { display: flex; flex-direction: row; flex-wrap: wrap; margin-top: 5px; }
-.mrow { border: 1px solid rgba(64,255,94,0.5); background-color: #04140a; padding: 4px 7px; margin-right: 5px; margin-bottom: 4px; }
-.mrow-sel { border: 2px solid #7dff9e; background-color: #0a1f0e; }
-.mname { color: #40ff5e; font-size: 11px; }
-.footrow { display: flex; flex-direction: row; margin-top: 2px; }
+.viewcv { width: 448px; height: 198px; margin-top: 4px; border: 1px solid rgba(64,255,94,0.7); background-color: #021007; }
+.big { color: #7dff9e; font-family: monospace; font-size: 19px; font-weight: 500; margin-top: 6px; }
+.film { color: #40ff5e; font-family: monospace; font-size: 12px; margin-top: 2px; }
+.hint { color: #7dff9e; font-size: 13px; margin-top: 5px; }
+.status { color: rgba(125,255,158,0.9); font-size: 10px; margin-top: 3px; }
+.info { color: rgba(64,255,94,0.75); font-size: 10px; margin-top: 4px; }
+.footrow { display: flex; flex-direction: row; margin-top: 4px; }
 .evt { flex-grow: 1; color: rgba(64,255,94,0.6); font-family: monospace; font-size: 9px; }
 .ver { color: rgba(64,255,94,0.6); font-family: monospace; font-size: 9px; }
 </style>

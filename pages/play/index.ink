@@ -8,13 +8,9 @@
 import wx from 'wx';
 import { store } from '../../store.js';
 
-var CFGKEY = 'av11_cfg';
 var WORKSKEY = 'av11_works';
-var SPEEDS = [
-  { key: 'slow', label: '慢速', fps: 5 },
-  { key: 'mid', label: '中速', fps: 8 },
-  { key: 'fast', label: '快速', fps: 12 }
-];
+var FPS = 12;
+var TARGET = 120;
 
 function sget(k) {
   try { if (typeof localStorage !== 'undefined') { var v = localStorage.getItem(k); if (v) return JSON.parse(v); } } catch (e) {}
@@ -26,38 +22,32 @@ function sset(k, v) {
   try { wx.setStorageSync(k, v); return true; } catch (e) {}
   return false;
 }
-function defCfg() { return { name: '未命名定格', speedKey: 'mid', lenKey: 'mid', mode: 'manual' }; }
-function speedOf(c) { for (var i = 0; i < SPEEDS.length; i++) if (SPEEDS[i].key === c.speedKey) return SPEEDS[i]; return SPEEDS[1]; }
-function reasonLabel(r) { return r === 'target' ? '拍够了' : (r === 'time' ? '满 3 分钟了' : (r === 'user' ? '手动结束' : '—')); }
-var MENU = [
-  { name: '播放/暂停', act: 'toggle' },
-  { name: '重播', act: 'replay' },
-  { name: '循环开关', act: 'loop' },
-  { name: '删最后一帧', act: 'del' },
-  { name: '回拍摄补拍', act: 'shoot' }
-];
+function reasonLabel(r) {
+  return r === 'voice' ? '说「退出」结束' : (r === 'target' ? '拍够了' : (r === 'time' ? '满 3 分钟了' : (r === 'back' ? '双击结束' : '—')));
+}
 
 export default {
   data: {
     evt: 'EVT: play ready',
-    ver: 'v1.0.0',
-    status: '合成 = 按设定帧率逐帧播放帧序列（不是生成视频文件）',
+    ver: 'v1.1.0',
+    status: '合成 = 按 12 帧/秒逐帧播放帧序列（不是生成视频文件）',
     progLine: '帧 0/0',
-    readLines: [],
-    rows: []
+    readLines: []
   },
   onLoad() {
     try { this.enableWorldAwareness(); } catch (e) {}
-    this._sel = 0; this._ctx = null; this._timer = null; this._playing = false;
-    this._idx = 0; this._loop = false; this._drawTimes = []; this._decBusy = false;
-    this._cfg = sget(CFGKEY) || defCfg();
-    this._fps = speedOf(this._cfg).fps;
-    if (!store.frames.length) this.setData({ status: '会话内暂无帧：先去拍摄页拍帧，再回来合成播放' });
+    this._ctx = null; this._timer = null; this._playing = false;
+    this._idx = 0; this._drawTimes = []; this._decBusy = false;
+    if (!store.frames.length) this.setData({ status: '会话内暂无帧：先回拍摄页，点头开始拍摄' });
     this._render();
   },
-  onReady() { try { if (wx.createCanvasContext) this._ctx = wx.createCanvasContext('playCanvas'); } catch (e) { this._ctx = null; } this._drawCurrent(); },
-  onHide() { this._pause(); this._persistMeasured(); },
-  onUnload() { this._pause(); this._persistMeasured(); },
+  onReady() {
+    try { if (wx.createCanvasContext) this._ctx = wx.createCanvasContext('playCanvas'); } catch (e) { this._ctx = null; }
+    if (store.frames.length) this._play();
+    else this._drawCurrent();
+  },
+  onHide() { this._stop(); this._persistMeasured(); },
+  onUnload() { this._stop(); this._persistMeasured(); },
   _totals() {
     var total = 0;
     store.sizes.forEach(function (s) { total += s || 0; });
@@ -70,24 +60,19 @@ export default {
     return Math.round(((this._drawTimes.length - 1) / dt) * 10) / 10;
   },
   _render() {
-    var sel = this._sel || 0;
-    var rows = MENU.map(function (m, i) {
-      return { name: m.name, cls: i === sel ? 'mrow mrow-sel' : 'mrow', mark: i === sel ? '▸' : '·' };
-    });
     var n = store.frames.length;
     var total = this._totals();
     var meas = this._measured();
     if (meas) store.measuredFps = meas;
     var reads = [
-      { l1: '设定帧率', v1: this._fps + ' fps', l2: '实测帧率', v2: meas ? (meas + ' fps') : '未测（播放后出）' },
-      { l1: '已拍张数', v1: n + ' / 目标 ' + (store.target || 0), l2: '单帧平均', v2: n ? (Math.round((total / n / 102.4)) / 10 + ' KB') : '-' },
-      { l1: '帧总大小', v1: n ? (Math.round((total / 102.4)) / 10 + ' KB') : '-', l2: '拍摄耗时', v2: (store.shootSec || 0) + ' s' },
-      { l1: '停因', v1: reasonLabel(store.stopReason), l2: '推算成片', v2: n ? (Math.round((n / this._fps) * 10) / 10 + ' s') : '-' }
+      { l1: '设定帧率', v1: FPS + ' fps', l2: '实测帧率', v2: meas ? (meas + ' fps') : '未测（播放后出）' },
+      { l1: '已拍张数', v1: n + ' / ' + TARGET, l2: '实际成片', v2: n ? (Math.round((n / FPS) * 10) / 10 + ' s') : '-' },
+      { l1: '单帧平均', v1: n ? (Math.round((total / n / 102.4)) / 10 + ' KB') : '-', l2: '帧总大小', v2: n ? (Math.round((total / 102.4)) / 10 + ' KB') : '-' },
+      { l1: '拍摄耗时', v1: (store.shootSec || 0) + ' s', l2: '停因', v2: reasonLabel(store.stopReason) }
     ];
     this.setData({
-      rows: rows,
       readLines: reads,
-      progLine: '帧 ' + (n ? Math.min(this._idx + 1, n) : 0) + '/' + n + ' · 循环' + (this._loop ? '开' : '关') + (this._playing ? ' · 播放中' : ' · 已停')
+      progLine: '帧 ' + (n ? Math.min(this._idx + 1, n) : 0) + '/' + n + (this._playing ? ' · 循环播放中 · 点头从头重播' : '')
     });
   },
   _persistMeasured() {
@@ -130,7 +115,7 @@ export default {
     try {
       var blob = this._dataUrlToBlob(store.frames[this._idx]);
       bmp = await createImageBitmap(blob);
-      this._ctx.drawImage(bmp, 0, 0, 448, 160);
+      this._ctx.drawImage(bmp, 0, 0, 448, 170);
       if (this._ctx.flush) this._ctx.flush();
       this._drawTimes.push(Date.now());
       if (this._drawTimes.length > 240) this._drawTimes.shift();
@@ -143,88 +128,41 @@ export default {
     }
   },
   _play() {
-    if (!store.frames.length) { this.setData({ status: '无帧可播：先去拍摄', evt: 'EVT: play empty' }); return; }
-    if (this._idx >= store.frames.length - 1) this._idx = 0;
+    if (!store.frames.length || this._playing) return;
     this._playing = true;
-    this._drawTimes = [];
-    var self = this;
-    var stepMs = Math.max(40, Math.round(1000 / this._fps));
     this._drawCurrent();
+    var self = this;
+    var stepMs = Math.max(40, Math.round(1000 / FPS));
     this._timer = setInterval(function () {
       if (!self._playing) return;
-      if (self._idx >= store.frames.length - 1) {
-        if (self._loop) { self._idx = 0; self._drawCurrent(); return; }
-        self._pause();
-        self._persistMeasured();
-        self._speak('播放结束');
-        self.setData({ status: '播放结束：实测帧率与读数见验证面板' });
-        return;
-      }
-      self._idx++;
+      self._idx = (self._idx + 1) % store.frames.length;
       self._drawCurrent();
     }, stepMs);
     this._render();
-    this.setData({ evt: 'EVT: playing @' + this._fps + 'fps' });
+    this.setData({ evt: 'EVT: looping @12fps' });
   },
-  _pause() {
+  _stop() {
     this._playing = false;
     if (this._timer) { clearInterval(this._timer); this._timer = null; }
+  },
+  _restart() {
+    this._idx = 0;
+    this._drawTimes = [];
+    if (!this._playing) this._play();
+    else this._drawCurrent();
     this._render();
+    this.setData({ evt: 'EVT: replay from 0' });
   },
-  _activate(i) {
-    var d = MENU[i]; if (!d) return;
-    this._sel = i;
-    if (d.act === 'toggle') { if (this._playing) { this._pause(); this._persistMeasured(); this.setData({ evt: 'EVT: pause' }); } else this._play(); }
-    else if (d.act === 'replay') { this._pause(); this._idx = 0; this._drawTimes = []; this._play(); }
-    else if (d.act === 'loop') { this._loop = !this._loop; this._render(); this.setData({ evt: 'EVT: loop ' + this._loop }); }
-    else if (d.act === 'del') {
-      this._pause();
-      if (store.frames.length) {
-        store.frames.pop();
-        store.sizes.pop();
-        if (this._idx >= store.frames.length) this._idx = Math.max(0, store.frames.length - 1);
-        this._persistMeasured();
-        this.setData({ status: '已删最后一帧，现 ' + store.frames.length + ' 帧；可回拍摄页补拍', evt: 'EVT: del last' });
-        this._drawCurrent();
-      } else this.setData({ status: '已无帧可删', evt: 'EVT: del empty' });
-      this._render();
-    }
-    else if (d.act === 'shoot') {
-      this._pause();
-      store.stopReason = ''; // retake continuation: shoot page must not reset
-      try { wx.navigateTo({ url: '/pages/shoot/index' }); } catch (e) {}
-    }
-    this._render();
-  },
-  onRowTap(e) {
-    var i = this._sel || 0;
-    try { i = Number(e.currentTarget.dataset.idx); } catch (err) {}
-    if (isNaN(i)) i = this._sel || 0;
-    this._activate(i);
-  },
-  _move(dir) { this._sel = ((this._sel || 0) + dir + MENU.length) % MENU.length; this._render(); },
-  _speak(text) {
-    try {
-      if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return false;
-      speechSynthesis.speak(new SpeechSynthesisUtterance(text), 'immediate');
-      return true;
-    } catch (e) { return false; }
-  },
-  onKeyDown(event) {
-    var k = event.key || event.code;
-    if (k === 'Enter' || k === 'GlobalHook') this._activate(this._sel || 0);
-    else if (k === 'ArrowDown') this._move(1);
-    else if (k === 'ArrowUp') this._move(-1);
-  },
-  onKeyUp(event) { if (['ArrowUp', 'ArrowDown', 'Enter'].indexOf(event.key || event.code) >= 0) event.preventDefault(); },
-  onHeadGesture(event) { if (event && event.gesture === 'nod') { if (this._playing) { this._pause(); this._persistMeasured(); } else this._play(); } }
+  onHeadGesture(event) {
+    if (event && event.gesture === 'nod') this._restart();
+  }
 };
 </script>
 
 <page>
   <view class="page">
     <text class="ttl">PLAY · 合成播放</text>
-    <canvas id="playCanvas" width="448" height="160" class="viewcv"></canvas>
+    <canvas id="playCanvas" width="448" height="170" class="viewcv"></canvas>
     <text class="prog">{{progLine}}</text>
     <view class="rlist">
       <view ink:for="{{readLines}}" class="rrow">
@@ -235,11 +173,6 @@ export default {
       </view>
     </view>
     <text class="status">{{status}}</text>
-    <view class="mlist">
-      <view ink:for="{{rows}}" class="{{item.cls}}" bindtap="onRowTap" data-idx="{{index}}">
-        <text class="mname">{{item.mark}} {{item.name}}</text>
-      </view>
-    </view>
     <view class="footrow">
       <text class="evt">{{evt}}</text>
       <text class="ver">{{ver}}</text>
@@ -250,19 +183,15 @@ export default {
 <style>
 .page { display: flex; flex-direction: column; height: 100vh; padding: 8px 14px; background-color: #000000; }
 .ttl { color: #7dff9e; font-size: 15px; font-weight: 500; }
-.viewcv { width: 448px; height: 160px; margin-top: 4px; border: 1px solid rgba(64,255,94,0.7); background-color: #021007; }
-.prog { color: #40ff5e; font-family: monospace; font-size: 11px; margin-top: 4px; }
+.viewcv { width: 448px; height: 170px; margin-top: 4px; border: 1px solid rgba(64,255,94,0.7); background-color: #021007; }
+.prog { color: #40ff5e; font-family: monospace; font-size: 12px; margin-top: 4px; }
 .rlist { display: flex; flex-direction: column; margin-top: 4px; border: 1px solid rgba(64,255,94,0.6); background-color: #04140a; padding: 4px 8px; }
 .rrow { display: flex; flex-direction: row; margin-bottom: 2px; }
 .rlabel { width: 56px; color: #40ff5e; font-size: 10px; font-family: monospace; }
 .rlabel2 { margin-left: 14px; }
 .rval { flex-grow: 1; color: #7dff9e; font-size: 10px; font-family: monospace; font-weight: 500; }
 .status { color: rgba(125,255,158,0.9); font-size: 9px; margin-top: 3px; }
-.mlist { display: flex; flex-direction: row; flex-wrap: wrap; margin-top: 4px; }
-.mrow { border: 1px solid rgba(64,255,94,0.5); background-color: #04140a; padding: 3px 6px; margin-right: 4px; margin-bottom: 3px; }
-.mrow-sel { border: 2px solid #7dff9e; background-color: #0a1f0e; }
-.mname { color: #40ff5e; font-size: 10px; }
-.footrow { display: flex; flex-direction: row; margin-top: 1px; }
+.footrow { display: flex; flex-direction: row; margin-top: 2px; }
 .evt { flex-grow: 1; color: rgba(64,255,94,0.6); font-family: monospace; font-size: 9px; }
 .ver { color: rgba(64,255,94,0.6); font-family: monospace; font-size: 9px; }
 </style>
