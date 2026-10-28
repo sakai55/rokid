@@ -12,9 +12,9 @@ https://github.com/sakai55/rokid/tree/agent-frame-align
 
 ## 预览截图
 
-![预览-ready](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/frame-align/preview-frame-align-ready.png)
-![预览-playing](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/frame-align/preview-frame-align-playing.png)
-![预览-done](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/frame-align/preview-frame-align-done.png)
+![预览-ready](../screenshots/frame-align/preview-frame-align-ready.png)
+![预览-playing](../screenshots/frame-align/preview-frame-align-playing.png)
+![预览-done](../screenshots/frame-align/preview-frame-align-done.png)
 
 ## 玩法
 
@@ -74,7 +74,7 @@ cd ~/workspace/rokid/git-rokid-photo/games/frame-align
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | 对框取景（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Version / Build | 1.0.1 / 待导入后回填 |
 | App Category | 待导入后回填 |
 | Intent Description | Photo framing game for Rokid glasses: put a named object into a named cell of a 3x3 grid, snap, and the host LLM reports the zone it sees for a local hit/miss compare. Camera only. |
 | Agent ID | 待导入后回填 |
@@ -128,3 +128,17 @@ cd ~/workspace/rokid/git-rokid-photo/games/frame-align
 **Fixes**
 
 - 无（首个版本）
+
+### Change Log（Build 1.0.1）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 无
+
+**Fixes**
+
+- 删除 FileReader（Ink 运行时不存在，真机必死）：照片 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败接全局错误码 E2005 并如实记为拍照失败可重试。
