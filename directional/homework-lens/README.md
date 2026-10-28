@@ -147,7 +147,7 @@ data: URL、FileReader 可用）、步骤是否只有提示没有答案、
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
@@ -282,3 +282,17 @@ Hi, I'm **Homework Lens** - steps, not answers.
 **Fixes**
 
 - None (initial release).
+
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Removed FileReader (absent from the Ink runtime; would fail on device): question photo Blob→dataURL now uses the documented `blob.arrayBuffer()` + chunked `btoa` path, and the failure surfaces fleet error code E2005 in the conversion-unavailable state.
