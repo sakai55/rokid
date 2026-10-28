@@ -111,6 +111,24 @@ that class of failure impossible to hide and possible to route around.
   JPEG encoder rejects or hangs is no longer a dead end: the take routes
   into bitmap mode and says so, big, on screen and in the metadata.
 
+## v1.1.2 addendum (device-proven root cause + fleet error codes)
+
+- The Ink runtime has NO FileReader (device-proven 2026-10-28, v1.1.0
+  died every frame at Blob→dataURL). FileReader must never appear in
+  this project again — Blob→dataURL goes through `blob.arrayBuffer()`
+  + chunked `btoa` only, still inside the 600 ms timeout breaker.
+- Every failure point maps to a fleet error code, defined ONCE in
+  `err.js`. Display/TTS/`lastError` use the full series-prefixed code
+  `AVE####` (series prefix AV + code, concatenated — GO 2026-10-28
+  23:22). Canonical table: repo-root `ERROR-CODES.md`; the project
+  `ERROR-CODES.md` is an AV11 excerpt. Same-code repeats only bump a
+  ×N counter; the latest code + raw text lands in `av11_works`
+  metadata as `lastError`.
+- Fast fail: 10 consecutive frame failures stop the take on the shoot
+  page (AVE2010 shown, TTS speaks just the code) — never grind to the
+  180 s cap again. A take ending with 0 frames shows AVE4001 and stays
+  on the shoot page; it never navigates to an empty play page.
+
 ## Permissions
 
 - `CAMERA` — grabFrame viewfinder, onion skin and frame capture.
