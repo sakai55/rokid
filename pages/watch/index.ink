@@ -13,7 +13,7 @@ var AKEY = 'av02_alert';
 export default {
   data: {
     evt: 'EVT: watch ready（仅前台运行）',
-    ver: 'v1.0.0',
+    ver: 'v1.0.1',
     status: '单击开始监看 · 离开本页即停',
     watching: false,
     watchLabel: 'START 开始监看',

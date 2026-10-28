@@ -23,7 +23,7 @@ var MENU = [
 export default {
   data: {
     evt: 'EVT: ready · 滑动选菜单/阈值',
-    ver: 'v1.0.0',
+    ver: 'v1.0.1',
     status: '先对准静止画面拍一张基线，再选触发阈值',
     baseLine: '基线：未标定',
     thrIdx: 1,
