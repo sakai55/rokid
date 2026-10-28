@@ -1,7 +1,7 @@
 ---
 name: "rokid-boutique-acceptance"
 description: "Acceptance check for Rokid boutique-line batches in the sakai55/rokid repo: verify a batch from the built files, not from ledger prose — page counts, skeleton isomorphism, counted content sets, API wiring per claimed loop step, persistence code for cross-session claims, placeholders never counted, and only passing agents counted toward the batch. Use after building and before packing, pushing, or registering any boutique batch."
-version: "1.1.0"
+version: "1.2.0"
 ---
 
 # Rokid Boutique Batch Acceptance
@@ -23,6 +23,7 @@ Run it after building, **before** packing counts as done, before pushing, and be
 - **Content set — count it.** For each claimed set, count the items in the built files and record the count (stations, songs, questions, stalls, steps…). A set that cannot be counted does not exist.
 - **Loop — find the call.** For each claimed loop step, search the built files for the API call that step needs (head orientation / `onHeadGesture`, ASR, TTS, camera…). A step with no call is unwired and fails that claim. Permissions in `app.json`/`package.json` must match the features actually wired — never zero-permission claims for a camera/sensor feature.
 - **Cross-session memory — find the persistence code.** When cross-session memory is claimed, search for the storage/write code (key name recorded). No persistence code, no claim.
+- **Error-code wiring — grep it.** For any agent claiming error-code integration (mandatory for new boutique agents), search the built files for the error-code wiring: every user-visible failure path must surface a full series-prefixed code (`<series>E####`, per the repo-root `ERROR-CODES.md`), persist `lastError` (full code + slug + version + original text), and the README must carry a 「错误码」 section listing the codes used. A failure path that shows raw error text with no code — fail. Also grep the built files for `FileReader`: any hit is an automatic fail (the API is absent from the Ink runtime, device-proven by field report AVE2005).
 - **Placeholders stay labelled.** Any placeholder or sample feature is labelled as a placeholder in the interface and in the notes, and is never counted as wired.
 
 ## Count only what passes and report the rest
@@ -43,5 +44,6 @@ Every change: bump `version:` above, append a Change Log entry below (date, what
 
 ## Change Log
 
+- **1.2.0 (2026-10-28)** — Minor: new check. GO stood up the fleet global error-code system (repo-root `ERROR-CODES.md`, registry in the 「Rokid开发环境」 chat) and approved acceptance coverage the same day: acceptance now greps built files for error-code wiring (full series-prefixed codes on every visible failure path, `lastError` persistence, README 「错误码」 section) and treats any `FileReader` hit as an automatic fail — distilled from AV11's device field report AVE2005 (「FileReader is not defined」), which exposed the same fatal call in 39 fleet files.
 - **1.1.0 (2026-10-28)** — Minor: new check. GO added a heavy quota to the daily batch （每日 2 个重度 Agent, each 20+ distinct pages); acceptance now reconciles the built `app.json` page list against the `pages/` tree for heavy-designated agents, states/demo steps never count as pages, and look-alike pages are merged before recounting.
 - **1.0.0 (2026-10-28)** — Landed as a skill at GO's instruction. Distilled from the boutique line's first week: the 2026-10-27 first batch passed its three gates in ledger prose but was, in built files, 10/10 single-page with near-identical 8.35–8.57 KB `.ink` files — GO's verdict 「还是老问题」; the same-day merge-redo (JP20/JP21/JP22/KR15 + CC10 v2, three to four pages each, counted sets, visible persistence keys) supplied the passing shape; the checks were then patched into the daily cron and the 2026-10-28 batch (10 agents, 3 pages each) was the first run accepted under them.
