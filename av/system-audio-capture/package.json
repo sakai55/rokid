@@ -1,1 +1,0 @@
-{"author":"","dependencies":{},"description":"System Audio Capture - system-audio source discipline, chunked recording, session transcription of own playback, archive with decode playback.","keywords":[],"license":"ISC","main":"app.js","name":"system-audio-capture","version":"1.0.0"}
