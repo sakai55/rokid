@@ -10,7 +10,7 @@ Rokid 眼镜持续视频流探针（AIUI Agent）。为回答「Agent 能不能�
 
 - **01 持续取流（60 秒）**：`getUserMedia({video})`（理想约束 640×480@30，被拒时回退 `{video:true}` 并在结果中标明）→ 读 `track.getSettings()` 报告实际分辨率/帧率 → 循环 `ImageCapture.grabFrame()` 计数：实测抓帧率（注意：这是 Agent 抓帧速率，不是传感器帧率）、帧间最大间隔、失败次数 → 起止电量（`navigator.getBattery()`，不支持时略）。
 - **02 持续录制（30 秒）**：新取一路流 → `MediaRecorder`（先查 `isTypeSupported`：`video/mp4` 优先，其次 `video/webm;codecs=vp8,opus`，都不支持记 SKIP）以 1 秒 timeslice 录制 → 分片数、总字节、折算 MB/分钟、错误数。录制数据只在内存中，测完即弃——平台无通用文件 API、录像无法落盘，这本身就是结论之一。
-- **03 抓帧问大模型（3 轮）**：优先走真 AR 帧路径：`grabFrame()` → 脚本 Canvas 缩至 480 宽 → `convertToBlob` JPEG → FileReader 转 data: URL → `LanguageModel` 图片输入；任一步不可用则回退 `takePhoto({mode:'telephoto'})`（舰队已验证路径），并在结果中标明来源（grabFrame / takePhoto），两种来源的耗时不混报。分段报告：抓帧均时、LLM 往返均时、最后一轮的回答摘要。
+- **03 抓帧问大模型（3 轮）**：优先走真 AR 帧路径：`grabFrame()` → 脚本 Canvas 缩至 480 宽 → `convertToBlob` JPEG → Blob 经 `arrayBuffer()` + 分块 `String.fromCharCode` + `btoa` 转 data: URL → `LanguageModel` 图片输入；任一步不可用则回退 `takePhoto({mode:'telephoto'})`（舰队已验证路径），并在结果中标明来源（grabFrame / takePhoto），两种来源的耗时不混报。分段报告：抓帧均时、LLM 往返均时、最后一轮的回答摘要。
 
 ## 操作（镜腿手势优先）
 
