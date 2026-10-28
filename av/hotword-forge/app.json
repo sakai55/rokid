@@ -1,0 +1,16 @@
+{
+  "name": "Hotword Forge",
+  "description": "Hotword Forge: forge SpeechRecognitionSession hotwords, VAD silence and segmentation from live host capabilities, test them with streamed microphone chunks, and settle per-word hit counts across sessions.",
+  "pages": [
+    "pages/index/index",
+    "pages/forge/index",
+    "pages/test/index",
+    "pages/settle/index"
+  ],
+  "permissions": [
+    "RECORD_AUDIO"
+  ],
+  "window": {
+    "navigationBarTitleText": "Hotword Forge"
+  }
+}
