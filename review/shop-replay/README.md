@@ -68,7 +68,7 @@ https://github.com/sakai55/rokid/tree/agent-shop-replay
 | 项目 | 内容 |
 |---|---|
 | Studio 名称 | （导入后回填） |
-| Version / Build | 1.0.0 / （导入后回填） |
+| Version / Build | 1.0.1 / （导入后回填） |
 | App Category | （导入后回填） |
 | Intent Description | （导入后回填） |
 | Agent ID | （导入后回填） |
@@ -111,3 +111,9 @@ https://github.com/sakai55/rokid/tree/agent-shop-replay
 - Features added：购物登记（商品/价格/朝向选择 + 当时拍画面 + 登记一格）；纠结回放（登记顺序走线）；最便宜一跳（你记的价格取最小，并列取先登记）；结束小结（共几件 + 最便宜哪件在哪个方向）；六段 DEMO 演示
 - Improvements：无（首个版本）
 - Fixes：无（首个版本）
+
+#### Build 1.0.1
+
+- Features added：无
+- Improvements：无
+- Fixes：删除 FileReader（Ink 运行时不存在，真机必死）：登记照片 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败接全局错误码 E2005 并如实显示
