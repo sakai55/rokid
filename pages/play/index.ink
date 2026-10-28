@@ -8,6 +8,7 @@
 import wx from 'wx';
 import { store } from '../../store.js';
 import { errLine } from '../../err.js';
+import { log as logEvent, flushLog } from '../../logq.js';
 
 var WORKSKEY = 'av11_works';
 var FPS = 12;
@@ -38,7 +39,7 @@ function frameUrl(fr) {
 export default {
   data: {
     evt: 'EVT: play ready',
-    ver: 'v1.1.3',
+    ver: 'v1.2.0',
     status: '合成 = 按 12 帧/秒逐帧播放帧序列（不是生成视频文件）',
     progLine: '帧 0/0',
     failLine: '',
@@ -49,6 +50,10 @@ export default {
     this._ctx = null; this._timer = null; this._playing = false;
     this._idx = 0; this._drawTimes = []; this._decBusy = false;
     this._pxCv = null; this._errCode = ''; this._errCount = 0; this._lowFpsRaised = false;
+    this._playLogged = false;
+    // Flush point 2: entering the play page sends whatever the take
+    // left in the diagnostic log queue (logq.js; no-op unconfigured).
+    flushLog();
     if (!store.frames.length) {
       if (store.startedAt) {
         // A take was recorded but its frames did not survive the page
@@ -80,6 +85,8 @@ export default {
         evt: 'EVT: ' + code
       });
     }
+    // Diagnostic log mirror (same code + raw as the failure itself).
+    logEvent('fail', code, e ? errText(e) : '');
   },
   _totals() {
     var total = 0;
@@ -97,6 +104,11 @@ export default {
     var total = this._totals();
     var meas = this._measured();
     if (meas) store.measuredFps = meas;
+    if (meas && !this._playLogged) {
+      // First measured fps exists: the play event of the log pilot.
+      this._playLogged = true;
+      logEvent('play', '', 'fps=' + meas);
+    }
     if (meas && this._drawTimes.length >= 36 && meas < FPS / 2 && !this._lowFpsRaised) {
       this._lowFpsRaised = true;
       this._recordErr('E4004', new Error('measured ' + meas + ' fps < set ' + FPS + '/2'));

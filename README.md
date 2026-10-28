@@ -14,6 +14,8 @@ AV11 · 桌前摆弄小物件/手作时，在眼镜里逐帧拍定格动画并�
 
 **v1.1.3 格式定版**（GO 2026-10-28 23:37）：错误码唯一形态定为裸码 `E####`（全局表 v1.4.0），err.js 34 码改裸码字面量、删除前缀拼接层，屏显/TTS/`lastError` 全部同步裸码；功能与 v1.1.2 完全一致，无其他变化。
 
+**v1.2.0 诊断日志回传试点**（GO 2026-10-29 批准）：真机打包版没有任何日志回传通道，本版加一个日志客户端 `logq.js`——运行事件先排进本地队列，在拍摄结束、进合成页、下次启动三个时机整批经前门 `/log` 回传，登记处按事件流（含开始通道、出帧模式、`lastError` 同码镜像）对齐 debug。回传配置只在 logq.js 顶部，**钥匙未填（仓库占位符）时整个功能完全关闭、不发任何请求——提审版就是这个关闭态**；填钥匙方法见「打包前配置」一节。拍摄/合成/错误码逻辑与 v1.1.3 完全一致。
+
 ## 预览截图
 
 ![预览-shoot](../screenshots/stop-motion-studio/preview-stop-motion-studio-shoot.png)
@@ -46,6 +48,7 @@ TTS 说话点：开始时「开始拍摄，说退出结束合成」；拍到半�
 
 - `pages/shoot` 拍摄（入口页）：`getUserMedia({video:true})` → `ImageCapture.grabFrame()` 取景画在页面画布上（仅等待态刷新）；**洋葱皮** = 上一帧以 `globalAlpha` 0.45 半透明叠加（真实 drawImage 接线）；点头或单击开始后每秒 `grabFrame` → 先走编码路（画布缩至 480×352 → JPEG `convertToBlob` q0.6 / `createImageBlob` → **`blob.arrayBuffer()` + 分块 `btoa` 拼 data URL**（v1.1.2 起，运行时无 FileReader）+ 真实字节），**全链套 600ms Promise.race 超时熔断**；编码报错或超时即锁存位图直存模式（画布 `getImageData` 像素帧，或位图本体帧；目标降为 40 张），帧入**共享内存** `store.js`（帧形态 url/px/bmp、模式、首个编码错误、最近错误码 `lastError`、开始通道都在 store 里）；单帧处理有 2.5 秒看门狗；**每个失败点映射错误码（`err.js` 唯一定义），大字 `E####` 显示、同码只计数**；连续失败 10 次自动停拍（E2010，留在本页）；结束时把作品元数据写入 `av11_works`（帧率/张数/目标/出帧模式/编码错误/lastError/开始通道/停因/拍摄耗时/单帧平均 KB/总 KB/成片秒数/实测帧率待合成页回填），有帧才跳合成页、0 帧显示 E4001 留在本页。离开页面停流、停定时器、停 ASR。
 - `pages/play` 合成：进入即按 12 帧/秒逐帧绘制、自动循环播放——这就是「合成播放」；按帧形态分支绘制（data URL 解码 / px 像素经离屏画布 drawImage / 位图直 drawImage）；点头或单击从头重播。**验证读数面板**集中显示 GO 真机要看的数据：设定帧率（12）vs **实测帧率**（按真实绘制时间戳算）、已拍张数 / 目标、实际成片秒数、单帧平均 KB、帧总大小（位图模式标「估算」）、拍摄实际耗时、停因、**出帧模式（dataURL / 内存帧）与首个编码错误**；实测帧率回写进 `av11_works` 对应条目。
+- `logq.js` 诊断日志回传（v1.2.0 试点）：事件集 = 启动（版本）/ 开始拍摄（开始通道 nod/tap）/ 首帧成功 / 出帧模式锁定（dataURL 或 frame）/ **每个失败点的错误码镜像**（与 `_recordErr` 同码同原文）/ 拍摄结束（停因 + 张数）/ 合成播放首个实测帧率。事件先入本地队列 `av11_logq`（上限 100 条、满丢最旧），在拍摄结束、进合成页、下次启动三个时机整批 POST 到前门 `/log`（单批 ≤50 条、按会话分组），发送失败保留队列下次再试，全程不抛错、不阻塞主流程。只记错误信息、计数与模式串：**不记照片数据、不记语音原文**，`data:` 开头的 raw 整条丢弃、raw 一律截断 200 字。
 
 ## 语音交互流
 
@@ -88,13 +91,18 @@ TTS 说话点：开始时「开始拍摄，说退出结束合成」；拍到半�
 - 本台映射概览：1xxx 相机取景（打开/权限/拍照器/预览/流中断）、2xxx 拍帧编码（抓帧/画布/画布编码/直编/转文本/超时切换/无出帧路径/内存帧/单帧超时/连续失败停拍）、3xxx 语音（不可用/没启动/出错/反复掉线/播报）、4xxx 合成播放（0 帧/解码/绘制/帧率过低/帧丢失）、5xxx 存储、E7006 手势通道、E8001 页面切换、E8002 页面回收、E9001 兜底。
 - 现场已回报：**E2005**（v1.1.0/v1.1.1 真机）——运行时无 FileReader，v1.1.2 已删除该 API 并保留此码备查。
 - v1.1.2 行为配套：连续拍帧失败满 10 次自动停拍（大字 E2010 + 主错误码，停在拍摄页）；0 帧结束显示 E4001 并留在拍摄页、**不跳合成页、眼镜不退出**，点头或单击即可重开。
+- v1.2.0 日志镜像：每个失败点在写 `lastError` 的同时镜像一条诊断日志事件（同码、同原文截断 200 字），随队列在三个发送时机回传——前提是已按下一节配置回传钥匙；未配置时不发送、其余行为与 v1.1.3 一致。
+
+## 打包前配置：诊断日志回传钥匙
+
+回传配置只在 `logq.js` 顶部：`LOG_URL`（前门 `/log` 地址，已填好）与 `CHANNEL_KEY`（仓库中永远只有占位符 `PASTE_CHANNEL_KEY_HERE`）。要开真机回传试点：从 GitHub 导入 Studio 后，打开 `logq.js` 把占位符换成前门钥匙，再打包。填了真钥匙的工程**不要回推仓库**；每次重新导入都要重填（导入是快照）。不填 = 日志回传关闭，拍摄与合成功能不受任何影响。前门域名须在开发者后台的域名白名单内（与消息通道共用同一前门）。
 
 ## 设备测试信息
 
 | 项目 | 值 |
 |---|---|
 | Studio name | 待导入后回填 |
-| Version | 1.1.3 |
+| Version | 1.2.0 |
 | App Category | Entertainment |
 | Intent Description | Capability check of the stop-motion chain: nod to shoot at 12 fps, say the exit word to composite and loop-play with measured readings |
 | Agent ID | 待回填 |
@@ -115,6 +123,21 @@ Hi, I'm **Stop Motion Studio**. There is nothing to set up: you are already look
 图片 2 张见预览截图节；视频待真机阶段补。
 
 ### Change Log
+
+#### Build 1.2.0
+
+**Features added**
+
+- Diagnostic log return (pilot, approved 2026-10-29): a packaged agent has no log channel back from a real device, so runtime events are now queued locally and returned through the front door's /log endpoint. Event set: start (app version), begin (start channel nod/tap), first frame, frame-mode latch (dataURL / frame), a mirror of every coded failure (same code, same raw text), finish (stop reason + frame count), and play (first measured fps). The queue (`av11_logq`) is capped at 100 entries with the oldest dropped, persists across launches, and flushes fire-and-forget at three points — take finish, play-page entry, and next launch (which first drains the previous run's leftovers under their own session). Events carry only error text, counts and mode strings: no photo data and no recognised speech text are ever logged, raw is truncated to 200 chars, and a raw starting with `data:` is dropped outright.
+- The log client (logq.js) is fully failure-isolated: every entry point is try/catch wrapped, a failed send keeps the queue for the next flush point, and logging can never throw into or block the shooting flow.
+
+**Improvements**
+
+- Configuration discipline: the return endpoint and key placeholder live only at the top of logq.js. While the key is still the placeholder the client is a complete no-op — it sends nothing and touches no storage — which is exactly the off state the review build ships in; the key is filled in Studio only for device pilot runs and never pushed back to the repo.
+
+**Fixes**
+
+- None (the capture chain, encode breaker, bitmap fallback, fast fail and zero-frame behaviour are unchanged from Build 1.1.3).
 
 #### Build 1.1.3
 
