@@ -1,1 +1,10 @@
-{"author":"","dependencies":{},"description":"Stop Motion Studio - frame-by-frame stop-motion shooting with onion skin, in-glasses composite playback and an honest video-encode probe","keywords":[],"license":"ISC","main":"app.js","name":"stop-motion-studio","version":"1.0.0"}
+{
+  "author": "",
+  "dependencies": {},
+  "description": "Stop Motion Studio - minimal verification build: nod to start auto frame capture with onion skin, say the exit word to finish, looped composite playback at a fixed 12 fps with measured readings",
+  "keywords": [],
+  "license": "ISC",
+  "main": "app.js",
+  "name": "stop-motion-studio",
+  "version": "1.1.0"
+}
