@@ -12,6 +12,8 @@ AV11 · 桌前摆弄小物件/手作时，在眼镜里逐帧拍定格动画并�
 
 **v1.1.2 根因修复版**（真机错误原文到手：屏显「拍帧失败，FileReader is not defined」）：**Ink 运行时根本没有 FileReader**（aiui-dev 官方参考全文亦无）——编码成功后转 dataURL 每帧必死、0 帧磨到 180 秒超时后自动退出。本版彻底删除该 API、改走 `blob.arrayBuffer()` + 分块 `btoa`；同时上线**错误码系统**（见「错误码」一节）、连续失败 10 次快速停拍、0 帧结束不跳页。
 
+**v1.1.3 格式定版**（GO 2026-10-28 23:37）：错误码唯一形态定为裸码 `E####`（全局表 v1.4.0），err.js 34 码改裸码字面量、删除前缀拼接层，屏显/TTS/`lastError` 全部同步裸码；功能与 v1.1.2 完全一致，无其他变化。
+
 ## 预览截图
 
 ![预览-shoot](../screenshots/stop-motion-studio/preview-stop-motion-studio-shoot.png)
@@ -42,7 +44,7 @@ TTS 说话点：开始时「开始拍摄，说退出结束合成」；拍到半�
 
 ## 结构与功能（核心链路闭环）
 
-- `pages/shoot` 拍摄（入口页）：`getUserMedia({video:true})` → `ImageCapture.grabFrame()` 取景画在页面画布上（仅等待态刷新）；**洋葱皮** = 上一帧以 `globalAlpha` 0.45 半透明叠加（真实 drawImage 接线）；点头或单击开始后每秒 `grabFrame` → 先走编码路（画布缩至 480×352 → JPEG `convertToBlob` q0.6 / `createImageBlob` → **`blob.arrayBuffer()` + 分块 `btoa` 拼 data URL**（v1.1.2 起，运行时无 FileReader）+ 真实字节），**全链套 600ms Promise.race 超时熔断**；编码报错或超时即锁存位图直存模式（画布 `getImageData` 像素帧，或位图本体帧；目标降为 40 张），帧入**共享内存** `store.js`（帧形态 url/px/bmp、模式、首个编码错误、最近错误码 `lastError`、开始通道都在 store 里）；单帧处理有 2.5 秒看门狗；**每个失败点映射错误码（`err.js` 唯一定义），大字 `AVE####` 显示、连码只计数**；连续失败 10 次自动停拍（E2010，留在本页）；结束时把作品元数据写入 `av11_works`（帧率/张数/目标/出帧模式/编码错误/lastError/开始通道/停因/拍摄耗时/单帧平均 KB/总 KB/成片秒数/实测帧率待合成页回填），有帧才跳合成页、0 帧显示 E4001 留在本页。离开页面停流、停定时器、停 ASR。
+- `pages/shoot` 拍摄（入口页）：`getUserMedia({video:true})` → `ImageCapture.grabFrame()` 取景画在页面画布上（仅等待态刷新）；**洋葱皮** = 上一帧以 `globalAlpha` 0.45 半透明叠加（真实 drawImage 接线）；点头或单击开始后每秒 `grabFrame` → 先走编码路（画布缩至 480×352 → JPEG `convertToBlob` q0.6 / `createImageBlob` → **`blob.arrayBuffer()` + 分块 `btoa` 拼 data URL**（v1.1.2 起，运行时无 FileReader）+ 真实字节），**全链套 600ms Promise.race 超时熔断**；编码报错或超时即锁存位图直存模式（画布 `getImageData` 像素帧，或位图本体帧；目标降为 40 张），帧入**共享内存** `store.js`（帧形态 url/px/bmp、模式、首个编码错误、最近错误码 `lastError`、开始通道都在 store 里）；单帧处理有 2.5 秒看门狗；**每个失败点映射错误码（`err.js` 唯一定义），大字 `E####` 显示、同码只计数**；连续失败 10 次自动停拍（E2010，留在本页）；结束时把作品元数据写入 `av11_works`（帧率/张数/目标/出帧模式/编码错误/lastError/开始通道/停因/拍摄耗时/单帧平均 KB/总 KB/成片秒数/实测帧率待合成页回填），有帧才跳合成页、0 帧显示 E4001 留在本页。离开页面停流、停定时器、停 ASR。
 - `pages/play` 合成：进入即按 12 帧/秒逐帧绘制、自动循环播放——这就是「合成播放」；按帧形态分支绘制（data URL 解码 / px 像素经离屏画布 drawImage / 位图直 drawImage）；点头或单击从头重播。**验证读数面板**集中显示 GO 真机要看的数据：设定帧率（12）vs **实测帧率**（按真实绘制时间戳算）、已拍张数 / 目标、实际成片秒数、单帧平均 KB、帧总大小（位图模式标「估算」）、拍摄实际耗时、停因、**出帧模式（dataURL / 内存帧）与首个编码错误**；实测帧率回写进 `av11_works` 对应条目。
 
 ## 语音交互流
@@ -80,11 +82,11 @@ TTS 说话点：开始时「开始拍摄，说退出结束合成」；拍到半�
 
 ## 错误码
 
-本台执行舰队全局错误码协议：**任何错误，眼镜上大字显示完整码 `AVE####` + 一行中文说明**（如 `AVE2005 编码转文本失败`），同码连续发生只递增计数（×N）不刷屏；自动停拍时 TTS 只读码（「错误 AVE2010」）；最近一次错误码与原文写入作品元数据 `lastError`（存完整码）。**回报约定：GO 在真机看到错误，只需报这个完整码（如 AVE2005），Muse 按码定位。**
+本台执行舰队全局错误码协议：**任何错误，眼镜上大字显示裸码 `E####` + 一行中文说明**（如 `E2005 编码转文本失败`），同码连续发生只递增计数（×N）不刷屏；自动停拍时 TTS 只读码（「错误 E2010」）；最近一次错误码与原文写入作品元数据 `lastError`（存裸码）。**回报约定：GO 在真机看到错误，只需报这个码（如 E2005），Muse 按码定位。** 格式为 GO 2026-10-28 23:37 定版：数字段全舰队唯一同义、唯一形态就是裸码，旧系列式已废止。
 
-- 唯一权威表（canonical）：仓库根目录 `ERROR-CODES.md`（舰队全局错误码表，登记处为旁聊「Rokid开发环境」；本地镜像 `~/workspace/rokid/ERROR-CODES.md`）；本工程 `ERROR-CODES.md` 是 AV11 用到码的节选版，冲突以全局表为准；代码唯一定义处是工程内 `err.js`，每个失败点都映射一个码。
+- 唯一权威表（canonical）：仓库根目录 `ERROR-CODES.md`（舰队全局错误码表 v1.4.0，登记处为旁聊「Rokid开发环境」；本地镜像 `~/workspace/rokid/ERROR-CODES.md`）；本工程 `ERROR-CODES.md` 是 AV11 用到码的节选版，冲突以全局表为准；代码唯一定义处是工程内 `err.js`（34 码全部裸码字面量），每个失败点都映射一个码。
 - 本台映射概览：1xxx 相机取景（打开/权限/拍照器/预览/流中断）、2xxx 拍帧编码（抓帧/画布/画布编码/直编/转文本/超时切换/无出帧路径/内存帧/单帧超时/连续失败停拍）、3xxx 语音（不可用/没启动/出错/反复掉线/播报）、4xxx 合成播放（0 帧/解码/绘制/帧率过低/帧丢失）、5xxx 存储、E7006 手势通道、E8001 页面切换、E8002 页面回收、E9001 兜底。
-- 现场已回报：**AVE2005**（v1.1.0/v1.1.1 真机）——运行时无 FileReader，v1.1.2 已删除该 API 并保留此码备查。
+- 现场已回报：**E2005**（v1.1.0/v1.1.1 真机）——运行时无 FileReader，v1.1.2 已删除该 API 并保留此码备查。
 - v1.1.2 行为配套：连续拍帧失败满 10 次自动停拍（大字 E2010 + 主错误码，停在拍摄页）；0 帧结束显示 E4001 并留在拍摄页、**不跳合成页、眼镜不退出**，点头或单击即可重开。
 
 ## 设备测试信息
@@ -92,7 +94,7 @@ TTS 说话点：开始时「开始拍摄，说退出结束合成」；拍到半�
 | 项目 | 值 |
 |---|---|
 | Studio name | 待导入后回填 |
-| Version | 1.1.2 |
+| Version | 1.1.3 |
 | App Category | Entertainment |
 | Intent Description | Capability check of the stop-motion chain: nod to shoot at 12 fps, say the exit word to composite and loop-play with measured readings |
 | Agent ID | 待回填 |
@@ -114,17 +116,24 @@ Hi, I'm **Stop Motion Studio**. There is nothing to set up: you are already look
 
 ### Change Log
 
+#### Build 1.1.3
+
+**Fixes**
+
+- Error-code form finalised to bare codes (GO 2026-10-28 23:37, fleet table v1.4.0): the numeric segment is unique fleet-wide, so the series prefix is abolished everywhere. err.js now defines all 34 codes as bare `E####` literals (the prefix-concatenation layer is deleted and a load-time self-check asserts the bare shape); display, TTS, `lastError`, the README error-code section and the project ERROR-CODES.md excerpt all use the bare form (e.g. E2005 / E2010 / E4001).
+- Format change only — no functional changes: the capture chain (arrayBuffer + chunked btoa), the 600 ms encode breaker, the bitmap-direct fallback, the fast fail and the zero-frame behaviour are identical to Build 1.1.2.
+
 #### Build 1.1.2
 
 **Fixes**
 
 - Root cause found from the real-device error text: the Ink runtime has NO FileReader (absent from the official aiui-dev reference too). Every frame died at Blob→dataURL after a successful encode, producing the reported 「拍帧失败，FileReader is not defined」, zero frames, and an agent that ground on to the 180 s cap and exited. FileReader is deleted everywhere; Blob→dataURL now goes through `blob.arrayBuffer()` plus chunked `btoa` (documented in the window reference), still covered by the 600 ms encode breaker and the busy watchdog; if arrayBuffer is unavailable or fails, the take latches into the bitmap-direct mode as before.
-- Fast fail: 10 consecutive frame failures stop the take immediately instead of grinding to the 180 s cap — the shoot page stays up, shows AVE2010 plus the primary error code, and speaks just the code.
-- Zero frames no longer navigates: a take that ends with 0 frames shows AVE4001 big on the shoot page and stays there (the play page is never opened empty, the glasses no longer feel like the agent quit); one nod or tap starts a new take.
+- Fast fail: 10 consecutive frame failures stop the take immediately instead of grinding to the 180 s cap — the shoot page stays up, shows E2010 plus the primary error code, and speaks just the code.
+- Zero frames no longer navigates: a take that ends with 0 frames shows E4001 big on the shoot page and stays there (the play page is never opened empty, the glasses no longer feel like the agent quit); one nod or tap starts a new take.
 
 **Features added**
 
-- Fleet error-code system (global table v1.1.0): every failure point in both pages maps to a 4-digit code defined once in err.js; the glasses show the full prefixed code `AVE####` plus a one-line explanation in the big-text area, consecutive repeats only bump a ×N counter, and the latest code + raw text is written into the work metadata field `lastError`. The project carries ERROR-CODES.md, an excerpt of the canonical fleet table covering exactly the codes this agent uses.
+- Fleet error-code system (global table v1.1.0): every failure point in both pages maps to a 4-digit code defined once in err.js; the glasses show the code `E####` plus a one-line explanation in the big-text area, consecutive repeats only bump a ×N counter, and the latest code + raw text is written into the work metadata field `lastError`. The project carries ERROR-CODES.md, an excerpt of the canonical fleet table covering exactly the codes this agent uses.
 
 **Improvements**
 

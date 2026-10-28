@@ -1,16 +1,16 @@
 // AV11 error-code system — the ONLY definition site in this project.
 // Canonical table: ERROR-CODES.md at the repo root (fleet global
-// table, registry: side chat 「Rokid开发环境」; local mirror at
+// table v1.4.0, registry: side chat 「Rokid开发环境」; local mirror at
 // ~/workspace/rokid/ERROR-CODES.md). The project copy ERROR-CODES.md
 // is an excerpt of the codes this agent uses; on any conflict the
 // canonical table wins.
-// Protocol (GO 2026-10-28, format finalised 23:22): the prefix is the
-// SERIES code, concatenated with no separator — this agent shows
-// "AVE#### + one line of explanation" in the big-text area; the user
-// reports just the code. Codes never change meaning and are never
-// reused. Raw error text is diagnostic garnish (truncated), never a
-// substitute for a code. lastError stores the full series-prefixed code.
-export var SERIES_PREFIX = 'AV';
+// Protocol (GO 2026-10-28, format finalised 23:37): the ONLY form is
+// the bare code "E####" — the numeric segment is unique fleet-wide, so
+// no series prefix is used anywhere (an earlier prefixed form was
+// abolished the same day). Display, TTS, lastError and debug all use
+// this bare code as-is; the user reports just the code. Codes never
+// change meaning and are never reused. Raw error text is diagnostic
+// garnish (truncated), never a substitute for a code.
 
 export var ERR = {
   E1001: '相机打开失败',
@@ -53,20 +53,27 @@ export function errLabel(code) {
   return ERR[code] || ERR.E9001;
 }
 
-// Full series-prefixed code as stored in lastError and shown/spoken:
-// "AVE2005" (= series AV + code E2005, concatenated, no separator)
-export function fullCode(code) {
-  return SERIES_PREFIX + code;
-}
-
-// Fixed on-screen format: "AVE2005 编码转文本失败"
+// Fixed on-screen format: "E2005 编码转文本失败" (bare code, no prefix)
 export function errLine(code) {
-  return SERIES_PREFIX + code + ' ' + errLabel(code);
+  return code + ' ' + errLabel(code);
 }
 
-// Build an Error that carries its (short) code through promise chains.
+// Build an Error that carries its code through promise chains.
 export function codedError(code, message) {
   var e = new Error(message || errLabel(code));
   e.code = code;
   return e;
 }
+
+// Bare-code shape assertion (runtime self-check): every defined key
+// must be exactly "E" + 4 digits — no prefix may ever creep back in.
+export function selfCheck() {
+  for (var k in ERR) {
+    if (!/^E\d{4}$/.test(k)) return false;
+  }
+  return errLine('E2005') === 'E2005 编码转文本失败';
+}
+
+try {
+  if (!selfCheck() && typeof console !== 'undefined') console.warn('err.js self-check failed: non-bare code form');
+} catch (e) { /* self-check must never break the agent */ }

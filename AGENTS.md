@@ -118,16 +118,26 @@ that class of failure impossible to hide and possible to route around.
   this project again — Blob→dataURL goes through `blob.arrayBuffer()`
   + chunked `btoa` only, still inside the 600 ms timeout breaker.
 - Every failure point maps to a fleet error code, defined ONCE in
-  `err.js`. Display/TTS/`lastError` use the full series-prefixed code
-  `AVE####` (series prefix AV + code, concatenated — GO 2026-10-28
-  23:22). Canonical table: repo-root `ERROR-CODES.md`; the project
-  `ERROR-CODES.md` is an AV11 excerpt. Same-code repeats only bump a
-  ×N counter; the latest code + raw text lands in `av11_works`
-  metadata as `lastError`.
+  `err.js`. Display/TTS/`lastError` use the code as-is. Canonical
+  table: repo-root `ERROR-CODES.md`; the project `ERROR-CODES.md`
+  is an AV11 excerpt. Same-code repeats only bump a ×N counter; the
+  latest code + raw text lands in `av11_works` metadata as
+  `lastError`.
 - Fast fail: 10 consecutive frame failures stop the take on the shoot
-  page (AVE2010 shown, TTS speaks just the code) — never grind to the
-  180 s cap again. A take ending with 0 frames shows AVE4001 and stays
+  page (E2010 shown, TTS speaks just the code) — never grind to the
+  180 s cap again. A take ending with 0 frames shows E4001 and stays
   on the shoot page; it never navigates to an empty play page.
+
+## v1.1.3 addendum (error-code form finalised: bare codes only)
+
+- GO's final ruling (2026-10-28 23:37, fleet table v1.4.0): the ONLY
+  error-code form is the bare code `E####` — the numeric segment is
+  unique fleet-wide, so no prefix is carried in code definitions,
+  display, TTS or `lastError`. `err.js` defines the 34 codes as bare
+  literals (the prefix-concatenation layer is deleted) and self-checks
+  the bare shape at load. v1.1.3 changes nothing else: capture chain,
+  breakers, fallbacks and behaviour are byte-identical to v1.1.2 apart
+  from the code strings.
 
 ## Permissions
 
