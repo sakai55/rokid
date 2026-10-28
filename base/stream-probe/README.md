@@ -21,7 +21,7 @@ https://github.com/sakai55/rokid/tree/agent-stream-probe
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 待回填（本地 package.json 1.0.0） |
+| Version（Build） | 待回填（本地 package.json 1.0.1） |
 | App Category | 待回填（建议 Work） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
@@ -88,3 +88,9 @@ https://github.com/sakai55/rokid/tree/agent-stream-probe
 - Features added：三项视频链路探针（持续取流 60s / 持续录制 30s / 抓帧→LLM 3 轮），LIVE 实时读数行，每项结果语音播报
 - Improvements：—
 - Fixes：—
+
+#### v1.0.1
+
+- Features added：—
+- Improvements：—
+- Fixes：删除 FileReader（Ink 运行时不存在，原第 03 项的抓帧路径在真机必然回退）：Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，使 grabFrame 路径成为实际被测路径，失败仍按来源如实回退/标注并接全局错误码 E2005。
