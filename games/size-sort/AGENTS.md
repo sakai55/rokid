@@ -13,7 +13,7 @@ surroundings, never from on-screen pretend play.
 2. 先排：滑动在 6 种排列里选你认为的「从大到小」位置序（如 2,1,3 = 中间最大、左边第二、右边最小），单击或点头确认——先定死再拍照。
 3. 大模型回 `ORDER:`（它看到的从大到小位置序）+ 一句理由，本地全序比对：完全一致才算猜中 +1，差一位也不算（结果行会同时写出判定顺序与你的顺序）。
 
-- **Judge chain.** takePhoto(default) → FileReader data: URL → LanguageModel 图片输入，只回 `ORDER:`（位置序号的排列）+ `REASON:`；本地校验必须是 1/2/3 的有效排列再与猜测全等比对，无效排列记判定失败。 A "判定中…" waiting state is
+- **Judge chain.** takePhoto(default) → Blob 经 `arrayBuffer()` + 分块 `String.fromCharCode` + `btoa` 转 data: URL（转码失败带 E2005、记判定失败）→ LanguageModel 图片输入，只回 `ORDER:`（位置序号的排列）+ `REASON:`；本地校验必须是 1/2/3 的有效排列再与猜测全等比对，无效排列记判定失败。 A "判定中…" waiting state is
   shown for the whole capture+judge duration; every verdict is
   spoken via TTS.
 - **Judge failure is a failed round, honestly.** If the model is

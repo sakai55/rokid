@@ -41,7 +41,9 @@ walked too far to check cheaply.
 - **Reading is the official photo path, and it is gated twice.**
   SNAP takes a wide-field photo (`ImageCapture.takePhoto({mode:
   'wide'})`, wx camera-context fallback like the siblings); the Blob
-  becomes a data: URL via `FileReader` and goes to the host
+  becomes a data: URL via `blob.arrayBuffer()` + chunked
+  `String.fromCharCode` + `btoa` (conversion failure surfaces
+  as E2005) and goes to the host
   `LanguageModel` as an `image_url` part of ONE user message (system
   prompt via `initialPrompts` only, `availability()` first, session
   `destroy()`ed after — dossier §2.9). One strict reply format

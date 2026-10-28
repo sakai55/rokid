@@ -13,7 +13,7 @@ surroundings, never from on-screen pretend play.
 2. 大模型判定同时读出画面主要文字（TEXT 行）并显示在判定结果里，玩家可当场核对它到底读到了什么——读错了一眼可见。命中 +1。
 3. 滑动可先跳到另一未拍字符轮；判定后点头 = 记录申诉（不改分）；大模型不可用/格式不对，该轮如实记判定失败。
 
-- **Judge chain.** takePhoto(default) → FileReader data: URL → LanguageModel 图片输入（平台无 OCR API，这是官方读字路径）；只回 `VERDICT:` + `TEXT:`（读到的主要文字）+ `REASON:` 三行，本地解析并展示 TEXT 供核对。 A "判定中…" waiting state is
+- **Judge chain.** takePhoto(default) → Blob 经 `arrayBuffer()` + 分块 `String.fromCharCode` + `btoa` 转 data: URL（转码失败带 E2005、记判定失败）→ LanguageModel 图片输入（平台无 OCR API，这是官方读字路径）；只回 `VERDICT:` + `TEXT:`（读到的主要文字）+ `REASON:` 三行，本地解析并展示 TEXT 供核对。 A "判定中…" waiting state is
   shown for the whole capture+judge duration; every verdict is
   spoken via TTS.
 - **Judge failure is a failed round, honestly.** If the model is

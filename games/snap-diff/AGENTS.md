@@ -13,7 +13,7 @@ surroundings, never from on-screen pretend play.
 2. 先声明：滑动选你改了哪类（少了一件 / 多了一件 / 一件移位），单击或点头确认——声明先定死，再回到原机位拍第二张。
 3. 两张照片同送一次大模型判定，大模型回 `TYPE:`（它判的改动类）+ `DIFF:`（一句话说清差异），本地拿 TYPE 与你的声明比对：说中 +1，判定看出的差异原话会显示出来。3 局结算。本作是拍照游戏系列（GA41–GA50）的收官作。
 
-- **Judge chain.** 两张 takePhoto(default) 照片各转 FileReader data: URL，在同一次 LanguageModel prompt 里以两个 image_url part 一起送出（多模态 user 消息支持多图 part）；只回 `TYPE:` + `DIFF:` 两行，本地比对 TYPE 与玩家声明。判定回 NONE（看不出差异）记没说中并写明。 A "判定中…" waiting state is
+- **Judge chain.** 两张 takePhoto(default) 照片各经 `arrayBuffer()` + 分块 `String.fromCharCode` + `btoa` 转 data: URL（任一转码失败带 E2005、记判定失败），在同一次 LanguageModel prompt 里以两个 image_url part 一起送出（多模态 user 消息支持多图 part）；只回 `TYPE:` + `DIFF:` 两行，本地比对 TYPE 与玩家声明。判定回 NONE（看不出差异）记没说中并写明。 A "判定中…" waiting state is
   shown for the whole capture+judge duration; every verdict is
   spoken via TTS.
 - **Judge failure is a failed round, honestly.** If the model is

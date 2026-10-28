@@ -13,7 +13,7 @@ surroundings, never from on-screen pretend play.
 2. 判定看的是表面质地本身（纹理与材质），不是物体名称：一张木桌拍远了只看到「桌子」不一定过，凑近拍出木纹才算。照片送大模型，只回 `VERDICT:` + `REASON:`，本地解析，命中 +1。
 3. 滑动可先跳到另一未拍质地轮；判定后点头 = 记录申诉（不改分）；大模型不可用/格式不对，该轮如实记判定失败。
 
-- **Judge chain.** takePhoto(default) → FileReader data: URL → LanguageModel 图片输入；提示词写明「判表面质地（纹理与材质），不看物体名称」，只回 `VERDICT:` + `REASON:` 两行，本地解析。 A "判定中…" waiting state is
+- **Judge chain.** takePhoto(default) → Blob 经 `arrayBuffer()` + 分块 `String.fromCharCode` + `btoa` 转 data: URL（转码失败带 E2005、记判定失败）→ LanguageModel 图片输入；提示词写明「判表面质地（纹理与材质），不看物体名称」，只回 `VERDICT:` + `REASON:` 两行，本地解析。 A "判定中…" waiting state is
   shown for the whole capture+judge duration; every verdict is
   spoken via TTS.
 - **Judge failure is a failed round, honestly.** If the model is

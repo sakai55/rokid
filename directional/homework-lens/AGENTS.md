@@ -29,8 +29,9 @@ Rokid 眼镜作业辅导智能体（AIUI Agent）。
   步只能是提示或引导问题、不许算出题、不许出现最终答案；
   FULL 模式下步骤带推导，但最终答案只许写在末尾的 ANSWER
   行。ASK 之后再切 MODE，界面明说只对下一道题生效。
-- 问（ASK）：照片 Blob 经 `FileReader.readAsDataURL` 编码
-  为 data: URL，作为 user 消息的 `{type:'image_url'}` 内容
+- 问（ASK）：照片 Blob 经 `arrayBuffer()` + 分块
+  `String.fromCharCode` + `btoa` 编码为 data: URL（转码
+  失败报裸码 E2005），作为 user 消息的 `{type:'image_url'}` 内容
   连同文字指令发给主机 `LanguageModel`（多模态结构化
   content 只允许出现在 user 角色，system 提示只经
   `initialPrompts` 首条设置——档案 §2.9）。调用前先查
@@ -73,8 +74,9 @@ Rokid 眼镜作业辅导智能体（AIUI Agent）。
   §4.3）。本 Agent 读题目走的是官方路径——telephoto 拍照
   + LLM 图片输入（§2.3 / §2.9）；照片经 data: URL 送入
   模型在文档里是成立的，但**宿主真机是否真的接受
-  image_url / data: URL、FileReader 是否可用，都未经真机
-  验证**（见 README「未验证」第一条）。所以每条失败路径
+  image_url / data: URL，未经真机验证**（见 README「未
+  验证」第一条）；FileReader 已实证不存在于本运行时
+  （E2005），转码不依赖它。所以每条失败路径
   都留了出路：模型不可用走内置教练、转换不可用 / wx 回退
   照片没 Blob 走口述题目，绝不把失败包装成步骤。
 - **机器步骤必须由家长把关**：大模型会读错题、也会算错

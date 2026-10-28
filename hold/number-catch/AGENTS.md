@@ -11,7 +11,9 @@ there and lose the moment someone talks to you.
 - **Reading is the official photo path, and it is gated.** SNAP takes a
   telephoto photo (`ImageCapture.takePhoto({mode:'telephoto'})`, wx
   camera-context fallback like the siblings); the Blob is encoded to a
-  data: URL via `FileReader` and sent to the host `LanguageModel` as an
+  data: URL via `blob.arrayBuffer()` + chunked
+  `String.fromCharCode` + `btoa` (conversion failure surfaces
+  as E2005) and sent to the host `LanguageModel` as an
   `image_url` part of ONE user message (multimodal content in the user
   role only, system prompt via `initialPrompts`, `availability()` first,
   session `destroy()`ed after — dossier §2.9, same machinery as DI39
@@ -31,8 +33,9 @@ there and lose the moment someone talks to you.
   loud with the pending catch kept — never a silent overwrite. The
   constant footer says it: 照片不保存 · 存的是你确认过的号码.
 - **The manual path is fully usable alone.** Every read failure (no
-  model, model unavailable, FileReader missing, model error,
-  unreadable photo, wx-fallback photo with no Blob, no camera at all)
+  model, model unavailable, data-URL conversion failure (E2005),
+  model error, unreadable photo, wx-fallback photo with no Blob,
+  no camera at all)
   lands on the same CONFIRM screen, empty, with the reason stated —
   DICT or stepper fills it and OK saves. The photo path is an
   accelerator, never a gate.
@@ -80,8 +83,9 @@ correction). No geolocation.
   (2-part user content, data: URL, system via initialPrompts only,
   destroy after), stepper + DICT correction replacing the read before
   save, letter-code stepper refusal, all read-failure variants landing
-  on a usable manual path (unavailable / no FileReader / throw / no
-  LM / READ: NONE / junk reply), no-camera host fully usable, cap-6
+  on a usable manual path (unavailable / conversion failure
+  (E2005) / no LM / READ: NONE / junk reply), no-camera host
+  fully usable, cap-6
   refusal with pending kept and no overwrite, two-nod clear semantics
   (unsteady nod ignored, one nod never clears, cleared spoken exactly
   once, nod in list speaks only, nod in confirm never saves), DEL

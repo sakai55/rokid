@@ -27,8 +27,9 @@ OCR；而且机器读数永远要过你这道核对。
   菜单 / 路牌 / 其他——轮换切换，写进给大模型的文字指令作
   为上下文，让它知道该找哪一类关键行（车次方向、登机口号、
   菜品价格、出口方向）。
-- 读（READ）：把照片 Blob 经 `FileReader.readAsDataURL` 编
-  码为 data: URL，作为 user 消息的 `{type:'image_url'}` 内
+- 读（READ）：把照片 Blob 经 `arrayBuffer()` + 分块
+  `String.fromCharCode` + `btoa` 编码为 data: URL（转码失
+  败报裸码 E2005），作为 user 消息的 `{type:'image_url'}` 内
   容连同一段文字指令一起发给主机 `LanguageModel`（多模态
   结构化 content 只允许出现在 user 角色，system 提示只经
   `initialPrompts` 首条设置——档案 §2.9）。调用前先查
@@ -74,8 +75,9 @@ OCR；而且机器读数永远要过你这道核对。
   §4.3）。本 Agent 读牌走的是官方路径——telephoto 拍照 +
   LLM 图片输入（§2.3 / §2.9）；照片经 data: URL 送入模型
   在文档里是成立的，但**宿主真机是否真的接受 image_url /
-  data: URL、FileReader 是否可用，都未经真机验证**（见
-  README「未验证」第一条）。所以每条失败路径都留了一条能
+  data: URL，未经真机验证**（见 README「未验证」第一
+  条）；FileReader 已实证不存在于本运行时（E2005），转
+  码不依赖它。所以每条失败路径都留了一条能
   用的路：模型不可用、转换不可用、模型报错、wx 回退照片
   没有 Blob 可转——全部如实落到对应状态（失败原因写在
   READ 行上，不会被渲染覆盖），并提供 DICT 兜底：你的眼
