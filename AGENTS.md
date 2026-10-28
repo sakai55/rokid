@@ -10,10 +10,10 @@ surroundings, never from on-screen pretend play.
 ## Design contract
 
 1. 屏幕一次给出一个目标物（固定顺序：红色杯子 → 一本书 → 一把钥匙 → 一把椅子 → 一瓶水），语音同步播报。在真实环境里找到它，对准，单击镜腿拍照。
-2. 照片经 FileReader 转 data: URL 送宿主大模型图片输入，大模型只回固定格式 `VERDICT: YES/NO` + 一句理由，本地解析计分：命中 +1。判定中会显示「判定中…」等待态。
+2. 照片经 `arrayBuffer()` + 分块 `String.fromCharCode` + `btoa` 转 data: URL 送宿主大模型图片输入（转码失败带 E2005、记判定失败），大模型只回固定格式 `VERDICT: YES/NO` + 一句理由，本地解析计分：命中 +1。判定中会显示「判定中…」等待态。
 3. 滑动可先跳到另一个未拍的目标（已判定的不能重拍）；判定后点头 = 记录申诉（只记录次数，永不改分）；大模型不可用或回答格式不对时，该轮如实记「判定失败 · 本轮不计分」。
 
-- **Judge chain.** takePhoto(default) → Blob → FileReader data: URL → LanguageModel 图片输入；提示词要求只回 `VERDICT:` + `REASON:` 两行，本地正则解析 VERDICT 行计分。 A "判定中…" waiting state is
+- **Judge chain.** takePhoto(default) → Blob 经 `arrayBuffer()` + 分块 `String.fromCharCode` + `btoa` 转 data: URL（转码失败带 E2005、记判定失败）→ LanguageModel 图片输入；提示词要求只回 `VERDICT:` + `REASON:` 两行，本地正则解析 VERDICT 行计分。 A "判定中…" waiting state is
   shown for the whole capture+judge duration; every verdict is
   spoken via TTS.
 - **Judge failure is a failed round, honestly.** If the model is
