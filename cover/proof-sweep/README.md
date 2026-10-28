@@ -67,7 +67,7 @@ https://github.com/sakai55/rokid/tree/agent-proof-sweep
 | 项目 | 内容 |
 |---|---|
 | Studio 名称 | （导入后回填） |
-| Version / Build | 1.0.0 / （导入后回填） |
+| Version / Build | 1.0.1 / （导入后回填） |
 | App Category | （导入后回填） |
 | Intent Description | （导入后回填） |
 | Agent ID | （导入后回填） |
@@ -109,3 +109,8 @@ https://github.com/sakai55/rokid/tree/agent-proof-sweep
 - Features added：整页拍照 + 模型读行（L 格式解析、少于 3 行拒绝）；逐行读（READ/点头/行名点选）；跳行即时标漏读并点名；FIN 未读行点名拦截；两段式小结（全读 / 漏读 + 覆盖率）；多页归档与累计覆盖率；四段 DEMO；会话内存零落盘；两步 DEL 清空。
 - Improvements：无（首版）。
 - Fixes：无（首版）。
+
+**Build 1.0.1**
+- Features added：无。
+- Improvements：无。
+- Fixes：删除 FileReader（Ink 运行时不存在，原照片读行路径在真机必然失败）：Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，转码失败接全局错误码 E2005 并在状态行显示。
