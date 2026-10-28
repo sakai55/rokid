@@ -98,7 +98,7 @@ cd ~/workspace/rokid/step-count-down
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | Step Count Down（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Version / Build | 1.0.1 / 待导入后回填 |
 | App Category | 待导入后回填 |
 | Intent Description | Stair countdown: count the total steps at the top, count down one wearer-confirmed step at a time, speak from 3 remaining down, warn on the last step, announce the bottom. |
 | Agent ID | 待导入后回填 |
@@ -155,3 +155,17 @@ cd ~/workspace/rokid/step-count-down
 **Fixes**
 
 - 无（首个版本）
+
+### Change Log（Build 1.0.1）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 无
+
+**Fixes**
+
+- 删除 FileReader（Ink 运行时不存在，真机必死）：照片 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败接全局错误码 E2005 并如实提示。
