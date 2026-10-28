@@ -7,24 +7,28 @@
 <script setup>
 import wx from 'wx';
 import { store } from '../../store.js';
+import { errLine, fullCode } from '../../err.js';
 
 var WORKSKEY = 'av11_works';
 var FPS = 12;
 var TARGET = 120;
 
-function sget(k) {
-  try { if (typeof localStorage !== 'undefined') { var v = localStorage.getItem(k); if (v) return JSON.parse(v); } } catch (e) {}
-  try { var w = wx.getStorageSync(k); if (w) return (typeof w === 'string') ? JSON.parse(w) : w; } catch (e) {}
+function sget(k, page) {
+  try { if (typeof localStorage !== 'undefined') { var v = localStorage.getItem(k); if (v) return JSON.parse(v); } } catch (e) { if (page) page._recordErr('E5002', e, true); }
+  try { var w = wx.getStorageSync(k); if (w) return (typeof w === 'string') ? JSON.parse(w) : w; } catch (e) { if (page) page._recordErr('E5002', e, true); }
   return null;
 }
 function sset(k, v) {
-  try { if (typeof localStorage !== 'undefined') { localStorage.setItem(k, JSON.stringify(v)); return true; } } catch (e) {}
-  try { wx.setStorageSync(k, v); return true; } catch (e) {}
-  return false;
+  var lastErr = null;
+  try { if (typeof localStorage !== 'undefined') { localStorage.setItem(k, JSON.stringify(v)); return null; } } catch (e) { lastErr = e; }
+  try { wx.setStorageSync(k, v); return null; } catch (e) { lastErr = e; }
+  return lastErr || new Error('storage write failed');
 }
 function reasonLabel(r) {
-  return r === 'voice' ? '说「退出」结束' : (r === 'target' ? '拍够了' : (r === 'time' ? '满 3 分钟了' : (r === 'back' ? '双击结束' : '—')));
+  return r === 'voice' ? '说「退出」结束' : (r === 'target' ? '拍够了' : (r === 'time' ? '满 3 分钟了' : (r === 'back' ? '双击结束' : (r === 'errors' ? '连续失败停拍' : '—'))));
 }
+function errText(e) { return String((e && e.message) || e); }
+function isQuota(e) { var s = errText(e) + ' ' + ((e && e.name) || ''); return /quota/i.test(s); }
 function frameUrl(fr) {
   if (!fr) return '';
   if (typeof fr === 'string') return fr;
@@ -34,17 +38,27 @@ function frameUrl(fr) {
 export default {
   data: {
     evt: 'EVT: play ready',
-    ver: 'v1.1.1',
+    ver: 'v1.1.2',
     status: '合成 = 按 12 帧/秒逐帧播放帧序列（不是生成视频文件）',
     progLine: '帧 0/0',
+    failLine: '',
     readLines: []
   },
   onLoad() {
-    try { this.enableWorldAwareness(); } catch (e) {}
+    try { this.enableWorldAwareness(); } catch (e) { this._recordErr('E7006', e, true); }
     this._ctx = null; this._timer = null; this._playing = false;
     this._idx = 0; this._drawTimes = []; this._decBusy = false;
-    this._pxCv = null;
-    if (!store.frames.length) this.setData({ status: '会话内暂无帧：先回拍摄页，点头或单击开始拍摄' });
+    this._pxCv = null; this._errCode = ''; this._errCount = 0; this._lowFpsRaised = false;
+    if (!store.frames.length) {
+      if (store.startedAt) {
+        // A take was recorded but its frames did not survive the page
+        // switch — that is exactly what E4005 exists to say.
+        this._recordErr('E4005', new Error('store empty after navigation'));
+        this.setData({ status: errLine('E4005') + '：拍摄记录在，帧没跟过来（本机内存跨页不可靠，如实）' });
+      } else {
+        this.setData({ status: '会话内暂无帧：先回拍摄页，点头或单击开始拍摄' });
+      }
+    }
     this._render();
   },
   onReady() {
@@ -54,6 +68,19 @@ export default {
   },
   onHide() { this._stop(); this._persistMeasured(); },
   onUnload() { this._stop(); this._persistMeasured(); },
+  // Same error-code plumbing as the shoot page (err.js definitions).
+  _recordErr(code, e, silent) {
+    var raw = e ? errText(e).slice(0, 40) : '';
+    store.lastError = { code: fullCode(code), text: raw, at: Date.now() };
+    if (this._errCode === code) this._errCount++;
+    else { this._errCode = code; this._errCount = 1; }
+    if (!silent) {
+      this.setData({
+        failLine: errLine(code) + (this._errCount > 1 ? ' ×' + this._errCount : ''),
+        evt: 'EVT: ' + fullCode(code)
+      });
+    }
+  },
   _totals() {
     var total = 0;
     store.sizes.forEach(function (s) { total += s || 0; });
@@ -70,6 +97,10 @@ export default {
     var total = this._totals();
     var meas = this._measured();
     if (meas) store.measuredFps = meas;
+    if (meas && this._drawTimes.length >= 36 && meas < FPS / 2 && !this._lowFpsRaised) {
+      this._lowFpsRaised = true;
+      this._recordErr('E4004', new Error('measured ' + meas + ' fps < set ' + FPS + '/2'));
+    }
     var T = store.target || TARGET;
     var mem = store.mode === 'memory';
     var avgTxt = n ? ((mem ? '约 ' : '') + Math.round((total / n / 102.4)) / 10 + ' KB' + (mem ? '（估算）' : '')) : '-';
@@ -89,21 +120,25 @@ export default {
   },
   _persistMeasured() {
     var meas = this._measured();
-    if (!meas || !store.startedAt) return;
-    var works = sget(WORKSKEY) || [];
+    if (!store.startedAt) return;
+    var works = sget(WORKSKEY, this) || [];
     var changed = false;
     for (var i = 0; i < works.length; i++) {
       if (works[i].id === store.startedAt) {
-        works[i].measuredFps = meas;
+        if (meas) works[i].measuredFps = meas;
         works[i].frames = store.frames.length;
         var total = this._totals();
         works[i].totalKB = Math.round((total / 102.4)) / 10;
         works[i].avgKB = store.frames.length ? Math.round((total / store.frames.length / 102.4)) / 10 : 0;
+        if (store.lastError) works[i].lastError = store.lastError;
         changed = true;
         break;
       }
     }
-    if (changed) sset(WORKSKEY, works);
+    if (changed) {
+      var se = sset(WORKSKEY, works);
+      if (se) this._recordErr(isQuota(se) ? 'E5003' : 'E5001', se, true);
+    }
   },
   _dataUrlToBlob(u) {
     var p = String(u).split(',');
@@ -128,6 +163,7 @@ export default {
     var fr = store.frames[this._idx];
     this._decBusy = true;
     var bmp = null;
+    var stage = 'draw';
     try {
       if (fr && fr.kind === 'px') {
         // Raw pixels: put back onto an offscreen canvas, then drawImage
@@ -140,19 +176,23 @@ export default {
       } else if (fr && fr.kind === 'bmp') {
         this._ctx.drawImage(fr.bmp, 0, 0, 448, 170);
       } else {
+        stage = 'decode';
         if (typeof createImageBitmap === 'undefined' || typeof atob === 'undefined') {
           this.setData({ status: '本机无 createImageBitmap/atob，帧图解码不可用，合成播放待真机（如实）', evt: 'EVT: decode n/a' });
           return;
         }
         var blob = this._dataUrlToBlob(frameUrl(fr));
         bmp = await createImageBitmap(blob);
+        stage = 'draw';
         this._ctx.drawImage(bmp, 0, 0, 448, 170);
       }
       if (this._ctx.flush) this._ctx.flush();
       this._drawTimes.push(Date.now());
       if (this._drawTimes.length > 240) this._drawTimes.shift();
     } catch (e) {
-      this.setData({ status: '帧绘制失败（如实）：' + String((e && e.message) || e).slice(0, 40), evt: 'EVT: draw fail' });
+      var code = (fr && fr.kind === 'url' || typeof fr === 'string') && stage === 'decode' ? 'E4002' : 'E4003';
+      this._recordErr(code, e);
+      this.setData({ status: '帧绘制失败（如实）：' + errText(e).slice(0, 40), evt: 'EVT: draw fail ' + fullCode(code) });
     } finally {
       if (bmp) { try { bmp.close(); } catch (e) {} }
       this._decBusy = false;
@@ -180,6 +220,7 @@ export default {
   _restart() {
     this._idx = 0;
     this._drawTimes = [];
+    this._lowFpsRaised = false;
     if (!this._playing) this._play();
     else this._drawCurrent();
     this._render();
@@ -200,6 +241,7 @@ export default {
     <text class="ttl">PLAY · 合成播放</text>
     <canvas id="playCanvas" width="448" height="170" class="viewcv"></canvas>
     <text class="prog">{{progLine}}</text>
+    <text class="fail" ink:if="{{failLine}}">{{failLine}}</text>
     <view class="rlist">
       <view ink:for="{{readLines}}" class="rrow">
         <text class="rlabel">{{item.l1}}</text>
@@ -221,6 +263,7 @@ export default {
 .ttl { color: #7dff9e; font-size: 15px; font-weight: 500; }
 .viewcv { width: 448px; height: 170px; margin-top: 4px; border: 1px solid rgba(64,255,94,0.7); background-color: #021007; }
 .prog { color: #40ff5e; font-family: monospace; font-size: 12px; margin-top: 4px; }
+.fail { color: #7dff9e; font-size: 13px; font-weight: 500; margin-top: 4px; }
 .rlist { display: flex; flex-direction: column; margin-top: 4px; border: 1px solid rgba(64,255,94,0.6); background-color: #04140a; padding: 4px 8px; }
 .rrow { display: flex; flex-direction: row; margin-bottom: 2px; }
 .rlabel { width: 56px; color: #40ff5e; font-size: 10px; font-family: monospace; }

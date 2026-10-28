@@ -18,6 +18,8 @@ export const store = {
                    // estimated w*h*4 for 'px'/'bmp'
   mode: '',        // '' | 'url' | 'memory'
   encodeError: '', // first encode-path error text (real-device diagnostic)
+  lastError: null, // { code, text, at } — most recent coded error (err.js);
+                   // persisted into av11_works entries as lastError
   startVia: '',    // 'nod' | 'tap' — which start channel fired (diagnostic)
   shootSec: 0,     // actual shooting seconds for the current sequence
   stopReason: '',  // 'target' | 'time' | 'voice' | 'back' | ''
@@ -31,6 +33,7 @@ export function resetSession() {
   store.sizes = [];
   store.mode = '';
   store.encodeError = '';
+  store.lastError = null;
   store.startVia = '';
   store.shootSec = 0;
   store.stopReason = '';
