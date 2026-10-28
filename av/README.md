@@ -1,6 +1,6 @@
 # 影音捕捉（av/）
 
-影音捕捉系列 · 编号 AV01–AV10：围绕拍照、视频、语音交互，每台顶一条基座边界（拍照三模式 / grabFrame 采样 / MediaRecorder 分片 / 麦克风四模式与内录 / 外部流 ASR / TTS 生成侧 / 条码检测 / LLM 多模态 / 音画双轨同采 / 内录转写链），做「登记→核验/比对→结算/回放」闭环，影音为主要交互通道。
+影音捕捉系列 · 编号 AV01–AV11：围绕拍照、视频、语音交互，每台顶一条基座边界（拍照三模式 / grabFrame 采样 / MediaRecorder 分片 / 麦克风四模式与内录 / 外部流 ASR / TTS 生成侧 / 条码检测 / LLM 多模态 / 音画双轨同采 / 内录转写链），做「登记→核验/比对→结算/回放」闭环，影音为主要交互通道。AV11 为追加的验证版（核心链路先行，深度功能推迟）。
 
 - AV01 [tri-shot-lab](tri-shot-lab/) — 三种拍照模式同场连拍，解码实测判读哪镜可用
 - AV02 [motion-frame-watch](motion-frame-watch/) — grabFrame 定时采样帧差守望点位，变了存证喊话
@@ -12,5 +12,6 @@
 - AV08 [dual-shot-verify](dual-shot-verify/) — 广角加长焦双拍配对，交叉核对才落账
 - AV09 [av-sync-check](av-sync-check/) — 音画双轨同采同检，拍手事件算同步差
 - AV10 [system-audio-capture](system-audio-capture/) — 只录设备播放声，内录分片转写归档
+- AV11 [stop-motion-studio](stop-motion-studio/) — 定格验证版：逐帧拍（洋葱皮），按帧率合成播放出验证读数
 
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。
