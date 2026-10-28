@@ -26,13 +26,13 @@ Agent 让你看向正前方那个人的名牌拍一张长焦照片，眼镜把�
 
 截图统一存放于仓库根目录 `screenshots/badge-reader/`。
 
-![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/badge-reader/preview-badge-reader-index.png)
+![首页初始状态](../screenshots/badge-reader/preview-badge-reader-index.png)
 
-![DEMO 态：名牌机器读数，姓名大字显示（王小明 · 星野科技 · 产品经理），标注 DEMO](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/badge-reader/preview-badge-reader-read.png)
+![DEMO 态：名牌机器读数，姓名大字显示（王小明 · 星野科技 · 产品经理），标注 DEMO](../screenshots/badge-reader/preview-badge-reader-read.png)
 
-![DICT 核对后：你读到的是王大明，与机器读数不一致，CHECK 显示 DIFF 并明说保存以你的版本为准](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/badge-reader/preview-badge-reader-diff.png)
+![DICT 核对后：你读到的是王大明，与机器读数不一致，CHECK 显示 DIFF 并明说保存以你的版本为准](../screenshots/badge-reader/preview-badge-reader-diff.png)
 
-![再遇卡片：演示朝向转到 90° 停住 2 秒，已登记的李华卡片弹出（按方向匹配，不是按脸）](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/badge-reader/preview-badge-reader-remeet.png)
+![再遇卡片：演示朝向转到 90° 停住 2 秒，已登记的李华卡片弹出（按方向匹配，不是按脸）](../screenshots/badge-reader/preview-badge-reader-remeet.png)
 
 ## 解决的问题
 
@@ -193,7 +193,7 @@ cd ~/workspace/rokid/badge-reader
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
@@ -333,3 +333,17 @@ Hi, I'm **Badge Reader** - the badge in front of you, read aloud only to you.
 **Fixes**
 
 - None (initial release).
+
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Removed FileReader (absent from the Ink runtime; would fail on device): badge photo Blob→dataURL now uses the documented `blob.arrayBuffer()` + chunked `btoa` path, and the failure surfaces fleet error code E2005 in the conversion-unavailable state.
