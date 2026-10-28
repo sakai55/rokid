@@ -70,7 +70,7 @@ https://github.com/sakai55/rokid/tree/agent-buy-filter
 | 项目 | 内容 |
 |---|---|
 | Studio 名称 | （导入后回填） |
-| Version / Build | 1.0.0 / （导入后回填） |
+| Version / Build | 1.0.1 / （导入后回填） |
 | App Category | （导入后回填） |
 | Intent Description | （导入后回填） |
 | Agent ID | （导入后回填） |
@@ -113,3 +113,8 @@ https://github.com/sakai55/rokid/tree/agent-buy-filter
 - Features added：过滤条件声明（示例清单、预算档、忌口词，待机时可换）；扫货拍标签（telephoto + LLM 按品名|价格|配料读数）；三条件比对过滤（符合横幅 + 一次 TTS，不符合只计并注明原因）；购物小结（看过/符合/已过滤/符合商品与价格）；DEMO 五段演示；DEL 清横幅/小结确认清空；本次购物内存零落盘；头稳点头纪律（扫货中点头不拍标签，不稳点头不占锁）。
 - Improvements：无（首版）。
 - Fixes：无（首版）。
+
+**Build 1.0.1**
+- Features added：无。
+- Improvements：无。
+- Fixes：删除 FileReader（Ink 运行时不存在，真机必死）：标签照片 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败接全局错误码 E2005 并如实显示。
