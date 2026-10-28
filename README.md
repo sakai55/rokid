@@ -18,11 +18,11 @@ https://github.com/sakai55/rokid/tree/agent-homework-lens
 
 截图统一存放于仓库根目录 `screenshots/homework-lens/`。
 
-![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/homework-lens/preview-homework-lens-index.png)
+![首页初始状态](../screenshots/homework-lens/preview-homework-lens-index.png)
 
-![DEMO 态第 1 步：HINT 模式的引导问题，答案被隔离、只在 REVEAL 后出现](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/homework-lens/preview-homework-lens-hint.png)
+![DEMO 态第 1 步：HINT 模式的引导问题，答案被隔离、只在 REVEAL 后出现](../screenshots/homework-lens/preview-homework-lens-hint.png)
 
-![DEMO 态第 4 步 + 家长点 REVEAL 后：答案显示，先由家长核对](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/homework-lens/preview-homework-lens-reveal.png)
+![DEMO 态第 4 步 + 家长点 REVEAL 后：答案显示，先由家长核对](../screenshots/homework-lens/preview-homework-lens-reveal.png)
 
 ## 解决的问题
 
@@ -147,7 +147,7 @@ data: URL、FileReader 可用）、步骤是否只有提示没有答案、
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
@@ -282,3 +282,17 @@ Hi, I'm **Homework Lens** - steps, not answers.
 **Fixes**
 
 - None (initial release).
+
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Removed FileReader (absent from the Ink runtime; would fail on device): question photo Blob→dataURL now uses the documented `blob.arrayBuffer()` + chunked `btoa` path, and the failure surfaces fleet error code E2005 in the conversion-unavailable state.
