@@ -83,7 +83,7 @@ TTS 只在三处说话：开始时「开始拍摄，说退出结束合成」；�
 
 ### Feature Description
 
-Stop Motion Studio is a minimal capability check of one chain: shoot stop-motion frames and composite them in the glasses. No settings: open it and you are on the shoot page, live view plus an onion-skin overlay of your last frame. Nod once and it shoots one frame per second at a fixed 12 fps, up to 120 frames (about 10 s of film). Say the exit word and it stops and loop-plays the composite, with verification readings: set vs measured fps, frame count, average and total KB, shooting time, stop reason.
+Stop Motion Studio is a minimal capability check of one chain: shoot stop-motion frames and composite them. No settings: open it and you are on the shoot page, live view plus an onion-skin overlay of your last frame. Nod once and it shoots one frame per second at a fixed 12 fps, up to 120 frames (about 10 s). Say the exit word and it stops and loop-plays the composite, with readings: set vs measured fps, frame count, average and total KB, shooting time, stop reason.
 
 ### Opening Message
 
