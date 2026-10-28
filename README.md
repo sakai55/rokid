@@ -62,7 +62,7 @@ cd ~/workspace/rokid/jongnyang-gauge
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | Jongnyang Gauge（待导入后回填） |
-| Version / Build | 1.0.2 / 待导入后回填 |
+| Version / Build | 1.0.3 / 待导入后回填 |
 | App Category | Life |
 | Intent Description | At home in Korea: tracks standard trash-bag fill level and food-waste drop ledger. |
 | Agent ID | 待导入后回填 |
@@ -131,3 +131,17 @@ cd ~/workspace/rokid/jongnyang-gauge
 **Fixes**
 
 - 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+
+### Change Log（Build 1.0.3）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 无
+
+**Fixes**
+
+- FileReader 제거(Ink 런타임에 존재하지 않아 실기기에서 반드시 실패함): 사진 Blob→dataURL 변환을 공식 문서 경로인 `blob.arrayBuffer()` + 분할 `btoa`로 바꾸고, 실패 시 전 함대 오류 코드 E2005를 표시한다.
