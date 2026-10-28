@@ -95,7 +95,7 @@ cd ~/workspace/rokid/last-glance
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | Last Glance（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Version / Build | 1.0.1 / 待导入后回填 |
 | App Category | 待导入后回填 |
 | Intent Description | Leave-the-room archive: turn around once before leaving, photo each of six heading zones, confirm each short description, and only 6/6 earns the "you may leave" summary. Replay zone by zone on the road - descriptions, not photo playback. Session memory only, wiped on close. No indoor positioning, no room map. |
 | Agent ID | 待导入后回填 |
@@ -153,3 +153,17 @@ cd ~/workspace/rokid/last-glance
 **Fixes**
 
 - 无（首个版本）
+
+### Change Log（Build 1.0.1）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 无
+
+**Fixes**
+
+- 删除 FileReader（Ink 运行时不存在，真机必死）：分区照片 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败接全局错误码 E2005 并如实显示。
