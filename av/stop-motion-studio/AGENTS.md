@@ -139,6 +139,40 @@ that class of failure impossible to hide and possible to route around.
   breakers, fallbacks and behaviour are byte-identical to v1.1.2 apart
   from the code strings.
 
+## v1.2.0 addendum (diagnostic log return pilot)
+
+- A log client exists: `logq.js` at the project root. It queues runtime
+  events in `localStorage` under `av11_logq` (cap 100, oldest dropped)
+  and POSTs batches (≤50 events, grouped by the session that recorded
+  them) to the front door's /log endpoint with the `x-channel-key`
+  header, using `fetch` (documented in the web API reference — the same
+  form the fleet's channel client uses). Config (endpoint + key) lives
+  ONLY at the top of logq.js; the repo stores the placeholder
+  `PASTE_CHANNEL_KEY_HERE`, and while the key is the placeholder the
+  client is a complete no-op (no sends, no storage touched) — that is
+  also the review build's off state.
+- Flush points are exactly three: take finish (shoot page `_finish` /
+  `_autoStop`), play-page entry (`onLoad`), and next launch (app.js
+  `onLaunch` → `initLog`, which drains the previous run's leftover
+  queue under its own session before opening the new session and
+  logging `start`).
+- Event set: start (raw = version), begin (raw = start channel
+  nod/tap), frame0, mode (raw = dataURL | frame, at latch time), a
+  mirror of EVERY `_recordErr` call (step 'fail', same code, same raw
+  text), finish (raw = stop reason + frame count), play (raw = first
+  measured fps). Failure points therefore reach the stream through the
+  `_recordErr` funnel automatically — that funnel was already the only
+  legal way to surface a failure (error-code protocol), and it stays
+  so.
+- The client must never throw or block: all exports are try/catch
+  wrapped, sends are fire-and-forget, failed sends keep the queue for
+  the next flush point. Privacy: no photo data, no recognised speech
+  text; raw is truncated to 200 chars and a raw starting with 'data:'
+  is dropped outright.
+- Persisted data in this agent is now `av11_works` metadata plus this
+  diagnostic queue (`av11_logq`); frames still live only in the
+  in-memory store.
+
 ## Permissions
 
 - `CAMERA` — grabFrame viewfinder, onion skin and frame capture.

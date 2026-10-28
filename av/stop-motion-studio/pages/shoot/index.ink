@@ -8,6 +8,7 @@
 import wx from 'wx';
 import { store, resetSession } from '../../store.js';
 import { errLine, codedError } from '../../err.js';
+import { log as logEvent, flushLog } from '../../logq.js';
 
 var WORKSKEY = 'av11_works';
 var FPS = 12;
@@ -40,7 +41,7 @@ function isQuota(e) { var s = errText(e) + ' ' + ((e && e.name) || ''); return /
 export default {
   data: {
     evt: 'EVT: shoot ready',
-    ver: 'v1.1.3',
+    ver: 'v1.2.0',
     status: '取景启动中…',
     bigLine: '已拍 0 / 120 张',
     filmLine: '预估成片 0 秒',
@@ -107,6 +108,10 @@ export default {
         evt: 'EVT: ' + code
       });
     }
+    // Diagnostic log mirror: every coded failure also lands in the log
+    // queue with the same code and raw text (logq.js truncates to 200;
+    // a no-op while the channel key is a placeholder). Never throws.
+    logEvent('fail', code, e ? errText(e) : '');
   },
   async _startCamera() {
     try {
@@ -352,7 +357,7 @@ export default {
           var enc = await this._encodeFrame(bmp);
           store.frames.push({ kind: 'url', url: enc.url });
           store.sizes.push(enc.bytes);
-          if (!store.mode) store.mode = 'url';
+          if (!store.mode) { store.mode = 'url'; logEvent('mode', '', 'dataURL'); }
           this._setPrev(bmp, false); owned = true;
         } catch (ee) {
           // Encode rejected OR timed out: record the first error verbatim
@@ -363,6 +368,7 @@ export default {
           if (!store.encodeError) store.encodeError = emsg.slice(0, 120);
           this._recordErr(ecode, ee, true);
           store.mode = 'memory';
+          logEvent('mode', '', 'frame');
           this._onModeSwitch(ecode);
           this._storeBitmap(bmp); owned = true;
         }
@@ -371,6 +377,7 @@ export default {
       }
       this._consecFails = 0;
       var n = store.frames.length;
+      if (n === 1) logEvent('frame0', '', store.mode || '');
       this.setData({ evt: 'EVT: frame ' + n });
       this._render();
       if (n === Math.floor(this._targetNow() / 2)) this._speak('已拍一半');
@@ -387,6 +394,7 @@ export default {
     if (this._phase !== 'wait') return;
     this._phase = 'shooting';
     store.startVia = via || 'nod';
+    logEvent('begin', '', store.startVia);
     this._startTs = Date.now();
     this._elapsed = 0;
     this._failTotal = 0; this._consecFails = 0;
@@ -490,6 +498,8 @@ export default {
     this._stopAll();
     this._writeWork();
     this._recordErr('E2010', new Error('10 consecutive frame failures'), false, true);
+    logEvent('finish', '', 'errors frames=' + store.frames.length);
+    flushLog();
     this._speak('错误 ' + 'E2010');
     this.setData({
       bigLine: errLine('E2010'),
@@ -509,6 +519,11 @@ export default {
     this._stopAll();
     this._writeWork();
     var n = store.frames.length;
+    // Flush point 1: the take has ended — log the finish event and send
+    // the queue (fire-and-forget; the play page and the next launch
+    // flush again, so a send cut short by navigation is not lost).
+    logEvent('finish', '', reason + ' frames=' + n);
+    flushLog();
     if (!n) {
       // E4001: zero frames — STAY on the shoot page with the code big,
       // never navigate (v1.1.x navigated to an empty play page and the
