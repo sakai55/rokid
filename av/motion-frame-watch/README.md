@@ -56,7 +56,7 @@ AV02 · 守一个固定点位（门口、工位、货架）时，先标定静止
 | 项目 | 值 |
 |---|---|
 | Studio name | 待导入后回填 |
-| Version | 1.0.0 |
+| Version | 1.0.1 |
 | App Category | Life |
 | Intent Description | Watch a fixed spot by frame differencing and log photo-proven changes |
 | Agent ID | 待回填 |
@@ -93,6 +93,20 @@ Hi, I'm **Motion Frame Watch**. Point me at a doorway, a desk or a shelf, tap on
 **Fixes**
 
 - None (initial build).
+
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Removed FileReader (absent from the Ink runtime; would fail on device): proof-photo Blob→dataURL now uses the documented `blob.arrayBuffer()` + chunked `btoa` path, and the failure surfaces fleet error code E2005.
 
 ## 打包与预览
 

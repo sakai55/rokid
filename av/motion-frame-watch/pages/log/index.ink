@@ -12,7 +12,7 @@ var LKEY = 'av02_log';
 export default {
   data: {
     evt: 'EVT: log ready',
-    ver: 'v1.0.0',
+    ver: 'v1.0.1',
     status: '变化日志与计数结算',
     countLine: '共 0 次 · 最大差值 -%',
     selIdx: 0,

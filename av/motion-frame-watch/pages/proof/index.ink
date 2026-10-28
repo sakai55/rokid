@@ -14,7 +14,7 @@ var SYS = 'You look at one photo from smart glasses watching a fixed spot. In on
 export default {
   data: {
     evt: 'EVT: proof ready',
-    ver: 'v1.0.0',
+    ver: 'v1.0.1',
     status: '单击拍存证照并判读变化',
     diffText: '触发差值 -%',
     photoLine: '存证照：未拍（拍后只存内存，不落盘）',
@@ -44,15 +44,21 @@ export default {
   onBackTap() { try { wx.navigateBack({}); } catch (e) {} },
   onProofTap() { this._proof(); },
   onLogTap() { this._confirmLog(); },
-  _blobToDataUrl(blob) {
-    return new Promise(function (resolve, reject) {
-      try {
-        var fr = new FileReader();
-        fr.onload = function () { resolve(fr.result); };
-        fr.onerror = function () { reject(new Error('FileReader fail')); };
-        fr.readAsDataURL(blob);
-      } catch (e) { reject(e); }
-    });
+  async _blobToDataUrl(blob) {
+    // This runtime has NO blob-text reader API (fleet error E2005).
+    // Documented path: blob.arrayBuffer() -> chunked base64 via btoa.
+    try {
+      if (!blob || typeof blob.arrayBuffer !== 'function') throw new Error('E2005: blob.arrayBuffer unavailable');
+      var buf = await blob.arrayBuffer();
+      var bytes = new Uint8Array(buf);
+      var bin = '';
+      var CH = 0x8000;
+      for (var i = 0; i < bytes.length; i += CH) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+      return 'data:' + (blob.type || 'image/jpeg') + ';base64,' + btoa(bin);
+    } catch (e) {
+      if (e && /^E2005/.test(e.message || '')) throw e;
+      throw new Error('E2005: ' + String((e && e.message) || e).slice(0, 40));
+    }
   },
   async _proof() {
     if (this.data.busy) return;
