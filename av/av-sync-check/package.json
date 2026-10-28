@@ -1,0 +1,1 @@
+{"author":"","dependencies":{},"description":"AV Sync Check - dual-track sampling, clap-event AV delta estimation, fixed-threshold verdict and report history.","keywords":[],"license":"ISC","main":"app.js","name":"av-sync-check","version":"1.0.0"}
