@@ -75,7 +75,7 @@ cd ~/workspace/rokid/git-rokid-photo/games/color-catch
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | 颜色捕手（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Version / Build | 1.0.1 / 待导入后回填 |
 | App Category | 待导入后回填 |
 | Intent Description | Photo color-matching game for Rokid glasses. Each round calls a color; the player photographs a real object whose main color matches, judged by host LLM image input (VERDICT YES/NO plus reason). Swipe switches rounds, nod logs a non-scoring appeal. Camera only; photos judged in memory, never saved. |
 | Agent ID | 待导入后回填 |
@@ -129,3 +129,17 @@ cd ~/workspace/rokid/git-rokid-photo/games/color-catch
 **Fixes**
 
 - 无（首个版本）
+
+### Change Log（Build 1.0.1）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 无
+
+**Fixes**
+
+- 删除 FileReader（Ink 运行时不存在，真机必死）：照片 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败接全局错误码 E2005 并如实记为拍照失败可重试。
