@@ -1,0 +1,10 @@
+{
+  "name": "ekiben-erabi",
+  "version": "1.0.0",
+  "description": "Ekiben erabi: pick a station bento while checking allergens. Eight bentos with allergen labels, an eight-question allergen quiz, and persisted quiz records.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

@@ -1,0 +1,10 @@
+{
+  "name": "line-by-line",
+  "version": "1.0.0",
+  "description": "Line by line: reading support that shows exactly one large line at a time. Three built-in sample passages (8, 10 and 9 lines), nod to advance, back to re-read, persisted finish records.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

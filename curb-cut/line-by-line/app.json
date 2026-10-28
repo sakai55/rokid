@@ -1,0 +1,11 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/lines/index",
+    "pages/record/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "逐行读"
+  },
+  "permissions": []
+}

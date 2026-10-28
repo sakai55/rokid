@@ -1,0 +1,29 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/t01/index",
+    "pages/t02/index",
+    "pages/t03/index",
+    "pages/t04/index",
+    "pages/t05/index",
+    "pages/t06/index",
+    "pages/t07/index",
+    "pages/t08/index",
+    "pages/t09/index",
+    "pages/t10/index",
+    "pages/t11/index",
+    "pages/t12/index",
+    "pages/t13/index",
+    "pages/t14/index",
+    "pages/t15/index",
+    "pages/t16/index",
+    "pages/t17/index",
+    "pages/t18/index",
+    "pages/t19/index",
+    "pages/t20/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "서울 생활 수첩"
+  },
+  "permissions": []
+}

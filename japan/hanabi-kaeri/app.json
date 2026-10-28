@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/guide/index",
+    "pages/record/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "花火帰り"
+  },
+  "permissions": [
+    "GEOLOCATION"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "teiki-mamori",
+  "version": "1.0.0",
+  "description": "Teiki mamori: a commuter companion before the ticket gate. Three registered passes with expiry dates, a six-item belongings check, and persisted departure records.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

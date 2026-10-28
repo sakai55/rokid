@@ -1,0 +1,10 @@
+{
+  "name": "hanok-stay",
+  "version": "1.0.0",
+  "description": "Hanok stay: a first stay in a Korean traditional house, room by room. Six rooms, four facility and etiquette checks each, checked by nod and persisted.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

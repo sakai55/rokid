@@ -1,0 +1,11 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/words/index",
+    "pages/record/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "第一句话"
+  },
+  "permissions": []
+}

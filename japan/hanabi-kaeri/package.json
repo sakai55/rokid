@@ -1,0 +1,10 @@
+{
+  "name": "hanabi-kaeri",
+  "version": "1.0.0",
+  "description": "Hanabi kaeri: after a fireworks festival, return to a saved meeting point by GPS cardinal bearing and approximate distance, with honest degradation when no fix is available.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

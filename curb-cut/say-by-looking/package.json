@@ -1,0 +1,10 @@
+{
+  "name": "say-by-looking",
+  "version": "1.0.0",
+  "description": "Say by looking: for people who cannot speak in the moment. Pick a scene, choose one of four fixed phrases by nod, and the glasses speak it aloud for you, with persisted records.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
