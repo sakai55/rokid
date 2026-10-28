@@ -545,19 +545,21 @@ export default {
     }
   },
 
-  _blobToDataUrl(blob) {
-    // The ONLY conversion the runtime story offers: Blob -> data: URL
-    // via FileReader. Missing FileReader -> honest rejection.
-    return new Promise(function (resolve, reject) {
-      if (typeof FileReader === 'undefined') {
-        reject(new Error('FileReader n/a on this host'));
-        return;
-      }
-      var fr = new FileReader();
-      fr.onload = function () { resolve(String(fr.result || '')); };
-      fr.onerror = function () { reject(new Error('FileReader read failed')); };
-      try { fr.readAsDataURL(blob); } catch (e) { reject(e); }
-    });
+  async _blobToDataUrl(blob) {
+    // This runtime has NO blob-text reader API (fleet error E2005).
+    // Documented path: blob.arrayBuffer() -> chunked base64 via btoa.
+    try {
+      if (!blob || typeof blob.arrayBuffer !== 'function') throw new Error('E2005: blob.arrayBuffer unavailable');
+      var buf = await blob.arrayBuffer();
+      var bytes = new Uint8Array(buf);
+      var bin = '';
+      var CH = 0x8000;
+      for (var i = 0; i < bytes.length; i += CH) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+      return 'data:' + (blob.type || 'image/jpeg') + ';base64,' + btoa(bin);
+    } catch (e) {
+      if (e && /^E2005/.test(e.message || '')) throw e;
+      throw new Error('E2005: ' + String((e && e.message) || e).slice(0, 40));
+    }
   },
 
   _buildReadContent(dataUrl) {
