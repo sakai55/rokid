@@ -1,0 +1,16 @@
+{
+  "name": "Voice Subtitle Lab",
+  "description": "Voice Subtitle Lab: pick a broadcast script, synthesize it with one of eleven official voices and word-level subtitle cues, compare A/B combos, and keep winning combos across sessions.",
+  "pages": [
+    "pages/index/index",
+    "pages/synth/index",
+    "pages/ab/index",
+    "pages/favs/index"
+  ],
+  "permissions": [
+    "RECORD_AUDIO"
+  ],
+  "window": {
+    "navigationBarTitleText": "Voice Subtitle Lab"
+  }
+}

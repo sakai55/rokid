@@ -1,0 +1,10 @@
+{
+  "name": "voice-subtitle-lab",
+  "version": "1.0.0",
+  "description": "Voice Subtitle Lab: pick a broadcast script, synthesize it with one of eleven official voices and word-level subtitle cues, compare A/B combos, and keep winning combos across sessions.",
+  "main": "app.js",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "dependencies": {}
+}
