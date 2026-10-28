@@ -70,7 +70,7 @@ https://github.com/sakai55/rokid/tree/agent-sign-filter
 | 项目 | 内容 |
 |---|---|
 | Studio 名称 | （导入后回填） |
-| Version / Build | 1.0.0 / （导入后回填） |
+| Version / Build | 1.0.1 / （导入后回填） |
 | App Category | （导入后回填） |
 | Intent Description | （导入后回填） |
 | Agent ID | （导入后回填） |
@@ -113,3 +113,8 @@ https://github.com/sakai55/rokid/tree/agent-sign-filter
 - Features added：目标声明（示例目标池，待机时可换）；扫街拍牌（telephoto + LLM 读字）；包含比对过滤（命中横幅 + 一次 TTS，不匹配只计）；拍照时面向申报（DIR）；扫街小结（看过/命中/命中牌面与面向）；DEMO 四段演示；DEL 清横幅/小结确认清空；本次扫街内存零落盘；头稳点头纪律（扫街中点头不拍牌，不稳点头不占锁）。
 - Improvements：无（首版）。
 - Fixes：无（首版）。
+
+**Build 1.0.1**
+- Features added：无。
+- Improvements：无。
+- Fixes：删除 FileReader（Ink 运行时不存在，真机必死）：招牌照片 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败接全局错误码 E2005 并如实显示。
