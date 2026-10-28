@@ -1,4 +1,4 @@
-# Rokid 舰队全局错误码表（Global Error Codes）v1.6.0
+# Rokid 舰队全局错误码表（Global Error Codes）v1.6.1
 
 GO 2026-10-28 定立，自 AV11 起全舰队执行：**任何 agent 发生任何错误，眼镜上统一显示错误码，用户只报码即可对表定位。**
 
@@ -32,39 +32,39 @@ E<4位数字>
 - 码一经分配**永不改义、永不复用**；废弃的码保留并标注「已废弃」。
 - 新错误类型只能在对应段内顺序追加；段满或新领域出现时由登记处开新段并升次版本号。只增新码的扩编升次版本号；格式/治理规则变更原则上升主版本号（例外情形见变更日志）。
 - 每个 agent 的代码里：每个失败点必须映射到本表一个码，不许裸抛原文了事（原文只作附带诊断截断显示）；agent 的 README 必须有「错误码」一节，写明本台用到的码与回报约定。
-- 本表版本：v1.6.0（2026-10-29）。canonical 位置 = 仓库根目录 `ERROR-CODES.md`（sakai55/rokid，main）。各 agent 工程内可放副本，冲突时以 canonical 为准。本文档为通用件，任何开发方与 AI agent 均可直接采用。
+- 本表版本：v1.6.1（2026-10-29）。canonical 位置 = 仓库根目录 `ERROR-CODES.md`（sakai55/rokid，main）。各 agent 工程内可放副本，冲突时以 canonical 为准。本文档为通用件，任何开发方与 AI agent 均可直接采用。
 
 ## 码表
 
 （下表的 `E####` 就是唯一使用形态，全舰队一致，不带任何前缀。）
 
-典型触发句尾带删除线「模拟器」徽章 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> 的，表示这个触发背后的失败原因模拟器模拟不出来（例如真机运行时缺失的接口、眼镜硬件与宿主服务的真实行为），只能靠真机测试撞见；无徽章的触发与环境无关，模拟器里同样会发生。全表共 29 处。新码登记时同步判定是否加徽章。
+典型触发句尾带删除线「模拟器」徽章 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> 的，表示这个触发背后的失败原因模拟器模拟不出来（例如真机运行时缺失的接口、眼镜硬件与宿主服务的真实行为），只能靠真机测试撞见；无徽章的触发与环境无关，模拟器里同样会发生。全表共 29 处。新码登记时同步判定是否加徽章。
 
 ### 1xxx 相机与取景
 | 码 | 说明 | 典型触发 |
 |---|---|---|
 | E1001 | 相机打开失败 | getUserMedia 抛错/被拒（非权限类） |
 | E1002 | 相机权限未给 | NotAllowedError / 权限拒绝 |
-| E1003 | 拍照器不可用 | ImageCapture 构造失败/不存在 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E1003 | 拍照器不可用 | ImageCapture 构造失败/不存在 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E1004 | 取景抓帧失败 | grabFrame 单次抛错 |
 | E1005 | 取景连续失败 | 预览绘制连续失败 |
-| E1006 | 相机流中断 | track ended / 流被收回 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E1006 | 相机流中断 | track ended / 流被收回 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E1007 | 相机设备不存在 | NotFoundError：无可用摄像头 / 约束无匹配设备 |
 | E1008 | 相机不可读 | NotReadableError：相机被占用或硬件读取失败，track 无法启动 |
 | E1009 | 拍照失败 | takePhoto 抛错或返回空 |
-| E1010 | 拍照模式不可用 | 请求的 wide / telephoto / default 模式不被支持 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E1010 | 拍照模式不可用 | 请求的 wide / telephoto / default 模式不被支持 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E1011 | 取景约束不满足 | 视频约束 OverconstrainedError 且回退默认值亦失败 |
 
 ### 2xxx 拍帧与编码
 | 码 | 说明 | 典型触发 |
 |---|---|---|
 | E2001 | 拍帧抓帧失败 | 拍摄中 grabFrame 抛错 |
-| E2002 | 画布创建失败 | Canvas 不可得 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E2002 | 画布创建失败 | Canvas 不可得 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E2003 | 编码失败（画布） | convertToBlob 抛错/空 |
 | E2004 | 编码失败（直编） | createImageBlob 抛错/空 |
-| E2005 | 编码转文本失败 | Blob→dataURL 失败（含 FileReader 缺失；首个现场码 E2005，出自 AV11） <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
-| E2006 | 编码超时已切换 | 编码超时熔断、已切备用模式 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
-| E2007 | 无可用出帧路径 | 主备出帧路径都不可用 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E2005 | 编码转文本失败 | Blob→dataURL 失败（含 FileReader 缺失；首个现场码 E2005，出自 AV11） <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
+| E2006 | 编码超时已切换 | 编码超时熔断、已切备用模式 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
+| E2007 | 无可用出帧路径 | 主备出帧路径都不可用 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E2008 | 内存帧读取失败 | getImageData 抛错且位图直存也失败 |
 | E2009 | 单帧处理超时 | 看门狗强制复位 |
 | E2010 | 连续失败已停拍 | 连续失败达上限自动停（主码见 lastError） |
@@ -75,21 +75,21 @@ E<4位数字>
 ### 3xxx 语音（ASR / TTS）
 | 码 | 说明 | 典型触发 |
 |---|---|---|
-| E3001 | 语音识别不可用 | SpeechRecognition 不存在 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E3001 | 语音识别不可用 | SpeechRecognition 不存在 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E3002 | 语音识别没启动 | rec.start() 抛错 |
 | E3003 | 语音识别出错 | rec.onerror（未细分事件的兜底） |
 | E3004 | 语音识别反复掉线 | onend 重启连续失败 |
 | E3005 | 播报失败 | speechSynthesis.speak 抛错 |
 | E3006 | 无语音输入 | ASR 事件 no-speech：静音超时无人声 |
-| E3007 | 麦克风采集失败 | ASR 事件 audio-capture：宿主侧采音失败 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
-| E3008 | 识别权限未给 | ASR 事件 not-allowed：RECORD_AUDIO 未授权 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E3007 | 麦克风采集失败 | ASR 事件 audio-capture：宿主侧采音失败 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
+| E3008 | 识别权限未给 | ASR 事件 not-allowed：RECORD_AUDIO 未授权 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E3009 | 识别网络错误 | ASR 事件 network：识别服务网络失败 |
-| E3010 | 麦克风模式回退 | OverconstrainedError：exact 麦克风模式不满足，已回退默认模式（AV04 现场；全舰队 23 处引用） <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E3010 | 麦克风模式回退 | OverconstrainedError：exact 麦克风模式不满足，已回退默认模式（AV04 现场；全舰队 23 处引用） <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E3011 | 麦克风流获取失败 | getUserMedia 音频流抛错（非权限、非约束类） |
-| E3012 | 识别服务不可用 | ASR 事件 service-not-allowed <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E3012 | 识别服务不可用 | ASR 事件 service-not-allowed <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E3013 | 识别语言不支持 | ASR 事件 language-not-supported |
-| E3014 | 识别会话配置失败 | SpeechRecognitionSession 热词 / VAD / updateContext 更新被拒（AV05） <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
-| E3015 | 语音合成失败 | speechSynthesis.synthesize 生成侧抛错（与 E3005 的 speak 播报失败区分，AV06） <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E3014 | 识别会话配置失败 | SpeechRecognitionSession 热词 / VAD / updateContext 更新被拒（AV05） <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
+| E3015 | 语音合成失败 | speechSynthesis.synthesize 生成侧抛错（与 E3005 的 speak 播报失败区分，AV06） <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 
 ### 4xxx 录制、合成与播放
 | 码 | 说明 | 典型触发 |
@@ -99,12 +99,12 @@ E<4位数字>
 | E4003 | 播放绘制失败 | 播放 drawImage 抛错 |
 | E4004 | 播放帧率过低 | 实测低于设定一半 |
 | E4005 | 帧数据丢失 | 跨页/跨会话后帧与记录不符 |
-| E4006 | 录制器不可用 | MediaRecorder 不存在 / 构造失败 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
-| E4007 | 录制格式不支持 | isTypeSupported 候选格式全否（AV03 探针） <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E4006 | 录制器不可用 | MediaRecorder 不存在 / 构造失败 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
+| E4007 | 录制格式不支持 | isTypeSupported 候选格式全否（AV03 探针） <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E4008 | 录制启动失败 | MediaRecorder.start 抛错 |
 | E4009 | 录制无数据 | ondataavailable 无数据 / 分片全空 |
 | E4010 | 音频解码失败 | decodeAudioData 抛错（AV04 分析路径） |
-| E4011 | 音频播放失败 | SpeechAudioPlayer / 媒体元素播放抛错 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E4011 | 音频播放失败 | SpeechAudioPlayer / 媒体元素播放抛错 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 
 ### 5xxx 存储
 | 码 | 说明 | 典型触发 |
@@ -113,7 +113,7 @@ E<4位数字>
 | E5002 | 记录读取失败 | 读取/JSON 解析抛错 |
 | E5003 | 存储空间不足 | 写入被配额拒绝 |
 | E5004 | 存档版本不兼容 | 持久数据结构版本不符、解析或迁移失败 |
-| E5005 | 持久化不可用 | localStorage / 存储接口不存在或被禁用 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E5005 | 持久化不可用 | localStorage / 存储接口不存在或被禁用 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 
 ### 6xxx 网络与 LLM
 | 码 | 说明 | 典型触发 |
@@ -127,31 +127,31 @@ E<4位数字>
 | E6007 | 服务端错误 | HTTP 5xx 或接口业务错误 |
 | E6008 | 请求被拒 | HTTP 4xx / 鉴权失败（401/403；dabiaoge 通道 401 属此） |
 | E6009 | 响应解析失败 | 网络响应 JSON / 结构解析抛错 |
-| E6010 | 域名不在白名单 | 请求域名未报备白名单、被宿主拦截 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E6010 | 域名不在白名单 | 请求域名未报备白名单、被宿主拦截 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E6011 | 大模型输出不可用 | 空响应或结构不符预期、无法解析为业务数据 |
 
 ### 7xxx 传感器、定位与检测
 | 码 | 说明 | 典型触发 |
 |---|---|---|
-| E7001 | 朝向传感器不可用 | AbsoluteOrientationSensor 构造/启动失败 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E7001 | 朝向传感器不可用 | AbsoluteOrientationSensor 构造/启动失败 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E7002 | 定位失败 | getCurrentPosition error 2/3 |
 | E7003 | 定位权限未给 | getCurrentPosition error 1 |
 | E7004 | 条码检测失败 | BarcodeDetector.detect 抛错 |
-| E7005 | 码制不支持 | getSupportedFormats 不含目标码制 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
-| E7006 | 手势通道异常 | 世界感知开启失败 enableWorldAwareness 抛错 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
-| E7007 | 惯性传感器不可用 | Accelerometer / Gyroscope 构造或启动失败 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
-| E7008 | 传感器无数据 | 传感器已启动但超时无读数（benchmark 朝向/动作项超时类） <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
-| E7009 | 条码检测器不可用 | BarcodeDetector 不存在 / 构造失败（与 E7004 的 detect 抛错区分） <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
-| E7010 | 头部校准失败 | 校准无法完成，或校准中心漂移过大（头部游戏 / 指向类） <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E7005 | 码制不支持 | getSupportedFormats 不含目标码制 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
+| E7006 | 手势通道异常 | 世界感知开启失败 enableWorldAwareness 抛错 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
+| E7007 | 惯性传感器不可用 | Accelerometer / Gyroscope 构造或启动失败 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
+| E7008 | 传感器无数据 | 传感器已启动但超时无读数（benchmark 朝向/动作项超时类） <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
+| E7009 | 条码检测器不可用 | BarcodeDetector 不存在 / 构造失败（与 E7004 的 detect 抛错区分） <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
+| E7010 | 头部校准失败 | 校准无法完成，或校准中心漂移过大（头部游戏 / 指向类） <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 
 ### 8xxx 页面与运行时
 | 码 | 说明 | 典型触发 |
 |---|---|---|
 | E8001 | 页面切换失败 | wx.navigateTo/navigateBack 抛错 |
-| E8002 | 页面被系统回收 | 非正常 onUnload 且任务未完 <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E8002 | 页面被系统回收 | 非正常 onUnload 且任务未完 <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E8003 | 权限未声明 | 调用能力与 app.json 权限不符（开发期自查码） |
-| E8004 | 运行时接口缺失 | 所需全局接口不存在（X is not defined 通用码；编码上下文的 FileReader 归 E2005） <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
-| E8005 | 输入事件未达页面 | 按键/手势事件未送达页面（开发期自查码：onKeyDown 未接线、bindtap-only 在真机不可触发类） <img src="assets/badges/badge-nosim.svg" height="18" alt="模拟器无法触发"> |
+| E8004 | 运行时接口缺失 | 所需全局接口不存在（X is not defined 通用码；编码上下文的 FileReader 归 E2005） <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
+| E8005 | 输入事件未达页面 | 按键/手势事件未送达页面（开发期自查码：onKeyDown 未接线、bindtap-only 在真机不可触发类） <img src="assets/badges/badge-nosim.svg" height="20" alt="模拟器无法触发"> |
 | E8006 | 会话状态丢失 | 跨页/重进后会话状态缺失（媒体帧丢失归 E4005） |
 
 ### 9xxx 系统
@@ -167,6 +167,7 @@ E<4位数字>
 - **E2005**（2026-10-28 真机，AV11 v1.1.0 首报）：原文「FileReader is not defined」——Ink 运行时无 FileReader（aiui-dev 官方参考全文亦无），编码后转 dataURL 每帧必死、0 帧超时退出。全舰队 grep 实查共 39 个文件用了 FileReader（AV01/02/08/10、stream-probe、games 多台、directional 4 台、curb-cut 5 台、cover/hold/filter/review/japan/korea 若干），真机同环同死，批量修复由登记处统筹（修法样板 = AV11 验证中的 arrayBuffer + 分块 btoa，AV11 本台由其开发方负责，登记处不直接动）。
 
 ## 变更日志
+- **v1.6.1（2026-10-29，徽章醒目化）**：GO 指令——删除线「模拟器」徽章由深灰改亮红（#e53935）、行内显示高度 18→20，一眼可见。判定与码义不变（PATCH）。
 - **v1.6.0（2026-10-29，标记改徽章）**：GO 指令删除「模拟器无法触发」列——29 码的标记改为在典型触发句尾加删除线「模拟器」徽章（新增 `assets/badges/badge-nosim.svg`，本表专用标记、非系列徽章）。判定集合与 84 码含义一字未变。
 - **v1.5.5（2026-10-29，说明去重）**：GO 指令——已记入变更日志的沿革，正文说明不再赘述：编码规则去掉前缀试行史、治理的版本规则去掉例外叙事、本表版本行只留版本号与日期、前缀节与现场记录同步收紧。规则本体与 84 码一字未变。今后正文只写现行规则，沿革只进本日志。
 - **v1.5.4（2026-10-29，列定义收紧）**：GO 指出「模拟器无法触发」列的原说明有歧义，定义改为一句话——**是 = 这个码背后的失败原因，模拟器模拟不出来**（如真机运行时缺失的接口、眼镜硬件与宿主服务的真实行为），在模拟器里不会真实发生；否 = 原因与环境无关、模拟器里同样会发生。逐码判定一字未变（29 是 / 55 否），84 码含义不变。
