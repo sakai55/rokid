@@ -18,7 +18,7 @@ var MODES = [
 export default {
   data: {
     evt: 'EVT: shoot ready',
-    ver: 'v1.0.0',
+    ver: 'v1.0.1',
     status: '对准对象，单击开始三镜连拍',
     targetName: '-',
     busy: false,
@@ -51,19 +51,25 @@ export default {
   },
   onBackTap() { try { wx.navigateBack({}); } catch (e) {} },
   onShootTap() { this._shootAll(); },
-  _blobToDataUrl(blob) {
-    return new Promise(function (resolve, reject) {
-      try {
-        var fr = new FileReader();
-        fr.onload = function () { resolve(fr.result); };
-        fr.onerror = function () { reject(new Error('FileReader fail')); };
-        fr.readAsDataURL(blob);
-      } catch (e) { reject(e); }
-    });
+  async _blobToDataUrl(blob) {
+    // This runtime has NO blob-text reader API (fleet error E2005).
+    // Documented path: blob.arrayBuffer() -> chunked base64 via btoa.
+    try {
+      if (!blob || typeof blob.arrayBuffer !== 'function') throw new Error('E2005: blob.arrayBuffer unavailable');
+      var buf = await blob.arrayBuffer();
+      var bytes = new Uint8Array(buf);
+      var bin = '';
+      var CH = 0x8000;
+      for (var i = 0; i < bytes.length; i += CH) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+      return 'data:' + (blob.type || 'image/jpeg') + ';base64,' + btoa(bin);
+    } catch (e) {
+      if (e && /^E2005/.test(e.message || '')) throw e;
+      throw new Error('E2005: ' + String((e && e.message) || e).slice(0, 40));
+    }
   },
   // Centre crop: drawImage with the 9-argument (source-rect -> dest-rect)
   // form on a document canvas, then canvas.convertToBlob(jpeg, 0.7) and
-  // FileReader to a data URL for the LLM. Falls back to the raw photo
+  // blob-to-dataURL for the LLM. Falls back to the raw photo
   // data URL when the host has no document canvas / convertToBlob.
   async _cropDataUrl(blob) {
     try {

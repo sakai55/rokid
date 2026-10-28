@@ -12,7 +12,7 @@ var HKEY = 'av01_history';
 export default {
   data: {
     evt: 'EVT: history ready',
-    ver: 'v1.0.0',
+    ver: 'v1.0.1',
     status: '历史判读（最近 8 条）',
     countLine: '共 0 条',
     selIdx: 0,

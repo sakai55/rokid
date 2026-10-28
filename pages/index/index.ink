@@ -20,7 +20,7 @@ var TARGETS = [
 export default {
   data: {
     evt: 'EVT: ready · 滑动选对象，单击进连拍',
-    ver: 'v1.0.0',
+    ver: 'v1.0.1',
     status: '选一个拍摄对象：三镜（wide/telephoto/default）将同场连拍',
     heard: '',
     steady: false,
