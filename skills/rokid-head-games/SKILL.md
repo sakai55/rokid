@@ -1,7 +1,7 @@
 ---
 name: "rokid-head-games"
 description: "Produce head-movement mini-games for Rokid AIUI (GA numbering, games/ directory): the no-circling constitution (segmented motion only), the safety line, sensor honesty (nod-only gesture event, calibration-learned signs), judging patterns, and GA production lessons. Use together with rokid-agent-sop for any GA game or the head-games collection hub."
-version: "1.0.0"
+version: "1.0.1"
 ---
 
 # Rokid Head-Movement Mini-Games
@@ -28,6 +28,7 @@ Every round opens with a short spoken form of this rule, and every game's ready 
 
 - **No eye tracking.** "Looking" in a game is head orientation plus steadiness, nothing else.
 - **`onHeadGesture` is officially documented only for `'nod'`.** Never claim shake / turn / tilt gesture events. A "no" answer is a side-turn held steady (GA16), explicitly not a shake.
+- Sensor readings are `null` until the first sample (`quaternion`, `timestamp`): judge sampling state from `activated` / `hasReading`, never treat a null reading as 0 (official device docs, confirmed in the 2026-10-29 full audit).
 - Yaw / pitch / roll all derive from `AbsoluteOrientationSensor` quaternions relative to a center calibrated at round start. **Signs are learned, never assumed**: calibration prompts teach them ("请低一下头" learns down, "请向左转一下" learns left, "请向左贴一下" learns left tilt); the opposite direction is the reverse sign.
 - Typical judging values (written down per game in its AGENTS.md, re-tuned only at the device stage): reach ≈ 27°, return-to-center < 10°, a direction counts only after ~0.8 s steady (stability-gated, with a documented elapsed-time fallback).
 - The sensor is absent in web preview: that path is labelled SKIP / demo, never a fake pass. The glasses have **no breath sensor** — breathing games are voice-paced, breathing is never measured (GA17).
@@ -37,7 +38,7 @@ Every round opens with a short spoken form of this rule, and every game's ready 
 - One page (`pages/index/index`), three states only (ready / playing / done), one mechanic, nothing else: no menus, no settings, no multi-level structure. Difficulty moves by exactly one number (count or seconds).
 - Playing screen shows at most three things — the big direction/target, the count/progress, one short hint; everything else is spoken. TTS guides, counts and announces the result.
 - Temple tap = start / confirm / play again; nod = confirm only where the mechanic says so; double-tap is the host back and is never intercepted. Each README states its gesture mapping.
-- **Zero permissions by design**: `permissions: []` (sensor and TTS are not among GEOLOCATION / CAMERA / RECORD_AUDIO). If any step ever forces a permission, report it and record it in the plan — never add one silently.
+- **Zero permissions by design**: `permissions: []` (no name in the platform's seven-permission table gates sensors or TTS — both are ungated). If any step ever forces a permission, report it and record it in the plan — never add one silently.
 - Green-shades-only CSS (brightest green `#7dff9e` plays the "white" role, no pure white or white rgba), buttons styled per each game's own UI form, canvas 480×352.
 
 ## Design rules
@@ -85,4 +86,5 @@ Every change: bump `version:` above, append a Change Log entry below (date, what
 
 ## Change Log
 
+- **1.0.1 (2026-10-29)** — Patch: two corrections from the full official-documentation audit (evidence: `rokid-agent-sop/API-AUDIT.md`): sensor readings are `null` before the first sample (judge from `activated`/`hasReading`, never as 0), and the zero-permissions note now reflects the platform's seven-name permission table (sensors/TTS remain ungated).
 - **1.0.0 (2026-10-28)** — Landed as a skill at GO's instruction. Distilled from GA01–GA26 production: GO's no-circling constitution and safety line (2026-10-24), calibration-learned sensor signs and threshold craft, the judging-pattern library, the GA03/GA04 pack-last incident, and the GA24–GA26 games/README omission lesson.
