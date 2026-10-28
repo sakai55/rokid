@@ -62,7 +62,7 @@ cd ~/workspace/rokid/omiyage-cover
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | Omiyage Cover（待导入后回填） |
-| Version / Build | 1.0.2 / 待导入后回填 |
+| Version / Build | 1.0.3 / 待导入后回填 |
 | App Category | Life |
 | Intent Description | Buying omiyage souvenirs in Japan: covers a 6-person recipient grid against gift-box stock. |
 | Agent ID | 待导入后回填 |
@@ -130,3 +130,17 @@ cd ~/workspace/rokid/omiyage-cover
 **Fixes**
 
 - 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+
+### Change Log（Build 1.0.3）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 无
+
+**Fixes**
+
+- FileReader 削除（Ink ランタイムに存在せず、実機で必ず失敗する）：写真 Blob→dataURL を公式ドキュメントの経路 `blob.arrayBuffer()` + 分割 `btoa` に変更し、失敗時は全艦隊エラーコード E2005 を表示する。
