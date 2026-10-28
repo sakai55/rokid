@@ -13,7 +13,7 @@ surroundings, never from on-screen pretend play.
 2. 出题后转过头去、不再看那个场景，凭记忆答题：每题的 3 个选项就是 3 道题的正确答案（按题号轮转排列），考的是「哪个答案配哪道题」。滑动选、单击或点头确认，即时判对错并播报正解。
 3. 3 题答完结算。出题失败（大模型不可用或没按格式出题）会如实显示「出题失败 · 可重拍」，绝不编题；可重拍一张重新出题。
 
-- **Judge chain.** takePhoto(wide) → FileReader data: URL → LanguageModel 图片输入，要求只回 3 行 `Qn: 问题 | An: 答案`，本地正则解析并把答案定死；答题阶段全本地比对，不再调大模型。 A "判定中…" waiting state is
+- **Judge chain.** takePhoto(wide) → Blob 经 `arrayBuffer()` + 分块 `String.fromCharCode` + `btoa` 转 data: URL（转码失败带 E2005、记判定失败）→ LanguageModel 图片输入，要求只回 3 行 `Qn: 问题 | An: 答案`，本地正则解析并把答案定死；答题阶段全本地比对，不再调大模型。 A "判定中…" waiting state is
   shown for the whole capture+judge duration; every verdict is
   spoken via TTS.
 - **Judge failure is a failed round, honestly.** If the model is
