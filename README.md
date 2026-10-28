@@ -17,11 +17,11 @@ https://github.com/sakai55/rokid/tree/agent-board-capture
 
 截图统一存放于仓库根目录 `screenshots/board-capture/`。
 
-![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/board-capture/preview-board-capture-index.png)
+![首页初始状态](../screenshots/board-capture/preview-board-capture-index.png)
 
-![DEMO 态：2 条记录已存档，第 3 块板的 LLM READ (DEMO) 读数待核对存档](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/board-capture/preview-board-capture-demo.png)
+![DEMO 态：2 条记录已存档，第 3 块板的 LLM READ (DEMO) 读数待核对存档](../screenshots/board-capture/preview-board-capture-demo.png)
 
-![KEEP 后：3 条提纲按拍摄顺序排好，OUTLINE 3/8](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/board-capture/preview-board-capture-kept.png)
+![KEEP 后：3 条提纲按拍摄顺序排好，OUTLINE 3/8](../screenshots/board-capture/preview-board-capture-kept.png)
 
 ## 解决的问题
 
@@ -137,7 +137,7 @@ FileReader 可用）、转写对公式/数字的准确率、看不清处是否�
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
@@ -260,3 +260,17 @@ Hi, I'm **Board Capture** - boards get wiped, your outline won't.
 **Fixes**
 
 - None (initial release).
+
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Removed FileReader (absent from the Ink runtime; would fail on device): board photo Blob→dataURL now uses the documented `blob.arrayBuffer()` + chunked `btoa` path, and the failure surfaces fleet error code E2005 in the conversion-unavailable state.
