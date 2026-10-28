@@ -19,11 +19,11 @@ https://github.com/sakai55/rokid/tree/agent-sign-reader
 
 截图统一存放于仓库根目录 `screenshots/sign-reader/`。
 
-![首页初始状态](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/sign-reader/preview-sign-reader-index.png)
+![首页初始状态](../screenshots/sign-reader/preview-sign-reader-index.png)
 
-![DEMO 态：登机口牌的机器读数，KEY 行大字显示（12 号登机口），全文在下](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/sign-reader/preview-sign-reader-demo.png)
+![DEMO 态：登机口牌的机器读数，KEY 行大字显示（12 号登机口），全文在下](../screenshots/sign-reader/preview-sign-reader-demo.png)
 
-![DICT 核对后：你读到的是 13 号登机口，与机器读数不一致，CHECK 显示 DIFF 并提示以你的眼睛为准](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/sign-reader/preview-sign-reader-diff.png)
+![DICT 核对后：你读到的是 13 号登机口，与机器读数不一致，CHECK 显示 DIFF 并提示以你的眼睛为准](../screenshots/sign-reader/preview-sign-reader-diff.png)
 
 ## 解决的问题
 
@@ -150,7 +150,7 @@ canvas 内坐标 DEMO (391, 245) → DICT (85, 273)，坐标经视觉
 | 项目 | 值 |
 |---|---|
 | Agent Name（Studio） | 待导入后回填 |
-| Version（Build） | 1.0.0（待导入后回填） |
+| Version（Build） | 1.0.1（待导入后回填） |
 | App Category | 待导入后回填 |
 | Intent Description | 待导入后回填 |
 | Agent ID | 待导入后回填 |
@@ -278,3 +278,17 @@ Hi, I'm **Sign Reader** - far signs, read big.
 **Fixes**
 
 - None (initial release).
+
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Removed FileReader (absent from the Ink runtime; would fail on device): sign photo Blob→dataURL now uses the documented `blob.arrayBuffer()` + chunked `btoa` path, and the failure surfaces fleet error code E2005 in the conversion-unavailable state.
