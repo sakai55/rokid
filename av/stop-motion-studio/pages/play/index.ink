@@ -25,11 +25,16 @@ function sset(k, v) {
 function reasonLabel(r) {
   return r === 'voice' ? '说「退出」结束' : (r === 'target' ? '拍够了' : (r === 'time' ? '满 3 分钟了' : (r === 'back' ? '双击结束' : '—')));
 }
+function frameUrl(fr) {
+  if (!fr) return '';
+  if (typeof fr === 'string') return fr;
+  return fr.url || '';
+}
 
 export default {
   data: {
     evt: 'EVT: play ready',
-    ver: 'v1.1.0',
+    ver: 'v1.1.1',
     status: '合成 = 按 12 帧/秒逐帧播放帧序列（不是生成视频文件）',
     progLine: '帧 0/0',
     readLines: []
@@ -38,7 +43,8 @@ export default {
     try { this.enableWorldAwareness(); } catch (e) {}
     this._ctx = null; this._timer = null; this._playing = false;
     this._idx = 0; this._drawTimes = []; this._decBusy = false;
-    if (!store.frames.length) this.setData({ status: '会话内暂无帧：先回拍摄页，点头开始拍摄' });
+    this._pxCv = null;
+    if (!store.frames.length) this.setData({ status: '会话内暂无帧：先回拍摄页，点头或单击开始拍摄' });
     this._render();
   },
   onReady() {
@@ -64,15 +70,21 @@ export default {
     var total = this._totals();
     var meas = this._measured();
     if (meas) store.measuredFps = meas;
+    var T = store.target || TARGET;
+    var mem = store.mode === 'memory';
+    var avgTxt = n ? ((mem ? '约 ' : '') + Math.round((total / n / 102.4)) / 10 + ' KB' + (mem ? '（估算）' : '')) : '-';
+    var totTxt = n ? ((mem ? '约 ' : '') + Math.round((total / 102.4)) / 10 + ' KB' + (mem ? '（估算）' : '')) : '-';
+    var modeTxt = store.mode === 'memory' ? '内存帧' : (store.mode === 'url' ? 'dataURL' : '—');
     var reads = [
       { l1: '设定帧率', v1: FPS + ' fps', l2: '实测帧率', v2: meas ? (meas + ' fps') : '未测（播放后出）' },
-      { l1: '已拍张数', v1: n + ' / ' + TARGET, l2: '实际成片', v2: n ? (Math.round((n / FPS) * 10) / 10 + ' s') : '-' },
-      { l1: '单帧平均', v1: n ? (Math.round((total / n / 102.4)) / 10 + ' KB') : '-', l2: '帧总大小', v2: n ? (Math.round((total / 102.4)) / 10 + ' KB') : '-' },
-      { l1: '拍摄耗时', v1: (store.shootSec || 0) + ' s', l2: '停因', v2: reasonLabel(store.stopReason) }
+      { l1: '已拍张数', v1: n + ' / ' + T, l2: '实际成片', v2: n ? (Math.round((n / FPS) * 10) / 10 + ' s') : '-' },
+      { l1: '单帧平均', v1: avgTxt, l2: '帧总大小', v2: totTxt },
+      { l1: '拍摄耗时', v1: (store.shootSec || 0) + ' s', l2: '停因', v2: reasonLabel(store.stopReason) },
+      { l1: '出帧模式', v1: modeTxt, l2: '编码错误', v2: store.encodeError ? store.encodeError.slice(0, 26) : '-' }
     ];
     this.setData({
       readLines: reads,
-      progLine: '帧 ' + (n ? Math.min(this._idx + 1, n) : 0) + '/' + n + (this._playing ? ' · 循环播放中 · 点头从头重播' : '')
+      progLine: '帧 ' + (n ? Math.min(this._idx + 1, n) : 0) + '/' + n + (this._playing ? ' · 循环播放中 · 点头或单击从头重播' : '')
     });
   },
   _persistMeasured() {
@@ -103,24 +115,44 @@ export default {
     for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
     return new Blob([arr], { type: mime });
   },
+  _makeCanvas(w, h) {
+    var cv = null;
+    try { if (typeof document !== 'undefined') cv = document.createElement('canvas'); } catch (e) {}
+    if (!cv && typeof Canvas !== 'undefined') { try { cv = new Canvas(w, h); } catch (e) {} }
+    if (cv) { try { cv.width = w; cv.height = h; } catch (e) {} }
+    return cv;
+  },
   async _drawCurrent() {
     if (!store.frames.length || !this._ctx) return;
     if (this._decBusy) return;
-    if (typeof createImageBitmap === 'undefined' || typeof atob === 'undefined') {
-      this.setData({ status: '本机无 createImageBitmap/atob，帧图解码不可用，合成播放待真机（如实）', evt: 'EVT: decode n/a' });
-      return;
-    }
+    var fr = store.frames[this._idx];
     this._decBusy = true;
     var bmp = null;
     try {
-      var blob = this._dataUrlToBlob(store.frames[this._idx]);
-      bmp = await createImageBitmap(blob);
-      this._ctx.drawImage(bmp, 0, 0, 448, 170);
+      if (fr && fr.kind === 'px') {
+        // Raw pixels: put back onto an offscreen canvas, then drawImage
+        // (Canvas is a documented drawImage source) scaled to the stage.
+        if (!this._pxCv) this._pxCv = this._makeCanvas(fr.w || 480, fr.h || 352);
+        if (!this._pxCv) throw new Error('no offscreen canvas for px frame');
+        var pctx = this._pxCv.getContext('2d');
+        pctx.putImageData(fr.img, 0, 0);
+        this._ctx.drawImage(this._pxCv, 0, 0, 448, 170);
+      } else if (fr && fr.kind === 'bmp') {
+        this._ctx.drawImage(fr.bmp, 0, 0, 448, 170);
+      } else {
+        if (typeof createImageBitmap === 'undefined' || typeof atob === 'undefined') {
+          this.setData({ status: '本机无 createImageBitmap/atob，帧图解码不可用，合成播放待真机（如实）', evt: 'EVT: decode n/a' });
+          return;
+        }
+        var blob = this._dataUrlToBlob(frameUrl(fr));
+        bmp = await createImageBitmap(blob);
+        this._ctx.drawImage(bmp, 0, 0, 448, 170);
+      }
       if (this._ctx.flush) this._ctx.flush();
       this._drawTimes.push(Date.now());
       if (this._drawTimes.length > 240) this._drawTimes.shift();
     } catch (e) {
-      this.setData({ status: '帧解码/绘制失败（如实）：' + String((e && e.message) || e).slice(0, 40), evt: 'EVT: draw fail' });
+      this.setData({ status: '帧绘制失败（如实）：' + String((e && e.message) || e).slice(0, 40), evt: 'EVT: draw fail' });
     } finally {
       if (bmp) { try { bmp.close(); } catch (e) {} }
       this._decBusy = false;
@@ -152,6 +184,10 @@ export default {
     else this._drawCurrent();
     this._render();
     this.setData({ evt: 'EVT: replay from 0' });
+  },
+  onKeyDown(event) {
+    var k = event.key || event.code;
+    if (k === 'Enter') this._restart(); // diagnostic twin of the nod replay
   },
   onHeadGesture(event) {
     if (event && event.gesture === 'nod') this._restart();
