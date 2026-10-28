@@ -12,9 +12,9 @@ https://github.com/sakai55/rokid/tree/agent-texture-hunt
 
 ## 预览截图
 
-![预览-ready](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/texture-hunt/preview-texture-hunt-ready.png)
-![预览-playing](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/texture-hunt/preview-texture-hunt-playing.png)
-![预览-done](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/texture-hunt/preview-texture-hunt-done.png)
+![预览-ready](../screenshots/texture-hunt/preview-texture-hunt-ready.png)
+![预览-playing](../screenshots/texture-hunt/preview-texture-hunt-playing.png)
+![预览-done](../screenshots/texture-hunt/preview-texture-hunt-done.png)
 
 ## 玩法
 
@@ -74,7 +74,7 @@ cd ~/workspace/rokid/git-rokid-photo/games/texture-hunt
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | 质地猎手（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Version / Build | 1.0.1 / 待导入后回填 |
 | App Category | 待导入后回填 |
 | Intent Description | Texture-hunt photo game for Rokid glasses: each round names a texture; the player photographs a real surface up close and the host LLM judges the surface texture (VERDICT YES/NO plus reason). Camera only. |
 | Agent ID | 待导入后回填 |
@@ -128,3 +128,17 @@ cd ~/workspace/rokid/git-rokid-photo/games/texture-hunt
 **Fixes**
 
 - 无（首个版本）
+
+### Change Log（Build 1.0.1）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 无
+
+**Fixes**
+
+- 删除 FileReader（Ink 运行时不存在，真机必死）：照片 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败接全局错误码 E2005 并如实记为拍照失败可重试。
