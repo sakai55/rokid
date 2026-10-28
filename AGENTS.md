@@ -28,8 +28,9 @@ Rokid 眼镜名牌识人智能体（AIUI Agent）。
   （一处快照取日期 + 时间，同 DI38/DI41 的时钟纪律）——这个
   朝向就是「刚才在你正前方的人」的方向。照片 Blob 只留
   在内存里等 READ，**从不落盘**。
-- 读（READ）：把照片 Blob 经 `FileReader.readAsDataURL` 编
-  码为 data: URL，作为 user 消息的 `{type:'image_url'}` 内
+- 读（READ）：把照片 Blob 经 `arrayBuffer()` + 分块
+  `String.fromCharCode` + `btoa` 编码为 data: URL（转码失
+  败报裸码 E2005），作为 user 消息的 `{type:'image_url'}` 内
   容连同一段文字指令一起发给主机 `LanguageModel`（多模态
   结构化 content 只允许出现在 user 角色，system 提示只经
   `initialPrompts` 首条设置——档案 §2.9）。调用前先查
@@ -101,8 +102,9 @@ Rokid 眼镜名牌识人智能体（AIUI Agent）。
   字识别 API。读名牌走的是官方路径——telephoto 拍照 +
   LLM 图片输入（档案 §2.3 / §2.9 / §4.3）；照片经 data:
   URL 送入模型在文档里是成立的，但**宿主真机是否真的接
-  受 image_url / data: URL、FileReader 是否可用，都未经
-  真机验证**（见 README「未验证」第一条）。所以每条失败
+  受 image_url / data: URL，未经真机验证**（见 README
+  「未验证」第一条）；FileReader 已实证不存在于本运行时
+  （E2005），转码不依赖它。所以每条失败
   路径都留了一条能用的路：模型不可用、转换不可用、模型
   报错、wx 回退照片没有 Blob 可转——全部如实落到对应状
   态（失败原因写在 READ 行上），并提供 DICT 兜底：你的
