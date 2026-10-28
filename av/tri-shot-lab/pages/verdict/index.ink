@@ -14,7 +14,7 @@ var SYS = 'You read one cropped photo from smart glasses. Reply with exactly two
 export default {
   data: {
     evt: 'EVT: verdict ready',
-    ver: 'v1.0.0',
+    ver: 'v1.0.1',
     status: '单击逐张判读（三张串行，同一 session 一次只发一个请求）',
     targetName: '-',
     busy: false,

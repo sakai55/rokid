@@ -57,7 +57,7 @@ AV01 · 读不清牌子小字时，一次同场连拍三镜并逐张判读，给
 | 项目 | 值 |
 |---|---|
 | Studio name | 待导入后回填 |
-| Version | 1.0.0 |
+| Version | 1.0.1 |
 | App Category | Life |
 | Intent Description | Compare all three photo modes on one target and learn which lens reads it |
 | Agent ID | 待回填 |
@@ -94,6 +94,20 @@ Hi, I'm **Tri Shot Lab**. Pick a target — a distant sign, small print, a barco
 **Fixes**
 
 - None (initial build).
+
+#### Build 1.0.1
+
+**Features added**
+
+- None.
+
+**Improvements**
+
+- None.
+
+**Fixes**
+
+- Removed FileReader (absent from the Ink runtime; would fail on device): photo/crop Blob→dataURL now uses the documented `blob.arrayBuffer()` + chunked `btoa` path, and the failure surfaces fleet error code E2005.
 
 ## 打包与预览
 
