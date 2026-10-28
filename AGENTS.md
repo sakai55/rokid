@@ -38,7 +38,9 @@ three lines in the middle were never actually read.
   gated three times.** LOAD takes a default photo
   (`ImageCapture.takePhoto({mode:'default'})`, wx camera-context
   fallback like the siblings); the Blob becomes a data: URL via
-  `FileReader` and goes to the host `LanguageModel` as an `image_url`
+  `blob.arrayBuffer()` + chunked `String.fromCharCode` + `btoa`
+  (conversion failure lands on the read-failure path as E2005)
+  and goes to the host `LanguageModel` as an `image_url`
   part of ONE user message (system prompt via `initialPrompts` only,
   `availability()` first, session `destroy()`ed after — dossier
   §2.9). The reply format is strict (`L1: ...` one per line, with a
