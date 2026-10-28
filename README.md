@@ -12,9 +12,9 @@ https://github.com/sakai55/rokid/tree/agent-snap-hunt
 
 ## 预览截图
 
-![预览-ready](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/snap-hunt/preview-snap-hunt-ready.png)
-![预览-playing](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/snap-hunt/preview-snap-hunt-playing.png)
-![预览-done](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/snap-hunt/preview-snap-hunt-done.png)
+![预览-ready](../screenshots/snap-hunt/preview-snap-hunt-ready.png)
+![预览-playing](../screenshots/snap-hunt/preview-snap-hunt-playing.png)
+![预览-done](../screenshots/snap-hunt/preview-snap-hunt-done.png)
 
 ## 玩法
 
@@ -75,7 +75,7 @@ cd ~/workspace/rokid/git-rokid-photo/games/snap-hunt
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | 拍物寻宝（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Version / Build | 1.0.1 / 待导入后回填 |
 | App Category | 待导入后回填 |
 | Intent Description | Photo treasure-hunt game for Rokid glasses. Five fixed targets are called by voice; the player finds each in the real environment and snaps a photo, judged by the host LLM image input (VERDICT YES/NO plus a reason). Swipe switches unattempted targets, nod logs a non-scoring appeal. Camera only; photos are judged in memory and never saved. |
 | Agent ID | 待导入后回填 |
@@ -129,3 +129,17 @@ cd ~/workspace/rokid/git-rokid-photo/games/snap-hunt
 **Fixes**
 
 - 无（首个版本）
+
+### Change Log（Build 1.0.1）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 无
+
+**Fixes**
+
+- 删除 FileReader（Ink 运行时不存在，真机必死）：照片 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败接全局错误码 E2005 并如实记为拍照失败可重试。

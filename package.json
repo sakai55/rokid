@@ -3,5 +3,5 @@
   "description": "Photo treasure-hunt game GA41 for Rokid glasses: five fixed targets (red cup, book, key, chair, water bottle). Find each in the real room, aim and snap; a host LLM image judge answers VERDICT YES/NO with a one-line reason. Swipe switches unattempted targets, nod after a verdict logs an appeal without changing the score. Camera only, photos judged in memory and never saved.",
   "main": "app.js",
   "name": "snap-hunt",
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
