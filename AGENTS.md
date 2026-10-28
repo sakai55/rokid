@@ -112,8 +112,9 @@ and this agent never knows where anyone is.
   positioning, direction is not navigation, single session,
   cross-day keeping named as GO's decision, no indoor
   positioning, zero persistence); camera path asserted
-  (ImageCapture.takePhoto wide mode, FileReader data-URL
-  conversion, DEMO photo labelled placeholder); initial
+  (ImageCapture.takePhoto wide mode, arrayBuffer data-URL
+  conversion (E2005 on failure), DEMO photo labelled
+  placeholder); initial
   register-empty state (bigText 还没登记， placeholder row);
   bigCls thresholds; refusals in register-empty (PREVIEW/
   GOT/END naming the missing MARK, NEXT/PREV/BACK ignored);
