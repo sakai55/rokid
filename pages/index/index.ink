@@ -21,7 +21,7 @@ export default {
     selLine: '',
     menu: [],
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.0.1'
   },
   onLoad() { this._sel = 0; this._steady = false; this._stream = null; this._ctx = null; this._render(); },
   onUnload() { this._cleanup(); },
