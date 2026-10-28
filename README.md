@@ -9,10 +9,10 @@ https://github.com/sakai55/rokid/tree/agent-number-catch
 
 注意力外挂系列 HO01（HOLD 默念型，本组第一个）。酒店房号、快递柜号、取餐号、停车位号——这类号码的共同点是：看一眼就得在脑子里默念一路，中间聊一句话就忘。本 Agent 的做法：看向号码拍一张长焦照片，主机大模型把数字读出来放大给你核对，你确认了才存住；之后号码就挂在你视线里，走路不用再当复读机，用完在常驻显示里点头两下清掉。
 
-![预览-首页](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/number-catch/preview-number-catch-index.png)
-![预览-演示读数待核对](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/number-catch/preview-number-catch-demo.png)
-![预览-演示列表](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/number-catch/preview-number-catch-list.png)
-![预览-常驻显示](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/number-catch/preview-number-catch-show.png)
+![预览-首页](../screenshots/number-catch/preview-number-catch-index.png)
+![预览-演示读数待核对](../screenshots/number-catch/preview-number-catch-demo.png)
+![预览-演示列表](../screenshots/number-catch/preview-number-catch-list.png)
+![预览-常驻显示](../screenshots/number-catch/preview-number-catch-show.png)
 
 ## 解决的问题
 
@@ -95,7 +95,7 @@ cd ~/workspace/rokid/number-catch
 | 字段 | 值 |
 |---|---|
 | Studio 名称 | Number Catch（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Version / Build | 1.0.1 / 待导入后回填 |
 | App Category | 待导入后回填 |
 | Intent Description | Glance-catch for short-lived numbers: telephoto photo read by the host AI, stored only after your confirm, recalled in view, cleared by a two-step nod. |
 | Agent ID | 待导入后回填 |
@@ -158,3 +158,17 @@ cd ~/workspace/rokid/number-catch
 **Fixes**
 
 - 无（首个版本）
+
+### Change Log（Build 1.0.1）
+
+**Features added**
+
+- 无
+
+**Improvements**
+
+- 无
+
+**Fixes**
+
+- 删除 FileReader（Ink 运行时不存在，真机必死）：照片 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败接全局错误码 E2005 并如实显示为读数失败。
