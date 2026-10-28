@@ -1,8 +1,32 @@
-# Rokid 舰队全局错误码表（Global Error Codes）v1.8.0
+# Rokid 舰队全局错误码表（Global Error Codes）v1.9.0
 
 GO 2026-10-28 定立，自 AV11 起全舰队执行：**任何 agent 发生任何错误，眼镜上统一显示错误码，用户只报码即可对表定位。**
 
-## 为什么要这张表（眼镜端屏显错误码）
+**这是唯一文件**：原理、规则、治理、接入规范（含可直接照抄的代码示例）与全部码表都在本文件内，分区见目录。其他开发者整份取用即可，不需要再找任何配套文档。
+
+## 目录
+
+- [给 AI agent 的执行指令（先读这一节）](#给-ai-agent-的执行指令先读这一节)
+- [1. 为什么要这张表](#1-为什么要这张表眼镜端屏显错误码)
+- [2. 编码规则](#2-编码规则全舰队唯一锁定)
+- [3. 治理](#3-治理)
+- [4. 接入规范（给开发者与 AI agent）](#4-接入规范给开发者与-ai-agent)
+- [5. 码表](#5-码表)
+- [6. 前缀（已废止）](#6-前缀已废止)
+- [7. 现场已回报码](#7-现场已回报码)
+- [8. 变更日志](#8-变更日志)
+
+## 给 AI agent 的执行指令（先读这一节）
+
+你是一名 Rokid AIUI 开发者（或为开发者工作的 AI agent），要把错误码接入一个 Agent。照下面做，不要自行发挥：
+
+1. **错误码只认本表**：只用第 5 节码表里存在的码；不自造码、不改码义、不用任何前缀（唯一形态是裸码 `E####`）。
+2. **接入步骤在第 4 节**：五件事（单点定义 → 失败点全映射 → 三处同码 → README 一节 → 静态自查），代码示例可直接照抄后按本台情况改名增删，不需要重新设计结构。
+3. **选码方法**：按失败点在第 5 节逐段查最贴切的码；查不到贴切的，用兜底码 `E9001` 并在 `lastError` 留原文，事后按第 3 节流程申请新码——回告之前不要用自拟码上线。
+4. **三条禁令**：不把英文报错原文直接显示给用户（原文只进 `lastError` 或截断附带）；不用已停用的码（当前：E6006）；不在业务代码里散写码字符串（一律走单点定义模块）。
+5. **打包前必跑第 4 节第（5）步的静态自查**，grep 结果留痕。
+
+## 1. 为什么要这张表（眼镜端屏显错误码）
 
 **先说一个现成的例子。** AV11 真机首测一帧没拍出来，代码死在 FileReader 上——而官方 API 参考是清单式的，FileReader 根本不在清单里：这一步首先是开发侧没对着清单核、顺手用了浏览器的习惯 API，错在开发侧。但这个错在模拟器和本地预览里藏得严严实实：那两处是完整 Web 环境，FileReader 跑得好好的，一切「正常」；只有真机第一次运行才把它揭出来，最后靠眼镜上报的 E2005 对表定位。清单内的错靠静态核对事先挡（本舰队已把 FileReader 列入静态检查禁词），清单与环境的不一致则永远要真机这一关和错误码兜底。
 
@@ -14,7 +38,7 @@ GO 2026-10-28 定立，自 AV11 起全舰队执行：**任何 agent 发生任何
 
 **所以两套是分工，不是重复**：模拟器管开发期能复现的，错误码（及规划中的日志回传）管只有真机才暴露的——后者恰恰是最贵的一类问题，每一个都要戴上眼镜才撞得见。本表即为此立。
 
-## 编码规则（全舰队唯一，锁定）
+## 2. 编码规则（全舰队唯一，锁定）
 
 ```
 E<4位数字>
@@ -25,34 +49,88 @@ E<4位数字>
 
 - 眼镜显示：大字 `E2005` + 一行中文说明；自动停机/停拍类错误 TTS 只读码；最近一次错误写入该 agent 的持久数据（字段名 `lastError`，含码、本台 slug、版本与原文），使用者报码、维护者对表定位。
 
-## 治理
+## 3. 治理
 
 - **登记处**：本表的唯一维护方。新码分配、段位扩展、舰队推广（存量 agent 接入、SOP/验收口径同步）都由登记处处理；其他开发方需要新码时向登记处申请，不许自行占码。
 - **申请新码的流程**：申请方说明三件事——失败点（哪一步、什么操作）、触发原文（真机/日志的原始报错）、自拟归段（1xxx–9xxx 哪个领域）。登记处核对现有码无同义后顺序分配，回告码号；申请方在登记处回告前不许先用临时码上线。紧急真机现场可先用 E9001 兜底并在 `lastError` 留原文，事后补申请正式码。
 - 码一经分配**永不改义、永不复用**；废弃的码保留并标注「已废弃」。
 - 新错误类型只能在对应段内顺序追加；段满或新领域出现时由登记处开新段并升次版本号。只增新码的扩编升次版本号；格式/治理规则变更原则上升主版本号（例外情形见变更日志）。
 - 每个 agent 的接入按下方「接入规范」一节执行（失败点全映射、三处同码、README「错误码」一节）。
-- 本表版本：v1.8.0（2026-10-29）。canonical 位置 = 仓库根目录 `ERROR-CODES.md`（sakai55/rokid，main）。各 agent 工程内可放副本，冲突时以 canonical 为准。本文档为通用件，任何开发方与 AI agent 均可直接采用；另有自成一体的分发版 `ROKID-ERROR-CODES.md`（同在仓库根目录），供其他开发者整份取用。
+- 本表版本：v1.9.0（2026-10-29）。canonical 位置 = 仓库根目录 `ERROR-CODES.md`（sakai55/rokid，main）。各 agent 工程内可放副本，冲突时以 canonical 为准。**本文件即唯一文件**，任何开发方与 AI agent 整份取用即可。
 
-## 接入规范（给开发者与 AI agent）
+## 4. 接入规范（给开发者与 AI agent）
 
 把一个 agent 接入本表，做五件事：
 
-**（1）单点定义。** 在工程里建一个错误码模块（如 `err.js`），把本台用到的码以裸码字面量集中定义一次，禁止在业务代码里散写字符串、禁止运行时拼前缀。参考形态：
+**（1）单点定义。** 在工程里建一个错误码模块（如下 `err.js`），把本台用到的码以裸码字面量集中定义一次，禁止在业务代码里散写字符串、禁止运行时拼前缀。下面的模块可直接照抄，按本台用到的码增删 `ERR` 与 `MESSAGES` 两张表即可：
 
 ```js
-// err.js —— 本台用到的码，单点定义；码义以全局表为准
+// err.js —— 错误码单点定义 + 统一失败出口
+// 码义以全局错误码表为准；业务代码只许引用 ERR.*，不许散写 'E####' 字符串。
+
 export const ERR = {
-  CAM_OPEN: 'E1001',
-  ENCODE_TEXT: 'E2005',
-  ASR_UNAVAILABLE: 'E3001',
-  UNKNOWN: 'E9001'
+  CAM_OPEN: 'E1001',        // 相机打开失败
+  PHOTO: 'E1009',           // 拍照失败
+  ENCODE_TEXT: 'E2005',     // 编码转文本失败
+  ASR_ERROR: 'E3003',       // ASR 其他错误（兜底）
+  ASR_DENIED: 'E3008',      // 麦克风未授权
+  UNKNOWN: 'E9001'          // 未分类兜底
 };
-// 统一失败出口：屏显 + TTS（停机类）+ 写 lastError
-export function fail(code, raw, opts) { /* 见（3） */ }
+
+const MESSAGES = {
+  E1001: '相机打开失败',
+  E1009: '拍照失败',
+  E2005: '编码转文本失败',
+  E3003: '语音识别出错',
+  E3008: '麦克风未授权',
+  E9001: '未分类错误'
+};
+
+// 页面把自己的屏显函数注册进来（大字码 + 一行说明）；err.js 不直接碰页面结构。
+let showOnScreen = null;
+export function onShowError(fn) { showOnScreen = fn; }
+
+// 统一失败出口：屏显 +（停机类）TTS 只读码 + 写 lastError，三处同一个码。
+// raw 传原始 error 对象或字符串，只进 lastError，截断 300 字，永不直接上屏。
+export function fail(code, raw, opts = {}) {
+  const entry = {
+    code,
+    slug: opts.slug || '',
+    version: opts.version || '',
+    raw: String((raw && raw.message) || raw || '').slice(0, 300),
+    at: new Date().toISOString()
+  };
+  try { wx.setStorageSync('lastError', entry); } catch (e) { /* 存储再失败也不许抛错 */ }
+  if (showOnScreen) showOnScreen(code, MESSAGES[code] || '未分类错误');
+  if (opts.speak) {
+    try {
+      speechSynthesis.speak(new SpeechSynthesisUtterance(code)); // 只读码本身，不念原文
+    } catch (e) { /* 播报失败不再抛错 */ }
+  }
+  return entry;
+}
 ```
 
-**（2）失败点全映射。** 逐个走查代码里所有会失败的调用（相机、编码、ASR/TTS、LLM、网络、存储、传感器、页面切换……），每个失败点映射到表中一个码；表里没有贴切的码时用 E9001 并保留原文。不许裸抛原文了事——原文只作附带诊断，截断后显示或只进 `lastError`。
+**（2）失败点全映射。** 逐个走查代码里所有会失败的调用（相机、编码、ASR/TTS、LLM、网络、存储、传感器、页面切换……），每个失败点映射到表中一个码；表里没有贴切的码时用 E9001 并保留原文。不许裸抛原文了事——原文只作附带诊断，截断后显示或只进 `lastError`。接线形态照下面两个例子：
+
+```js
+// 例 1：拍照失败点 —— try/catch 后调 fail()，然后降级返回，不裸抛
+async function takeShot(capture) {
+  try {
+    return await capture.takePhoto({ mode: 'telephoto' });
+  } catch (e) {
+    fail(ERR.PHOTO, e);   // 屏显 E1009 + 写 lastError
+    return null;          // 调用方拿到 null 走降级流程
+  }
+}
+
+// 例 2：ASR 错误事件 —— 只映射自己真正处理过的类别，其余一律兜底 E3003
+// 注意：ASR 错误类别字符串官方文档没有枚举表，未经真机验证的类别不要细分新码。
+rec.onerror = (event) => {
+  if (event.error === 'not-allowed') fail(ERR.ASR_DENIED, event, { speak: true });
+  else fail(ERR.ASR_ERROR, event);
+};
+```
 
 **（3）三处同码。** 失败发生时同一个码出现在三处：
 
@@ -69,9 +147,31 @@ export function fail(code, raw, opts) { /* 见（3） */ }
 本台用到：E1001、E1002、E2005、E3001、E9001。
 ```
 
-**（5）静态自查。** 打包前 grep 一遍：本台用到的每个码都在全局表里存在且含义对得上；没有自造码、没有前缀形态。另外提醒：AIUI 的 API 是清单式的，官方参考里没有的浏览器 API（如 `FileReader`）不存在于运行时——Blob 转 dataURL 用 `blob.arrayBuffer()` + 分块 `btoa`，这正是 E2005 的由来。
+**（5）静态自查。** 打包前跑下面三条，结果留痕：
 
-## 码表
+```bash
+grep -rn "FileReader" <工程目录>                 # 必须 0 命中（运行时不存在此 API）
+grep -rEoh "E[0-9]{4}" <工程目录> | sort -u      # 本台用到的全部码，逐个对第 5 节核义
+grep -rn "'E[0-9]" <业务代码目录> --include=*.js | grep -v err.js
+                                                 # 业务代码里散写的码字符串，必须 0 命中
+```
+
+**附例：Blob 转 dataURL 的正确写法（E2005 的由来）。** AIUI 的 API 是清单式的，官方参考里没有的浏览器 API（如 `FileReader`）不存在于运行时；需要把 Blob 转文本时照下面写，不要用 FileReader：
+
+```js
+// blobToDataUrl —— arrayBuffer + 分块 btoa（整块转换大图会爆栈，必须分块）
+export async function blobToDataUrl(blob) {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  let bin = '';
+  const CHUNK = 0x8000;
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+  }
+  return 'data:' + (blob.type || 'image/jpeg') + ';base64,' + btoa(bin);
+}
+```
+
+## 5. 码表
 
 （下表的 `E####` 就是唯一使用形态，全舰队一致，不带任何前缀。）
 
@@ -197,16 +297,17 @@ export function fail(code, raw, opts) { /* 见（3） */ }
 | E9001 | 未分类错误 | 兜底（原文截断附带） |
 | E9002 | 配置缺失 | 必需配置/常量为空 |
 
-## 前缀（已废止）
+## 6. 前缀（已废止）
 不使用任何前缀：系列前缀（AV / CC / BO …连写）与无编号短码（BENCH / PROBE / DABIAO / MYAGT、BA）全部废止，沿革见变更日志。
 
-## 现场已回报码
+## 7. 现场已回报码
 - **E2005**（2026-10-28 真机，AV11 v1.1.0 首报）：原文「FileReader is not defined」——Ink 运行时无 FileReader（aiui-dev 官方参考全文亦无），编码后转 dataURL 每帧必死、0 帧超时退出。全舰队 grep 实查共 39 个文件用了 FileReader（AV01/02/08/10、stream-probe、games 多台、directional 4 台、curb-cut 5 台、cover/hold/filter/review/japan/korea 若干），真机同环同死，批量修复由登记处统筹（修法样板 = AV11 验证中的 arrayBuffer + 分块 btoa，AV11 本台由其开发方负责，登记处不直接动）。
 
-## 变更日志
+## 8. 变更日志
 
 | 版本日期 | 内容 |
 |---|---|
+| v1.9.0（2026-10-29） | 单文件定版（GO 指令）：只需要一个文件——分发版 `ROKID-ERROR-CODES.md` 退役删除，其内容并入本文件；本文件加目录与编号分区（1 原理 / 2 规则 / 3 治理 / 4 接入规范 / 5 码表 / 6 前缀 / 7 现场码 / 8 变更日志），开头新增「给 AI agent 的执行指令」一节；第 4 节代码示例补全为可直接照抄的完整形态（err.js 完整模块、拍照/ASR 接线示例、三条静态自查 grep、附 Blob 转 dataURL 正确写法）。84 码含义一字未动（MINOR：结构与规范完善）。 |
 | v1.8.0（2026-10-29） | 规范合并（GO 指令）：分发版的「接入指令」并入本表，新增「接入规范（给开发者与 AI agent）」一节——单点定义（含 err.js 参考形态）、失败点全映射、三处同码、README 模板、静态自查五件事，治理一节的接入要求改为指向该节。84 码含义一字未动（MINOR：规范增补）。 |
 | v1.7.0（2026-10-29） | E6006 停用（GO 裁定）：该码原触发写作 availability 为 downloadable / downloading 中间态——同日官方文档全量审计查实 `LanguageModel.availability()` 只有 available / unavailable 两态，该前提系当年按 Chrome 习惯臆测、并不存在。码义保留原样、永不复用，新开发不得再引用；大模型不可用一律用 E6001。其余各码一字未动（MINOR：码状态变更）。 |
 | v1.6.3（2026-10-29） | 首段如实归因：GO 指出原写法像把责任推给模拟器——官方 API 参考是清单式的、FileReader 查无此项，首错在开发侧未对清单核对；改写为开发侧误用清单外 API 在先、模拟器与本地预览的完整 Web 环境把此错藏住在后、真机靠 E2005 揭出。立表理由与判定不变（PATCH）。 |
