@@ -13,7 +13,7 @@ surroundings, never from on-screen pretend play.
 2. 先猜：滑动选「第几个是不同类」，单击或点头确认——猜测先定死，拍照后不许改口。然后对准 4 件物品拍照。
 3. 大模型回 `ODD:`（不同类的位置）+ `ITEMS:`（从左到右 4 件物品名），本地拿 ODD 与你的猜测比对：猜中 +1。判定念出的物品清单会显示出来，它认错了物品一眼可见。
 
-- **Judge chain.** takePhoto(default) → FileReader data: URL → LanguageModel 图片输入，只回 `ODD:` + `ITEMS:` 两行；本地解析位置与猜测比对计分。没给有效位置（0 或格式不对）记判定失败。 A "判定中…" waiting state is
+- **Judge chain.** takePhoto(default) → Blob 经 `arrayBuffer()` + 分块 `String.fromCharCode` + `btoa` 转 data: URL（转码失败带 E2005、记判定失败）→ LanguageModel 图片输入，只回 `ODD:` + `ITEMS:` 两行；本地解析位置与猜测比对计分。没给有效位置（0 或格式不对）记判定失败。 A "判定中…" waiting state is
   shown for the whole capture+judge duration; every verdict is
   spoken via TTS.
 - **Judge failure is a failed round, honestly.** If the model is
