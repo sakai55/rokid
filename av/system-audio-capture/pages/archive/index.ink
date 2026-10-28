@@ -23,7 +23,7 @@ export default {
     countLine: '归档 0 条',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.0.1'
   },
   onLoad() { this._focus = 0; this._steady = false; this._ctx = null; this._src = null; this._render(); },
   onShow() { this._render(); },

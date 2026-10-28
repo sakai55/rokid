@@ -23,7 +23,7 @@ export default {
     srcLine: '录音：未读临时键',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.0.1'
   },
   onLoad() { this._focus = 0; this._busy = false; this._steady = false; this._session = null; this._render(); },
   onUnload() { try { if (this._session && this._session.close) this._session.close(); } catch (e) {} this._session = null; },

@@ -59,7 +59,7 @@ AV10 · 把设备自己正在播放的声音（视频课、播客、语音播报
 | 项 | 值 |
 |---|---|
 | Studio name | System Audio Capture（待回填） |
-| Version / Build | 1.0.0 |
+| Version / Build | 1.0.1 |
 | App Category | 待回填（导入时确认） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
@@ -85,6 +85,11 @@ Record what the device itself is playing, never the room: a source gate that req
 - Features added: 四页新作（来源门纪律探测/分片内录/会话分片转写/归档回放）；内录来源硬纪律与 Web Audio 解码回放。
 - Improvements: 无（首版）。
 - Fixes: 无（首版）。
+
+#### Build 1.0.1
+- Features added: 无。
+- Improvements: 无。
+- Fixes: 删除 FileReader（Ink 运行时不存在，真机必死）：录音 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败路径接全局错误码 E2005 并在状态行显示。
 
 ## 打包与预览
 
