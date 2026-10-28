@@ -62,7 +62,7 @@ AV08 · 贵重物品交接时，同一件物品拍全景与细节两张照片、
 | 项 | 值 |
 |---|---|
 | Studio name | Dual Shot Verify（待回填） |
-| Version / Build | 1.0.0 |
+| Version / Build | 1.0.1 |
 | App Category | 待回填（导入时确认） |
 | Intent Description | 待回填 |
 | Agent ID | 待回填 |
@@ -88,6 +88,11 @@ Two photos or it did not happen: register an item with a wide shot, capture its 
 - Features added: 四页新作（全景登记/头稳细节拍/三轮交叉核验/门检落账）；双图隔离判读与本地分歧结算。
 - Improvements: 无（首版）。
 - Fixes: 无（首版）。
+
+#### Build 1.0.1
+- Features added: 无。
+- Improvements: 无。
+- Fixes: 删除 FileReader（Ink 运行时不存在，真机必死）：照片 Blob→dataURL 改走官方文档路径 `blob.arrayBuffer()` + 分块 `btoa`，失败路径接全局错误码 E2005 并在状态行显示。
 
 ## 打包与预览
 

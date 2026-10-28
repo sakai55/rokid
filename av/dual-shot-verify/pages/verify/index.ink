@@ -26,7 +26,7 @@ export default {
     voiceLine: '语音：待命',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.0.1'
   },
   onLoad() { this._focus = 0; this._busy = false; this._steady = false; this._rec = null; this._render(); },
   onShow() { this._render(); },
