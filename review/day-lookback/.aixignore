@@ -1,7 +1,0 @@
-.agents/
-.aix/
-artifacts/
-*.aix
-skills-lock.json
-node_modules/
-.git/
