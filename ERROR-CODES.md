@@ -1,4 +1,4 @@
-# Rokid 舰队全局错误码表（Global Error Codes）v1.9.1
+# Rokid 舰队全局错误码表（Global Error Codes）v1.9.2
 
 GO 2026-10-28 定立，自 AV11 起全舰队执行：**任何 agent 发生任何错误，眼镜上统一显示错误码，用户只报码即可对表定位。**
 
@@ -56,7 +56,8 @@ E<4位数字>
 - 码一经分配**永不改义、永不复用**；废弃的码保留并标注「已废弃」。
 - 新错误类型只能在对应段内顺序追加；段满或新领域出现时由登记处开新段并升次版本号。只增新码的扩编升次版本号；格式/治理规则变更原则上升主版本号（例外情形见变更日志）。
 - 每个 agent 的接入按下方「接入规范」一节执行（失败点全映射、三处同码、README「错误码」一节）。
-- 本表版本：v1.9.1（2026-10-29）。canonical 位置 = 仓库根目录 `ERROR-CODES.md`（sakai55/rokid，main）。各 agent 工程内可放副本，冲突时以 canonical 为准。**本文件即唯一文件**，任何开发方与 AI agent 整份取用即可。
+- **版本存档**：每次升版，被取代的旧版全文快照存入 `base/error/ERROR-CODES-v<旧版本号>.md`（首行加存档横幅），仓库根目录只留最新版。存档只供追溯沿革；现行规则与码义只认根目录最新版。
+- 本表版本：v1.9.2（2026-10-29）。canonical 位置 = 仓库根目录 `ERROR-CODES.md`（sakai55/rokid，main）。各 agent 工程内可放副本，冲突时以 canonical 为准。**本文件即唯一文件**，任何开发方与 AI agent 整份取用即可。
 
 ## 4. 接入规范（给开发者与 AI agent）
 
@@ -304,6 +305,10 @@ export async function blobToDataUrl(blob) {
 - **E2005**（2026-10-28 真机，AV11 v1.1.0 首报）：原文「FileReader is not defined」——Ink 运行时无 FileReader（aiui-dev 官方参考全文亦无），编码后转 dataURL 每帧必死、0 帧超时退出。全舰队 grep 实查共 39 个文件用了 FileReader（AV01/02/08/10、stream-probe、games 多台、directional 4 台、curb-cut 5 台、cover/hold/filter/review/japan/korea 若干），真机同环同死，批量修复由登记处统筹（修法样板 = AV11 验证中的 arrayBuffer + 分块 btoa，AV11 本台由其开发方负责，登记处不直接动）。
 
 ## 8. 变更日志
+
+### v1.9.2（2026-10-29）
+
+归档制度（GO 指令）：老版本快照统一存入 `base/error/`（文件名 `ERROR-CODES-v<版本号>.md`，首行加存档横幅），仓库根目录只留最新版，治理一节增「版本存档」一条。本次补齐 v1.1.0–v1.9.1 共 17 个历史快照入档；v1.0.0 无独立存世快照（canonical 落仓库根目录始于 v1.1.0）、v1.5.3 与 v1.5.4 同一提交落地无独立快照，两处缺口已在存档索引中注明。84 码含义一字未动（PATCH：治理增补）。
 
 ### v1.9.1（2026-10-29）
 
