@@ -13,7 +13,7 @@ surroundings, never from on-screen pretend play.
 2. 靠挪动物体或转头取景，把目标物主体挪进高亮格，单击拍照。大模型只报告它看到的区域代码（ZONE: TL/TC/TR/ML/C/MR/BL/BC/BR，找不到回 NONE），命中与否由本地拿 ZONE 与目标格比对计分——判定结果里会写明「判定位置 X（目标 Y）」。
 3. 滑动可先跳到另一未做构图轮；判定后点头 = 记录申诉（不改分）；大模型不可用/没给 ZONE，该轮如实记判定失败。
 
-- **Judge chain.** takePhoto(default) → FileReader data: URL → LanguageModel 图片输入，只回 `ZONE:` + `REASON:` 两行；本地把 ZONE 与本轮目标格比对计分（大模型只报位置，不直接判输赢）。 A "判定中…" waiting state is
+- **Judge chain.** takePhoto(default) → Blob 经 `arrayBuffer()` + 分块 `String.fromCharCode` + `btoa` 转 data: URL（转码失败带 E2005、记判定失败）→ LanguageModel 图片输入，只回 `ZONE:` + `REASON:` 两行；本地把 ZONE 与本轮目标格比对计分（大模型只报位置，不直接判输赢）。 A "判定中…" waiting state is
   shown for the whole capture+judge duration; every verdict is
   spoken via TTS.
 - **Judge failure is a failed round, honestly.** If the model is
