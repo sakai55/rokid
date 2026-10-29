@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-home-patrol
 ```
 
+**AIX 直接下载**（最新版）：[home-patrol.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/home-patrol.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI28 个。出门前总有一组问题在
 脑子里盘旋：门锁了吗？窗户关了吗？燃气阀拧了吗？水龙头还滴
