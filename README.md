@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-standup-echo
 ```
 
+**AIX 直接下载**（最新版）：[standup-echo.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/standup-echo.aix)
+
 注意力外挂系列 SO04（SOCIAL 社交型，本组第四个，系列第 39 个）。每日站会轮到你之前，同事的进度大多和你无关，轮到关联项又没听清。本 Agent 把筛选外包出去：wearer/far-field 守听站会，只命中与你负责模块相关的关键词才亮屏存笔记，未命中默记成一行摘要，会后 REVIEW 列出关联笔记 + 摘要行；结束出小结（命中几条、摘要几行、只听过几段）。
 
 ## 解决的问题
