@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-origami-steps
 ```
 
+**AIX 直接ダウンロード**（最新版）：[origami-steps.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/origami-steps.aix)
+
 JP19 ・ 日本ローカル × 指向性 × 注意力（GUIDE）。自宅で折り紙をするとき、両手がふさがっている人がうなずきで手順を進め、鶴を1羽折るごとに数を数える。対話哲学：**折り紙手順送り Origami Steps**。
 
 ## プレビュー画像

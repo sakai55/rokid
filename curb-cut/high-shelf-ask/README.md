@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-high-shelf-ask
 ```
 
+**AIX 直接下载**（最新版）：[high-shelf-ask.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/high-shelf-ask.aix)
+
 CC09 · 路缘坡（CC）。轮椅/坐姿人群在超市够不着高层货架时，锁定一件商品并生成一句准确求助话。交互哲学：**高层货架求助话 Shelf Ask**。
 
 ## 预览截图

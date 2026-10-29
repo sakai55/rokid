@@ -5,6 +5,8 @@
 https://github.com/sakai55/rokid/tree/agent-tsugaku-mimamori
 ```
 
+**AIX 直接ダウンロード**（最新版）：[tsugaku-mimamori.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/tsugaku-mimamori.aix)
+
 一言で表す場面：小学生が眼鏡をかけて登校し、通学路のチェックポイントでうなずいて到着を記録し、帰宅後に記録を確認できる。
 
 ## 方向構成

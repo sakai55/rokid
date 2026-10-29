@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-hanbok-rental
 ```
 
+**AIX 직접 다운로드**(최신 버전): [hanbok-rental.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/hanbok-rental.aix)
+
 KR11 · 한국 현지화 시리즈. 상호작용 철학: **의류 확인 Garment Check**. 이 Agent는 한복 대여 확인표 한 장입니다. 대여 물품 네 점(상의, 치마, 장신구, 가방)을 한 점씩 확인하고, 포커스 마커가 현재 항목을 가리키며, 남은 시간이 큰 글자로 표시되고, 연장은 30분 단위로 더해집니다. 네 점을 모두 확인하면 GO가 한 번에 "반납 가능"으로 표시하고, 그다음은 당신이 가게에 직접 반납합니다. 촬영으로 시간을 재지도, 옷을 알아보지도 않습니다. 지키는 것은 두 가지뿐입니다. 점수가 다 찼는지, 시간이 얼마나 남았는지.
 
 ## 미리보기 스크린샷

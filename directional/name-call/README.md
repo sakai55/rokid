@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-name-call
 ```
 
+**AIX 直接下载**（最新版）：[name-call.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/name-call.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI19 个。在嘈杂的办公室、
 车间或家庭聚会里，有人隔着房间喊你的名字，你却没听见 —

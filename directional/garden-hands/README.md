@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-garden-hands
 ```
 
+**AIX 直接下载**（最新版）：[garden-hands.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/garden-hands.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI14 个。戴着手套、手上全是泥，
 记不住哪块畦什么时候浇过水 — 不是重复浇就是漏浇。本 Agent 让苗床

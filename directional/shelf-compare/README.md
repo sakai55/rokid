@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-shelf-compare
 ```
 
+**AIX 直接下载**（最新版）：[shelf-compare.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/shelf-compare.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI02 个。在超市里同类商品看花眼、价格和
 规格记不住没法比时：看着货架上的商品扫一下条码，一个个加进眼镜里的

@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-pack-sweep
 ```
 
+**AIX 直接下载**（最新版）：[pack-sweep.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/pack-sweep.aix)
+
 注意力外挂系列 CO04（COVER 覆盖型，本组第四位）。出门收行李最典型的翻车：凭感觉装，到了目的地才发现证件、充电器、药没带。本 Agent 的做法：先有一张清单（示例 8 件，可加备选件），你看向一件行李、确认已装就勾一件；出门前点 FIN，有未装项时小结直接拒绝并且点名——还有没装的：药、钥匙、水杯……；全部装完，小结才报「行李齐了，可以出门了」。它不替你判断东西在不在包里（它看不见包里），它只替你证明「这张清单上的每一件，我都亲手确认过装了，而且漏的那几件没有被含糊掉」。
 
 ## 解决的问题

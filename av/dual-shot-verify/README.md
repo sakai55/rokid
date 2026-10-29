@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-dual-shot-verify
 ```
 
+**AIX 直接下载**（最新版）：[dual-shot-verify.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/dual-shot-verify.aix)
+
 AV08 · 贵重物品交接时，同一件物品拍全景与细节两张照片、由同一模型会话分三轮交叉核对，一致才落账，顶边界 B8 双图 LLM 三轮。
 
 ## 预览截图

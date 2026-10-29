@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-photo-level
 ```
 
+**AIX 直接下载**（最新版）：[photo-level.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/photo-level.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI44 个。用眼镜拍照（或者举着
 手机拍）总是歪：地平线斜几度，照片立刻显得业余；构图没感觉，

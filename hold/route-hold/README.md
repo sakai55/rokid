@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-route-hold
 ```
 
+**AIX 直接下载**（最新版）：[route-hold.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/route-hold.aix)
+
 
 注意力外挂系列 HO04（HOLD 默念型）。问路，对方一口气说完：「左转、直行、第二个灯右转。」边走边在脑子里默念，聊一句话、看一眼手机，就走错一个路口。本 Agent 的做法：对方说完，你自己复述一遍（麦克风只听你一个人）——可以一步步说、每步核对后存下；也可以一口气说整条，它按步骤词拆开摆在你面前，你删掉拆错的步再存。走的时候，眼前只有当前这一步，你判断这步走完了，点一下头才进下一步。它不知道你在哪，也永远不会假装知道。
 

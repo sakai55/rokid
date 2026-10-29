@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-seoul-life-hub
 ```
 
+**AIX 직접 다운로드**(최신 버전): [seoul-life-hub.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/seoul-life-hub.aix)
+
 KR19 · 한국 현지 × 집합 총괄 × 주의. 서울에서 일주일을 사는 방문객이 수첩 한 권으로 일상 도구 20가지를 끝까지 사용합니다
 
 ## 미리보기 스크린샷

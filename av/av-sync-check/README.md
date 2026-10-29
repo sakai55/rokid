@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-av-sync-check
 ```
 
+**AIX 直接下载**（最新版）：[av-sync-check.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/av-sync-check.aix)
+
 AV09 · 录制或直播前同开音视频两轨，用 3 次拍手同时标出声音尖峰与画面亮度尖峰，估出声画差值并按写死标准判定，顶边界 B9 音画同采。
 
 ## 预览截图

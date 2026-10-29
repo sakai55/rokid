@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-stream-probe
 ```
 
+**AIX 直接下载**（最新版）：[stream-probe.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/stream-probe.aix)
+
 为回答「Rokid 的 Agent 能不能持续录像并像实时 AR 一样交互」而建的探针：不预设结论，在真机上量三个数——持续取流能跑成什么样、持续录制产出多少数据、抓一帧问大模型的往返要多久。
 
 ## 预览截图

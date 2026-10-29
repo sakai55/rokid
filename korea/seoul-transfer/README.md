@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-seoul-transfer
 ```
 
+**AIX 직접 다운로드**(최신 버전): [seoul-transfer.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/seoul-transfer.aix)
+
 한 줄 장면: 서울 지하철을 처음 타는 사람이 환승역에서 머리 방향으로 승강장 방향을 확인해 고정하고, 카운트다운으로 막차를 지킵니다.
 
 방향 구성: 한국 현지 × 지향성 × 주의. 지향성은 환승 승강장 방향 확인 고리를 맡고(머리 yaw 좌우 확인 + 고개 끄덕임 고정), 주의는 막차 카운트다운 대기와 환승 기록 유지 고리를 맡으며, 현지는 서울 지하철의 실제 환승역 8곳과 노선에 뿌리내립니다.

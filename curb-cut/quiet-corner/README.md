@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-quiet-corner
 ```
 
+**AIX 直接下载**（最新版）：[quiet-corner.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/quiet-corner.aix)
+
 CC14 · 路缘坡。自闭症谱系/感官过载人群专设：一句话场景是超市、车站人声灯光一起涌来、过载时立刻知道“往哪边走最安静”，而不是更多信息。
 
 方向构成：路缘坡承担全部一环——特殊人群（自闭症谱系/感官过载者）先行：过载时信息越少越好，所以本 Agent 只给一个方向词加一句话行动指令，其余信息全部关掉；安静地点可存为记录，下次过载直接翻旧记录。安静地点记录集与多步流程（总览→扫描标记→存地点）构成厚度。

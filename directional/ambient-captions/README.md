@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-ambient-captions
 ```
 
+**AIX 直接下载**（最新版）：[ambient-captions.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/ambient-captions.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI20 个。听力不佳时，
 面对面聊天是一场猜谜：每句话听一半漏一半，人名、数字

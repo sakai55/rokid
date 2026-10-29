@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-voice-subtitle-lab
 ```
 
+**AIX 直接下载**（最新版）：[voice-subtitle-lab.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/voice-subtitle-lab.aix)
+
 AV06 · 给店里/家里做语音播报前，挑出读得清、跟得上词级字幕的音色与语速组合，顶边界 B6（TTS synthesize 词级字幕）。
 
 ## 预览截图

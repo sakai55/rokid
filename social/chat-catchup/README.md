@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-chat-catchup
 ```
 
+**AIX 直接下载**（最新版）：[chat-catchup.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/chat-catchup.aix)
+
 注意力外挂系列 SO01（SOCIAL 社交型，本组第一个，系列第 36 个）。和人谈话走神十几秒，回来完全接不上，又不好意思让对方重复。本 Agent 把接续外包出去：far-field 守听谈话，ASR 字幕默记进最近 15 秒滚动缓冲；你摇头或点 HELP 求助时，眼前给出最近 15 秒的要点摘要（无声），看完 BACK 回守听，缓冲继续滚动；结束出小结（求助几次、已听几段）。
 
 ## 解决的问题

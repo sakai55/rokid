@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-cafe-stamp
 ```
 
+**AIX 직접 다운로드**(최신 버전): [cafe-stamp.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/cafe-stamp.aix)
+
 KR13 · 한국 현지화 시리즈. 상호작용 철학: **도장 카드 Stamp Card**. 이 Agent는 도장만 기록하는 카드 한 장입니다. 10칸 도장판에 커피 한 잔마다 STAMP로 도장 하나를 찍고, 10개가 차면 FREE로 무료 한 잔과 교환한 뒤 판을 비우고 다시 기록합니다. 잘못 찍으면 UNDO로 마지막 도장을 되돌립니다. 교환한 무료 잔 수는 따로 셉니다. 어떤 가게 시스템과도 연동되지 않고 잔액도 조회하지 않습니다. 카드 규칙(몇 개에 한 잔인지)은 가게 안의 고지가 기준이며, 화면에 명시됩니다.
 
 ## 미리보기 스크린샷

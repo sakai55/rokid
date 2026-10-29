@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-gaze-translate
 ```
 
+**AIX 直接下载**（最新版）：[gaze-translate.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/gaze-translate.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI01 个。在国外看不懂菜单、路牌、说明书时，
 不用掏手机（慢、还遮挡视线）：看着文字，把头稳住，眼镜用长焦拍下、翻译，

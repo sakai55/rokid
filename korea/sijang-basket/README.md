@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-sijang-basket
 ```
 
+**AIX 직접 다운로드**(최신 버전): [sijang-basket.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/sijang-basket.aix)
+
 KR14 · 한국 현지 × 주의(HOLD). 한국 전통시장(시장) 쇼핑객이 가판대별로 장바구니를 항목마다 확인하고, 한 가지라도 빠지면 계산하지 않습니다. 상호작용 철학: **시장 장바구니 Market Basket**.
 
 ## 미리보기 스크린샷

@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-kaiten-tally
 ```
 
+**AIX 直接ダウンロード**（最新版）：[kaiten-tally.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/kaiten-tally.aix)
+
 JP12・日本ローカライズシリーズ。インタラクション哲学：**コンベヤーの皿数 Conveyor Tally**。この Agent はコンベヤーの脇の皿数帳：白皿 110 円、赤皿 220 円、黒皿 330 円、1 皿食べるごとに色で 1 皿加え、合計がそのままリアルタイムの会計の目安になる。寿司を判別せず、美味しいかどうかも判断せず、皿を数えるだけ；会計のときに GO を 1 回で合計をロックし、もう 1 回 GO で次の客のためにゼロに戻す。ラストオーダーの時刻は必ず店員に聞くこと。画面にも、代わりに報せないと明記する。
 
 ## プレビュー画像

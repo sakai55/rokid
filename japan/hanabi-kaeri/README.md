@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-hanabi-kaeri
 ```
 
+**AIX 直接ダウンロード**（最新版）：[hanabi-kaeri.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/hanabi-kaeri.aix)
+
 JP30・日本在地 × 指向性 × カーブカット。花火大会の後、混雑の中で集合場所へGPSの方角と距離で戻る
 
 ## プレビュー画像

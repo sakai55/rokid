@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-manual-lens
 ```
 
+**AIX 直接下载**（最新版）：[manual-lens.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/manual-lens.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI05 个。家电跳出一个故障代码，
 说明书早就丢了，你一只手还扶着机器、另一只手根本腾不出来翻

@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-teleprompter-gaze
 ```
 
+**AIX 直接下载**（最新版）：[teleprompter-gaze.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/teleprompter-gaze.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI48 个。演讲、录视频、上台发言
 最怕的不是讲错，是**忘词后低头找稿**：眼神一离开听众，气势就散

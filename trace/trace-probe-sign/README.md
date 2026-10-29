@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-trace-probe-sign
 ```
 
+**AIX 直接下载**（最新版）：[trace-probe-sign.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/trace-probe-sign.aix)
+
 描红系列的识别可行性探针，**不占 TR 编号、不上根清单**，UI 全日语。测 LLM 靠一张定格照片认日本手语（JSL）指文字与数字到底准不准，结果决定 TR03 手语描红正式版的收录范围（门槛事先定死：认对进练习范围、认错只进不计分练习、看不清复测后不收、全集认对不足一半则正式版降级自评描红）。
 
 **定位明示：这是学 / 练手语的练习用识别试验，不是手语翻译工具。** 实时翻译需要连续手部追踪，眼镜没有这个能力，本 Agent 不做、也不暗示能做。

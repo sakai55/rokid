@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-fresh-pick
 ```
 
+**AIX 直接下载**（最新版）：[fresh-pick.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/fresh-pick.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI23 个。不会挑水果的人，
 买回家切开才发现没熟、过熟或已经坏了。本 Agent 不替你看

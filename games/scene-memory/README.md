@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-scene-memory
 ```
 
+**AIX 直接下载**（最新版）：[scene-memory.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/scene-memory.aix)
+
 拍照现实交互游戏系列 GA45。先对准一个真实场景（桌面、书架、房间一角）拍一张全景照（wide）。大模型看着这张首图当场出 3 道记忆题并定死正确答案（问题只问画面里确实可见的物品、颜色、数量、位置）。
 
 与注意力系列 day-lookback（日终回看当天登记内容的日记工具）的区别：day-lookback 是回放你一天真实记录的生活工具；本作是当场拍、当场出题、当场转头答题的记忆游戏，照片与题目都只活在本局内存，关掉即没。

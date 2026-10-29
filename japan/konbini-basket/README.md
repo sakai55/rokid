@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-konbini-basket
 ```
 
+**AIX 直接ダウンロード**（最新版）：[konbini-basket.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/konbini-basket.aix)
+
 JP03 ・ 日本ローカライズシリーズ。操作の考え方：**レシート台帳 Receipt Ledger**。本 Agent は、自動で記帳するレシートである。出かける前に買うものを 4 つ登録し、店内で手に取るたびに 1 行ずつ消し込む。合計行は、残り何件かを常に知らせる。レジでは翻訳はしない（翻訳は基盤側の担当）。最も頻繁に使うレジの定型句 4 つを大きな文字のフレーズカードにし、店員に指して示すか、読み上げるかできるようにする。バーコード読み取りは任意の消し込み支援である。現在の品目と一致した場合だけ記帳し、一致しなければその旨を正直に伝え、合わない台帳には緑の合図を出さない。
 
 ## プレビュー画像

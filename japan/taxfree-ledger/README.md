@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-taxfree-ledger
 ```
 
+**AIX 直接ダウンロード**（最新版）：[taxfree-ledger.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/taxfree-ledger.aix)
+
 JP11 ・ 日本ローカライズシリーズ。対話哲学：**免税台帳 Taxfree Ledger**。本 Agent は免税だけを記録する台帳だ。店舗ごとに一般物品と消耗品の2つの金額を記録し、合計が 5,000 円のライン以上になって初めてその店舗が達成とみなされ、達成後は自分自身の手で密封袋が封をされたことを確認する。店舗が変われば台帳もページを変える。達成した店舗数は別に数える。免税資格は判断しない（最終判断は店舗のレジであり、画面にも明記する）。バーコードのスキャンも商品の識別もせず、「ラインへの到達と袋の封」この2つだけを守る。
 
 ## プレビュー画像

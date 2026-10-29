@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-frame-align
 ```
 
+**AIX 直接下载**（最新版）：[frame-align.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/frame-align.aix)
+
 拍照现实交互游戏系列 GA46。每轮给一个构图任务（固定顺序：书→左上、椅子→右上、杯子→正中、水瓶→左下、植物→右下），屏幕九宫格高亮目标格，语音同步播报。
 
 与 games 系列 photo-level（拍照水平校准玩法）的区别：photo-level 判的是画面水平不水平；本作判的是目标物落在九宫格哪一格，是构图对位游戏，不测水平。

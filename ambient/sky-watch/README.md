@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-sky-watch
 ```
 
+**AIX 直接下载**（最新版）：[sky-watch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/sky-watch.aix)
+
 注意力外挂系列 AM02（AMBIENT 环境型，本组第二个，系列第 47 个）。晒着衣服/被子出门，天什么时候阴的完全没察觉，回来全淋透。本 Agent 把「盯天空」外包出去：出门前看向晾晒区登记，定时提醒回看天空，云层变化大时 TTS 预警。
 
 ## 解决的问题

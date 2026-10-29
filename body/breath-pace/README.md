@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-breath-pace
 ```
 
+**AIX 直接下载**（最新版）：[breath-pace.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/breath-pace.aix)
+
 注意力外挂系列 BO03（BODY 身体型，本组第三个，系列第 43 个）。紧张/焦虑时呼吸乱成一团，自己数拍子反而更慌。本 Agent 把数拍子外包出去：视线内呼吸节拍光点（吸-停-呼），跟着看就行，拍子由它数，结束给时长小结（跟了几轮、本次多长）。
 
 ## 解决的问题

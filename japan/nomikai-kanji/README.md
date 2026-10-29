@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-nomikai-kanji
 ```
 
+**AIX 直接ダウンロード**（最新版）：[nomikai-kanji.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/nomikai-kanji.aix)
+
 JP08 · 日本ローカライズシリーズ。対話の哲学：**幹事帳簿 Host Ledger**。この Agent は幹事のあの帳簿そのものである。人数、品目の合計、1人分（割り勘の地元の流儀として自動で100円単位に切り上げる）、終電までのカウントダウン、すべてが1枚の伝票に載る。録音も文字起こしも、会話内容の要約も決してしない——会議の文字起こしは基盤の能力であり、酒席に必要なものでもない。持つのはお金と人数と時間という、幹事が持ち続けなければならない3つの数字だけであり、うなずきが会計の確認になる。
 
 ## プレビュー画像

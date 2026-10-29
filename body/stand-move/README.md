@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-stand-move
 ```
 
+**AIX 直接下载**（最新版）：[stand-move.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/stand-move.aix)
+
 注意力外挂系列 BO04（BODY 身体型，本组第四个，系列第 44 个）。久坐一上午，腰背僵了才惊觉没起过身。本 Agent 把「察觉久坐」外包出去：头部活动量 + 静止时长监测，静止满阈值提醒起身，环视一圈当作活动确认，结束给小结（提醒几次、起身几次、最长静止多久）。
 
 ## 解决的问题

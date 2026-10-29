@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-noise-map
 ```
 
+**AIX 直接下载**（最新版）：[noise-map.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/noise-map.aix)
+
 注意力外挂系列 AM03（AMBIENT 环境型，本组第三个，系列第 48 个）。在家/办公室找最安静的角落办公，凭感觉选总是选错。本 Agent 把「选角落」外包出去：你顺时针转头扫一周，每转到一个方向点 SCAN 记一次电平，8 个扇区生成噪音方位图，最安静的朝向出声报一次。
 
 ## 解决的问题

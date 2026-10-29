@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-yutnori-game
 ```
 
+**AIX 직접 다운로드**(최신 버전): [yutnori-game.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/yutnori-game.aix)
+
 한 줄 장면: 가족이 설날이나 추석에 모였을 때, 손을 쓰지 않고 머리 움직임만으로 윷놀이를 하고, 20칸에 먼저 도착하는 사람이 이깁니다.
 
 방향 구성: 한국 현지 × 게임 × 주의. 현지는 설날·추석 가족 윷놀이에 뿌리내리고, 게임은 플레이의 폐쇄 루프 한 고리(시작/윷 던져 말 옮기기/승패 점수)를 맡고, 주의는 말 위치, 점수, 성적 기록을 지키는 고리를 맡습니다.

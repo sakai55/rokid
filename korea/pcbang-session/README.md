@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-pcbang-session
 ```
 
+**AIX 직접 다운로드**(최신 버전): [pcbang-session.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/pcbang-session.aix)
+
 KR09 · 한국 현지화 시리즈. 상호작용 철학: **좌석 장부 Seat Ledger**. 이 Agent는 좌석 장부 한 권만 기록합니다. 시스템이 한 시간이 찼다고 알릴 때마다 본인이 +1H를 한 번 누르거나(또는 고개를 끄덕여) 시간 블록 하나를 기록합니다. 음식을 시킬 때는 ORDER로 한 건씩 기록하고(스와이프로 메뉴 후보를 바꿈), 자리를 뜰 때는 END가 예상 정산액(PC 이용료+음식값)을 보여줘 마음의 준비를 하게 합니다. PC방 관리 시스템과 연동되지 않고(요금과 총액은 카운터 정산이 기준), 대신 주문하지 않으며(주문은 여전히 좌석 화면에서), 쉬라고 알리지도 않습니다(건강 앱의 일). 보장하는 것은 딱 하나, 이 좌석의 시간과 먹은 것, 당신이 직접 기록한 장부입니다.
 
 ## 미리보기 스크린샷

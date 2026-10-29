@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-hangang-base
 ```
 
+**AIX 직접 다운로드**(최신 버전): [hangang-base.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/hangang-base.aix)
+
 KR05 · 한국 현지화 시리즈. 상호작용 철학: **베이스캠프 지킴이 Basecamp Holder**. 이 Agent는 돗자리에 앉아 있는 그 사람입니다. 배달 지점 코드, 음식 수령 번호, 돗자리 반납 시각, 정리(片付け) 네 가지가 돗자리 면의 네 칸에 모두 고정됩니다. 당신이 놀러 가 있는 동안 대신 앉아서 기억하고, 돌아와 한 번 흘끗 보면 네 칸의 상태가 한눈에 들어옵니다. 배달 지점까지 길 안내를 하지도(베이스 내비게이션의 일), 대신 주문해 주지도 않습니다. 지키는 것은 "베이스캠프 정보" 한 가지뿐입니다. 밖에 나가 놀 때 즐거움에 가장 흩어지기 쉬운 주의가 바로 이것입니다.
 
 ## 미리보기 스크린샷

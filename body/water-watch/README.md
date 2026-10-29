@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-water-watch
 ```
 
+**AIX 直接下载**（最新版）：[water-watch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/water-watch.aix)
+
 注意力外挂系列 BO02（BODY 身体型，本组第二个，系列第 42 个）。忙起来一天喝不上两杯水，渴了才想起水杯就在手边。本 Agent 把喝水提醒外包出去：看向水杯登记位置，久未看向水杯（=久未喝水）时轻轻亮屏提醒，喝完凝视确认，计时重新开始；结束出小结（本次喝水几次、最长间隔多久）。
 
 ## 解决的问题

@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-gye-circle
 ```
 
+**AIX 직접 다운로드**(최신 버전): [gye-circle.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/gye-circle.aix)
+
 KR12 · 한국 현지화 시리즈. 상호작용 철학: **계 원형 Gye Circle**. 이 Agent는 순번만 기록하는 계 장부입니다. 네 사람이 번갈아 "이번에 받는 사람"이 되고, 원판 중앙이 바로 이번 달 수령인입니다. PAY로 이번 달 납부가 완료됐음을 기록해야 NEXT가 원판을 다음 사람으로 돌립니다. 납부가 끝나지 않았는데 돌리려 하면 음성 알림이 막아섭니다. 한 바퀴를 다 돌면 한 라운드로 셉니다. 돈을 받지도, 이자를 계산하지도, 누구에게 독촉하지도 않으며, 화면에 명시됩니다.
 
 ## 미리보기 스크린샷

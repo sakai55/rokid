@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-homework-lens
 ```
 
+**AIX 直接下载**（最新版）：[homework-lens.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/homework-lens.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI40 个，H 组（学习记忆）第四个。
 孩子题目不会，家长常常不是不会做，而是讲不清步骤——一上来

@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-alarm-triage-visual
 ```
 
+**AIX 直接下载**（最新版）：[alarm-triage-visual.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/alarm-triage-visual.aix)
+
 路缘坡效应系列 CC06（FILTER 守望型）。重度听障的人家里有个根本问题：烟感、门铃、水壶、洗衣机结束音、宝宝哭声——全是声音，对他就等于不存在，而 TTS 对他也没用。本 Agent 把声音变成光：全向守听，有响声整屏亮起大横幅；转头逐向采样声级，定出方向；你亲眼看到是什么在响，选类型、点确认，分诊横幅定格为「类型 + 方向」。
 
 ## 预览截图

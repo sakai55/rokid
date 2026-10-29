@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-sound-compass
 ```
 
+**AIX 直接下载**（最新版）：[sound-compass.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/sound-compass.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI16 个。声音发生了 — 水管在
 响、水壶开了、手机在另一个房间响、有人在喊你 — 却分不清是从

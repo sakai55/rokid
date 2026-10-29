@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-meter-reader
 ```
 
+**AIX 直接下载**（最新版）：[meter-reader.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/meter-reader.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI27 个。水表、电表、燃气表
 的数字又小、位置又高、光线又差，抄完写在纸上回头就丢，更

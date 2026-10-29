@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-sijang-shopping
 ```
 
+**AIX 직접 다운로드**(최신 버전): [sijang-shopping.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/sijang-shopping.aix)
+
 KR15 · 한국 현지 × 커브 컷 × 주의. 부티크 라인 통합 재제작: CC09 `high-shelf-ask`(슈퍼마켓 높은 진열대 도움 요청 문구)와 KR14 `sijang-basket`(시장 바구니 확인)을 같은 장면(한국 전통시장 쇼핑)으로 합쳐 만들었고, 원래 두 Agent는 그대로 봉인해 삭제도 수정도 하지 않습니다. 한 줄 장면: 휠체어를 타거나 앉아서 한국 전통시장을 도는 사람이 높은 가판대 앞에서 정확한 도움 요청 문구를 만들고(TTS가 대신 말하거나 큰 글자로 보여줌), 가판대별로 장바구니를 항목마다 확인하며, 한 가지라도 빠지면 계산하지 않습니다.
 
 ## 미리보기 스크린샷

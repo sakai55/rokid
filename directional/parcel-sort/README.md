@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-parcel-sort
 ```
 
+**AIX 直接下载**（最新版）：[parcel-sort.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/parcel-sort.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI29 个。快递一多就堆在门口一地：
 这件是谁的？那件是不是生鲜、得先拆？拆错顺序，生鲜在普通堆里

@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-deungsan-pace
 ```
 
+**AIX 직접 다운로드**(최신 버전): [deungsan-pace.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/deungsan-pace.aix)
+
 KR06 · 한국 현지화 시리즈. 상호작용 철학: **고도 페이스 Elevation Pace**. 이 Agent는 다리를 맡고 길은 맡지 않습니다. 산 모양 단면 선 위에 당신의 진행을 핀으로 꽂고(8구간 직접 등록), 휴식과 수분을 한 번씩 장부에 남기며, 수분이 시간보다 뒤처지면 조용히 알려줍니다. 고도는 GEO를 누를 때 한 번만 기록용으로 가져옵니다(가져오지 못하면 그대로 SKIP이라 밝힙니다). 내비게이션은 절대 하지 않고 길도 안내하지 않습니다(베이스 AR 내비게이션의 일입니다). 갈림길에서는 표지판과 지도를 보세요. 이 Agent가 답하는 질문은 하나뿐입니다. 지금의 페이스와 수분으로, 이 다리가 하산까지 버틸 수 있는가.
 
 ## 미리보기 스크린샷

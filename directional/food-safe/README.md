@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-food-safe
 ```
 
+**AIX 直接下载**（最新版）：[food-safe.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/food-safe.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI35 个，G 组（健康安全）收尾。
 剩菜放了三四天，闻着好像没事、看着也没坏，到底能不能吃？

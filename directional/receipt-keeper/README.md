@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-receipt-keeper
 ```
 
+**AIX 直接下载**（最新版）：[receipt-keeper.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/receipt-keeper.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI25 个。小票随手一丢，月底
 不知道钱花哪了——手机记账要掏手机、解锁、开 App、敲数字，

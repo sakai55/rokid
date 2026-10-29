@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-hanok-stay
 ```
 
+**AIX 직접 다운로드**(최신 버전): [hanok-stay.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/hanok-stay.aix)
+
 KR18 · 한국 현지 × 커브 컷 × 주의. 처음 한옥에 머무는 여행객이 방마다 시설과 예절을 항목별로 확인해 실례를 피합니다
 
 ## 미리보기 스크린샷

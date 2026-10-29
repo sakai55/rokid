@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-task-anchor
 ```
 
+**AIX 直接下载**（最新版）：[task-anchor.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/task-anchor.aix)
+
 CC13 · 路缘坡。ADHD 时间盲与任务切换成本专设：一句话场景是 ADHD/注意力缺陷者开工时声明唯一任务，任务名常驻视线角落，计时分段轻提醒，走神自报后只报已用时与下一步最小动作。
 
 方向构成：路缘坡承担全部一环——特殊人群（ADHD/注意力缺陷者）的时间盲与任务切换成本先行，任务名常驻、25 分钟分段、走神只报时间与最小动作都是为该人群的障碍而设，不为大众收益稀释；大众外溢是任何人开工前先定唯一任务都能少切换，但这不是本 Agent 的设计目标。

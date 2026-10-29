@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-say-by-looking
 ```
 
+**AIX 直接下载**（最新版）：[say-by-looking.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/say-by-looking.aix)
+
 CC16 · 路缘坡（CC）。失语者看向场景、从4句固定候选里点头选一句、由TTS替他说出来
 
 ## 预览截图

@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-machi-game-set
 ```
 
+**AIX 直接ダウンロード**（最新版）：[machi-game-set.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/machi-game-set.aix)
+
 JP21 ・ 日本在地 × 指向性 × ゲーム。ブティックラインでの合併リメイク：JP15 `matsuri-taiko`（祭り太鼓リズム）と JP17 `kotowaza-quiz`（ことわざクイズ）を、待ち時間向け頭部ゲーム集として 1 つに合併した。元の 2 つの Agent はそのまま保管し、削除も変更もしない。場面を一言で表すと：祭りや駅で順番を待つ家族が、頭の動きだけで遊べる二つのゲームで待ち時間を過ごし、ベスト記録を端末に残す。
 
 ## プレビュー画像

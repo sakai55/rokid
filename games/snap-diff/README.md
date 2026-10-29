@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-snap-diff
 ```
 
+**AIX 直接下载**（最新版）：[snap-diff.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/snap-diff.aix)
+
 拍照现实交互游戏系列 GA50。一局两拍：先对准一个场景拍第一张；然后动手只改一处（拿走一件 / 放进一件 / 挪动一件）。
 
 与注意力系列 proof-sweep（文字校对找错工具）的区别：proof-sweep 是对着文稿找文字差错的工作工具；本作找的是真实场景两拍之间的实物变化，是先声明后判定的找不同游戏，照片不用于任何校对留档。

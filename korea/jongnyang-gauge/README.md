@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-jongnyang-gauge
 ```
 
+**AIX 직접 다운로드**(최신 버전): [jongnyang-gauge.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/jongnyang-gauge.aix)
+
 KR04 · 한국 현지화 시리즈. 상호작용 철학: **계량 게이지 Volume Gauge**. 이 Agent는 자 하나입니다. 왼쪽은 현재 봉투의 충전 눈금(리터 단위로 등록), 오른쪽은 장부입니다. 음식물 쓰레기 배출 횟수와 추정 요금, 내보낸 봉투 수. 눈금이 80%에 닿으면 "곧 가득 차요"라고 알려주고, 가득 차면 THROW(봉투를 묶어 배출)한 뒤 새 봉투를 열어야만 합니다. 화면 안에서 더 욱여넣을 수 있는 척은 하지 않습니다. 쓰레기 종류를 알아보지도 않습니다(분류는 각 지자체 안내서와 JP06식 규칙 카드의 일입니다). 지키는 것은 부피와 무게, 이 두 경제 장부뿐입니다. 봉투 용량은 포장에 인쇄된 숫자를 스캔해 설정할 수 있습니다(잠정 인식).
 
 ## 미리보기 스크린샷

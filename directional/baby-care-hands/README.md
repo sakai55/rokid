@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-baby-care-hands
 ```
 
+**AIX 直接下载**（最新版）：[baby-care-hands.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/baby-care-hands.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI15 个（C 组双手忙碌收尾）。
 双臂抱着宝宝，腾不出手点手机记录 — 喂过奶、换过尿布没法当场

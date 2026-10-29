@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-system-audio-capture
 ```
 
+**AIX 直接下载**（最新版）：[system-audio-capture.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/system-audio-capture.aix)
+
 AV10 · 把设备自己正在播放的声音（视频课、播客、语音播报）内录下来、分片喂进识别会话转成文字稿并归档，顶边界 B10 内录→外部流转写链 + B4 内录纪律。
 
 ## 预览截图

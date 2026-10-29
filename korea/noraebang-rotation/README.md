@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-noraebang-rotation
 ```
 
+**AIX 직접 다운로드**(최신 버전): [noraebang-rotation.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/noraebang-rotation.aix)
+
 KR07 · 한국 현지화 시리즈. 상호작용 철학: **공정 순번 Fair Rotation**. 이 Agent가 바로 그 원판입니다. 가수 네 명의 이름이 고리 모양으로 놓이고, 현재 가수는 큰 글자로 가운데에, 이전과 다음 사람은 반쯤 밝게 대기합니다. 곡마다 예약 번호가 가수 이름 아래 등록되고, 다 부르면 DONE으로 자동 순환합니다. PASS는 대놓고 하는 양보입니다(「양보」로 기록되며, 몰래 부른 것으로 세지 않습니다). 노래 실력을 듣지도, 점수를 매기지도, 녹음하지도 않습니다(그건 베이스 전사와 채점기 업체의 일). 지키는 것은 공정함 한 가지뿐입니다. 마이크가 누구 손에 있어야 하는가.
 
 ## 미리보기 스크린샷

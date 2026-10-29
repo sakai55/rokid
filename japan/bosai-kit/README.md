@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-bosai-kit
 ```
 
+**AIX 直接ダウンロード**（最新版）：[bosai-kit.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/bosai-kit.aix)
+
 JP04・日本ローカライズシリーズ。インタラクション哲学：**畳のカバーグリッド Coverage Grid**。この Agent は防災バッグを 1 枚のカバーグリッドにする：8 品目が 1 品目 1 セル、確認したら ●、期限切れや交換が必要なら △、未確認は ○。8 セルすべてが ○ を離れて初めて「点検完了」と言う。期限は telephoto で包装の日付を撮って LLM に年月を読ませる（暫定。原文を表示して確認を待つ）か、自分で直接 FLAG する。災害を判別せず、情報を放送せず、避難所へ案内もしない——それはプラットフォームと自治体の仕事。これは 1 つだけを証明する：このバッグは今日、本当に一通り確認された、ということ。
 
 ## プレビュー画像

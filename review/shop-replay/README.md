@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-shop-replay
 ```
 
+**AIX 直接下载**（最新版）：[shop-replay.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/shop-replay.aix)
+
 注意力外挂系列 RE03（REVIEW 回顾型，本组第三位）。逛完一圈纠结：刚才犹豫的那件在哪家店？多少钱？——逛的时候每件都看中了，逛完却想不起哪件在哪家店、标价是多少。本 Agent 把购物回放外包出去：看中一件就登记一格——商品名 + 你记的价格 + 店面朝向 + 当时拍一张画面；纠结时按登记顺序列出候选，CHEAP 直接跳到你记的价格里最便宜的一件；结束小结钉住最便宜的是哪件、在哪个方向。
 
 ## 解决的问题

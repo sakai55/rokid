@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-matsuri-taiko
 ```
 
+**AIX 直接ダウンロード**（最新版）：[matsuri-taiko.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/matsuri-taiko.aix)
+
 JP15 ・ 日本在地 × 指向性 × ゲーム。夏祭りの待ち時間、家族が頭の動きだけで太鼓リズムを叩く。操作の考え方：**祭り太鼓リズム Festival Drum**。
 
 ## プレビュー画像

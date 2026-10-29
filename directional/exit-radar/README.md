@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-exit-radar
 ```
 
+**AIX 直接下载**（最新版）：[exit-radar.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/exit-radar.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI10 个。入住陌生酒店、走进
 陌生办公楼时，几乎没人会留意紧急出口在哪——真出事时在烟雾和

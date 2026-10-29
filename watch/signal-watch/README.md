@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-signal-watch
 ```
 
+**AIX 直接下载**（最新版）：[signal-watch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/signal-watch.aix)
+
 
 注意力外挂系列 WA04（WATCH 守望型）。医院、银行、取餐窗口叫号时，眼睛必须死盯大屏，闭眼歇一下就可能过号。本 Agent 的做法：佩戴者只在开始时用自己的眼睛看一眼大屏，把「你的号」和「当前号」填进来（步进器或口述），之后的盯屏工作交给节律提醒——每隔一段节律语音叫你回看一眼、更新当前号；只差 3 个号时提前喊你准备，到号时喊你，过号了就如实说过号。
 

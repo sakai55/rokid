@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-cue-mirror
 ```
 
+**AIX 直接下载**（最新版）：[cue-mirror.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/cue-mirror.aix)
+
 注意力外挂系列 CU05（CUE 提示型，本组收官，系列第 35 个）。早上出门前最慌乱：天气、第一件事、别忘的东西全挤在镜前十秒。本 Agent 把镜前确认外包出去：看向镜子停稳才亮三行——今日天气要点、第一件事、昨日留给今早的一句话——逐行确认已读，三行都读了说「可以出门了」，提前结束当场点名未读行（提醒，不是拦门），小结照实记已读/未读。
 
 ## 解决的问题

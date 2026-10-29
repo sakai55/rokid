@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-first-sentence
 ```
 
+**AIX 直接下载**（最新版）：[first-sentence.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/first-sentence.aix)
+
 CC17 · 路缘坡（CC）。口吃者开口前把第一句存好、开口时逐词定速显示在视线内
 
 ## 预览截图

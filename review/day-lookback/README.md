@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-day-lookback
 ```
 
+**AIX 直接下载**（最新版）：[day-lookback.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/day-lookback.aix)
+
 注意力外挂系列 RE01（REVIEW 回顾型，本组第一位）。晚上复盘：今天看过的号码、答应的事、路过的店，全混成一团——白天每一眼都过去了，晚上想捡回来却想不起哪件是哪件。本 Agent 把复盘外包出去：白天每一次凝视登记一格（类型三选一：画面 / 数字 / 承诺 + 一句描述 + 你当时的朝向，自动带时间标记），晚上按时间顺序走一条注意力时间线，每格显示时间 + 朝向 + 类型 + 描述；FILTER 按类型过滤（只看画面 / 只看数字 / 只看承诺 / 看全部）；结束给一张本次复盘小结：各类型各几格、最早最晚时间。
 
 ## 解决的问题

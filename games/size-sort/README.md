@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-size-sort
 ```
 
+**AIX 直接下载**（最新版）：[size-sort.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/size-sort.aix)
+
 拍照现实交互游戏系列 GA48。每局指定一类物品（固定 4 局：杯子 → 书 → 瓶子 → 鞋）。找 3 个同类、大小有别的实物，从左到右摆开，位置编号 1、2、3。
 
 与指向性系列 shelf-compare（货架商品登记比对工具）的区别：shelf-compare 是把商品信息拍下来比价比参数的购物工具；本作判的是三个同类物的相对大小顺序，是先猜后判的排序游戏，不登记商品信息。

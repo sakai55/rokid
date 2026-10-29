@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-line-by-line
 ```
 
+**AIX 直接下载**（最新版）：[line-by-line.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/line-by-line.aix)
+
 CC15 · 路缘坡（CC）。阅读障碍者读纸质文件时一次只看一行、点头进下一行、不串行
 
 ## 预览截图

@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-cook-along
 ```
 
+**AIX 直接下载**（最新版）：[cook-along.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/cook-along.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI11 个。做饭时手上全是油和水，
 翻不了手机菜谱，步骤还总做到一半就忘：菜谱就悬在你的视线里，

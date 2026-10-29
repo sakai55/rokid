@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-memory-anchor
 ```
 
+**AIX 直接下载**（最新版）：[memory-anchor.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/memory-anchor.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI38 个。想法和待办总是「转头就忘」：
 看着药瓶想起晚上要吃药，转身就没影；站在洗手台前想起要买牙膏，走到

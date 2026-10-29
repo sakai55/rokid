@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-barcode-rally
 ```
 
+**AIX 直接下载**（最新版）：[barcode-rally.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/barcode-rally.aix)
+
 AV07 · 储藏间/货架盘点双手忙，靠扫码把一架货点清并按目标清单核销，顶边界 B7（BarcodeDetector 码制与输入类型）。
 
 ## 预览截图

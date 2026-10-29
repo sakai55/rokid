@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-trail-back
 ```
 
+**AIX 直接下载**（最新版）：[trail-back.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/trail-back.aix)
+
 注意力外挂系列 AM04（AMBIENT 环境型，本组第四个，系列第 49 个）。商场/展馆/大停车场逛一圈，回去的路完全没印象。本 Agent 把「回去的路」外包出去：沿途关键路口看向停稳点 MARK 登记面包屑（朝向 + 画面），返程点 RETURN 按反向朝向逐点走回起点，每点点 ARRIVED 确认。
 
 ## 解决的问题

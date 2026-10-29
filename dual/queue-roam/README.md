@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-queue-roam
 ```
 
+**AIX 直接下载**（最新版）：[queue-roam.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/queue-roam.aix)
+
 注意力外挂系列 DU05（DUAL 并行型，本组最后一位）。取了号想去逛逛，又怕过号，只能守在屏幕前干等——逛和等号抢同一个人：走开了怕错过，守着又逛不成。本 Agent 把副线外包出去：登记自己的号，START 开始 far-field 守听叫号广播，转写逐段过叫号门——只有叫到你的号才亮强横幅 + 一次 TTS「到你了，马上回去」；路过叫号屏时点 PROG 手动报进度（这是你报的数，不是读屏），当前叫到号距你的号 ≤5 个时出横幅 + 一次 TTS「快到你了，回去等着」；结束时给一张本次取号小结：登记号、最终进度、已听几段、快到提醒几次、叫到提醒几次、回去确认几次。
 
 ## 解决的问题

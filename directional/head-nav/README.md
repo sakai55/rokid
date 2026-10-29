@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-head-nav
 ```
 
+**AIX 直接下载**（最新版）：[head-nav.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/head-nav.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI06 个。看手机导航要低头走路，
 东南西北又分不清——本 Agent 把目标方向换算成相对你头部朝向的方向：

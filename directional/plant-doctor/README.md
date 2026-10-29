@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-plant-doctor
 ```
 
+**AIX 直接下载**（最新版）：[plant-doctor.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/plant-doctor.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI04 个。盆栽蔫了、黄了、生虫了，
 你不知道出了什么问题、也不知道该不该浇水：看着植物拍一张（只作

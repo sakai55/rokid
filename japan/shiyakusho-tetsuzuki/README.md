@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-shiyakusho-tetsuzuki
 ```
 
+**AIX 直接ダウンロード**（最新版）：[shiyakusho-tetsuzuki.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/shiyakusho-tetsuzuki.aix)
+
 一文の場面：市役所で手続きをする高齢者が、チェックリストどおりに書類をそろえ、番号を守って呼び出しを逃さない。
 
 ## 方向構成

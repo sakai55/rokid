@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-far-ear
 ```
 
+**AIX 直接下载**（最新版）：[far-ear.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/far-ear.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI17 个。看得见说话的人，
 却听不清他说什么 — 会议室前排的发言、隔着客厅的电视、

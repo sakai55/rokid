@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-texture-hunt
 ```
 
+**AIX 直接下载**（最新版）：[texture-hunt.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/texture-hunt.aix)
+
 拍照现实交互游戏系列 GA49。每轮出一种质地（固定顺序：木纹 → 金属 → 布料 → 玻璃 → 纸），语音同步播报。找一处该质地的实物表面，凑近让表面占满画面，单击拍照。
 
 与注意力系列 plant-doctor（看叶片判植物状态的养护工具）的区别：plant-doctor 是对着植物做健康判断的生活工具；本作判的是任意实物表面的质地类别，是找质地计分游戏，不做任何诊断。

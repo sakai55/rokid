@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-nichijo-set
 ```
 
+**AIX 直接ダウンロード**（最新版）：[nichijo-set.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/nichijo-set.aix)
+
 JP22 · 日本ローカル × 注意力 × カーブカット（日常生活セット）。ブティックラインでの統合作り直し：CC11 `left-home-proof`（外出時の存証リプレイ、日本向けローカライズ）＋ JP18 `coin-laundry`（ランドリーのカウントダウン見守り）＋ JP19 `origami-steps`（うなずきで進める折り紙）を統合したもの。元の3つの Agent はそのまま封存し、削除も変更もしない。ワンセンテンスの場面：日本の家庭の日常で、外出前に一つずつ存証して不安を防ぎ、コインランドリーで取り忘れず、両手がふさがっているときも折り紙を中断しない——3つの家事がそれぞれ自分のクローズドループを完走し、進捗はすべて端末に残る。
 
 ## プレビュー画像

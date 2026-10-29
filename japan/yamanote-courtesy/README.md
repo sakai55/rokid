@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-yamanote-courtesy
 ```
 
+**AIX 直接ダウンロード**（最新版）：[yamanote-courtesy.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/yamanote-courtesy.aix)
+
 JP07 · 日本ローカル化シリーズ。対話の哲学：**駅名ライン図 Station Line Cue**。本 Agent はナビゲーションをしない（基盤側の AR ナビゲーションの役目）。あなたがどこにいるかは扱わず、「マナーの動作が正しい駅で発動すること」だけを扱う：固定の通勤駅順を1つ登録し（デモは山手線の品川→東京区間）、駅に着くたびにあなたがシングルタップで確認する（列車 API は存在せず、その旨を正直に明記する；GEO は大まかな照合にのみ使う）。終点の1つ前の駅で3点セットのマナーリストが自動で表示され、1件ずつうなずいて完了にする。その本体は位置そのものではなく、状況に応じた知らせのタイミングである。
 
 ## プレビュー画像

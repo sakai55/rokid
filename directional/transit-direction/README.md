@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-transit-direction
 ```
 
+**AIX 直接下载**（最新版）：[transit-direction.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/transit-direction.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI42 个。出了地铁站最大的崩溃不是
 路远，是**方向感清零**：站内地图看懂了，一出地面就分不清自己面朝

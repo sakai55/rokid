@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-code-hold
 ```
 
+**AIX 直接下载**（最新版）：[code-hold.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/code-hold.aix)
+
 
 注意力外挂系列 HO02（HOLD 默念型）。朋友报的 WiFi 密码、临时门锁码、会议号——这类码的共同点是：只听一遍，走到要输入的地方就已经忘了大半。本 Agent 的做法：朋友说完，你自己复述一遍（麦克风只听你一个人），听写结果放大给你逐字核对，你确认了才存住；要输入时，码在你视线里逐段（每 4 个字符一段）显示，你在另一台设备上输一段、翻一段；输完两下焚掉，不留痕。
 

@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-soju-turn
 ```
 
+**AIX 직접 다운로드**(최신 버전): [soju-turn.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/soju-turn.aix)
+
 KR03 · 한국 현지화 시리즈. 상호작용 철학: **존중 안무 Respect Choreography**. 이 Agent가 안무하는 것은 바로 몸입니다. 네 단계 고정 무대(두 손으로 잔 받기→두 손으로 술 따르기→고개 돌려 마시기→빈 잔 확인) 중 "고개 돌리기" 단계는 머리 편향 센서로 판정합니다. 기준선에서 35° 넘게 돌렸다가 바로 돌아와야 완료로 셉니다. 고개를 돌리는 방향과 크기가 곧 상호작용 자체입니다. 어른이 자리에 없으면(ELDER 전환) 그 단계는 마주 보고 마시기로 자동 바뀌어, 규칙이 자리에 따라 달라집니다. 술자리를 녹음하지도, 건배사를 받아쓰지도 않으며(베이스의 일), 젊은이 몸의 방향만 지킵니다.
 
 ## 미리보기 스크린샷

@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-retrace-steps
 ```
 
+**AIX 直接下载**（最新版）：[retrace-steps.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/retrace-steps.aix)
+
 一句话场景：失智/认知障碍者在小区、商场、医院走着走着忘了来路，用自身轨迹逆序返回，不读地图。
 
 ## 方向构成

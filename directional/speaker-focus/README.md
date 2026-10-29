@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-speaker-focus
 ```
 
+**AIX 直接下载**（最新版）：[speaker-focus.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/speaker-focus.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI46 个。多人会议最累的不是听，
 是**跟人**：三四个人轮流开口，你低头记两行就丢了谁在说，纪要

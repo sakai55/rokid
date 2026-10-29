@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-stove-watch
 ```
 
+**AIX 直接下载**（最新版）：[stove-watch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/stove-watch.aix)
+
 
 注意力外挂系列 **WA01**（守望型 WATCH）· Rokid 眼镜 AIUI Agent
 

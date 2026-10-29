@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-eki-dekake
 ```
 
+**AIX 直接ダウンロード**（最新版）：[eki-dekake.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/eki-dekake.aix)
+
 JP20・日本在地 × カーブカット × 指向性。精品ラインの統合リメイク：JP14 `kasa-share`（駅前シェア傘帳簿）と JP16 `eki-barrier`（駅の昇降機の側の確認）を同一の場面で統合したもの。元の 2 つの Agent はそのまま封印され、削除も変更もしない。一文の場面：雨の日や初めての駅で、移動に困難のある人がグラス上で 1 回分の駅のお出かけを完了する——昇降機のある側を見つけ → シェア傘を借り → 返却期限を守り → 返却を確認し、セッションをまたぐお出かけ記録を残す。
 
 ## プレビュー画像

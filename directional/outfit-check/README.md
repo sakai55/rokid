@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-outfit-check
 ```
 
+**AIX 直接下载**（最新版）：[outfit-check.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/outfit-check.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI24 个。买衣服时站在
 试衣间里拿不准：这件搭不搭？这个颜色配不配？穿去那个

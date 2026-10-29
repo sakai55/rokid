@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-mic-mode-arena
 ```
 
+**AIX 直接下载**（最新版）：[mic-mode-arena.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/mic-mode-arena.aix)
+
 AV04 · 同一环境里四种麦克风模式同句实测，用实测电平排出「这个环境该用哪种模式」并跨会话记住。顶边界 B4：麦克风四模式（wearer / far-field / near-field / omnidirectional 的 exact→ideal 回退与 getSettings 回读）。
 
 ## 预览截图

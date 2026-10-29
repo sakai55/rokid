@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-daily-routine
 ```
 
+**AIX 直接下载**（最新版）：[daily-routine.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/daily-routine.aix)
+
 头部动作小游戏系列 **GA20 / 20，收官之作**，D 组（趣味收尾），极简设计：一页、三态（准备 / 进行 / 完成），把 A 组 5 个动作串成一套约 2 分钟的日常流程。坐稳或站稳、头摆正，点一下开始：先校准——Agent 请你低一下头、向左转一下、向左贴一下，记住哪边是下、哪边是左、哪边是左贴（这样真机方向即使反了也不会算错）；然后跟着语音做 5 节，每节做完回正到中间，下一节才报；一节 30 秒没做完就先跳过，不硬撑。
 
 ## 系列收官索引

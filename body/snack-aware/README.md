@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-snack-aware
 ```
 
+**AIX 直接下载**（最新版）：[snack-aware.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/snack-aware.aix)
+
 注意力外挂系列 BO05（BODY 身体型，本组第五个，系列第 45 个，B 组收官）。无意识吃零食：一边忙一边伸手，回过神一包没了。本 Agent 把「计数」外包出去：看向零食停稳时先亮「这是今天第几次」，计数外包给它，吃不吃你决定，它只负责让你看见。
 
 ## 解决的问题

@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-glasses-benchmark
 ```
 
+**AIX 直接下载**（最新版）：[glasses-benchmark.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/glasses-benchmark.aix)
+
 
 第一个开发测试智能体：一键跑完 Rokid 眼镜在 AIUI 下的全部功能，共 23 项（21 项实测 + 2 项平台边界声明）。
 

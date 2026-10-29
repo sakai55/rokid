@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-elder-day
 ```
 
+**AIX 直接下载**（最新版）：[elder-day.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/elder-day.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI50 个。独居老人一天的难处不是
 哪一件大事，是**一串小事全靠记性**：早晨的药吃没吃、上午水喝

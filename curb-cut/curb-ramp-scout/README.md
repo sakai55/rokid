@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-curb-ramp-scout
 ```
 
+**AIX 直接下载**（最新版）：[curb-ramp-scout.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/curb-ramp-scout.aix)
+
 路缘坡效应系列 CC08（WATCH 守望型）——本系列的字面原点。轮椅使用者到陌生路口最怕的一刻：路缘坡常常不在正对面而在侧面，推到马路牙子前才发现是台阶，只能退回车流里找坡。本 Agent 把「发现」挪到「推过去」之前：到路口先定向、转头扫两侧、逐向拍照核查是坡还是台阶，最后横幅直接告诉你坡在哪边——双手全程不离轮子。
 
 ## 预览截图

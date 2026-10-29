@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-tri-shot-lab
 ```
 
+**AIX 直接下载**（最新版）：[tri-shot-lab.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/tri-shot-lab.aix)
+
 AV01 · 读不清牌子小字时，一次同场连拍三镜并逐张判读，给出「这类对象该用哪一镜」的结论。顶边界 B1：拍照三模式（wide / telephoto / default）同场对照 + 中心裁片多模态判读。
 
 ## 预览截图

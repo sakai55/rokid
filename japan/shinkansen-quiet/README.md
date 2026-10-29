@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-shinkansen-quiet
 ```
 
+**AIX 直接ダウンロード**（最新版）：[shinkansen-quiet.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/shinkansen-quiet.aix)
+
 JP01 ・ 日本ローカライズシリーズ。対話哲学：**沈黙の番人 Silence Keeper**。静音車両で最も自覚しにくいのは「自分の声がどれほど大きいか」だ。ヘッドホンを着けて話すと無意識に声量が上がり、電話が鳴って慌てて出た最初の数秒が最もうるさい。本 Agent は「自分が一線を越えたかどうか」をグラスに任せる。装着者の近距離の発声強度だけを監視し、普段は何も表示せず、越えたときだけ現れて、デッキへ行くよう促す。書き起こしも録音もせず、他人を評価することもしない——それはリアルタイム字幕や会議の書き起こし（ベース機能）の役割であり、本 Agent とは関係がない。
 
 ## プレビュー画像

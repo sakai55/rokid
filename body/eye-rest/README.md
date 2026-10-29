@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-eye-rest
 ```
 
+**AIX 直接下载**（最新版）：[eye-rest.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/eye-rest.aix)
+
 注意力外挂系列 BO01（BODY 身体型，本组第一个，系列第 41 个）。看书/看屏幕一投入就是两小时，眼睛干到疼才想起休息。本 Agent 把休息提醒外包出去：头部停稳凝视近处持续计时，满 20 分钟视线内提醒远眺，抬头看远自动确认完成，计时重新开始；结束出小结（本次累计近视时长、提醒几次、远眺完成几次）。
 
 ## 解决的问题
