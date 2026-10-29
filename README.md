@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-cue-desk
 ```
 
+**AIX 直接下载**（最新版）：[cue-desk.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/cue-desk.aix)
+
 注意力外挂系列 CU03（CUE 提示型，本组第三个，系列第 33 个）。坐到书桌前先刷十分钟手机才进入状态，站起来又忘刚才做到哪。本 Agent 把续接确认外包出去：看向书桌停稳才亮今日三件事——按你预设的三件事（写报告 / 回邮件 / 整理桌面）做完一项勾一项，起身时按未完成项给一句「回来从这继续」，全做完起身则说「三件事都做完了」。
 
 ## 解决的问题
