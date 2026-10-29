@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-pcbang-session
 ```
 
+**AIX 直接下载**（最新版）：[pcbang-session.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/pcbang-session.aix)
+
 KR09 · 韩国本地化系列。交互哲学：**座席账本 Seat Ledger**。本 Agent 只记一本座席账：系统每播报满一小时，本人点一下 +1H（或点头）记一个时间块；点餐时 ORDER 记一笔（滑动换菜单候选）；离座时 END 亮出预估结算额（机时费+餐费）让你心里有数。它不与 PC 管家系统联动（费率与总价以柜台结算为准）、不替你下单（订单仍走座位屏）、不提醒休息（那是健康类应用的事）——它只保证这一座的时间和吃喝，有一本你自己记的账。
 
 ## 预览截图
