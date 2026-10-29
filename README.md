@@ -5,6 +5,8 @@
 https://github.com/sakai55/rokid/tree/agent-yutnori-game
 ```
 
+**AIX 直接下载**（最新版）：[yutnori-game.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/yutnori-game.aix)
+
 一句话场景：家人在春节或中秋聚会时，不用手、只用头部动作玩 윷놀이，先到 20 格者胜。
 
 方向构成：韩国在地 × 游戏 × 注意力。在地性落在 설날·추석 家族 윷놀이；游戏承担玩法闭环一环（开始／掷棒移子／输赢计分）；注意力承担棋子位置、比分与成绩记录的守候一环。
