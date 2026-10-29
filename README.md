@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-noraebang-rotation
 ```
 
+**AIX 直接下载**（最新版）：[noraebang-rotation.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/noraebang-rotation.aix)
+
 KR07 · 韩国本地化系列。交互哲学：**公平轮值 Fair Rotation**。本 Agent 就是那个轮盘：四位歌手的名字排成环，当前唱者大字居中，上一位、下一位半亮待命；每首歌的预约号登记在唱者名下，唱完 DONE 自动轮转。PASS 是明着来的跳过（记「양보」让唱，不算偷唱）。它不听唱功、不打分、不录音（那是底座转写与评分机厂商的事），只守公平这一件事：麦克风该在谁手里。
 
 ## 预览截图
