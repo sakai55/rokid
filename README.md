@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-find-my-thing
 ```
 
+**AIX 直接下载**（最新版）：[find-my-thing.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/find-my-thing.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI07 个。眼镜盒、钥匙、遥控器、钱包
 放下就忘在哪：放下时看着它登记一下，眼镜记下「物品 + 房间 +
