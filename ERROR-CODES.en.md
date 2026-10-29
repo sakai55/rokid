@@ -180,33 +180,33 @@ export async function blobToDataUrl(blob) {
 
 (The `E####` form in the table below is the only form in use — the same across the whole fleet, with no prefix.)
 
-A typical-trigger cell ending with the struck-through "simulator" badge <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> means the failure cause behind that trigger cannot be reproduced by the simulator (for example, an interface missing from the real-device runtime, or the real behavior of the glasses hardware and host services); it can only be met in real-device testing. Triggers without the badge are environment-independent and happen in the simulator too. There are 29 badge occurrences in the whole table. When registering a new code, judge at the same time whether to add the badge.
+A typical-trigger cell ending with the struck-through "simulator" badge <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> means the failure cause behind that trigger cannot be reproduced by the simulator (for example, an interface missing from the real-device runtime, or the real behavior of the glasses hardware and host services); it can only be met in real-device testing. Triggers without the badge are environment-independent and happen in the simulator too. There are 29 badge occurrences in the whole table. When registering a new code, judge at the same time whether to add the badge.
 
 ### 1xxx Camera and framing
 | Code | Description | Typical trigger |
 |---|---|---|
 | E1001 | Camera failed to open | getUserMedia throws / is rejected (non-permission class) |
 | E1002 | Camera permission not granted | NotAllowedError / permission denied |
-| E1003 | Image capture device unavailable | ImageCapture construction fails / does not exist <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E1003 | Image capture device unavailable | ImageCapture construction fails / does not exist <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E1004 | Frame grab failed | grabFrame throws on a single call |
 | E1005 | Repeated frame grab failures | preview rendering fails repeatedly |
-| E1006 | Camera stream interrupted | track ended / stream withdrawn <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E1006 | Camera stream interrupted | track ended / stream withdrawn <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E1007 | No camera device | NotFoundError: no usable camera / no device matches the constraints |
 | E1008 | Camera not readable | NotReadableError: camera busy or hardware read failure, track cannot start |
 | E1009 | Photo capture failed | takePhoto throws or returns empty |
-| E1010 | Photo mode unavailable | the requested wide / telephoto / default mode is not supported <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E1010 | Photo mode unavailable | the requested wide / telephoto / default mode is not supported <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E1011 | Framing constraints not satisfied | video constraint OverconstrainedError and the fallback to defaults also fails |
 
 ### 2xxx Frame capture and encoding
 | Code | Description | Typical trigger |
 |---|---|---|
 | E2001 | Frame capture failed during shooting | grabFrame throws while shooting |
-| E2002 | Canvas creation failed | Canvas unavailable <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E2002 | Canvas creation failed | Canvas unavailable <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E2003 | Encoding failed (canvas) | convertToBlob throws / returns empty |
 | E2004 | Encoding failed (direct) | createImageBlob throws / returns empty |
-| E2005 | Encoding to text failed | Blob→dataURL failed (including missing FileReader; the first field code, E2005, from AV11) <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
-| E2006 | Encoding timed out, switched mode | encoding timeout circuit-breaker tripped; switched to the backup mode <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
-| E2007 | No usable frame output path | both the primary and backup frame output paths are unavailable <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E2005 | Encoding to text failed | Blob→dataURL failed (including missing FileReader; the first field code, E2005, from AV11) <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E2006 | Encoding timed out, switched mode | encoding timeout circuit-breaker tripped; switched to the backup mode <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E2007 | No usable frame output path | both the primary and backup frame output paths are unavailable <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E2008 | In-memory frame read failed | getImageData throws and bitmap-direct storage also fails |
 | E2009 | Single-frame processing timeout | watchdog forced reset |
 | E2010 | Stopped after repeated failures | repeated failures reached the cap and shooting stopped automatically (main code in lastError) |
@@ -217,21 +217,21 @@ A typical-trigger cell ending with the struck-through "simulator" badge <img src
 ### 3xxx Voice ASR / TTS
 | Code | Description | Typical trigger |
 |---|---|---|
-| E3001 | Speech recognition unavailable | SpeechRecognition does not exist <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E3001 | Speech recognition unavailable | SpeechRecognition does not exist <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E3002 | Speech recognition did not start | rec.start() throws |
 | E3003 | Speech recognition error | rec.onerror (fallback for unrefined events) |
 | E3004 | Speech recognition keeps dropping | onend restarts fail repeatedly |
 | E3005 | Speech output failed | speechSynthesis.speak throws |
 | E3006 | No speech input | ASR event no-speech: silence timeout, no voice |
-| E3007 | Microphone capture failed | ASR event audio-capture: host-side audio capture failed <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
-| E3008 | Recognition permission not granted | ASR event not-allowed: RECORD_AUDIO not authorized <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E3007 | Microphone capture failed | ASR event audio-capture: host-side audio capture failed <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E3008 | Recognition permission not granted | ASR event not-allowed: RECORD_AUDIO not authorized <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E3009 | Recognition network error | ASR event network: recognition service network failure |
-| E3010 | Microphone mode fell back | OverconstrainedError: the exact microphone mode cannot be satisfied; fell back to the default mode (AV04 field case; referenced in 23 places across the fleet) <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E3010 | Microphone mode fell back | OverconstrainedError: the exact microphone mode cannot be satisfied; fell back to the default mode (AV04 field case; referenced in 23 places across the fleet) <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E3011 | Microphone stream acquisition failed | getUserMedia audio stream throws (non-permission, non-constraint class) |
-| E3012 | Recognition service unavailable | ASR event service-not-allowed <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E3012 | Recognition service unavailable | ASR event service-not-allowed <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E3013 | Recognition language not supported | ASR event language-not-supported |
-| E3014 | Recognition session configuration failed | SpeechRecognitionSession hot words / VAD / updateContext update rejected (AV05) <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
-| E3015 | Speech synthesis failed | speechSynthesis.synthesize throws on the generation side (distinct from E3005's speak playback failure, AV06) <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E3014 | Recognition session configuration failed | SpeechRecognitionSession hot words / VAD / updateContext update rejected (AV05) <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E3015 | Speech synthesis failed | speechSynthesis.synthesize throws on the generation side (distinct from E3005's speak playback failure, AV06) <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 
 ### 4xxx Recording, composition, and playback
 | Code | Description | Typical trigger |
@@ -241,12 +241,12 @@ A typical-trigger cell ending with the struck-through "simulator" badge <img src
 | E4003 | Playback rendering failed | playback drawImage throws |
 | E4004 | Playback frame rate too low | measured rate below half the setting |
 | E4005 | Frame data lost | frames no longer match the record after crossing pages / sessions |
-| E4006 | Recorder unavailable | MediaRecorder does not exist / construction fails <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
-| E4007 | Recording format not supported | isTypeSupported rejects every candidate format (AV03 probe) <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E4006 | Recorder unavailable | MediaRecorder does not exist / construction fails <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E4007 | Recording format not supported | isTypeSupported rejects every candidate format (AV03 probe) <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E4008 | Recording start failed | MediaRecorder.start throws |
 | E4009 | Recording has no data | ondataavailable has no data / all chunks empty |
 | E4010 | Audio decoding failed | decodeAudioData throws (AV04 analysis path) |
-| E4011 | Audio playback failed | SpeechAudioPlayer / media element playback throws <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E4011 | Audio playback failed | SpeechAudioPlayer / media element playback throws <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 
 ### 5xxx Storage
 | Code | Description | Typical trigger |
@@ -255,7 +255,7 @@ A typical-trigger cell ending with the struck-through "simulator" badge <img src
 | E5002 | Record read failed | read / JSON parse throws |
 | E5003 | Storage space insufficient | write rejected by quota |
 | E5004 | Saved data version incompatible | persisted data structure version mismatch; parse or migration fails |
-| E5005 | Persistence unavailable | localStorage / storage interface does not exist or is disabled <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E5005 | Persistence unavailable | localStorage / storage interface does not exist or is disabled <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 
 ### 6xxx Network and LLM
 | Code | Description | Typical trigger |
@@ -269,31 +269,31 @@ A typical-trigger cell ending with the struck-through "simulator" badge <img src
 | E6007 | Server error | HTTP 5xx or API business error |
 | E6008 | Request rejected | HTTP 4xx / authentication failure (401/403; a dabiaoge channel 401 belongs here) |
 | E6009 | Response parsing failed | network response JSON / structure parsing throws |
-| E6010 | Domain not on the allowlist | the request domain was not filed on the allowlist and is blocked by the host <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E6010 | Domain not on the allowlist | the request domain was not filed on the allowlist and is blocked by the host <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E6011 | Large model output unusable | empty response or structure not as expected; cannot be parsed into business data |
 
 ### 7xxx Sensors, positioning, and detection
 | Code | Description | Typical trigger |
 |---|---|---|
-| E7001 | Orientation sensor unavailable | AbsoluteOrientationSensor construction / start fails <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E7001 | Orientation sensor unavailable | AbsoluteOrientationSensor construction / start fails <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E7002 | Positioning failed | getCurrentPosition error 2/3 |
 | E7003 | Positioning permission not granted | getCurrentPosition error 1 |
 | E7004 | Barcode detection failed | BarcodeDetector.detect throws |
-| E7005 | Barcode format not supported | getSupportedFormats does not include the target format <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
-| E7006 | Gesture channel abnormal | enabling world awareness fails; enableWorldAwareness throws <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
-| E7007 | Inertial sensor unavailable | Accelerometer / Gyroscope construction or start fails <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
-| E7008 | Sensor has no data | sensor started but no reading within the timeout (benchmark orientation / motion item timeout class) <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
-| E7009 | Barcode detector unavailable | BarcodeDetector does not exist / construction fails (distinct from E7004's detect throw) <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
-| E7010 | Head calibration failed | calibration cannot complete, or the calibration center drifts too far (head games / directional class) <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E7005 | Barcode format not supported | getSupportedFormats does not include the target format <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E7006 | Gesture channel abnormal | enabling world awareness fails; enableWorldAwareness throws <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E7007 | Inertial sensor unavailable | Accelerometer / Gyroscope construction or start fails <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E7008 | Sensor has no data | sensor started but no reading within the timeout (benchmark orientation / motion item timeout class) <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E7009 | Barcode detector unavailable | BarcodeDetector does not exist / construction fails (distinct from E7004's detect throw) <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E7010 | Head calibration failed | calibration cannot complete, or the calibration center drifts too far (head games / directional class) <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 
 ### 8xxx Pages and runtime
 | Code | Description | Typical trigger |
 |---|---|---|
 | E8001 | Page navigation failed | wx.navigateTo / navigateBack throws |
-| E8002 | Page reclaimed by the system | abnormal onUnload with the task unfinished <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E8002 | Page reclaimed by the system | abnormal onUnload with the task unfinished <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E8003 | Permission not declared | the called capability does not match the permissions in app.json (development-time self-check code) |
-| E8004 | Runtime interface missing | a required global interface does not exist (generic code for "X is not defined"; FileReader in an encoding context goes to E2005) <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
-| E8005 | Input event did not reach the page | key / gesture events not delivered to the page (development-time self-check code: onKeyDown not wired, or the bindtap-only class that cannot be triggered on a real device) <img src="assets/badges/badge-nosim.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E8004 | Runtime interface missing | a required global interface does not exist (generic code for "X is not defined"; FileReader in an encoding context goes to E2005) <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
+| E8005 | Input event did not reach the page | key / gesture events not delivered to the page (development-time self-check code: onKeyDown not wired, or the bindtap-only class that cannot be triggered on a real device) <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> |
 | E8006 | Session state lost | session state missing after crossing pages / re-entering (media frame loss goes to E4005) |
 
 ### 9xxx System
@@ -381,7 +381,7 @@ Badge made conspicuous: per GO directive — the struck-through "simulator" badg
 
 ### v1.6.0 2026-10-29
 
-Marks become badges: per GO directive the "Cannot be triggered in the simulator" column is deleted — the marks for the 29 codes change to a struck-through "simulator" badge at the end of the typical-trigger sentence (new file `assets/badges/badge-nosim.svg`; a mark dedicated to this table, not a series badge). The judged set and the meanings of the 84 codes are unchanged, not a word.
+Marks become badges: per GO directive the "Cannot be triggered in the simulator" column is deleted — the marks for the 29 codes change to a struck-through "simulator" badge at the end of the typical-trigger sentence (new file `assets/badges/badge-nosim.en.svg`; a mark dedicated to this table, not a series badge). The judged set and the meanings of the 84 codes are unchanged, not a word.
 
 ### v1.5.5 2026-10-29
 

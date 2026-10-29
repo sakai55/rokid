@@ -180,33 +180,33 @@ export async function blobToDataUrl(blob) {
 
 （下の表の `E####` が唯一の使用形態であり、全体で一致し、前置文字は付けない。）
 
-典型的な引き金の文末に取り消し線の「シミュレーター」バッジ <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> が付いているものは、その引き金の背後にある失敗の原因をシミュレーターでは再現できないことを示す（例：実機ランタイムに欠けているインターフェース、眼鏡のハードウェアとホストサービスの実際の振る舞い）。実機テストでないと出会えない。バッジがない引き金は環境に依存せず、シミュレーターでも同様に起こる。表全体で 29 か所ある。新コードを登録するときは、バッジを付けるかどうかも同時に判定する。
+典型的な引き金の文末に取り消し線の「シミュレーター」バッジ <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> が付いているものは、その引き金の背後にある失敗の原因をシミュレーターでは再現できないことを示す（例：実機ランタイムに欠けているインターフェース、眼鏡のハードウェアとホストサービスの実際の振る舞い）。実機テストでないと出会えない。バッジがない引き金は環境に依存せず、シミュレーターでも同様に起こる。表全体で 29 か所ある。新コードを登録するときは、バッジを付けるかどうかも同時に判定する。
 
 ### 1xxx カメラとフレーミング
 | コード | 説明 | 典型的な引き金 |
 |---|---|---|
 | E1001 | カメラを開けなかった | getUserMedia が例外 / 拒否（権限系でないもの） |
 | E1002 | カメラの権限がない | NotAllowedError / 権限の拒否 |
-| E1003 | 撮影デバイスが使えない | ImageCapture の構築に失敗 / 存在しない <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E1003 | 撮影デバイスが使えない | ImageCapture の構築に失敗 / 存在しない <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E1004 | フレーム取得に失敗した | grabFrame が 1 回で例外 |
 | E1005 | フレーム取得が連続で失敗した | プレビュー描画が連続で失敗 |
-| E1006 | カメラストリームが途切れた | track が ended / ストリームが取り上げられた <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E1006 | カメラストリームが途切れた | track が ended / ストリームが取り上げられた <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E1007 | カメラデバイスが存在しない | NotFoundError：使えるカメラがない / 制約に合うデバイスがない |
 | E1008 | カメラを読み取れない | NotReadableError：カメラが占有されているかハードウェアの読み取りに失敗し、track を開始できない |
 | E1009 | 撮影に失敗した | takePhoto が例外、または空を返す |
-| E1010 | 撮影モードが使えない | 要求した wide / telephoto / default モードがサポートされていない <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E1010 | 撮影モードが使えない | 要求した wide / telephoto / default モードがサポートされていない <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E1011 | フレーミング制約を満たせない | 映像制約の OverconstrainedError で、既定値へのフォールバックも失敗 |
 
 ### 2xxx フレーム撮影と符号化
 | コード | 説明 | 典型的な引き金 |
 |---|---|---|
 | E2001 | 撮影中のフレーム取得に失敗した | 撮影中に grabFrame が例外 |
-| E2002 | キャンバスの作成に失敗した | Canvas が得られない <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E2002 | キャンバスの作成に失敗した | Canvas が得られない <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E2003 | 符号化に失敗した（キャンバス） | convertToBlob が例外 / 空 |
 | E2004 | 符号化に失敗した（直接） | createImageBlob が例外 / 空 |
-| E2005 | テキストへの符号化に失敗した | Blob→dataURL に失敗（FileReader 欠如を含む。初の現場コード E2005、AV11 出身） <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
-| E2006 | 符号化がタイムアウトし切り替えた | 符号化タイムアウトの遮断が働き、予備モードに切り替えた <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
-| E2007 | 使えるフレーム出力経路がない | 主・予備のフレーム出力経路がどちらも使えない <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E2005 | テキストへの符号化に失敗した | Blob→dataURL に失敗（FileReader 欠如を含む。初の現場コード E2005、AV11 出身） <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E2006 | 符号化がタイムアウトし切り替えた | 符号化タイムアウトの遮断が働き、予備モードに切り替えた <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E2007 | 使えるフレーム出力経路がない | 主・予備のフレーム出力経路がどちらも使えない <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E2008 | メモリ内フレームの読み取りに失敗した | getImageData が例外で、ビットマップ直接保存も失敗 |
 | E2009 | 1 フレームの処理がタイムアウトした | ウォッチドッグが強制リセット |
 | E2010 | 連続失敗で撮影を止めた | 連続失敗が上限に達して自動停止（主コードは lastError を見る） |
@@ -217,21 +217,21 @@ export async function blobToDataUrl(blob) {
 ### 3xxx 音声 ASR / TTS
 | コード | 説明 | 典型的な引き金 |
 |---|---|---|
-| E3001 | 音声認識が使えない | SpeechRecognition が存在しない <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E3001 | 音声認識が使えない | SpeechRecognition が存在しない <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E3002 | 音声認識が始まらなかった | rec.start() が例外 |
 | E3003 | 音声認識でエラー | rec.onerror（細分していないイベントの受け皿） |
 | E3004 | 音声認識が繰り返し切れる | onend の再起動が連続で失敗 |
 | E3005 | 読み上げに失敗した | speechSynthesis.speak が例外 |
 | E3006 | 音声入力がない | ASR イベント no-speech：無音タイムアウトで声がない |
-| E3007 | マイクの取り込みに失敗した | ASR イベント audio-capture：ホスト側の録音に失敗 <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
-| E3008 | 認識の権限がない | ASR イベント not-allowed：RECORD_AUDIO が未許可 <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E3007 | マイクの取り込みに失敗した | ASR イベント audio-capture：ホスト側の録音に失敗 <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E3008 | 認識の権限がない | ASR イベント not-allowed：RECORD_AUDIO が未許可 <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E3009 | 認識のネットワークエラー | ASR イベント network：認識サービスのネットワーク失敗 |
-| E3010 | マイクモードがフォールバックした | OverconstrainedError：exact なマイクモードを満たせず、既定モードに戻した（AV04 の現場。全艦隊で 23 か所参照） <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E3010 | マイクモードがフォールバックした | OverconstrainedError：exact なマイクモードを満たせず、既定モードに戻した（AV04 の現場。全艦隊で 23 か所参照） <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E3011 | マイクストリームの取得に失敗した | getUserMedia の音声ストリームが例外（権限系・制約系でないもの） |
-| E3012 | 認識サービスが使えない | ASR イベント service-not-allowed <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E3012 | 認識サービスが使えない | ASR イベント service-not-allowed <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E3013 | 認識の言語がサポートされていない | ASR イベント language-not-supported |
-| E3014 | 認識セッションの設定に失敗した | SpeechRecognitionSession のホットワード / VAD / updateContext の更新が拒否された（AV05） <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
-| E3015 | 音声合成に失敗した | speechSynthesis.synthesize の生成側が例外（E3005 の speak 再生失敗とは区別する、AV06） <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E3014 | 認識セッションの設定に失敗した | SpeechRecognitionSession のホットワード / VAD / updateContext の更新が拒否された（AV05） <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E3015 | 音声合成に失敗した | speechSynthesis.synthesize の生成側が例外（E3005 の speak 再生失敗とは区別する、AV06） <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 
 ### 4xxx 録画・合成・再生
 | コード | 説明 | 典型的な引き金 |
@@ -241,12 +241,12 @@ export async function blobToDataUrl(blob) {
 | E4003 | 再生の描画に失敗した | 再生の drawImage が例外 |
 | E4004 | 再生フレームレートが低すぎる | 実測が設定の半分を下回る |
 | E4005 | フレームデータが失われた | ページ / セッションをまたいだ後、フレームと記録が食い違う |
-| E4006 | レコーダーが使えない | MediaRecorder が存在しない / 構築に失敗 <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
-| E4007 | 録画形式がサポートされていない | isTypeSupported の候補形式がすべて不可（AV03 のプローブ） <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E4006 | レコーダーが使えない | MediaRecorder が存在しない / 構築に失敗 <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E4007 | 録画形式がサポートされていない | isTypeSupported の候補形式がすべて不可（AV03 のプローブ） <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E4008 | 録画の開始に失敗した | MediaRecorder.start が例外 |
 | E4009 | 録画にデータがない | ondataavailable にデータがない / 断片がすべて空 |
 | E4010 | 音声のデコードに失敗した | decodeAudioData が例外（AV04 の解析経路） |
-| E4011 | 音声の再生に失敗した | SpeechAudioPlayer / メディア要素の再生が例外 <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E4011 | 音声の再生に失敗した | SpeechAudioPlayer / メディア要素の再生が例外 <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 
 ### 5xxx ストレージ
 | コード | 説明 | 典型的な引き金 |
@@ -255,7 +255,7 @@ export async function blobToDataUrl(blob) {
 | E5002 | 記録の読み取りに失敗した | 読み取り / JSON 解析が例外 |
 | E5003 | ストレージの容量が足りない | 書き込みがクォータで拒否された |
 | E5004 | 保存データのバージョンが合わない | 永続データ構造のバージョン不一致、解析または移行に失敗 |
-| E5005 | 永続化が使えない | localStorage / ストレージインターフェースが存在しないか無効化されている <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E5005 | 永続化が使えない | localStorage / ストレージインターフェースが存在しないか無効化されている <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 
 ### 6xxx ネットワークと LLM
 | コード | 説明 | 典型的な引き金 |
@@ -269,31 +269,31 @@ export async function blobToDataUrl(blob) {
 | E6007 | サーバー側エラー | HTTP 5xx、またはインターフェースの業務エラー |
 | E6008 | 要求が拒否された | HTTP 4xx / 認証の失敗（401/403。dabiaoge チャネルの 401 はここに属する） |
 | E6009 | 応答の解析に失敗した | ネットワーク応答の JSON / 構造の解析が例外 |
-| E6010 | ドメインが許可リストにない | 要求ドメインが許可リストに登録されておらず、ホストに遮られた <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E6010 | ドメインが許可リストにない | 要求ドメインが許可リストに登録されておらず、ホストに遮られた <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E6011 | 大規模モデルの出力が使えない | 空の応答、または構造が想定と違い、業務データとして解析できない |
 
 ### 7xxx センサー・位置・検出
 | コード | 説明 | 典型的な引き金 |
 |---|---|---|
-| E7001 | 姿勢センサーが使えない | AbsoluteOrientationSensor の構築 / 起動に失敗 <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E7001 | 姿勢センサーが使えない | AbsoluteOrientationSensor の構築 / 起動に失敗 <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E7002 | 位置の取得に失敗した | getCurrentPosition の error 2/3 |
 | E7003 | 位置の権限がない | getCurrentPosition の error 1 |
 | E7004 | バーコード検出に失敗した | BarcodeDetector.detect が例外 |
-| E7005 | コード形式がサポートされていない | getSupportedFormats に対象のコード形式が含まれない <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
-| E7006 | ジェスチャーチャネルに異常 | 世界認識の有効化に失敗。enableWorldAwareness が例外 <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
-| E7007 | 慣性センサーが使えない | Accelerometer / Gyroscope の構築または起動に失敗 <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
-| E7008 | センサーにデータがない | センサーは起動したがタイムアウトまで読み取り値がない（benchmark の姿勢 / 動作項目のタイムアウト系） <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
-| E7009 | バーコード検出器が使えない | BarcodeDetector が存在しない / 構築に失敗（E7004 の detect 例外とは区別する） <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
-| E7010 | 頭部の較正に失敗した | 較正を完了できない、または較正中心のずれが大きすぎる（頭部ゲーム / 指向系） <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E7005 | コード形式がサポートされていない | getSupportedFormats に対象のコード形式が含まれない <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E7006 | ジェスチャーチャネルに異常 | 世界認識の有効化に失敗。enableWorldAwareness が例外 <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E7007 | 慣性センサーが使えない | Accelerometer / Gyroscope の構築または起動に失敗 <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E7008 | センサーにデータがない | センサーは起動したがタイムアウトまで読み取り値がない（benchmark の姿勢 / 動作項目のタイムアウト系） <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E7009 | バーコード検出器が使えない | BarcodeDetector が存在しない / 構築に失敗（E7004 の detect 例外とは区別する） <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E7010 | 頭部の較正に失敗した | 較正を完了できない、または較正中心のずれが大きすぎる（頭部ゲーム / 指向系） <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 
 ### 8xxx ページとランタイム
 | コード | 説明 | 典型的な引き金 |
 |---|---|---|
 | E8001 | ページ遷移に失敗した | wx.navigateTo / navigateBack が例外 |
-| E8002 | ページがシステムに回収された | タスク未完了のまま異常な onUnload <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E8002 | ページがシステムに回収された | タスク未完了のまま異常な onUnload <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E8003 | 権限が宣言されていない | 呼び出す能力と app.json の権限が一致しない（開発時のセルフチェック用コード） |
-| E8004 | ランタイムのインターフェースが欠けている | 必要な全体インターフェースが存在しない（X is not defined の汎用コード。符号化の文脈での FileReader は E2005） <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
-| E8005 | 入力イベントがページに届かなかった | キー / ジェスチャーのイベントがページに届かない（開発時のセルフチェック用コード：onKeyDown が未接続、bindtap のみでは実機で発火しない系） <img src="assets/badges/badge-nosim.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E8004 | ランタイムのインターフェースが欠けている | 必要な全体インターフェースが存在しない（X is not defined の汎用コード。符号化の文脈での FileReader は E2005） <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
+| E8005 | 入力イベントがページに届かなかった | キー / ジェスチャーのイベントがページに届かない（開発時のセルフチェック用コード：onKeyDown が未接続、bindtap のみでは実機で発火しない系） <img src="assets/badges/badge-nosim.ja.svg" height="20" alt="シミュレーターでは再現できない"> |
 | E8006 | セッション状態が失われた | ページをまたぐ / 再入した後にセッション状態が欠けている（メディアフレームの喪失は E4005） |
 
 ### 9xxx システム
@@ -381,7 +381,7 @@ E6006 の使用停止（GO の裁定）：このコードの引き金はもと�
 
 ### v1.6.0 2026-10-29
 
-印をバッジに変える：GO の指示で「シミュレーターでは再現できない」の列を削除する——29 コードの印は、典型的な引き金の文末に付ける取り消し線の「シミュレーター」バッジに変える（新規ファイル `assets/badges/badge-nosim.svg`。この表専用の印であり、シリーズのバッジではない）。判定した集合と 84 コードの意味は一字も変えていない。
+印をバッジに変える：GO の指示で「シミュレーターでは再現できない」の列を削除する——29 コードの印は、典型的な引き金の文末に付ける取り消し線の「シミュレーター」バッジに変える（新規ファイル `assets/badges/badge-nosim.ja.svg`。この表専用の印であり、シリーズのバッジではない）。判定した集合と 84 コードの意味は一字も変えていない。
 
 ### v1.5.5 2026-10-29
 
