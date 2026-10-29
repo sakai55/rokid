@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-play-watch
 ```
 
+**AIX 直接下载**（最新版）：[play-watch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/play-watch.aix)
+
 注意力外挂系列 DU01（DUAL 并行型，本组第一位）。带孩子去游乐场，家长在长椅上歇会儿，主线是休息，副线是「孩子还在活动区吗」——两个都想要的结果是两边都顾不好：要么一直抬头盯着没法歇，要么歇着歇着就忘了抬头。本 Agent 把副线外包出去：看向活动区停稳后 REG 登记一次，之后每 5 分钟（演示间隔）提醒回看一次；点按或头稳点头确认「看到了」，计时重置；一次提醒没确认，下一轮升级为 TTS + 更醒目横幅；再没确认就出「请起身去活动区看一眼」的强提醒；结束时给一张小结：回看确认几次、未确认提醒几次。
 
 ## 解决的问题
