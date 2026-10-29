@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-snap-hunt
 ```
 
+**AIX 直接下载**（最新版）：[snap-hunt.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/snap-hunt.aix)
+
 拍照现实交互游戏系列 GA41。屏幕一次给出一个目标物（固定顺序：红色杯子 → 一本书 → 一把钥匙 → 一把椅子 → 一瓶水），语音同步播报。在真实环境里找到它，对准，单击镜腿拍照。
 
 与注意力系列 home-find（找物登记工具）的区别：home-find 是把常找物品的位置登记下来日后查询的生活工具；本作是当场出题、当场拍照判定计分的寻宝游戏，不登记、不查询。
