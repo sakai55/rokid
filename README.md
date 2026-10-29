@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-taxfree-ledger
 ```
 
+**AIX 直接下载**（最新版）：[taxfree-ledger.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/taxfree-ledger.aix)
+
 JP11 · 日本本地化系列。交互哲学：**免税账本 Taxfree Ledger**。本 Agent 是一本只记免税的账：按店铺记一般物品与消耗品两笔金额，合计满 5,000 日元线才算该店达标，达标后由你亲手确认密封袋已封。店铺一换，账就换一页；达标店数单独计数。它不判断免税资格（最终判断在店铺收银台，界面明写），不扫条码、不识商品，只守「凑线与封袋」这两件事。
 
 ## 预览截图
