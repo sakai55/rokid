@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-origami-steps
 ```
 
+**AIX 直接下载**（最新版）：[origami-steps.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/origami-steps.aix)
+
 JP19 · 日本在地 × 指向性 × 注意力（GUIDE）。家里折纸时双手占满的人靠点头推进步骤，折完一羽鹤再计下一羽。交互哲学：**折り紙手順送り Origami Steps**。
 
 ## 预览截图
