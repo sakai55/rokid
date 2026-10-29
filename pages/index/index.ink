@@ -20,7 +20,7 @@ export default {
     sumLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.3.0'
+    ver: 'v1.3.1'
   },
   onLoad() { this._focus = 0; this._render(); },
   onShow() { this._render(); },
@@ -86,7 +86,7 @@ export default {
       <button class="act" bindtap="actTap" data-idx="4">看点评</button>
       <button class="act" bindtap="actTap" data-idx="5">我的进度</button>
     </view>
-    <text class="note">练法：中央范字逐笔学（当前笔最亮）→ 在真纸上用真毛笔写 → 低头拍照验字，只查粗项：少笔多笔、重心、最明显的一两处。不装专业评分。</text>
+    <text class="note">练法：中央范字逐笔学（当前笔透明度最高）→ 在真纸上用真毛笔写 → 低头拍照验字，只查粗项：少笔多笔、重心、最明显的一两处。不装专业评分。</text>
     <text class="line dim">{{focusLine}}</text>
     <text class="foot">{{evt}} · {{ver}} · TR01</text>
   </view>
