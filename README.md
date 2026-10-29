@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-expiry-check
 ```
 
+**AIX 直接下载**（最新版）：[expiry-check.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/expiry-check.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI03 个。冰箱和囤货柜里的食品总是放到
 过期才发现：看着包装拍一下日期区域，日期你亲口/手动确认，眼镜算好
