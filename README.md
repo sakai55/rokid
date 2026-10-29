@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-sijang-shopping
 ```
 
+**AIX 直接下载**（最新版）：[sijang-shopping.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/sijang-shopping.aix)
+
 KR15 · 韩国在地 × 路缘坡 × 注意力。精品线合并重做：由 CC09 `high-shelf-ask`（超市高货架求助话）与 KR14 `sijang-basket`（시장 바구니 核销）按同一场景（韩国传统市场购物）合并而成；原两个 Agent 原样封存、不删不改。一句话场景：坐轮椅或坐姿逛韩国传统市场的人，高处摊位前生成一句准确的求助话（TTS 代说或大字出示），再按摊位逐件核销篮子，差一件不结账。
 
 ## 预览截图
