@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-omiyage-cover
 ```
 
+**AIX 直接下载**（最新版）：[omiyage-cover.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/omiyage-cover.aix)
+
 JP09 · 日本本地化系列。交互哲学：**人情覆盖 Obligation Grid**。本 Agent 把送礼名单变成覆盖格：格子不是物，是人。出发前登记六位受赠人（演示名单），在店里每买一份就核销一人，在库不够时先记「後で」（待补）也不许假装买过；只有 6 格全部落 ✓，它才说「全員分そろいました」。SCAN 扫到礼盒条码只加一份在库（暂定识别），核销永远由你确认。它不辨识礼品好不好（慧眼的事），只守「人人有份」这条人情底线。
 
 ## 预览截图
