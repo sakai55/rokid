@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-bosai-kit
 ```
 
+**AIX 直接下载**（最新版）：[bosai-kit.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/bosai-kit.aix)
+
 JP04 · 日本本地化系列。交互哲学：**榻榻米覆盖格 Coverage Grid**。本 Agent 把防灾包变成一张覆盖格：8 个品类一人一格，查过打 ●，过期或需更换打 △，没查是 ○。只有 8 格全部离开 ○，它才说「点检完了」。期限靠 telephoto 拍包装日期 + LLM 读年月（暂定，显示原文等你确认），或由你直接 FLAG。它不辨识灾害、不播报情报、不导航去避难所——那些是底座与自治体的事；它只证明一件事：这个包，今天真的被完整查过一遍。
 
 ## 预览截图
