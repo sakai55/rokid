@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-kimjang-batch
 ```
 
+**AIX 直接下载**（最新版）：[kimjang-batch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/kimjang-batch.aix)
+
 KR08 · 韩国本地化系列。交互哲学：**批次大数 Batch Counter**。本 Agent 为沾满料的手而设计：屏幕上只有一个 62px 的大数字——当前阶段的棵数。计数靠点头（+1）与语音口令（宿主识别听到「다음」即 +1，识别不可用自动降级并明示），手几乎不用碰任何东西；+10 应对整筐过数，下滑纠错 -1。三段流水线各自计数，段目标达成才放行下一段。它不辨识白菜品质、不提供配方（那是菜谱与慧眼的事），只在你双手最忙的时候，把「数到几了」这件事稳稳接住。
 
 ## 预览截图
