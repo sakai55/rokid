@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-yamanote-courtesy
 ```
 
+**AIX 直接下载**（最新版）：[yamanote-courtesy.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/yamanote-courtesy.aix)
+
 JP07 · 日本本地化系列。交互哲学：**站名线图 Station Line Cue**。本 Agent 不导航（底座 AR 导航的事），不管你在哪，只管「礼仪动作在正确的站触发」：你登记一条固定通勤站序（演示为山手线品川→东京段），每到一站由你单击确认（列车 API 不存在，如实说明；GEO 只作粗核对），终点前一站自动亮出三件套礼仪清单，逐件点头销项。它的本体是情境提示的时机，不是位置本身。
 
 ## 预览截图
