@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-hanbok-rental
 ```
 
+**AIX 直接下载**（最新版）：[hanbok-rental.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/hanbok-rental.aix)
+
 KR11 · 韩国本地化系列。交互哲学：**衣物核对 Garment Check**。本 Agent 是一张韩服租赁核对单：四件租赁物品（上衣、裙子、饰品、包）逐件确认，焦点用标记指着当前件，剩余时间大字显示，延长按 30 分钟一档加。四件全确认后 GO 一次即为「可归还」，再由你去店里交还。它不计时拍照、不识衣服，只守「件数齐了没有、时间还剩多少」这两件事。
 
 ## 预览截图
