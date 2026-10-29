@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-clean-check
 ```
 
+**AIX 直接下载**（最新版）：[clean-check.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/clean-check.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI30 个。打扫最气人的不是累，
 是漏：窗台、柜顶、墙角、桌下，每次漏的总是这几个边角，复查
