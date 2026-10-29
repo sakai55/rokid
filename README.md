@@ -5,6 +5,8 @@
 https://github.com/sakai55/rokid/tree/agent-okusuri-techou
 ```
 
+**AIX 直接下载**（最新版）：[okusuri-techou.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/okusuri-techou.aix)
+
 一句话场景：高齢者がお薬手帳を眼鏡で守る——服薬時刻を逃さず、残量と次回受診を一冊で管理する。
 
 ## 方向构成
