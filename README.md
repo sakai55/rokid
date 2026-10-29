@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-sign-reader
 ```
 
+**AIX 直接下载**（最新版）：[sign-reader.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/sign-reader.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI41 个，I 组（出行定向）第一个。
 站牌在马路对面、登机口信息在通道尽头、菜单牌挂在柜台上方——
