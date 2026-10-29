@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-onsen-gate
 ```
 
+**AIX 直接下载**（最新版）：[onsen-gate.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/onsen-gate.aix)
+
 > **退役保留（2026-10-25，GO 裁定）**：温泉里没人戴眼镜入浴，浴场也不允许携入电子设备，高温蒸汽本身就会毁掉眼镜——本 Agent 的场景在生活常识中不成立。即日起退出日韩系列现役阵容，JP05 由 `coin-locker`（车站储物柜寄存账）接替。工程与导入地址保留备查，不删除。
 
 JP05 · 日本本地化系列。交互哲学：**门禁阈限 Threshold Gates**。本 Agent 是入浴前的三道门：洗净身体、束发与毛巾出池、安静入池——上一道门没过，下一道门不开，界面就是三道门框本身。三道门全过，它才切换成入池计时（10 分钟目安，超时轻声收）。浴室场景它硬性不用相机：权限表里根本没有 CAMERA，代码里零相机调用，写进 README 作为设计承诺。它不辨识浴场、不翻译告示（底座的事），只守这三道门。
