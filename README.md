@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-kairanban-relay
 ```
 
+**AIX 直接下载**（最新版）：[kairanban-relay.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/kairanban-relay.aix)
+
 JP13 · 日本本地化系列。交互哲学：**町内リレー Neighborhood Relay**。本 Agent は回覧板の「今どこにあるか」だけを守る帳簿：4 軒の順番を一本の線にし、今持っている家を大きく表示する。受け取ったら STAMP で押印を記し、PASS で次の家へ回す。押印していないのに回そうとすると止めて声で知らせる。一周回って町内会へ戻れば周回数を数える。板の中身・お知らせの内容は一切読まず、期限は各町内会の決まりに従う（界面明示）。
 
 ## 预览截图
