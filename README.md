@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-trace-brush
 ```
 
+**AIX 直接下载**（最新版）：[trace-brush.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/trace-brush.aix)
+
 描红系列 TR01：中央范本 + 边上步骤 + 做一步验一步。书法初学者在书桌前打开它，逐笔学一个范字，在自己面前的真纸上用真毛笔写，写完低头拍照验字——只查粗项，不装专业评分；进度跨会话保存，下次接着练。
 
 ## 功能（7 页闭环）
