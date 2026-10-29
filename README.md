@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-proof-sweep
 ```
 
+**AIX 直接下载**（最新版）：[proof-sweep.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/proof-sweep.aix)
+
 注意力外挂系列 CO03（COVER 覆盖型，本组第三位）。读长合同、说明书、条款时最典型的焦虑：读完一页，感觉都读了，却不知道中间哪几行其实跳过去了。本 Agent 的做法：拍一页，模型读出行文本，你逐行读——读完一行点 READ；点中后面的行名直接跳读时，中间被跳过的行当场标「漏读」并点名提醒；页末小结前还有未读行会被拒绝并点名；只有全部读完，小结才报「本页全部读完」并给出覆盖率。多页文档按页累计总覆盖率。
 
 ## 解决的问题
