@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-step-count-down
 ```
 
+**AIX 直接下载**（最新版）：[step-count-down.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/step-count-down.aix)
+
 路缘坡效应系列 CC03（HOLD 倒数型）。低视力或全盲的人下陌生楼梯，最怕的不是「楼梯在哪」，而是「还剩几级」——最后一级踏空是最常见的摔倒点。本 Agent 只替你拿住一个数：在梯口数清总级数，下楼时每下一级你确认一次，它往下倒数；剩 3 级起逐级播报，最后一级单独警告，到底明说「已到底」。它不替你看楼梯，只替你记住还剩几级。
 
 ## 预览截图
