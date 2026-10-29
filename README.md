@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-coin-locker
 ```
 
+**AIX 直接下载**（最新版）：[coin-locker.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/coin-locker.aix)
+
 JP05 · 日本本地化系列。交互哲学：**寄存格账本 Locker Ledger**。本 Agent 只做一张寄存账：存入时登记柜号（滑动选号）、中身一件（ITEM 切换）、场所固定写明在状态里；保管中它只显示这三件事；取回时先亮出中身名让你核对，TAKE 才记取回完成。它不帮你找空柜（那要看车站的实时空位屏）、不导航回柜子（底座的事）、不替你保管密码——它只保证你寄存的那一格，被完整地记住并核对着取回。
 
 ## 预览截图
