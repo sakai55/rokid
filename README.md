@@ -55,7 +55,7 @@ https://github.com/sakai55/rokid/tree/agent-trace-brush
 | 项 | 值 |
 |---|---|
 | Studio name | （待导入后回填） |
-| Version / Build | 1.3.5 |
+| Version / Build | 1.3.6 |
 | App Category | （待导入后回填） |
 | Intent Description | 毛笔字描红：20 字逐笔范字学写，拍照粗查三项，本人改判，进度续练 |
 | Agent ID | （待导入后回填） |
@@ -86,6 +86,7 @@ https://github.com/sakai55/rokid/tree/agent-trace-brush
 - **Feature Description**（≤500 字）：毛笔字描红练习：20 个常用字逐笔范字浮在眼前（空心字帖字，按桌面距离与纸上字接近 1:1 大小，范字笔画统一低亮度，每笔带高亮的笔顺数字和与字身拉开距离的短弧形笔顺箭头），跟着在真纸上用真毛笔写，写完低头拍照，只查少笔多笔、结构重心和最明显的差别，给一句人话点评；判定可由本人改判，进度保存、下次续练，写到一半熄屏重进仍回到当前笔，还有只给拼音的复习抽查。
 - **Opening Message**：今天练一个字：一笔一笔看清，在纸上写完，拍照看看差在哪。
 - **Preview Media**：见「预览截图」8 张（图片，含学字页已学 2 笔状态图）；视频待真机阶段补（提审需 3–5 个文件、含 ≥1 视频 ≤60s）。
+- **Change Log**（Build 1.3.6）：Features added — 无；Improvements — 平行弧覆盖 52/77 → 70/77（均匀重采样后起笔处更少被挤退）；Fixes — 去掉笔顺弧弧尾的倒钩（根因：中线点距悬殊让 Catmull-Rom 在起笔处过冲回环、偏移弧起点折返；中线先按弧长均匀重采样再偏移，弧首另有夹角削钩兜底；GO 验收 v1.3.5 时指出「大」第 1 笔，其余定版冻结）。
 - **Change Log**（Build 1.3.5）：Features added — 无；Improvements — 笔顺弧线箭头改放在起笔位置（平行弧取中线起始段，弧尾即起笔处、序号随之锚定起笔，箭头沿行笔方向指去向）；Fixes — 无。
 - **Change Log**（Build 1.3.4）：Features added — 无；Improvements — 笔顺序号改为锚定弧尾、一律外侧（按离字心距离打分选位，两个序号不再同侧相挤）；平行弧法线平滑，弧形贴合笔画自身走向；Fixes — 无。
 - **Change Log**（Build 1.3.3）：Features added — 无；Improvements — 笔顺弧形箭头改回 v1.2 式沿笔画平行伴行弧、只取末段约 1/3 的缩短版（硬校验与字身拉开距离，不贴轮廓；放不下才退回 v1.3 分离短弧）；其余（低亮度笔画、高亮序号、空心范字、尺寸）按 GO 裁定冻结不变；Fixes — 无。

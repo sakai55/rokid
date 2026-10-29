@@ -6,7 +6,7 @@ import wx from 'wx';
 import { ERR, codedError, fail } from './err.js';
 
 var SLUG = 'trace-brush';
-var VERSION = '1.3.5';
+var VERSION = '1.3.6';
 
 export function loadKey(key, fallback) {
   try {

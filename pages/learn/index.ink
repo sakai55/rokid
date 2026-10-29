@@ -48,7 +48,7 @@ export default {
     barLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.3.5'
+    ver: 'v1.3.6'
   },
   onLoad() {
     this._focus = 1; this._step = 0; this._useMedians = false;
@@ -345,8 +345,28 @@ export default {
     if (!line || line.length < 2) return null;
     const self = this;
     const hyp = function (a, b) { return Math.sqrt(a * a + b * b); };
+    // 中线先按弧长均匀重采样（约 9px 一点）：原始 medians 点距
+    // 悬殊（一笔内可达 58→246 设计 px），Catmull-Rom 在点距突
+    // 变处过冲回环——偏移弧起点因此折返成倒钩（「大」第 1 笔，
+    // v1.3.6 实查定位）；均匀化后曲线不再回环。
+    const uline = [line[0]];
+    let acc = 0;
+    for (let k = 1; k < line.length; k++) {
+      let ax = line[k - 1][0], ay = line[k - 1][1];
+      const bx = line[k][0], by = line[k][1];
+      let d = hyp(bx - ax, by - ay);
+      while (d > 1e-6 && acc + d >= 9) {
+        const f = (9 - acc) / d;
+        ax = ax + (bx - ax) * f; ay = ay + (by - ay) * f;
+        uline.push([ax, ay]);
+        d = hyp(bx - ax, by - ay);
+        acc = 0;
+      }
+      acc += d;
+    }
+    if (uline[uline.length - 1] !== line[line.length - 1]) uline.push(line[line.length - 1]);
     // Catmull-Rom 重采样（端点复制补齐），72 样点 + 逐点切向
-    const P = [line[0]].concat(line, [line[line.length - 1]]);
+    const P = [uline[0]].concat(uline, [uline[uline.length - 1]]);
     const dense = [];
     const SEG = 72;
     for (let s = 0; s < P.length - 3; s++) {
@@ -450,6 +470,25 @@ export default {
       const cap = Math.max(18, segLen * 0.65);
       for (let k = 0; k < dense.length; k++) { shortIdx.push(k); if (cum[k] >= cap) break; }
       if (shortIdx.length >= 3 && shortIdx.length < segIdx.length) arc = attempt(shortIdx);
+    }
+    return arc;
+  },
+  _detangle(arc) {
+    // 弧尾去倒钩（v1.3.6，GO 指「大」第 1 笔弧尾多一个倒钩）：
+    // 起笔处中线带顿笔小弯，偏移弧的头几步会被法线急转带出回
+    // 钩。弧首第一步与「弧首→第 4 点」走向夹角 >60° 时逐个削
+    // 掉弧首点（至多 4 个），走向顺直即停；正常弧起步平缓、不
+    // 触发。
+    if (!arc || !arc.pts) return arc;
+    const pts = arc.pts;
+    let guard = 0;
+    while (pts.length > 4 && guard < 4) {
+      guard++;
+      const ax = pts[1][0] - pts[0][0], ay = pts[1][1] - pts[0][1];
+      const bx = pts[3][0] - pts[0][0], by = pts[3][1] - pts[0][1];
+      const la = Math.sqrt(ax * ax + ay * ay), lb = Math.sqrt(bx * bx + by * by);
+      if (la < 1e-6 || lb < 1e-6) break;
+      if ((ax * bx + ay * by) / (la * lb) < 0.5) pts.shift(); else break;
     }
     return arc;
   },
@@ -582,6 +621,7 @@ export default {
           const baseArc = this._arcFor(lines, polys, i, ccx, ccy);
           arc = baseArc ? this._shortenArc(baseArc, ccx, ccy) : null;
         }
+        if (arc) arc = this._detangle(arc);
         if (arc) {
           // 箭头头方向 = 本笔中线末段方向（自末点回溯 ≥10px 取向）：
           // v1.3.2 修正——短弧自身的弦向会偏（如「大」第 1 笔横，短
