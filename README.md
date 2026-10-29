@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-trace-sketch
 ```
 
+**AIX 直接下载**（最新版）：[trace-sketch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/trace-sketch.aix)
+
 描红系列 TR06：中央范本 + 边上步骤 + 做一步验一步。想在手账本上学画简笔画的人打开它，范本逐笔亮起，一笔一笔在真纸上跟画，整幅画完拍照对形——只查粗项，画完当场知道哪笔漏了、哪处比例最偏；进度跨会话保存，还有只给名字的复习抽查。
 
 ## 功能（6 页闭环）
