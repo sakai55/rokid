@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-nod-count
 ```
 
+**AIX 直接下载**（最新版）：[nod-count.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/nod-count.aix)
+
 头部动作小游戏系列 GA01，极简设计：一页、三态（准备 / 进行 / 完成），语音指导做 10 次慢速点头。坐稳或站稳、头摆正，点一下开始：Agent 校准你的头部中心，然后一句一句带着你做——低头，停，回正。屏幕上只有大指令、计数和一行提示；你的点头本身就是游戏动作，由方向传感器对照校准中心判定。
 
 ## 预览截图
