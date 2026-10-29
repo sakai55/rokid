@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-attention-diary
 ```
 
+**AIX 直接下载**（最新版）：[attention-diary.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/attention-diary.aix)
+
 注意力外挂系列 RE05（REVIEW 回顾型，本组收官，系列第 30 个）。一天结束，想知道自己的注意力到底被谁偷走了——守望叫过几次、默念存过什么、护盾挡过多少打扰，全混成一团。本 Agent 把注意力账单外包出去：按分类记一格触发（守望提醒 / 默念存档 / 护盾拦截 / 过滤命中 / 回放确认 / 副线提醒），晚上出一张账单——各分类几次、偷走最多的是哪类、总共几格，一张表说清楚。
 
 ## 解决的问题
