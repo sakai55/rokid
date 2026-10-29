@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-eki-barrier
 ```
 
+**AIX 直接下载**（最新版）：[eki-barrier.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/eki-barrier.aix)
+
 JP16 · 日本在地 × 路缘坡 × 指向性。初めての駅で車椅子利用者がエレベーターのある側を最後の10mで見つける。交互哲学：**駅バリア最後の10m Station Barrier Scan**。
 
 ## 预览截图
