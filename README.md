@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-coin-laundry
 ```
 
+**AIX 直接下载**（最新版）：[coin-laundry.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/coin-laundry.aix)
+
 JP18 · 日本在地 × 路缘坡 × 注意力（WATCH）。コインランドリーで終了音が聞こえにくい人が視覚カウントダウンで取り忘れを防ぐ。交互哲学：**コインランドリー見守り Laundry Watch**。
 
 ## 预览截图
