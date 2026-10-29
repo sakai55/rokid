@@ -1,1 +1,0 @@
-{"author":"","dependencies":{},"description":"Trace Knots (TR05) - knot tracing: 8 knots, 42 steps, per-step photo coarse check, learner override, cross-session progress.","keywords":[],"license":"ISC","main":"app.js","name":"trace-knots","version":"1.0.0"}
