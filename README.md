@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-tour-watch
 ```
 
+**AIX 直接下载**（最新版）：[tour-watch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/tour-watch.aix)
+
 注意力外挂系列 DU04（DUAL 并行型，本组第四位）。跟团旅游专心看景时，导游的集合时间/广播通知一走神就错过——看景和听集合通知抢同一双耳朵：盯着景就听不清喊话，竖着耳朵听广播就看不好景。本 Agent 把副线外包出去：看向集合点停稳登记朝向，TIME 选集合时间，START 开始 far-field 守听；导游喊话/广播转写逐段过集合关键词门（集合/出发/上车/点名/集合点），只有集合句才亮横幅 + 一次 TTS 点名关键词 + 原句存入本团笔记，非集合句只计数、判定即丢弃；快到集合时间提前提醒往登记朝向归队，CHECK 或头稳点头确认归队；结束时给一张本团小结：已听几段、集合命中几条、归队提醒几次、归队确认几次。
 
 ## 解决的问题
