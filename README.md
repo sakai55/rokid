@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-deungsan-pace
 ```
 
+**AIX 直接下载**（最新版）：[deungsan-pace.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/deungsan-pace.aix)
+
 KR06 · 韩国本地化系列。交互哲学：**海拔配速 Elevation Pace**。本 Agent 管腿不管路：它在一条山形剖面线上钉你的进度（8 段自登记），休息与补水逐次落账，补水落后于时长时轻声提醒；高度只在你按下 GEO 时取一次作记录（取不到如实 SKIP）。它坚决不导航、不指路（底座 AR 导航的事）——岔路口请看路牌与地图；它只回答一个问题：以你现在的配速与补水，这双腿还撑不撑得住下山。
 
 ## 预览截图
