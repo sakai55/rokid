@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-sijang-basket
 ```
 
+**AIX 直接下载**（最新版）：[sijang-basket.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/sijang-basket.aix)
+
 KR14 · 韩国在地 × 注意力（HOLD）。韩国传统市场（시장）购物者按摊位逐件核销菜篮子，差一件不结账。交互哲学：**시장 장바구니 Market Basket**。
 
 ## 预览截图
