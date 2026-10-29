@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-samgyeop-flip
 ```
 
+**AIX 直接下载**（最新版）：[samgyeop-flip.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/samgyeop-flip.aix)
+
 KR01 · 韩国本地化系列。交互哲学：**烤盘节拍 Grill Metronome**。本 Agent 是烤盘上的节拍器：一面 45 秒、翻面、一面 40 秒，到点只喊一句「뒤집으세요」，其余时间只显示盘心里的大秒数。它不判断熟度（没有任何传感器能替你判断，界面明写），只持有节奏与进度：翻了几面、剪了几段、几块肉已上桌。剪段（CUT）计数让「这批可以吃了」有明确节点，烤肉的人终于可以按节拍而不是按焦虑工作。它不识肉、不点评火候（慧眼的事），只守时间。
 
 ## 预览截图
