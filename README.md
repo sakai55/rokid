@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-light-change
 ```
 
+**AIX 直接下载**（最新版）：[light-change.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/light-change.aix)
+
 注意力外挂系列 AM01（AMBIENT 环境型，本组第一个，系列第 46 个）。看书/做手工太投入，天黑了还在昏光里用眼，伤眼不自知。本 Agent 把「盯光线」外包出去：相机测光变化 + 定时回看，光线低于阈值在视线内提醒开灯。
 
 ## 解决的问题
