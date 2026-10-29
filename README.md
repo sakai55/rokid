@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-odd-one-out
 ```
 
+**AIX 直接下载**（最新版）：[odd-one-out.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/odd-one-out.aix)
+
 拍照现实交互游戏系列 GA47。每局给出布置（固定 4 局：水果组混文具、餐具组混玩具、文具组混厨具、鞋组混帽子）。把 4 件实物从左到右摆开。
 
 与 JP 系列 gomi-sort（垃圾分类投放辅助）的区别：gomi-sort 是教你把垃圾分对类的生活工具；本作是玩家自己摆局、先下注猜测、再拍照揭晓的对赌式找茬游戏，分类只作裁判口径。
