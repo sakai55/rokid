@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-kotowaza-quiz
 ```
 
+**AIX 直接下载**（最新版）：[kotowaza-quiz.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/kotowaza-quiz.aix)
+
 JP17 · 日本在地 × 注意力 × 游戏。通勤・通学の待ち時間、頭の左右でことわざクイズに答える。交互哲学：**ことわざ頭クイズ Proverb Quiz**。
 
 ## 预览截图
