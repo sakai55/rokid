@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-allergen-guard
 ```
 
+**AIX 直接下载**（最新版）：[allergen-guard.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/allergen-guard.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI22 个。过敏/忌口的人每买一样
 东西都要眯眼读配料表，漏看一个词就可能进医院。本 Agent 不替
