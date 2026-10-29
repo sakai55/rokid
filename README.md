@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-ekiben-erabi
 ```
 
+**AIX 直接下载**（最新版）：[ekiben-erabi.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/ekiben-erabi.aix)
+
 JP31 · 日本在地 × 注意力 × 游戏。駅で旅行者がアレルギーを確かめながら駅弁をクイズで選ぶ
 
 ## 预览截图
