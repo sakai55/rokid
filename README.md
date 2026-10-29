@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-board-capture
 ```
 
+**AIX 直接下载**（最新版）：[board-capture.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/board-capture.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI39 个，H 组（学习记忆）第三个。
 上课、开会时，黑板白板上的字又远又多，老师讲完一擦就没，手抄
