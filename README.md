@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-door-watch
 ```
 
+**AIX 直接下载**（最新版）：[door-watch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/door-watch.aix)
+
 
 注意力外挂系列 WA05（WATCH 守望型）。在里屋开会、戴着耳机工作时，门铃、敲门、快递全靠运气听见。本 Agent 的做法：你坐在平常的位置看一眼门，把门的朝向登记下来；之后它替你守听门口的响动模式——出现敲门状的连响或门铃状的一声长音时，它按登记的方向叫你一次「刚才有一阵响动 — 正门在你右后方，去看一眼」；你转头看向门停住 1 秒，这次提醒就算闭环。
 
