@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-teiki-mamori
 ```
 
+**AIX 直接下载**（最新版）：[teiki-mamori.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/teiki-mamori.aix)
+
 JP28 · 日本在地 × 路缘坡 × 注意力。通勤者が改札前で定期券の期限と忘れ物を一度に確認する
 
 ## 预览截图
