@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-color-order-check
 ```
 
+**AIX 直接下载**（最新版）：[color-order-check.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/color-order-check.aix)
+
 路缘坡效应系列 CC04（COVER 核对型）。红绿色弱的人接线、查线序时，问题不是看不见线，而是**颜色编码读不准**：电阻色环、网线线序、电线颜色排错了，轻则返工，重则出故障。本 Agent 只做一件事：先逐根登记颜色名，排成一张顺序表；再逐根重拍核对，错位立刻停住，明说第几根不对、登记是什么色、现在是什么色。它绝不用颜色本身来告诉你颜色——因为用断了的通道纠错，等于没纠。
 
 ## 预览截图
