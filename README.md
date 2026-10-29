@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-nod-catch
 ```
 
+**AIX 直接下载**（最新版）：[nod-catch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/nod-catch.aix)
+
 头部动作小游戏系列 GA08，B 组（头当控制器）的接球游戏，极简设计：一页、三态（准备 / 进行 / 完成），语音指导轻轻点头接球。10 个球一个一个从上落下，每个球固定落 3 秒，中间有一条接球线：球落到线附近时轻轻点头，就是接住。屏幕上只有下落的球 + 中间的接球线、得分 x / 10 和一行提示；点头本身就是游戏动作。
 
 与 GA07（稳头不动）不同：本游戏考的是点头的时机——点头太早、太晚都算这个球没接住，一个球只能点头一次，没有第二次机会。
