@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-guest-watch
 ```
 
+**AIX 直接下载**（最新版）：[guest-watch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/guest-watch.aix)
+
 注意力外挂系列 SO02（SOCIAL 社交型，本组第二个，系列第 37 个）。在家招待客人，你在厨房忙，客厅谁的水空了、谁想添饭全靠余光。本 Agent 把守望外包出去：客人入座时逐位看向登记座位朝向，定时提醒回看茶水位，门口有动静 SCAN 报方位；结束出小结（登记几位、回看确认几次、SCAN 几次、提醒几次）。
 
 ## 解决的问题
