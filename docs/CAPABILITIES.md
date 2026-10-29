@@ -1,410 +1,298 @@
-# Rokid Glasses 能力档案（官方来源版）
+# Rokid Glasses 能力原子注册表
 
 中文 | [English](CAPABILITIES.en.md) | [日本語](CAPABILITIES.ja.md)
 
-> 整理日期：2026-10-24，最后更新：2026-10-29
-> 资料原则：**只采用 Rokid 官方来源**（官方产品页、官方文档站、官方 GitHub 仓库 `yodaos-project/AIUI` 及其内置的 `aiui-dev` skill 参考）。每条非平凡结论都标注来源。
-> 标注约定：**** = 官方页面/文档原文写明；**** = 由官方 API 文档的存在/缺失合理推导，已明确标出；**官方未公布** = 在所查官方来源中找不到，绝不猜测。
-> 本地 skill 参考的统一出处：官方仓库 `skills/aiui-dev`（https://github.com/yodaos-project/AIUI/tree/main/skills/aiui-dev），下文引用写作 `skill: references/…`。
+> 编制日期：2026-10-24；当前版本 v2.0.0，2026-10-29
+> 资料原则：**只采用 Rokid 官方来源**（官方产品页、官方文档站、官方 GitHub 仓库 `yodaos-project/AIUI` 及其内置的 `aiui-dev` skill 参考），外加本注册表维护者自己的真机与构建实测，实测结论在条目里单独标明。官方仓库 `skills/aiui-dev` 是 API 契约的主来源，下文依据写作 `skill: references/…`。
 
----
+## 写在前面
 
-## 1. 硬件规格
+本注册表由一名 Rokid AIUI 开发者维护，不是 Rokid 官方文件。它把 Rokid Glasses 底座的能力拆成原子条目：一个条目只说一件底座原语，有稳定编号、一句结论、官方依据与实测状态。设计一个 Agent 之前，先在这里查它要用的原语在不在、边界在哪。
 
-数据来源以官方全球产品页为准：https://global.rokid.com/products/b-h-rokid-glasses-with-display
-（英国官方站 https://gb.rokid.com/collections/rokid-ai-lineup 的参数与之互相印证。）
+本表只登记原语，不登记应用场景。场景是原语的组合，写法无穷无尽，逐条收录会变成没有尽头的问答集；任何场景问题都用同一条路回答：把场景拆成所需的原语，逐个查本表——原语在，组合就成立；原语不在，答案就是做不了，不需要为这个问题单开一条。官方 API 参考本身是封闭清单，清单里没有的 API 就不存在，这是本表多数字段的判定基础。
 
-| 项目 | 规格 | 备注 |
-|---|---|---|
-| SoC | Snapdragon AR1（高通） | 产品页 Performance 一栏只写 "Snapdragon AR1"，未写世代后缀；产品页另有 "Dual-Chip Performance" 宣传语，但官方规格表未列出第二颗芯片的型号 |
-| RAM / 存储 | 2 GB / 32 GB | |
-| 显示技术 | 双目 Micro LED + 衍射光波导（Binocular Micro LED waveguide），光学设计为 "1 Micro LED + waveguide" | |
-| 显示颜色 | **单色绿**（Single green display） | 不是全彩；AIUI 设计规范同样定义为单一绿色发光通道（`skill: references/design/monochrome-green.md`） |
-| 显示分辨率 | **480 × 400** | ⚠️ 与 AIUI 运行时参考画布 480 × 352 不一致，见第 5 节 |
-| FOV | 30° | |
-| 亮度 | 1500 nits | |
-| 摄像头 | 12 MP，照片分辨率 3024 × 4032，光圈 F2.25 | 产品页营销文案称 "Sony sensor"，但规格表未给出传感器型号；摄像头 FOV 官方未公布 |
-| 照片格式 | 4K 3:4、4K 9:16、3K 4:3 | |
-| 视频格式 | 最高 3K 30fps（9:16）；另有 2.5K 30fps（3:4 / 4:3）、2K 30fps（9:16 / 9:19.5） | |
-| 麦克风 | **4 麦克风阵列**（4-microphone array） | |
-| 扬声器 | 双线性定向高保真扬声器（Dual linear directional high-fidelity speakers） | |
-| 传感器 | IMU：Supported | 官方产品页未公布 IMU 轴数/型号；AIUI 侧可调用的传感器见 2.7 |
-| 电池 | 210 mAh | 续航口径不一，见下 |
-| 续航 | FAQ 称日常使用约 **8–10 小时**；同页对比表称 **up to 6 h mixed use**、配充电盒 **up to 30 h** | |
-| 充电 | 磁吸充电；快充 20 分钟充至 80%；充电盒可为眼镜充满约 10 次；另有可选 Power Capsule 配件 | |
-| 无线连接 | Wi-Fi 6、Bluetooth 5.3（BT 5.3） | |
-| 重量 | 49 g | |
-| 尺寸 | 镜腿长 155.5 mm、铰链间距 146.3 mm、镜片宽 49 mm、镜框高 44.4 mm | 镜框材质 TR90，铰链钛合金 |
-| 防护等级 | IPX4 | |
-| 唤醒词 | "Hi Rokid" | 中文唤醒词见 3.1（运行时文档） |
-| 配镜 | 支持屈光度 +15 至 −15，官方配镜服务 + 磁吸配镜框 | |
-| 系统/OS | **官方未公布** | 产品页与文档均未标注眼镜操作系统名称/版本；可知的是智能体运行时为自研 Ink 容器（QuickJS + Skia），见 2.1 与 https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/runtime/env.md |
-| 摄像头指示灯 | 支持（Camera indicator: supported） | 拍摄时有指示，属隐私设计 |
+维护方式与错误码表 `ERROR-CODES.md` 同构：条目只在段尾追加、编号永不复用，结论被推翻的条目改结论并在变更日志里留痕，不删号；结论有变化时升版本号，旧版归档在 `base/capabilities/` 并附索引。中文版为权威版，英日版为译文，冲突时以中文版为准。
 
-### 1.1 官方功能清单（产品级，非 Agent API）
+## 1. 编号与治理
 
-官方产品页列出的整机功能：实时翻译（支持 89 种语言）、UI 语言 13 种、AI 助手（Voice AI + Vision AI，模型提及 Qwen + ChatGPT 等）、通知（显示+声音）、导航、提词器、笔记、会议转录、SDK 支持。
-注意：这些是**眼镜系统/官方 App 的功能**，不等于 AIUI Agent 可调用的 API（见第 2 节）。
+编号形如 `C2003`：字母 C 加四位数字，千位是段号，段内顺序编号。
 
----
-
-## 2. AIUI 运行时能力（Agent 实际可调用的 API）
-
-运行时环境：在 Rokid Glasses 上，智能体的逻辑层与视图层运行在基于 **QuickJS**（JS 引擎）与 **Skia**（渲染）构建的自研容器 **Ink** 中，针对穿戴设备的低功耗/内存/CPU 做了优化。来源：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/runtime/env.md
-API 契约以下文的 skill 参考为准（`skill: references/apis/*.md`），该 skill 即官方仓库随附的开发契约文档。
-
-### 2.1 设备信息与系统状态（`navigator`）
-
-来源：`skill: references/apis/navigator.md`
-
-| API | 能力 | 限制/说明 |
-|---|---|---|
-| `navigator.id` | 与智能体+设备绑定的不透明 ID | 普通重启/升级通常稳定；不得当作凭据 |
-| `navigator.userAgent` / `versions.ink` / `versions.skia` | 运行时与渲染引擎版本字符串 | |
-| `navigator.language` / `languages` / `region` | 语言偏好（BCP 47）与地区 | 可能为空字符串 |
-| `navigator.renderingEnabled` | 当前实例能否渲染可见界面 | |
-| `navigator.onLine` / `navigator.connection` | 在线状态与连接信息：`type`（none/wifi/ethernet/cellular/bluetooth/other/unknown）、`effectiveType`、`downlink`、`rtt`、`saveData`，及 `change` 事件 | 仅为估计值，不保证服务可达；经手机蓝牙转发时 `type` 可能报 `bluetooth` |
-| `navigator.getBattery()` | 返回 `Promise<BatteryManager>` | 主机无电池能力时 Promise 被拒；⚠️ navigator 参考称电量方法在 device 参考中，但 device 参考实际没有电池章节（见第 5 节） |
-| `navigator.getDeviceSerialNumber()` | 设备序列号 | **仅系统级智能体**可拿到，普通智能体返回空字符串 |
-| `navigator.requestDeviceToken()` | 设备令牌 | **仅系统级智能体**，普通智能体不得依赖 |
-
-### 2.2 显示与窗口（`window`）
-
-来源：`skill: references/apis/window.md`、`skill: references/framework.md`
-
-- `window.innerWidth` / `innerHeight`：只读视口尺寸（逻辑像素）。
-- 全屏 Page 参考画布 **480 × 352 px**（设计规范定义，目标设备 RokidGlasses1 / RokidGlasses2），安全边距左右 16px、上下 12px，有效内容宽 448px。来源：`skill: references/design/monochrome-green.md`
-- Widget（桌面小组件）尺寸族：`1x1` = 239 × 140、`1x2` = 480 × 140；眼镜共 **4 个 Widget 网格位**。`family` 只是尺寸类别，禁止把根节点写死为该像素值。
-- `window.open(url, '_widget')`：只能打开 `app.json` 已声明的 Widget（唯一 target `_widget`，支持 `placement: 'overlay'` 浮层）；不能打开其他 Page 或外部 URL。
-- `window.close()`：请求宿主关闭当前智能体实例。
-- `window.atob/btoa`、全局 `createImageBlob(bitmap, …)`（PNG/JPEG 编码）。
-
-### 2.3 摄像头（Camera）
-
-来源：`skill: references/apis/media.md`、`skill: references/apis/wx.md`。需声明 `CAMERA` 权限。
-
-| API | 能力 | 关键参数/限制 |
-|---|---|---|
-| `navigator.mediaDevices.getUserMedia({video})` | 获取视频流（MediaStream） | 约束支持 `facingMode`、`width`、`height`、`frameRate`、`deviceId`；最终值读 `track.getSettings()` |
-| `ImageCapture.takePhoto(options?)` | 拍照，返回编码后的 `Blob` | **三种模式**：`mode: 'wide'`（条码扫描用广角）、`mode: 'telephoto'`（读远处文字的长焦）、`mode: 'default'`（普通拍照）；另有 `quality`、`enableSystemPreview` 选项 |
-| 拍照默认输出尺寸 | wide = 2016 × 2688；telephoto = 2016 × 1512；default = 3024 × 4032 | 与视频流尺寸可能不同；Blob 本身不带宽高，需 `createImageBitmap()` 解码 |
-| `ImageCapture.grabFrame()` | 返回未编码的 `ImageBitmap` 像素帧 | 用后需 close bitmap |
-| `wx.media.createCameraContext().takePhoto()` | wx 风格拍照，返回 `{ data: ArrayBuffer, mimeType}` | 必须在交互门（interactive）调用点触发；无模式选择参数（模式选择走 Web 的 ImageCapture） |
-| `MediaRecorder` | 录制音视频流 | 支持 `video/webm;codecs=vp8,opus`、`video/mp4` 等（先用 `isTypeSupported()` 查） |
-
-### 2.4 麦克风与录音
-
-来源：`skill: references/apis/media.md`。需声明 `RECORD_AUDIO` 权限，且必须从有效的用户交互出发起采集。
-
-| API/参数 | 能力 | 关键限制 |
-|---|---|---|
-| `getUserMedia({audio:{captureSource}})` | 录音来源选择：`'microphone'`（麦克风）或 `'system-audio'`（设备播放混音，即系统声音内录） | system-audio 不能与 `echoCancellation: true` 或 `microphoneMode` 组合，否则 `OverconstrainedError`；系统声音不自动回退到麦克风 |
-| `microphoneMode`（麦克风模式） | **四种模式**：`'wearer'`（默认，优先佩戴者人声）、`'far-field'`（远处声音）、`'near-field'`（近处声音）、`'omnidirectional'`（全向不偏重方向） | 仅对麦克风来源有效；设备是否支持每种模式不保证，不支持时报 `OverconstrainedError`；实际生效值读 track 的 `getSettings()` |
-| `MediaRecorder` | 录音编码 | 支持 `audio/wav`、`audio/ogg;codecs=opus` |
-| `wx.media.getRecorderManager()` | wx 风格录音（start/pause/resume/stop、帧回调等） | **使用默认麦克风，不提供来源/模式选择参数**；要选模式必须用 Web 的 getUserMedia |
-
-### 2.5 音频播放与 Web Audio
-
-来源：`skill: references/apis/media.md`
-
-- `AudioPlayer`：通用播放器（本地包内文件或网络 URL），支持 `pcm` / `ogg_opus` 流式 `append()` 播放、字幕文本轨（`TextTrack`/`VTTCue`）。
-- `Sound`：本地音效短播放（仅本地文件，拒绝 http(s) URL）。
-- Web Audio：`AudioContext` + `createBuffer/Oscillator/Gain/BiquadFilter/Analyser/MediaStreamSource`、`decodeAudioData` 等，可做麦克风波形/频谱分析。
-
-### 2.6 语音合成 TTS
-
-来源：`skill: references/apis/ai.md`
-
-| API | 能力 | 关键限制 |
-|---|---|---|
-| `speechSynthesis.speak(utterance, mode?)` | 直接合成并播放（运行时统一播放器排队） | `mode`: `'enqueue'`（默认）/ `'immediate'` |
-| `speechSynthesis.synthesize(utterance, options?)` | 只生成不播放，返回 `SpeechSynthesisTask`（含音频块事件、可 abort，配 `SpeechAudioPlayer` 独立播放） | 选项：字幕粒度 `subtitles: 'none'/'sentence'/'word'`、音频格式 `pcm/mp3/ogg_opus`、采样率、声道、码率、`AbortSignal` |
-| `SpeechSynthesisUtterance` | text/lang/voice/volume/pitch/rate | **`lang` 属性目前不生效**（文档明示不支持、不会改变生成语言）；pitch/rate/volume 默认 1 |
-| 官方音色 ID（共 11 个） | `female-tianmei`、`English_radiant_girl`、`English_expressive_narrator`、`male-qn-qingse`、`male-qn-jingying`、`female-yujie`、`Chinese (Mandarin)_News_Anchor`、`Chinese (Mandarin)_Radio_Host`、`clever_boy`、`lovely_girl`、`English_Trustworthy_Man` | 无 `getVoices()`、无 `cancel()/pause()/resume()`（文档明示未暴露） |
-| `wx.speech.playTTS(text)` | wx 风格一句话播报 | 返回字符串（请求 ID），失败返回空字符串 |
-
-### 2.7 传感器（IMU）
-
-来源：`skill: references/apis/device.md`、官方指南 https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/device/imu.md
-
-| API | 数据 | 事件/说明 |
-|---|---|---|
-| `new Accelerometer({frequency?})` | 三轴加速度 `x/y/z` + `timestamp` | 事件 `activate`/`reading`/`error`；`frequency` 只是给主机的尽力提示（best-effort hint） |
-| `new Gyroscope({frequency?})` | 三轴角速度 `x/y/z` + `timestamp` | 同上 |
-| `new AbsoluteOrientationSensor({frequency?})` | 绝对朝向四元数 `quaternion`（[x,y,z,w]）+ `timestamp` | 可用性取决于设备硬件支持 |
-| 采样率 | 官方指南示例用 60，建议从 30–60 Hz 起步按需调高 | 无官方公布的最高频率/精度数值 |
-
-注：API 层只暴露以上三种传感器；没有单独的地磁/光感/接近传感器 API 出现在官方 API 参考中。
-
-### 2.8 语音识别 ASR
-
-来源：`skill: references/apis/ai.md`。**无独立的 `SPEECH_RECOGNITION` 权限**（文档明示已取消）；开麦克风仍需 `RECORD_AUDIO`。
-
-| API | 能力 | 关键限制 |
-|---|---|---|
-| `new SpeechRecognition()` | 宿主麦克风识别：`lang`、`continuous`、`interimResults`、`maxAlternatives`；事件含 `result`/`nomatch`/`error` 等完整 Web Speech 风格事件集 | `start()` 要求所属视图保持交互态，非交互态立即 `InvalidStateError`；`lang` 为空时由宿主选默认语言 |
-| `new SpeechRecognitionSession(options?)` | 外部音频流识别（自己用 MediaRecorder 喂音频块到 `session.audio` 写入流），会话本身不开麦克风 | 选项含热词 `phrases: [{phrase, boost}]`、分段 `segmentation: 'auto'/'vad'/'semantic'/{mode:'vad', silenceDurationMs}`、`updateContext(messages)` 动态上下文 |
-| `SpeechRecognitionSession.getCapabilities()` | 查询宿主真实能力：音频格式/采样率、`maxChunkBytes`、是否支持 interim/热词/上下文/VAD 阈值范围 | 能力因宿主而异，必须先查再用 |
-
-### 2.9 大语言模型 LLM
-
-来源：`skill: references/apis/ai.md`
-
-| API | 能力 | 关键限制 |
-|---|---|---|
-| `LanguageModel.availability()` | 返回 `'available'/'unavailable'` | **不暴露**供应商、模型列表、端点信息 |
-| `LanguageModel.create({model?, initialPrompts?, tools?})` | 创建会话；模型解析顺序：显式 `model` → 宿主 `defaultModel` | 底层是宿主的 **OpenAI 兼容 chat-completions 流式通道**；`system` 只能出现在 initialPrompts 首条 |
-| 多模态输入 | user 消息 content 数组支持 `{type:'text'}` 与 `{type:'image_url', image_url:{url}}`（含 data: URL） | 结构化 content 仅限 user 角色 |
-| 工具调用 | `tools`（function 型）会被转发进供应商请求体；工具调用以会话 `toolcall` 事件形式回传（callId/functionName/arguments） | **不是**自动执行：JS 侧需自行处理事件，没有结构化 tool-call 往返协议保证 |
-| `session.prompt(input)` / `promptStreaming(input)` | 一次性回答 / 流式回答（轮询式 `read()`，非 WHATWG Stream、非 async iterator） | 同一会话同时只允许一个进行中的请求；`destroy()` 后不可再用 |
-| `wx.speech.startRecognition()` | wx 风格发起识别（字符串返回） | 与 2.8 是不同入口 |
-
-### 2.10 定位（Geolocation）
-
-来源：`skill: references/apis/geo/geolocation.md`。需声明 `GEOLOCATION` 权限（声明后系统仍可能拒绝）。
-
-- `navigator.geolocation.getCurrentPosition(success, error?, options?)` / `watchPosition(...)`（返回数值型 watch ID，`clearWatch` 释放）。
-- 选项：`enableHighAccuracy`（默认 false）、`timeout`、`maximumAge`（省略时由宿主定）。
-- 结果：`coords` 含 `latitude`、`longitude`、`accuracy`（米），及可空的 `altitude`、`altitudeAccuracy`、`heading`、`speed`；错误码 1/2/3（拒绝/不可用/超时）。
-- 附带 `GPXDocument` API（`'gpx'` 模块）：GPX 路线解析、创建、导出（setStartPoint/addWaypoint/appendTrackPoint/toString/toBlob），配合 `<map>` / `<map-gpx>` 组件做轨迹显示。来源：`skill: references/apis/geo/gpx-document.md`、`skill: references/components.md`
-
-### 2.11 蓝牙 BLE（客户端）
-
-来源：`skill: references/apis/device.md`
-
-- `navigator.bluetooth`：`getAvailability()`、`getDevices()`、`requestDevice({acceptAllDevices?, optionalServices?, filters?:[{name?, services?}]})`、`scanDevices(options?)`（Ink 特有，非标准 Web Bluetooth）。
-- GATT：`device.gatt.connect()/disconnect()/getPrimaryService(s)/…`，特征值 `readValue()`（返回 `Promise<number[]>`）、`writeValue(With/WithoutResponse)`、`startNotifications()` + `characteristicvaluechanged` 事件。
-- 限制：`requestDevice`、`scanDevices`、`gatt.connect()`、`startNotifications()` 都要求所属视图保持**交互态**；`getAvailability/getDevices` 不受此限。角色是 BLE **中心设备（client）**；官方 API 参考中没有 BLE 外围（peripheral/广播）能力。
-
-### 2.12 存储与文件
-
-来源：`skill: references/apis/web.md`、`skill: references/apis/wx.md`、`skill: references/apis/navigator.md`、`skill: references/framework.md`
-
-- `localStorage`：当前智能体隔离的字符串 KV（getItem/setItem/removeItem/clear）。
-- wx 存储：`wx.setStorage/getStorage/removeStorage/clearStorage` 及 `Sync` 同步版，数据经 JSON 序列化。
-- `navigator.storage`：StorageManager，文档定义为 "Persistent file storage entry point"（持久文件存储入口）——⚠️ skill 参考未给出其方法细节（见第 5 节）。
-- 文件模型：资源一律从**工程内路径**解析（如 `/assets/icon.png` 打包进.aix）；官方框架文档明确提醒**不要假设可任意访问设备文件系统**。官方 API 参考中不存在通用文件系统 API（无任意路径的读/写/列目录接口）。
-- ⚠️ **FileReader 不存在（真机实证，2026-10-28，全局错误码 E2005）**：Ink 运行时没有 `FileReader`，aiui-dev 官方参考全文亦无此 API。`Blob → dataURL` 必须走 `blob.arrayBuffer()` + 分块 `btoa` 转码（或位图直存）；任何 `new FileReader()` / `readAsDataURL` 在真机必抛 `FileReader is not defined`，每帧必死。开发时以官方 API 参考清单为准：清单里没有的 API 就不存在，不要按浏览器习惯假设。
-
-### 2.13 网络
-
-来源：`skill: references/apis/web.md`、`skill: references/apis/wx.md`、官方指南 https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/network/usage.md
-
-- `fetch` / `Headers` / `Response`（含 `body` ReadableStream 流式读取、BYOB）、`WebSocket`、`File`/`FormData`、`URL`/`URLSearchParams`、Streams 全家桶（Readable/Writable/Transform）。
-- `wx.request`（超时解析顺序：options.timeout → app.json 配置 → 默认 60000 ms）、`wx.createSocket/connectSocket`、`wx.createEventSource`（SSE）。
-- `crypto`：`randomUUID`、`getRandomValues`（上限 65,536 字节）；`crypto.subtle` **仅** SHA-1/256/384/512 摘要与 HMAC（generateKey/importKey/exportKey/sign/verify）——加密/解密、RSA、ECDSA、JWK **不支持**。
-- **手机代理上网（Mobile Proxy）**：眼镜未连 Wi-Fi 时，只要蓝牙连着手机 App（Rokid AI App / Hi Rokid），`fetch`/`wx.request` 会自动经手机链路转发上网，对开发者透明，且更省电。
-- **HTTPS 强制**：线上环境网络请求必须 HTTPS；发布商店前请求域名需在开发者后台**报备白名单**。
-- **局域网直连：不支持**（官方指南称"正在开发中"；文档目录中 LAN 一节标注 `status: unsupported`）。
-
-### 2.14 Canvas 2D 与条码检测
-
-来源：`skill: references/apis/canvas.md`
-
-- `CanvasRenderingContext2D`：路径/矩形/文本（含 `measureText`）/变换/渐变/图案/图像数据/`drawImage`（仅 3/5/9 参数三种形式）等；入口为页面 `<canvas>`（`wx.createCanvasContext(id)`）或脚本自建 `new Canvas(w,h)`。
-- 颜色解析受限：仅 `#rrggbb`、`#rgb`、`rgb()`、`rgba()` 与 black/white/red/green/blue/yellow/transparent 等少数命名色。
-- 输出：`canvas.convertToBlob({type, quality})`（PNG 默认，JPEG 质量 0–1；透明像素在 JPEG 下合成到黑底）、全局 `createImageBlob()`。
-- `BarcodeDetector`（`'barcode'` 模块或全局）：`getSupportedFormats()` 查支持的码制（规范名如 `qr_code`、`code_128`、`ean_13`）；`detect(image)` 接受 ImageData、编码图像 Blob 或 ImageBitmap，返回 `format`、`rawValue`、`boundingBox`、`cornerPoints`。不支持 OffscreenCanvas/VideoFrame/HTML 元素类输入。
-
-### 2.15 交互事件（运行时层）
-
-来源：`skill: references/events.md`。详见第 3 节交互模型。
-
-- 模板事件：`bindtap`/`catchtap` 等 `bind<event>` 绑定；动画事件 `bindanimationstart/iteration/end/cancel`。
-- 按键事件：Page 的 `onKeyDown/onKeyUp(event)`，按 `event.code` 分发（Rokid Glasses 映射见 3.2）。
-- 语音唤醒回调：`onVoiceWakeup(event)`。
-- 环境感知（需在 Page 内 `enableWorldAwareness()` 开启）：`onHeadGesture(event)`（示例手势值 `'nod'`）、`onOrientationStabilityChange(event)`（`event.stable` 头部稳定性）。
-- 网络状态：App/Page `onNetworkStatus(event)`。
-
-### 2.16 框架与组件面
-
-来源：`skill: references/framework.md`、`skill: references/components.md`、`skill: references/apis/agent-worker.md`
-
-- 工程结构：`app.json` + `app.js` + `AGENTS.md` + `pages/`（`.ink` 单文件或 `.json/.wxml/.wxss/.js` 四件套）+ 可选 `widgets/`、`workers/`、`components/`、`assets/`。
-- 内置组件共 **37 个可编写标签**：容器/文本/表单（button/input/textarea/switch）/媒体（image/video/lottie-view）/地图（map、map-gpx）/画布与图表（canvas/chart）/AI 生成 UI（a2ui）等。
-- Agent Worker：无界面脚本（open 触发，`lifetime: 'instant'|'foreground'`，`background` 保留且无效）；有定时器、Promise、Crypto、Wasm、编码流，但**没有** `window/document/fetch`、路由、渲染与媒体采集。
-- TypeScript 入口与 WebAssembly 模块受支持（走工程打包流程）。
-
-### 2.17 权限清单（app.json.permissions，精确名称）
-
-来源（2026-10-29 全量审计订正）：`documentation/1-framework/open-agent-format/app-json.md` 权限表，共 **7 个**。名称**大小写敏感**，未识别的名称不授予任何能力；清单声明 ≠ 系统授权，调用处仍需处理拒绝。注：aiui-dev Skill 的 `references/framework.md` 仍只列前三个，属上游文档内部不一致，以 framework 文档为准。
-
-| 权限名 | 用途 |
+| 段 | 域 |
 |---|---|
-| `GEOLOCATION` | 获取当前位置 / 监听位置变化 |
-| `CAMERA` | 访问摄像头、拍摄图像或视频 |
-| `RECORD_AUDIO` | 访问麦克风、采集音频（ASR 开麦、录音均靠它；无独立 ASR 权限，旧 `SPEECH_RECOGNITION` 权限已于 Ink 0.19 移除） |
-| `READ_MEDIA_IMAGES` | 列出和读取系统媒体库中的图片 |
-| `CREATE_MEDIA_IMAGES` | 向系统媒体库新增图片（不含修改/覆盖已有资源） |
-| `READ_MEDIA_AUDIO` | 列出和读取系统媒体库中的音频 |
-| `CREATE_MEDIA_AUDIO` | 向系统媒体库新增音频（不含修改/覆盖已有资源） |
+| C1xxx | 硬件与显示 |
+| C2xxx | 摄像头与图像 |
+| C3xxx | 音频、语音与大模型 |
+| C4xxx | 传感器与定位 |
+| C5xxx | 显示运行时与页面 |
+| C6xxx | 存储、文件与网络 |
+| C7xxx | 权限 |
+| C8xxx | 交互与宿主 |
+| C9xxx | 分发与提审 |
 
-补充：提审环节（Studio/商店）另有**声明类勾选**——网络、摄像头、麦克风、扬声器、Rokid 账号信息等，需逐项填写用途，与清单权限是两套东西。来源：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/bundle/publish.md
+实测状态只用四种取值：**文档**——只有官方文档依据，未在真机验过；**真机已证**——有真机返回的结果或行为证据；**构建实测 / Studio 实测**——在打包或 Studio 流程里验过；**待验**——已有探针，数据未回，探针见第 4 节。版本号规则：新增条目或条目结论变化升 MINOR，结构或规则变化升 MAJOR，文字修正升 PATCH。
 
----
+## 2. 总则
 
-## 3. 交互模型
+总则不是条目，是推导场景答案时与条目同等适用的规则。
 
-### 3.1 唤醒
+- **R1 闭环定位**（官方口径，2026-10-29）：Agent 本质上完成闭环——一个 Agent 靠自身声明的权限与可调用的 API，在自己内部把一件事从进入做到结果；闭环之外的宿主能力，包括系统设置、其他 Agent 与宿主配置，不向 Agent 下放。来源：官方回复，经本注册表维护者转述。
+- **R2 清单即边界**：官方 API 参考是封闭清单。查不到的 API、参数与枚举值一律按不存在处理，不按浏览器或微信小程序的习惯假设。
+- **R3 交互门**：采集与连接类调用（拍照、录音、ASR 启动、BLE 连接等）要求所属视图处于交互态，通常还要由用户交互触发；非交互态调用直接失败。资源用完必须释放：麦克风与相机 track 要 stop、BLE 扫描与连接要断、watchPosition 要 clearWatch、AudioContext 要 close。
+- **R4 声明不等于授权**：权限写进 app.json 只是声明，系统在调用处仍可拒绝，代码必须处理拒绝分支。
+- **R5 模拟器不等于真机**：网页模拟器里传感器多为模拟值，性能与发热与真机不同；条目的实测状态标「文档」的，结论以真机复测为准。
 
-- 产品级唤醒词：**"Hi Rokid"**。
-- 运行时 `onVoiceWakeup(event)`：语音或触控均可触发；已知 `event.keyword` 值包括 `乐奇`（中文唤醒词）、`Hi Rokid`、`clickAiAssist`（触控唤醒）。默认不要按 keyword 过滤；`event.preventDefault()` 可接管宿主默认动作。
+## 3. 条目
 
-### 3.2 镜腿触控与按键映射
+### 3.1 硬件与显示
 
-运行时以**键事件**形式下发（`onKeyDown/onKeyUp` + `event.code`），Rokid Glasses 映射如下：
+依据：官方全球产品页 https://global.rokid.com/products/b-h-rokid-glasses-with-display ，英国官方站同参数互证。
 
-| `event.code` | 含义 | 默认行为（onKeyUp 后） |
+| 编号 | 原语 | 结论 | 实测 |
+|---|---|---|---|
+| C1001 | 主芯片 | Snapdragon AR1。产品页另有「双芯片」宣传语，但官方规格表未列第二颗芯片型号 | 文档 |
+| C1002 | 内存与存储 | 2 GB / 32 GB | 文档 |
+| C1003 | 显示技术 | 双目 Micro LED 加衍射光波导 | 文档 |
+| C1004 | 显示颜色 | 单色绿，单一绿色发光通道，不是全彩 | 文档 |
+| C1005 | 面板分辨率 | 480 × 400，产品规格口径；与运行时画布 C5002 口径并存，见未明第 1 条 | 文档 |
+| C1006 | 视场角 | 30° | 文档 |
+| C1007 | 亮度 | 1500 nits | 文档 |
+| C1008 | 摄像头硬件 | 12 MP，照片 3024 × 4032，F2.25；传感器型号与摄像头视场角官方未公布 | 文档 |
+| C1009 | 麦克风硬件 | 4 麦克风阵列 | 文档 |
+| C1010 | 扬声器 | 双线性定向高保真扬声器 | 文档 |
+| C1011 | 电池与充电 | 210 mAh；续航官方口径多套，见未明第 4 条；磁吸充电，20 分钟充至 80%，充电盒可充满约 10 次 | 文档 |
+| C1012 | 无线连接 | Wi-Fi 6、蓝牙 5.3 | 文档 |
+| C1013 | 整机参数 | 49 g，IPX4；镜腿长 155.5 mm，铰链间距 146.3 mm，镜框 TR90 加钛合金铰链 | 文档 |
+| C1014 | 配镜 | 支持屈光度 +15 至 −15，官方配镜服务与磁吸配镜框 | 文档 |
+| C1015 | 摄像头指示灯 | 支持，拍摄时有指示 | 文档 |
+| C1016 | 操作系统 | 名称与版本官方未公布；已知运行时为 Ink 容器，见 C5001 | 文档 |
+| C1017 | 产品级整机功能 | 实时翻译 89 种语言、AI 助手、通知、导航、提词器、笔记、会议转录等是眼镜系统与官方 App 的功能，不是 Agent 可调用的 API；Agent 能用的只有本表登记的原语 | 文档 |
+
+### 3.2 摄像头与图像
+
+依据：`skill: references/apis/media.md`、`skill: references/apis/wx.md`；需权限 C7002。
+
+| 编号 | 原语 | 结论 | 实测 |
+|---|---|---|---|
+| C2001 | 视频流 getUserMedia | 可取 MediaStream；约束支持 facingMode、width、height、frameRate、deviceId，最终值读 track 的 getSettings | 文档 |
+| C2002 | 拍照 ImageCapture.takePhoto | 返回编码后的 Blob；三种模式：wide 条码扫描用广角、telephoto 读远处文字、default 普通拍照；另有 quality、enableSystemPreview 选项 | 文档 |
+| C2003 | 拍照输出尺寸 | wide 2016 × 2688、telephoto 2016 × 1512、default 3024 × 4032；Blob 本身不带宽高，需 createImageBitmap 解码 | 文档 |
+| C2004 | 取帧 ImageCapture.grabFrame | 返回未编码的 ImageBitmap 像素帧，用后需 close | 文档 |
+| C2005 | wx 拍照 CameraContext.takePhoto | 返回 ArrayBuffer 加 mimeType；没有模式选择参数，模式走 C2002；必须在交互门调用点触发 | 文档 |
+| C2006 | 录像 MediaRecorder | 录制音视频流；视频 mime 以 isTypeSupported 查询为准，已知 video/webm;codecs=vp8,opus 与 video/mp4 | 文档 |
+| C2007 | 条码检测 BarcodeDetector | 支持的码制先用 getSupportedFormats 查；detect 输入限 ImageData、编码图像 Blob 或 ImageBitmap，返回 format、rawValue、boundingBox、cornerPoints | 文档 |
+| C2008 | OCR 接口 | 不存在。读文字的路径是 telephoto 拍照加图片输入大模型，见 C3016 | 文档 |
+| C2009 | 持续帧流 | 文档未给出持续取帧的频率上限与后台行为；getUserMedia 流与 grabFrame 的持续可用性待探针验证，见第 4 节 | 待验 |
+| C2010 | 文字与人脸检测 | TextDetector、FaceDetector 不存在，官方清单无此条目 | 文档 |
+
+### 3.3 音频、语音与大模型
+
+依据：`skill: references/apis/media.md`、`skill: references/apis/ai.md`；录音需权限 C7003。
+
+| 编号 | 原语 | 结论 | 实测 |
+|---|---|---|---|
+| C3001 | 录音来源 captureSource | microphone 麦克风或 system-audio 系统声音内录；system-audio 不能与 echoCancellation 或 microphoneMode 组合，否则 OverconstrainedError；系统声音不自动回退到麦克风 | 文档 |
+| C3002 | 麦克风模式 microphoneMode | 四种：wearer 佩戴者优先、far-field 远场、near-field 近场、omnidirectional 全向；仅对 getUserMedia 采集流有效，设备支持不保证，不支持报 OverconstrainedError，实际生效值读 getSettings | 文档 |
+| C3003 | 麦克风模式与宿主识别的关系 | 模式只作用于自采流，不作用于宿主语音识别；宿主识别用宿主麦克风，与模式设置无关 | 文档 |
+| C3004 | 录音编码 MediaRecorder | 音频支持 audio/wav、audio/ogg;codecs=opus | 文档 |
+| C3005 | wx 录音 RecorderManager | start、pause、resume、stop 与帧回调；用默认麦克风，没有来源与模式选择参数，要选模式用 C3001、C3002 | 文档 |
+| C3006 | 语音合成 speechSynthesis.speak | 直接合成并播放，走运行时统一播放器排队；mode 为 enqueue 默认或 immediate | 文档 |
+| C3007 | 语音合成 speechSynthesis.synthesize | 只生成不播放，返回可 abort 的任务；选项含字幕粒度 none、sentence、word，音频格式 pcm、mp3、ogg_opus，采样率、声道、码率；配 SpeechAudioPlayer 独立播放 | 文档 |
+| C3008 | 合成音色 | 共 11 个固定音色 ID：female-tianmei、English_radiant_girl、English_expressive_narrator、male-qn-qingse、male-qn-jingying、female-yujie、Chinese (Mandarin)_News_Anchor、Chinese (Mandarin)_Radio_Host、clever_boy、lovely_girl、English_Trustworthy_Man；没有 getVoices | 文档 |
+| C3009 | 合成控制面 | utterance 的 lang 属性不生效，不改变生成语言；没有 cancel、pause、resume；pitch、rate、volume 默认 1 | 文档 |
+| C3010 | wx 播报 wx.speech.playTTS | 一句话播报，返回请求 ID 字符串，失败返回空字符串 | 文档 |
+| C3011 | 语音识别 SpeechRecognition | 宿主麦克风识别；属性 lang、continuous、interimResults、maxAlternatives；start 要求视图保持交互态，否则 InvalidStateError；lang 为空时宿主选默认语言 | 文档 |
+| C3012 | 语音识别 SpeechRecognitionSession | 外部音频流识别，会话本身不开麦克风；支持热词 phrases 加 boost、分段 auto、vad、semantic、updateContext 动态上下文；用前先 getCapabilities 查宿主真实能力 | 文档 |
+| C3013 | 识别错误类别 | error 事件的错误类别取值，官方没有给出枚举表；按类别细分错误处理属于未证假设，不可依赖 | 文档 |
+| C3014 | 大模型可用性 LanguageModel.availability | 只返回 available 或 unavailable，不暴露供应商、模型列表与端点 | 文档 |
+| C3015 | 大模型会话 LanguageModel.create | 底层是宿主的 OpenAI 兼容 chat-completions 流式通道；模型解析顺序为显式 model、宿主 defaultModel；system 只能出现在 initialPrompts 首条 | 文档 |
+| C3016 | 大模型多模态输入 | user 消息 content 数组支持 text 与 image_url，图片可为 data: URL；结构化 content 仅限 user 角色 | 文档 |
+| C3017 | 大模型工具调用 | tools 会转发进供应商请求体；调用以会话 toolcall 事件回传，含 callId、functionName、arguments；不自动执行，没有结构化往返协议保证 | 文档 |
+| C3018 | 大模型请求 prompt 与 promptStreaming | 流式为轮询式 read，不是 WHATWG Stream 也不是 async iterator；同一会话同时只允许一个进行中的请求；destroy 后不可再用 | 文档 |
+| C3019 | 音频播放 AudioPlayer | 通用播放器，本地包内文件或网络 URL；支持 pcm、ogg_opus 流式 append 播放与字幕文本轨 | 文档 |
+| C3020 | 音效 Sound | 本地音效短播放，仅本地文件，拒绝 http 与 https 的 URL | 文档 |
+| C3021 | Web Audio | AudioContext 与 createBuffer、Oscillator、Gain、BiquadFilter、Analyser、MediaStreamSource、decodeAudioData 等可用，可做波形与频谱分析 | 文档 |
+
+### 3.4 传感器与定位
+
+依据：`skill: references/apis/device.md`、`skill: references/apis/geo/geolocation.md`、官方 IMU 指南；定位需权限 C7001。
+
+| 编号 | 原语 | 结论 | 实测 |
+|---|---|---|---|
+| C4001 | 加速度计 Accelerometer | 三轴加速度 x、y、z 加 timestamp；事件 activate、reading、error；构造参数 frequency 只是给主机的尽力提示 | 文档 |
+| C4002 | 陀螺仪 Gyroscope | 三轴角速度 x、y、z 加 timestamp；事件与 frequency 语义同 C4001 | 文档 |
+| C4003 | 绝对朝向 AbsoluteOrientationSensor | 绝对朝向四元数 quaternion [x, y, z, w] 加 timestamp；可用性取决于设备硬件支持 | 文档 |
+| C4004 | 采样率保证 | 无官方公布的最高频率与精度数值；官方指南示例用 60，建议 30 至 60 Hz 起步 | 文档 |
+| C4005 | 其他传感器接口 | 地磁、光感、接近传感器没有单独 API，未出现在官方清单 | 文档 |
+| C4006 | 头部手势 onHeadGesture | 需在 Page 内 enableWorldAwareness 开启；官方示例手势值只有 nod 点头，完整枚举未公布，见未明第 8 条 | 文档 |
+| C4007 | 头稳事件 onOrientationStabilityChange | 同需开启世界感知；event.stable 表示头部稳定性变化 | 文档 |
+| C4008 | 眼动追踪 | 不存在。所谓凝视由头部朝向 C4003 加头稳 C4007 加点头 C4006 实现 | 文档 |
+| C4009 | 定位 geolocation | getCurrentPosition 与 watchPosition，clearWatch 释放；coords 含 latitude、longitude、accuracy（米）及可空的 altitude、altitudeAccuracy、heading、speed；选项 enableHighAccuracy 默认 false、timeout、maximumAge；错误码 1 拒绝、2 不可用、3 超时 | 文档 |
+| C4010 | GPX GPXDocument | GPX 路线解析、创建与导出：setStartPoint、addWaypoint、appendTrackPoint、toString、toBlob；配合 map 与 map-gpx 组件显示轨迹 | 文档 |
+| C4011 | 蓝牙 BLE | 中心设备角色：getAvailability、getDevices、requestDevice、scanDevices（Ink 特有）、GATT connect、readValue、writeValue、startNotifications；requestDevice、scanDevices、connect、startNotifications 要求视图交互态 | 文档 |
+| C4012 | 蓝牙外围与广播 | 不存在，官方清单无 peripheral 能力 | 文档 |
+
+### 3.5 显示运行时与页面
+
+依据：`skill: references/framework.md`、`skill: references/apis/window.md`、`skill: references/apis/canvas.md`、`skill: references/events.md`、官方运行环境文档。
+
+| 编号 | 原语 | 结论 | 实测 |
+|---|---|---|---|
+| C5001 | 运行时 Ink | 逻辑层与视图层运行在 QuickJS 加 Skia 的自研容器 Ink 中；ES2023、ESM | 文档 |
+| C5002 | 参考画布 | 全屏 Page 参考画布 480 × 352；安全边距左右 16 px、上下 12 px，有效内容宽 448 px | 文档 |
+| C5003 | 单色绿设计约束 | 基色 #40ff5e，6 级亮度阶梯；黑色等于透明底，不能指望不透明黑面板遮挡现实；语义不能只靠颜色，须叠加图标、文字或线型；正文亮度建议不低于 72%，装饰线不高于 24%，关键信息落在中央舒适视野 | 文档 |
+| C5004 | 视口尺寸 | window.innerWidth、innerHeight 只读逻辑像素 | 文档 |
+| C5005 | Widget 尺寸 | 尺寸族 1x1 为 239 × 140、1x2 为 480 × 140；眼镜共 4 个 Widget 网格位；family 只是尺寸类别，禁止把根节点写死为该像素值 | 文档 |
+| C5006 | 打开界面 window.open | 只能打开 app.json 已声明的 Widget，唯一 target 为 _widget，支持 overlay 浮层；不能打开其他 Page 或外部 URL | 文档 |
+| C5007 | 关闭实例 window.close | 请求宿主关闭当前智能体实例 | 文档 |
+| C5008 | 跨 Agent 跳转 | 不存在：官方清单无 openAgent 类条目，wx.navigateTo 仅限本 Agent 内页面，见总则 R1 | 文档 |
+| C5009 | 打开宿主设置页 | 不可达：没有此 API，「打开某某设置」类意图由宿主执行到打开应用本身为止，见总则 R1 | 文档 |
+| C5010 | 工程结构 | app.json 加 app.js 加 AGENTS.md 加 pages；页面为 .ink 单文件或 .json、.wxml、.wxss、.js 四件套；可选 widgets、workers、components、assets | 文档 |
+| C5011 | 内置组件 | 共 37 个可编写标签，含容器、文本、表单、媒体、地图、画布、图表与 AI 生成 UI 的 a2ui | 文档 |
+| C5012 | Agent Worker | 无界面脚本，open 触发；lifetime 为 instant 或 foreground，background 保留且无效；有定时器、Promise、Crypto、Wasm、编码流；没有 window、document、fetch、路由、渲染与媒体采集 | 文档 |
+| C5013 | 语言与模块 | TypeScript 入口与 WebAssembly 模块受支持，走工程打包流程 | 文档 |
+| C5014 | Canvas 2D | 路径、矩形、文本含 measureText、变换、渐变、图案、drawImage 仅 3、5、9 参数三种形式；颜色解析仅 #rrggbb、#rgb、rgb、rgba 与少数命名色；输出走 convertToBlob 与 createImageBlob，canvas.toDataURL 不存在 | 文档 |
+| C5015 | WXML 模板 | template 不支持 | 文档 |
+| C5016 | 对话流卡片 | 默认仅展示；交互式界面需全屏 Page 或 Widget | 文档 |
+| C5017 | 设备信息 navigator | id 为与智能体加设备绑定的不透明 ID，不得当作凭据；userAgent 与 versions.ink、versions.skia 给版本字符串；language、languages、region 可能为空；onLine 与 connection 给在线状态与连接估计值；renderingEnabled 表示当前实例能否渲染 | 文档 |
+| C5018 | 电池 getBattery | 返回 Promise 的 BatteryManager；主机无电池能力时 Promise 被拒；细节文档不全，见未明第 9 条 | 文档 |
+| C5019 | 序列号与令牌 | getDeviceSerialNumber 与 requestDeviceToken 仅系统级智能体可用，普通智能体返回空字符串或不得依赖 | 文档 |
+| C5020 | 全局编码工具 | window.atob、btoa 与全局 createImageBlob 可用，createImageBlob 做 PNG、JPEG 编码 | 文档 |
+
+### 3.6 存储、文件与网络
+
+依据：`skill: references/apis/web.md`、`skill: references/apis/wx.md`、官方网络指南。
+
+| 编号 | 原语 | 结论 | 实测 |
+|---|---|---|---|
+| C6001 | 本地存储 localStorage | 当前智能体隔离的字符串 KV：getItem、setItem、removeItem、clear | 文档 |
+| C6002 | wx 存储 | setStorage、getStorage、removeStorage、clearStorage 及 Sync 同步版，数据经 JSON 序列化 | 文档 |
+| C6003 | StorageManager navigator.storage | 文档只给一句「持久文件存储入口」，方法细节未给出，见未明第 10 条 | 文档 |
+| C6004 | 通用文件系统 | 不存在：资源一律从工程内路径解析，没有任意路径的读、写、列目录接口 | 文档 |
+| C6005 | FileReader | 不存在，真机必抛 FileReader is not defined；Blob 转 dataURL 走 blob.arrayBuffer 加分块 btoa；关联错误码 E2005 | 真机已证 |
+| C6006 | 查无的浏览器 API | 以下在 Ink 运行时均不存在，写进代码即错：sessionStorage、XMLHttpRequest、URL.createObjectURL、DOMParser、structuredClone、queueMicrotask、Notification、剪贴板 API、IntersectionObserver、MutationObserver、ServiceWorker、new Worker、OffscreenCanvas、getDisplayMedia、applyConstraints、getVoices、navigator.permissions | 文档 |
+| C6007 | fetch 与 Web 设施 | fetch、Headers、Response 含 body 流式读取、WebSocket、File、FormData、URL 与 URLSearchParams、Streams 全家桶可用 | 文档 |
+| C6008 | wx 网络 | wx.request 超时解析顺序为 options.timeout、app.json 配置、默认 60000 ms；wx.createSocket、connectSocket；wx.createEventSource 做 SSE | 文档 |
+| C6009 | Web Crypto | randomUUID、getRandomValues 上限 65536 字节可用；subtle 仅 SHA-1、256、384、512 摘要与 HMAC；加密、解密、RSA、ECDSA、JWK 不支持 | 文档 |
+| C6010 | 手机代理上网 | 眼镜未连 Wi-Fi 时，只要蓝牙连着手机 App，fetch 与 wx.request 自动经手机链路转发上网，对开发者透明 | 文档 |
+| C6011 | HTTPS 与域名白名单 | 线上环境网络请求必须 HTTPS；发布商店前，请求域名需在开发者后台报备白名单 | 文档 |
+| C6012 | 局域网直连 | 不支持，官方指南称开发中，文档目录标注 unsupported | 文档 |
+| C6013 | 数据预拉取 | prefetch 不支持 | 文档 |
+| C6014 | Source map 调试 | 不支持 | 文档 |
+
+### 3.7 权限
+
+依据：官方 framework 文档 app-json.md 权限表，2026-10-29 全量审计订正。共 7 个，名称大小写敏感，未识别的名称不授予任何能力；另注意 C7008 的上游不一致。
+
+| 编号 | 原语 | 结论 | 实测 |
+|---|---|---|---|
+| C7001 | 权限 GEOLOCATION | 获取当前位置与监听位置变化，见 C4009 | 文档 |
+| C7002 | 权限 CAMERA | 访问摄像头、拍摄图像或视频，见 3.2 节 | 文档 |
+| C7003 | 权限 RECORD_AUDIO | 访问麦克风与采集音频；ASR 开麦也靠它，没有独立的 ASR 权限，旧 SPEECH_RECOGNITION 已于 Ink 0.19 移除 | 文档 |
+| C7004 | 权限 READ_MEDIA_IMAGES | 列出和读取系统媒体库中的图片 | 文档 |
+| C7005 | 权限 CREATE_MEDIA_IMAGES | 向系统媒体库新增图片，不含修改与覆盖已有资源 | 文档 |
+| C7006 | 权限 READ_MEDIA_AUDIO | 列出和读取系统媒体库中的音频 | 文档 |
+| C7007 | 权限 CREATE_MEDIA_AUDIO | 向系统媒体库新增音频，不含修改与覆盖已有资源 | 文档 |
+| C7008 | 权限清单的文档口径 | aiui-dev skill 的 framework 参考仍只列前三个权限，属上游文档内部不一致；以 framework 正式文档的七名为准 | 文档 |
+
+### 3.8 交互与宿主
+
+依据：`skill: references/events.md`、Hi Rokid App 内置操作指南（手势部分，真机行为以此为准）。
+
+| 编号 | 原语 | 结论 | 实测 |
+|---|---|---|---|
+| C8001 | 唤醒 onVoiceWakeup | 语音或触控均可触发；event.keyword 已知值：乐奇、Hi Rokid、clickAiAssist 触控唤醒；默认不要按 keyword 过滤；event.preventDefault 可接管宿主默认动作 | 文档 |
+| C8002 | 按键事件 | Page 的 onKeyDown、onKeyUp 按 event.code 分发：Enter 确认、Backspace 返回、ArrowUp 与 ArrowDown 滚动、GlobalHook 为镜腿触摸的设备专用信号；宿主默认动作在 onKeyUp 后触发 | 文档 |
+| C8003 | 单指单击 | 确认，对应 Enter | 文档 |
+| C8004 | 单指双击 | 返回，对应 Backspace；无页面可回时请求关闭智能体 | 文档 |
+| C8005 | 单指滑动 | 滚动，对应 ArrowUp、ArrowDown；滚动方向可在 App 里改 | 文档 |
+| C8006 | 单指长按 | 唤醒助手；App 里可选眼镜 AI 助手或手机助手 | 文档 |
+| C8007 | 双指双击 | 息屏 | 文档 |
+| C8008 | 双指前后滑动 | 音量加减，默认如此，可在 App 里改 | 文档 |
+| C8009 | 双指长按 AI 快捷指令 | 向选定的触发对象发送一条固定指令，文本上限 500 字；触发对象可以选某个具体的自定义或调试 Agent，即零 ASR、确定性地把固定文本投递给指定 Agent | 真机已证 |
+| C8010 | 场景化手势 | 音乐场景：单击播放或暂停、前后滑切歌；通话场景：来电双击拒接、通话中单击禁麦或开麦、双击挂断 | 文档 |
+| C8011 | 仅绑定点击的按钮 | 只绑 bindtap 的按钮在眼镜上无法被手势触发；页面必须自己把按键映射到动作，不能只依赖按钮点击 | 真机已证 |
+| C8012 | 语音唤醒的失败层 | 固定句式唤醒的失败发生在语音识别的转写层，不是文本正确转写后的匹配层；缩短或规整 Agent 名只能缓解转写，不能绕过，确定性入口见 C8009 | 真机已证 |
+| C8013 | 手机伴侣 App 的角色 | 网络代理见 C6010；另承担设备管理与设置、媒体管理、AI 功能入口与眼镜资源包下发 | 文档 |
+
+### 3.9 分发与提审
+
+依据：官方发布文档 publish.md、AIX 文档；导入行为为维护者 2026-10-24 在 Global AIUI Studio 的实测。
+
+| 编号 | 原语 | 结论 | 实测 |
+|---|---|---|---|
+| C9001 | 分发格式 AIX | AI eXecutable，遵循 Open Agent Format，自包含代码、配置与静态资源；打包自动生成唯一 UUID 的 VERSION 文件做版本校验 | 文档 |
+| C9002 | 包大小上限 | 官方未公布数值 | 文档 |
+| C9003 | 打包排除 .aixignore | 必须排除 .agents、.aix、artifacts、*.aix、skills-lock.json、node_modules，否则开发文件进包，实测可由 2.3 KB 膨胀到 107 KB | 构建实测 |
+| C9004 | Studio 导入行为 | 导入对话框只有一个 URL 输入框；/tree/ 之后的内容整体被当作一个 ref，子目录地址导入失败；仓库根地址导入得到空代码树；单段分支名、分支根放一个 Agent 的全部文件时，导入成功为一个完整项目 | Studio 实测 |
+| C9005 | 提审红线 | 名称必填且不超过 20 字符、不得与他人重名、不得含测试与 test、beta 等词与极限词；图标必填且不得用默认图标；功能介绍不超过 500 字符；开场白必填，建议不超过 300 字；预览素材 3 至 5 个文件，至少 1 张图片加 1 个视频，视频不超过 60 秒；每个权限逐项写明用途 | 文档 |
+| C9006 | 提审声明勾选 | Studio 提审另有声明类勾选：网络、摄像头、麦克风、扬声器、Rokid 账号信息等，与 3.7 节的清单权限是两套东西 | 文档 |
+| C9007 | 发布流程 | 构建、网页模拟、AIX 打包上传云端、真机调试、完善提审资料、提交审核 | 文档 |
+| C9008 | 版本与 ID 的生成 | 版本号与 Agent ID 均由系统生成，开发者不可编辑 | 文档 |
+
+## 4. 开口探针
+
+探针是为验证条目而建的实测装置。本节只登记探针与它要回答的条目号；探针数据回齐后，结论写回对应条目并更新其实测状态，本节相应行删除。
+
+| 探针 | 验证条目 | 状态 |
 |---|---|---|
-| `Enter` | 确认/激活 | 进入导航模式或激活当前目标 |
-| `Backspace` | 返回 | 回上一级；无页面可回时请求关闭智能体 |
-| `ArrowUp` / `ArrowDown` | 上/下方向 | 在当前导航路径内移动或滚动根视图 |
-| `GlobalHook` | **镜腿按键触摸**的设备专用信号（非标准 Web 键值） | 无默认动作；文档建议仅在 onKeyDown 做快速响应，要区分返回/确认应使用 Backspace/Enter |
+| 能力基准测试 Agent，23 项逐项测底座 | C2002、C2004、C3002、C3011、C4001 至 C4007、C5002 等 | 已建，真机复测未完成 |
+| 影音捕捉系列 10 个 Agent，各顶一条影音边界 | C2002、C2004、C2006、C2007、C3001、C3002、C3021 | 已建，硬件链待真机回填 |
+| 定格动画 Agent 加日志回传客户端 | C6005 复证；错误日志经外部通道回传的可行性 | 已建，待真机跑一轮 |
+| 描红探针，结印与手语两个 | C3016 图片输入做定格判定的可用性与命中率 | 已建，待真机数据定正式版收录 |
+| 连续视频流探针 | C2009 | 已立项，未跑 |
+| 识别错误类别采集 | C3013 | 待真机触发各类错误后比对原文 |
 
-产品侧补充：产品页称有 "Quick Action Shortcuts — Tap to launch the features you use most"（点按镜腿快速启动常用功能）与独立拍摄操作（"One word or one press" 拍照）。
+## 5. 未明与矛盾
 
-### 3.2.1 镜腿触控板完整手势表（真机实证，Hi Rokid App「操作指南」）
+以下不是条目：它们是官方来源自身对不上、或官方没有给出的点，挂在相关条目之下，等官方口径或实测澄清后并入条目或删除。
 
-来源：Hi Rokid App 内置操作指南（真机行为，以此为准；触控位置为镜腿中段）。这是 §3.2 键事件在产品层的完整映射——运行时里 `Enter`/`Backspace`/`ArrowUp/Down` 的来源就是这些手势。
-
-**单指交互（通用）**
-
-| 手势 | 系统行为 | 运行时对应 |
-|---|---|---|
-| 单击 | 确认 | `Enter` |
-| 双击 | 返回 | `Backspace` |
-| 长按触控板 | 唤醒助手（可在 App 里选「眼镜 AI 助手（默认）」或「手机助手」） | `onVoiceWakeup`（keyword `clickAiAssist`） |
-| 滑动 | 正向滚动（方向可在 App 里改） | `ArrowUp` / `ArrowDown` |
-
-**单指·场景化**：音乐——首页单击 = 无；音乐应用中单击 = 播放/暂停；向前/后滑 = 下一首/上一首。通话——来电中双击 = 拒接；通话中单击 = 禁麦/开麦；通话中双击 = 挂断。
-
-**双指交互（双指张开触控镜腿中段）**
-
-| 手势 | 系统行为 |
-|---|---|
-| 双击 | 息屏 |
-| 长按 | **AI 快捷指令**：向选定的「触发对象」发送一条固定指令（见下） |
-| 前后滑动 | 音量加减（默认，可改） |
-
-**AI 快捷指令（双指长按）**：App 里可开关；指令可选预置（「看一下面前这是什么」「拍照翻译成中文」「今天天气」）或自定义文本（≤500 字）。关键点：**触发对象可以选某个具体的自定义/调试 Agent**——即双指长按 = 零 ASR、确定性地把一段固定文本投递给指定 Agent，是绕过语音唤醒误识别的硬件级入口（真机实测可用）。
-
-
-### 3.3 "凝视"到底是什么：头部朝向，不是眼动追踪
-
-**结论：AIUI 没有眼动追踪（eye tracking）API；所谓"凝视"由头部姿态实现。**
-
-依据：
-1. 官方 API 参考（skill 全部 apis 文件）中不存在任何眼动/视线坐标 API；全文检索无 eye-tracking 相关条目。
-2. 指向能力由 IMU 提供：`AbsoluteOrientationSensor` 给出头部朝向四元数（2.7）。
-3. 世界感知回调只有两个：`onHeadGesture(event)`（已文档化的手势值示例为 `'nod'` 点头）与 `onOrientationStabilityChange(event)`（头部稳定性变化）——即"看向某物并稳住头 → 触发"的交互范式靠的是**头稳检测**，官方示例正是 `event.gesture === 'nod'` 时确认。来源：`skill: references/events.md`
-4. 产品页与文档从未宣称眼动追踪硬件；规格表传感器仅写 "IMU: Supported"。
-
-因此：开发"凝视"类交互 = 头部朝向（四元数/方向）+ 头稳事件 + 点头确认。**摇头（shake）等其他手势值未在官方文档中列出**——`onHeadGesture` 的完整手势枚举官方未公布（见第 5 节）。
-
-### 3.4 语音交互流
-
-
-唤醒词/触控唤醒 → `onVoiceWakeup` → Agent 内可用 `SpeechRecognition`（宿主识别）或 `SpeechRecognitionSession`（自备音频流）做 ASR → `LanguageModel` 会话推理（可带图片输入）→ `speechSynthesis.speak/synthesize` 或 `AudioPlayer` 播报。对话流卡片（conversation-flow card）默认**仅展示**，交互式界面需全屏 Page 或 Widget（`skill: SKILL.md` Core Rules）。
-
-### 3.5 手机伴侣 App 的角色
-
-
-- 网络代理：眼镜无 Wi-Fi 时经蓝牙借手机 App（海外版 **Hi Rokid**，包名 `com.rokid.sprite.global.aiapp`）上网（2.13）。
-- 设备管理与资源下发：连接/管理眼镜、调整设置、管理媒体、AI 功能入口（翻译/字幕/提词器/设备控制）——产品页 FAQ。
-- Agent 分发链路：Studio 打包上传云端 → App 更新眼镜资源包 → 眼镜端运行（本项目既定流程；官方指南的发布流程为"构建 → 网页模拟 → AIX 打包上传云端 → 真机调试"，来源：publish.md）。
-
----
-
-## 4. 平台限制与约束（开发者视角）
-
-### 4.1 显示/UI 约束
-
-- 单一绿色通道：所有可见像素只是同一绿色的不同亮度（基色 `#40ff5e`，6 级亮度阶梯）；**黑色 = 透明底**，不能指望不透明黑面板遮挡现实环境。
-- 语义不能只靠颜色：状态/严重程度必须叠加图标、文字标签、线型或动效等冗余编码。
-- 参考画布 480 × 352，关键信息须落在中央舒适视野内；正文文本亮度建议 ≥72%，装饰线 ≤24%。
-
-### 4.2.aix 包约束
-
-- AIX = "AI eXecutable"，AIUI 定义的专有分发格式，内部遵循 OAF（Open Agent Format）规范，自包含代码（WXML/WXSS/JS）、配置（JSON）与静态资源。
-- 打包时自动生成唯一 UUID 的 `VERSION` 文件用于版本校验/热更新；打包支持 PNG/JPEG 压缩与 JSON 混淆压缩。
-- **包大小上限：官方未公布**（所查文档无数值）。
-- 工程侧红线：`.aixignore` 必须排除 `.agents/`、`.aix/`、`artifacts/`、`*.aix`、`skills-lock.json`、`node_modules/`，否则开发文件会进包（实测 2.3 KB → 107 KB）。来源：本项目根 README（仓库 sakai55/rokid）。
-
-### 4.3 AIUI 明确不暴露 / 不支持的能力
-
-| 能力 | 状态 | 依据 |
-|---|---|---|
-| **OCR（文字识别）API** | **不存在** | 官方 API 参考全量清单（skill apis 目录）与官方文档目录中均无 OCR 条目；"读文字"的官方路径是 telephoto 拍照 + LLM 图片输入（2.3 / 2.9） |
-| 眼动追踪 | 不存在 | 见 3.3 |
-| 局域网直连通信 | 不支持（开发中） | 官方网络指南 + 文档目录 `lan: status unsupported` |
-| 数据预拉取 prefetch | 不支持 | 文档目录 `prefetch: status unsupported` |
-| Source map 调试 | 不支持 | 文档目录 `sourcemap: status unsupported` |
-| WXML `<template>` | 不支持 | 文档目录标注 unsupported |
-| Agent Worker 后台常驻 | 不支持 | `lifetime: 'background'` 保留且无效；Worker 也无 fetch |
-| Web Crypto 加密算法 | 仅 SHA 摘要 + HMAC | `skill: references/apis/web.md` 明示 RSA/ECDSA/加密解密/JWK 不支持 |
-| TTS 语言切换 | `lang` 属性不生效 | `skill: references/apis/ai.md` 明示 |
-| TTS 队列控制 | 无 cancel/pause/resume/getVoices | 同上 |
-| 通用文件系统 | 无任意路径文件 API | 2.12 |
-| 设备序列号/令牌 | 仅系统级智能体 | 2.1 |
-| LLM 供应商信息 | availability() 不给 | 2.9 |
-
-### 4.4 提审/发布约束
-
-> 注意：该官方文档描述的是发布到 **Rokid Ai 智能体商店（中国大陆）** 的流程；Global 版走 Global AIUI Studio 的 Submit 页签，要求大体一致（本项目实测）。
-
-- 名称：必填，≤20 字符，不得与他人重名，不得含"测试/test/beta"、价格促销、极限词；文案禁用"官方/权威/推荐/TOP1"等暗示词与"100% 准确"类绝对化承诺。
-- 图标：必填且**不得使用默认图标**，不得模糊/拉伸/带水印二维码/纯色+文字。
-- 功能介绍 ≤500 字符；开场白必填、建议 ≤300 字；版本号与 Agent ID 均由系统生成、开发者不可编辑。
-- 权限：如实勾选实际使用的全部权限并逐项写明用途，遵循"最小必要 + 用途真实"；未声明却调用、描述模糊、与代码行为不一致都可能被拒。
-- 预览素材：必填 **3–5 个文件**，至少 1 张图片 + 1 个视频；图片 JPG/PNG（建议 1:1），视频 MP4（建议 1:1）、时长 ≤60 秒（建议 15–45 秒）、单文件建议 ≤50 MB；视频须完整演示 1–2 个核心流程。
-- 内容安全：UGC 需安全过滤；AI 生成合成内容需依法添加标识；智能体必须能正常启动、交互、返回，不得频繁崩溃。
-- 流程：构建 → 网页模拟 → AIX 打包上传云端 → 真机调试 → 完善提审资料 → 提交审核 → 结果（拒绝则改后重新打包再交；通过后上架商店）。
-
-### 4.5 运行时与交互门约束
-
-- **交互门（interactive gate）**：BLE 的 requestDevice/scanDevices/connect/startNotifications、SpeechRecognition.start、RecorderManager.start、CameraContext.takePhoto、getUserMedia 采集等都要求所属视图处于交互态，通常还需由用户交互触发；非交互态调用直接抛错/失败。
-- 资源生命周期：麦克风/相机 track 用完必须 stop；BLE 扫描要停、GATT 要断；watchPosition 要 clearWatch；AudioContext 要 close。官方 checklist 把这些列为交付红线（`skill: references/checklist.md`）。
-- 模拟器 ≠ 真机：DevTools 中传感器多为模拟值、性能/发热/降频与真机不同，官方要求以真机为准（env.md）。
-
----
-
-## 5. 矛盾与未明事项
-
-1. **显示分辨率口径不一致**：官方产品规格表写 **480 × 400**；AIUI 设计规范与 Widget 尺寸族按 **480 × 352** 参考画布（1x2 Widget 宽 480 也与此一致）。两者都是官方来源——推测 480×400 为面板物理分辨率、480×352 为运行时安全画布，但官方未作此说明。
-2. **FOV 的第三方说法**：非官方评测（Notebookcheck 等）称 23°，官方产品页为 **30°**。以官方为准，23° 标记为**未经官方证实**。
-3. **显示分辨率的第三方说法**：个别非官方评测称 640×480，与官方 480×400 不符，**未经官方证实**。
-4. **续航口径多套**：官方同一产品页内 FAQ 写 8–10 小时日常使用、对比表写 6 小时混合使用 / 配盒 30 小时；未给出统一测试条件下的标称值。
-5. **第二颗芯片**：产品页有 "Dual-Chip Performance" 宣传语，但官方规格表 SoC 只列 Snapdragon AR1；第二芯片型号（如第三方所称 NXP RT600）**官方规格页未证实**。
-6. **摄像头细节缺失**：传感器型号（营销文案称 Sony、规格表未写型号）、摄像头 FOV（第三方称 109°）均**官方未公布**。
-7. **IMU 细节缺失**：产品页仅 "IMU: Supported"；轴数、型号、采样率上限、精度均未公布；API 侧 frequency 只是 best-effort 提示，无保证值。
-8. **头部手势枚举未公布**：`onHeadGesture` 官方示例只给出 `'nod'`；摇头、抬头等其他手势值是否存在、叫什么，官方文档未列全。
-9. **`navigator.getBattery()` 文档悬空引用**：navigator 参考称电量方法见 device 参考，但 device 参考中并无 BatteryManager 章节——API 存在性以 navigator 参考为准，细节（属性/事件）未在 skill 中给出。
-10. **`navigator.storage`（StorageManager）细节缺失**：navigator 参考只给了一句 "Persistent file storage entry point"，无方法签名；其与 localStorage/wx 存储的边界未在 skill 中说明。
-11. **设备代际差异未验证**：events 参考明示 **Rokid Glasses 2** 与**第一代全彩眼镜**的按键映射"remain unverified"，不得套用 Rokid Glasses（一代单色绿）的映射；设计规范目标设备写作 RokidGlasses1 / RokidGlasses2。
-12. **文档版本双轨**：官方文档现有两个站点——open.rokid.com/aiui（当前版）与 js.rokid.com（较早版本，AI 开发指南位于 /AIUI/guide/quickstart/ai-dev）；本档案的 API 契约以官方仓库当前 `documentation/` 与 `skills/aiui-dev` 为准，两站内容差异未逐页比对。
-13. **OS 未公布**：眼镜操作系统名称/版本在官方产品页与文档中均未标注（仅知运行时为 Ink/QuickJS+Skia 容器）。
-14. **.aix 包大小上限未公布**；域名白名单的报备入口/审核时效亦未在公开文档中细化。
-
----
+1. 显示分辨率双口径：产品规格 480 × 400（C1005）与运行时画布 480 × 352（C5002）并存，官方未说明两者关系。
+2. FOV 第三方说法 23° 与显示分辨率第三方说法 640 × 480 均未经官方证实，以 C1006、C1005 为准。
+3. 续航口径多套：同一产品页 FAQ 称日常 8 至 10 小时、对比表称混合使用 6 小时、配充电盒 30 小时，无统一测试条件（C1011）。
+4. 第二颗芯片型号官方未证实（C1001）。
+5. 摄像头传感器型号与视场角官方未公布（C1008）。
+6. IMU 轴数、型号、采样率上限与精度官方未公布（C4001 至 C4004）。
+7. 头部手势完整枚举官方未公布（C4006）。
+8. getBattery 的细节文档不全：navigator 参考称电量方法见 device 参考，但 device 参考无此章节（C5018）。
+9. StorageManager 方法细节官方未给出（C6003）。
+10. 设备代际差异：Rokid Glasses 2 与第一代全彩眼镜的按键映射在官方 events 参考中标注未验证，不得套用本表 3.8 节的映射。
+11. 官方文档双轨：open.rokid.com/aiui 为当前版，js.rokid.com 为较早版本，两站差异未逐页比对；本表以官方仓库 documentation 与 aiui-dev skill 为准。
+12. 包大小上限与域名白名单报备入口、审核时效，官方未细化（C9002、C6011）。
 
 ## 6. 官方来源清单
 
 **产品与平台**
+
 - Rokid Glasses 官方全球产品页（规格主来源）：https://global.rokid.com/products/b-h-rokid-glasses-with-display
 - Rokid 英国官方站 AI 产品线（规格互证）：https://gb.rokid.com/collections/rokid-ai-lineup
-- 官方 Academy 教程《3.6 Glasses AIUI》（Craft/Studio 工作流）：https://global.rokid.com/de/blogs/academy-glasses/glasses-3-6-aiui
+- 官方 Academy 教程《3.6 Glasses AIUI》：https://global.rokid.com/de/blogs/academy-glasses/glasses-3-6-aiui
 
 **官方文档站**
+
 - AIUI 文档（当前版）：https://open.rokid.com/aiui
 - AIUI 文档（较早版本）：https://js.rokid.com/AIUI/guide/quickstart/ai-dev
 
-**官方 GitHub 仓库 yodaos-project/AIUI（jsar-project/AIUI 会重定向至此）**
-- 仓库首页/README（定位、Samples 索引）：https://github.com/yodaos-project/AIUI
-- Samples 目录（bluetooth / capabilities / cut-card / games / gyroscope-test / meal-card / navigator-info / realtime-voice-intelligence / scanner / tts）：https://github.com/yodaos-project/AIUI/tree/main/samples
-- aiui-dev skill（本档案 API 契约的主来源）：https://github.com/yodaos-project/AIUI/tree/main/skills/aiui-dev
+**官方 GitHub 仓库 yodaos-project/AIUI**
+
+- 仓库首页：https://github.com/yodaos-project/AIUI
+- aiui-dev skill（API 契约主来源）：https://github.com/yodaos-project/AIUI/tree/main/skills/aiui-dev
 - 提审与发布：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/bundle/publish.md
 - 什么是 AIX：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/bundle/aix.md
 - 运行环境：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/runtime/env.md
 - IMU 指南：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/device/imu.md
-- 网络使用说明（手机代理 / HTTPS / 域名白名单 / 局域网）：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/network/usage.md
-- 文档目录（含 lan/prefetch/sourcemap 等 unsupported 标注）：https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
+- 网络使用说明：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/network/usage.md
+- 文档目录（含 lan、prefetch、sourcemap 等 unsupported 标注）：https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
+
+## 7. 变更日志
+
+### v2.0.0 2026-10-29
+
+结构重构为原子注册表：全文按九段拆成 123 个编号条目，每条含原语、结论与实测状态；新增编号与治理、总则与开口探针三节；原第 5 节矛盾与未明事项改挂条目号保留。场景类问题不再逐条收录，统一由条目与总则推导。
+
+### v1.1.0 2026-10-29
+
+第 4 节补入平台定位的官方口径「Agent 本质上完成闭环」，并在 4.3 表新增跨 Agent 跳转与打开宿主设置页两条；全文标题去除括注，括注内容移入正文；新增写在前面与本变更日志。
+
+### v1.0.0 2026-10-29
+
+入仓公开版。本档案编制于 2026-10-24，汇编官方产品页、官方文档站与官方仓库 aiui-dev 参考；入仓时做通用化处理，删去开发者内部的工作政策与个人使用痕迹，能力事实未动。

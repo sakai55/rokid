@@ -1,412 +1,300 @@
-# Rokid Glasses 能力アーカイブ（公式ソース版）
+# Rokid Glasses 能力アトミックレジストリ
 
 [中文](CAPABILITIES.md) | [English](CAPABILITIES.en.md) | 日本語
 
-中文版（最終更新 2026-10-29）からの翻訳。齟齬がある場合は中文版が優先する。
+中文版 v2.0.0（2026-10-29）からの翻訳。齟齬がある場合は中文版が優先する。
 
-> 整理日：2026-10-24、最終更新：2026-10-29
-> 資料の原則：**Rokid 公式ソースのみを採用する**（公式製品ページ、公式ドキュメントサイト、公式 GitHub リポジトリ `yodaos-project/AIUI` およびそれに内蔵される `aiui-dev` skill リファレンス）。自明でない結論にはすべて出典を明記する。
-> 表記約定：**** = 公式ページ／ドキュメントの原文に明記；**** = 公式 API ドキュメントの存在／不在から合理的に推論したもので、その旨を明示する；**公式未公表** = 調査した公式ソースのいずれにも見当たらず、決して推測しない。
-> ローカル skill リファレンスの統一出典：公式リポジトリ `skills/aiui-dev`（https://github.com/yodaos-project/AIUI/tree/main/skills/aiui-dev）。以下、引用は `skill: references/…` と表記する。
+> 作成日：2026-10-24；現在のバージョン v2.0.0、2026-10-29
+> 資料原則：**Rokid 公式ソースのみを採用する**（公式製品ページ、公式ドキュメントサイト、公式 GitHub リポジトリ `yodaos-project/AIUI` とその内蔵 `aiui-dev` skill リファレンス）。これに加えて、本レジストリのメンテナ自身による実機およびビルドの検証があり、検証結論は条目の中に個別に明示する。公式リポジトリの `skills/aiui-dev` が API 契約の主ソースであり、以下の根拠は `skill: references/…` と表記する。
 
----
+## はじめに
 
-## 1. ハードウェア仕様
+本レジストリは 1 人の Rokid AIUI 開発者が維持するもので、Rokid の公式文書ではない。Rokid Glasses の基盤能力をアトミックな条目に分解する。1 条目は基盤プリミティブ 1 件だけを述べ、安定した番号、1 文の結論、公式根拠と検証状態を持つ。Agent を設計する前に、まずここで、使おうとするプリミティブが存在するかどうか、境界がどこにあるかを調べる。
 
-データソースは公式グローバル製品ページを正とする：https://global.rokid.com/products/b-h-rokid-glasses-with-display
-（英国公式サイト https://gb.rokid.com/collections/rokid-ai-lineup のパラメータと相互に裏付けが取れる。）
+本表にはプリミティブだけを登録し、アプリケーションシナリオは登録しない。シナリオはプリミティブの組み合わせであり、その書き方は無限にあって、1 件ずつ収録していけば際限のない Q&A 集になる。どのシナリオの問いにも同じ道筋で答える。シナリオを必要なプリミティブに分解し、本表を 1 件ずつ引く。プリミティブがあれば組み合わせは成立する。プリミティブがなければ、答えは「できない」であり、その問いのために条目を 1 件開く必要はない。公式 API リファレンスそのものが閉じたリストであり、リストにない API は存在しない。これが本表の大半の項目の判定根拠である。
 
-| 項目 | 仕様 | 備考 |
-|---|---|---|
-| SoC | Snapdragon AR1（Qualcomm） | 製品ページの Performance 欄には "Snapdragon AR1" とだけあり、世代の接尾辞はなし；製品ページには別途 "Dual-Chip Performance" の宣伝文句があるが、公式仕様表に第 2 のチップの型番は記載されていない |
-| RAM / ストレージ | 2 GB / 32 GB | |
-| ディスプレイ技術 | 両眼 Micro LED + 回折導波路（ウェーブガイド）（Binocular Micro LED waveguide）、光学設計は "1 Micro LED + waveguide" | |
-| ディスプレイ色 | **単色グリーン**（Single green display） | フルカラーではない；AIUI の設計規範でも単一のグリーン発光チャネルとして定義されている（`skill: references/design/monochrome-green.md`） |
-| ディスプレイ解像度 | **480 × 400** | ⚠️ AIUI ランタイムの基準キャンバス 480 × 352 と一致しない。第 5 節を参照 |
-| FOV | 30° | |
-| 輝度 | 1500 nits | |
-| カメラ | 12 MP、写真解像度 3024 × 4032、絞り F2.25 | 製品ページのマーケティング文案は "Sony sensor" と称するが、仕様表にセンサーの型番は記載されていない；カメラの FOV は公式未公表 |
-| 写真フォーマット | 4K 3:4、4K 9:16、3K 4:3 | |
-| 動画フォーマット | 最大 3K 30fps（9:16）；ほかに 2.5K 30fps（3:4 / 4:3）、2K 30fps（9:16 / 9:19.5） | |
-| マイク | **4 マイクアレイ**（4-microphone array） | |
-| スピーカー | デュアルリニア指向性ハイファイスピーカー（Dual linear directional high-fidelity speakers） | |
-| センサー | IMU：Supported | 公式製品ページには IMU の軸数／型番は公表されていない；AIUI 側で呼び出せるセンサーは 2.7 を参照 |
-| バッテリー | 210 mAh | 連続使用時間の口径は一様でない。下記参照 |
-| 連続使用時間 | FAQ では日常使用で約 **8–10 時間**；同ページの比較表では **up to 6 h mixed use**、充電ケース併用で **up to 30 h** | |
-| 充電 | マグネット式充電；急速充電で 20 分で 80% まで；充電ケースでメガネを約 10 回フル充電可能；ほかにオプションの Power Capsule アクセサリあり | |
-| ワイヤレス接続 | Wi-Fi 6、Bluetooth 5.3（BT 5.3） | |
-| 重量 | 49 g | |
-| 寸法 | テンプル長 155.5 mm、ヒンジ間隔 146.3 mm、レンズ幅 49 mm、フレーム高 44.4 mm | フレーム素材 TR90、ヒンジはチタン合金 |
-| 防塵防水等級 | IPX4 | |
-| ウェイクワード | "Hi Rokid" | 中国語のウェイクワードは 3.1（ランタイムドキュメント）を参照 |
-| 度付き対応 | 屈折度数 +15 から −15 まで対応、公式の度付きサービス + マグネット式度付きフレーム | |
-| システム / OS | **公式未公表** | 製品ページにもドキュメントにもメガネの OS 名／バージョンは記載されていない；判明しているのは、エージェントのランタイムが自社開発の Ink コンテナ（QuickJS + Skia）であること。第 2.1 節および https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/runtime/env.md を参照 |
-| カメラインジケータ | 対応（Camera indicator: supported） | 撮影時に点灯する、プライバシー設計 |
+維持の方法はエラーコード表 `ERROR-CODES.md` と同型である。条目は段の末尾にだけ追加し、番号は二度と使い回さない。結論が覆った条目は結論を書き換えて変更履歴に痕跡を残し、番号は消さない。結論に変化があればバージョンを上げ、旧版は `base/capabilities/` にアーカイブして索引を付ける。中文版が正本であり、英日版は翻訳である。齟齬がある場合は中文版が優先する。
 
-### 1.1 公式機能リスト（製品レベル、Agent API ではない）
+## 1. 番号とガバナンス
 
-公式製品ページに列挙された本機の機能：リアルタイム翻訳（89 言語対応）、UI 言語 13 種、AI アシスタント（Voice AI + Vision AI、モデルとして Qwen + ChatGPT などに言及）、通知（表示＋音声）、ナビゲーション、プロンプター、メモ、会議の文字起こし、SDK サポート。
-注意：これらは**メガネのシステム／公式アプリの機能**であり、AIUI Agent が呼び出せる API とは等しくない（第 2 節を参照）。
+番号は `C2003` の形で、文字 C に 4 桁の数字が続き、千の位が段番号、段の中では連番である。
 
----
-
-## 2. AIUI ランタイム機能（Agent が実際に呼び出せる API）
-
-ランタイム環境：Rokid Glasses 上では、エージェントのロジック層とビュー層は **QuickJS**（JS エンジン）と **Skia**（レンダリング）で構築された自社開発コンテナ **Ink** の中で動作し、ウェアラブルデバイスの低消費電力／メモリ／CPU に最適化されている。出典：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/runtime/env.md
-API 契約は以下の skill リファレンスを正とする（`skill: references/apis/*.md`）。この skill は公式リポジトリに付属する開発契約ドキュメントである。
-
-### 2.1 デバイス情報とシステム状態（`navigator`）
-
-出典：`skill: references/apis/navigator.md`
-
-| API | 機能 | 制限／説明 |
-|---|---|---|
-| `navigator.id` | エージェント＋デバイスに紐づく不透明な ID | 通常の再起動／アップグレードでは安定；認証情報として扱ってはならない |
-| `navigator.userAgent` / `versions.ink` / `versions.skia` | ランタイムとレンダリングエンジンのバージョン文字列 | |
-| `navigator.language` / `languages` / `region` | 言語設定（BCP 47）と地域 | 空文字列の場合がある |
-| `navigator.renderingEnabled` | 現在のインスタンスが可視 UI をレンダリングできるか | |
-| `navigator.onLine` / `navigator.connection` | オンライン状態と接続情報：`type`（none/wifi/ethernet/cellular/bluetooth/other/unknown）、`effectiveType`、`downlink`、`rtt`、`saveData`、および `change` イベント | あくまで推定値であり、サービスへの到達可能性を保証しない；スマートフォンの Bluetooth 経由で転送される場合、`type` は `bluetooth` と報告されることがある |
-| `navigator.getBattery()` | `Promise<BatteryManager>` を返す | ホストにバッテリー機能がない場合、Promise は拒否される；⚠️ navigator リファレンスはバッテリー取得メソッドが device リファレンスにあるとするが、device リファレンスには実際にはバッテリーの章がない（第 5 節を参照） |
-| `navigator.getDeviceSerialNumber()` | デバイスのシリアル番号 | **システムレベルエージェントのみ**取得可能、通常のエージェントには空文字列が返る |
-| `navigator.requestDeviceToken()` | デバイストークン | **システムレベルエージェントのみ**、通常のエージェントは依存してはならない |
-
-### 2.2 ディスプレイとウィンドウ（`window`）
-
-出典：`skill: references/apis/window.md`、`skill: references/framework.md`
-
-- `window.innerWidth` / `innerHeight`：読み取り専用のビューポート寸法（論理ピクセル）。
-- フルスクリーン Page の基準キャンバス **480 × 352 px**（設計規範の定義、対象デバイス RokidGlasses1 / RokidGlasses2）、安全マージンは左右 16px、上下 12px、有効コンテンツ幅 448px。出典：`skill: references/design/monochrome-green.md`
-- Widget（ホーム画面ウィジェット）のサイズファミリー：`1x1` = 239 × 140、`1x2` = 480 × 140；メガネには合計 **4 つの Widget グリッド枠**がある。`family` はあくまでサイズ区分であり、ルートノードをそのピクセル値に固定して書いてはならない。
-- `window.open(url, '_widget')`：`app.json` で宣言済みの Widget のみ開ける（唯一の target `_widget`、`placement: 'overlay'` のオーバーレイ対応）；他の Page や外部 URL は開けない。
-- `window.close()`：ホストに現在のエージェントインスタンスの終了を要求する。
-- `window.atob/btoa`、グローバル `createImageBlob(bitmap, …)`（PNG/JPEG エンコード）。
-
-### 2.3 カメラ（Camera）
-
-出典：`skill: references/apis/media.md`、`skill: references/apis/wx.md`。`CAMERA` 権限の宣言が必要。
-
-| API | 機能 | 主要パラメータ／制限 |
-|---|---|---|
-| `navigator.mediaDevices.getUserMedia({video})` | 映像ストリーム（MediaStream）を取得 | 制約として `facingMode`、`width`、`height`、`frameRate`、`deviceId` に対応；最終値は `track.getSettings()` で読む |
-| `ImageCapture.takePhoto(options?)` | 撮影し、エンコード済みの `Blob` を返す | **3 つのモード**：`mode: 'wide'`（バーコードスキャン用広角）、`mode: 'telephoto'`（遠くの文字を読む望遠）、`mode: 'default'`（通常撮影）；ほかに `quality`、`enableSystemPreview` オプション |
-| 撮影のデフォルト出力サイズ | wide = 2016 × 2688；telephoto = 2016 × 1512；default = 3024 × 4032 | 映像ストリームのサイズと異なる場合がある；Blob 自体には幅・高さが含まれず、`createImageBitmap()` でデコードする必要がある |
-| `ImageCapture.grabFrame()` | 未エンコードの `ImageBitmap` ピクセルフレームを返す | 使用後は bitmap を close すること |
-| `wx.media.createCameraContext().takePhoto()` | wx スタイルの撮影、`{ data: ArrayBuffer, mimeType}` を返す | インタラクティブゲート（interactive）内の呼び出し地点からトリガーしなければならない；モード選択パラメータはない（モード選択は Web の ImageCapture で行う） |
-| `MediaRecorder` | 音声・映像ストリームを録画 | `video/webm;codecs=vp8,opus`、`video/mp4` などに対応（事前に `isTypeSupported()` で確認） |
-
-### 2.4 マイクと録音
-
-出典：`skill: references/apis/media.md`。`RECORD_AUDIO` 権限の宣言が必要であり、収録は必ず有効なユーザー操作から開始しなければならない。
-
-| API／パラメータ | 機能 | 主要な制限 |
-|---|---|---|
-| `getUserMedia({audio:{captureSource}})` | 録音ソースの選択：`'microphone'`（マイク）または `'system-audio'`（デバイス再生のミックス、すなわちシステム音声の内部録音） | system-audio は `echoCancellation: true` や `microphoneMode` と組み合わせられず、組み合わせると `OverconstrainedError`；システム音声はマイクへ自動フォールバックしない |
-| `microphoneMode`（マイクモード） | **4 つのモード**：`'wearer'`（デフォルト、装着者の声を優先）、`'far-field'`（遠くの音声）、`'near-field'`（近くの音声）、`'omnidirectional'`（全指向、方向を偏重しない） | マイクソースにのみ有効；各モードへのデバイスの対応は保証されず、非対応の場合は `OverconstrainedError`；実際に効いている値は track の `getSettings()` で読む |
-| `MediaRecorder` | 録音エンコード | `audio/wav`、`audio/ogg;codecs=opus` に対応 |
-| `wx.media.getRecorderManager()` | wx スタイルの録音（start/pause/resume/stop、フレームコールバックなど） | **デフォルトのマイクを使用し、ソース／モード選択パラメータは提供されない**；モードを選ぶには Web の getUserMedia を使う必要がある |
-
-### 2.5 音声再生と Web Audio
-
-出典：`skill: references/apis/media.md`
-
-- `AudioPlayer`：汎用プレーヤー（ローカルパッケージ内ファイルまたはネットワーク URL）。`pcm` / `ogg_opus` のストリーミング `append()` 再生、字幕テキストトラック（`TextTrack`/`VTTCue`）に対応。
-- `Sound`：ローカル効果音の短い再生（ローカルファイルのみ、http(s) URL は拒否）。
-- Web Audio：`AudioContext` + `createBuffer/Oscillator/Gain/BiquadFilter/Analyser/MediaStreamSource`、`decodeAudioData` など、マイクの波形／スペクトル分析が可能。
-
-### 2.6 音声合成 TTS
-
-出典：`skill: references/apis/ai.md`
-
-| API | 機能 | 主要な制限 |
-|---|---|---|
-| `speechSynthesis.speak(utterance, mode?)` | 直接合成して再生（ランタイムの統一プレーヤーがキューイング） | `mode`: `'enqueue'`（デフォルト）/ `'immediate'` |
-| `speechSynthesis.synthesize(utterance, options?)` | 生成のみで再生せず、`SpeechSynthesisTask` を返す（音声チャンクイベント、abort 可能、`SpeechAudioPlayer` による独立再生と併用） | オプション：字幕粒度 `subtitles: 'none'/'sentence'/'word'`、音声フォーマット `pcm/mp3/ogg_opus`、サンプルレート、チャンネル数、ビットレート、`AbortSignal` |
-| `SpeechSynthesisUtterance` | text/lang/voice/volume/pitch/rate | **`lang` 属性は現状では効かない**（ドキュメントに非対応と明記されており、生成言語は変わらない）；pitch/rate/volume のデフォルトは 1 |
-| 公式ボイス ID（全 11 種） | `female-tianmei`、`English_radiant_girl`、`English_expressive_narrator`、`male-qn-qingse`、`male-qn-jingying`、`female-yujie`、`Chinese (Mandarin)_News_Anchor`、`Chinese (Mandarin)_Radio_Host`、`clever_boy`、`lovely_girl`、`English_Trustworthy_Man` | `getVoices()` はなく、`cancel()/pause()/resume()` もない（ドキュメントに未公開と明記） |
-| `wx.speech.playTTS(text)` | wx スタイルの一文読み上げ | 文字列（リクエスト ID）を返し、失敗時は空文字列を返す |
-
-### 2.7 センサー（IMU）
-
-出典：`skill: references/apis/device.md`、公式ガイド https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/device/imu.md
-
-| API | データ | イベント／説明 |
-|---|---|---|
-| `new Accelerometer({frequency?})` | 3 軸加速度 `x/y/z` + `timestamp` | イベント `activate`/`reading`/`error`；`frequency` はホストへのベストエフォートのヒントにすぎない（best-effort hint） |
-| `new Gyroscope({frequency?})` | 3 軸角速度 `x/y/z` + `timestamp` | 同上 |
-| `new AbsoluteOrientationSensor({frequency?})` | 絶対方位クォータニオン `quaternion`（[x,y,z,w]）+ `timestamp` | 利用可否はデバイスのハードウェア対応に依存 |
-| サンプリング周波数 | 公式ガイドの例では 60 を使用、30–60 Hz から始めて必要に応じて上げることを推奨 | 公式に公表された最大周波数／精度の数値はない |
-
-注：API 層が公開するのは以上の 3 種のセンサーのみ；公式 API リファレンスには、地磁気／光／近接センサー単独の API は現れていない。
-
-### 2.8 音声認識 ASR
-
-出典：`skill: references/apis/ai.md`。**独立した `SPEECH_RECOGNITION` 権限はない**（ドキュメントに廃止済みと明記）；マイクを開くには依然として `RECORD_AUDIO` が必要。
-
-| API | 機能 | 主要な制限 |
-|---|---|---|
-| `new SpeechRecognition()` | ホストマイクによる認識：`lang`、`continuous`、`interimResults`、`maxAlternatives`；イベントには `result`/`nomatch`/`error` など Web Speech 風イベント一式を含む | `start()` は所属ビューがインタラクティブ状態を保っていることを要求し、非インタラクティブ状態では直ちに `InvalidStateError`；`lang` が空の場合はホストがデフォルト言語を選ぶ |
-| `new SpeechRecognitionSession(options?)` | 外部音声ストリームの認識（MediaRecorder で音声チャンクを自ら `session.audio` 書き込みストリームへ供給する。セッション自体はマイクを開かない） | オプションにはホットワード `phrases: [{phrase, boost}]`、セグメンテーション `segmentation: 'auto'/'vad'/'semantic'/{mode:'vad', silenceDurationMs}`、`updateContext(messages)` による動的コンテキストを含む |
-| `SpeechRecognitionSession.getCapabilities()` | ホストの実能力を照会：音声フォーマット／サンプルレート、`maxChunkBytes`、interim／ホットワード／コンテキスト対応の有無、VAD しきい値の範囲 | 能力はホストによって異なるため、必ず先に照会してから使うこと |
-
-### 2.9 大規模言語モデル LLM
-
-出典：`skill: references/apis/ai.md`
-
-| API | 機能 | 主要な制限 |
-|---|---|---|
-| `LanguageModel.availability()` | `'available'/'unavailable'` を返す | プロバイダ、モデル一覧、エンドポイント情報は**公開されない** |
-| `LanguageModel.create({model?, initialPrompts?, tools?})` | セッションを作成；モデルの解決順序：明示的な `model` → ホストの `defaultModel` | 基盤はホストの **OpenAI 互換 chat-completions ストリーミングチャネル**；`system` は initialPrompts の先頭にのみ置ける |
-| マルチモーダル入力 | user メッセージの content 配列は `{type:'text'}` と `{type:'image_url', image_url:{url}}`（data: URL を含む）に対応 | 構造化 content は user ロールに限る |
-| ツール呼び出し | `tools`（function 型）はプロバイダのリクエストボディへ転送される；ツール呼び出しはセッションの `toolcall` イベントとして返ってくる（callId/functionName/arguments） | **自動実行ではない**：JS 側で自らイベントを処理する必要があり、構造化されたツールコールの往復プロトコルの保証はない |
-| `session.prompt(input)` / `promptStreaming(input)` | 一括回答／ストリーミング回答（ポーリング式の `read()`、WHATWG Stream でも async iterator でもない） | 同一セッションでは同時に 1 件のリクエストのみ進行可能；`destroy()` 後は再利用不可 |
-| `wx.speech.startRecognition()` | wx スタイルで認識を開始（文字列を返す） | 2.8 とは別の入口 |
-
-### 2.10 位置情報（Geolocation）
-
-出典：`skill: references/apis/geo/geolocation.md`。`GEOLOCATION` 権限の宣言が必要（宣言してもシステムが拒否する場合がある）。
-
-- `navigator.geolocation.getCurrentPosition(success, error?, options?)` / `watchPosition(...)`（数値型の watch ID を返し、`clearWatch` で解放）。
-- オプション：`enableHighAccuracy`（デフォルト false）、`timeout`、`maximumAge`（省略時はホストが決定）。
-- 結果：`coords` には `latitude`、`longitude`、`accuracy`（メートル）と、nullable な `altitude`、`altitudeAccuracy`、`heading`、`speed` を含む；エラーコード 1/2/3（拒否／利用不可／タイムアウト）。
-- 付随する `GPXDocument` API（`'gpx'` モジュール）：GPX ルートの解析、作成、エクスポート（setStartPoint/addWaypoint/appendTrackPoint/toString/toBlob）。`<map>` / `<map-gpx>` コンポーネントと組み合わせて軌跡表示を行う。出典：`skill: references/apis/geo/gpx-document.md`、`skill: references/components.md`
-
-### 2.11 Bluetooth BLE（クライアント）
-
-出典：`skill: references/apis/device.md`
-
-- `navigator.bluetooth`：`getAvailability()`、`getDevices()`、`requestDevice({acceptAllDevices?, optionalServices?, filters?:[{name?, services?}]})`、`scanDevices(options?)`（Ink 独自、標準の Web Bluetooth ではない）。
-- GATT：`device.gatt.connect()/disconnect()/getPrimaryService(s)/…`、キャラクタリスティックの `readValue()`（`Promise<number[]>` を返す）、`writeValue(With/WithoutResponse)`、`startNotifications()` + `characteristicvaluechanged` イベント。
-- 制限：`requestDevice`、`scanDevices`、`gatt.connect()`、`startNotifications()` はいずれも所属ビューが**インタラクティブ状態**を保っていることを要求する；`getAvailability/getDevices` はこの限りではない。役割は BLE の**セントラル（client）**；公式 API リファレンスには BLE ペリフェラル（周辺機器／アドバタイジング）の機能はない。
-
-### 2.12 ストレージとファイル
-
-出典：`skill: references/apis/web.md`、`skill: references/apis/wx.md`、`skill: references/apis/navigator.md`、`skill: references/framework.md`
-
-- `localStorage`：現在のエージェントに隔離された文字列 KV（getItem/setItem/removeItem/clear）。
-- wx ストレージ：`wx.setStorage/getStorage/removeStorage/clearStorage` および `Sync` 同期版。データは JSON シリアライズされる。
-- `navigator.storage`：StorageManager。ドキュメントでは "Persistent file storage entry point"（永続ファイルストレージへの入口）と定義されている——⚠️ skill リファレンスにはそのメソッドの詳細が示されていない（第 5 節を参照）。
-- ファイルモデル：リソースはすべて**プロジェクト内のパス**から解決される（例：`/assets/icon.png` は .aix にパッケージされる）；公式フレームワークドキュメントは、**デバイスのファイルシステムへ任意にアクセスできると想定しないこと**を明確に注意している。公式 API リファレンスには汎用ファイルシステム API は存在しない（任意パスへの読み／書き／ディレクトリ一覧のインターフェースはない）。
-- ⚠️ **FileReader は存在しない（実機で実証、2026-10-28、グローバルエラーコード E2005）**：Ink ランタイムに `FileReader` はなく、aiui-dev 公式リファレンス全文にもこの API はない。`Blob → dataURL` は `blob.arrayBuffer()` + チャンク分割した `btoa` 変換で行う（あるいはビットマップを直接保存する）必要がある；いかなる `new FileReader()` / `readAsDataURL` も実機では必ず `FileReader is not defined` を投げ、フレームごとに失敗する。開発時は公式 API リファレンスのリストを正とすること：リストにない API は存在しない。ブラウザの習慣で想定してはならない。
-
-### 2.13 ネットワーク
-
-出典：`skill: references/apis/web.md`、`skill: references/apis/wx.md`、公式ガイド https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/network/usage.md
-
-- `fetch` / `Headers` / `Response`（`body` の ReadableStream によるストリーミング読み込み、BYOB を含む）、`WebSocket`、`File`/`FormData`、`URL`/`URLSearchParams`、Streams 一式（Readable/Writable/Transform）。
-- `wx.request`（タイムアウトの解決順序：options.timeout → app.json の設定 → デフォルト 60000 ms）、`wx.createSocket/connectSocket`、`wx.createEventSource`（SSE）。
-- `crypto`：`randomUUID`、`getRandomValues`（上限 65,536 バイト）；`crypto.subtle` は SHA-1/256/384/512 ダイジェストと HMAC（generateKey/importKey/exportKey/sign/verify）**のみ**——暗号化／復号、RSA、ECDSA、JWK は**非対応**。
-- **モバイルプロキシ経由の通信（Mobile Proxy）**：メガネが Wi-Fi に接続していなくても、Bluetooth でスマートフォンアプリ（Rokid AI App / Hi Rokid）とつながっていれば、`fetch`/`wx.request` は自動的にスマートフォンの回線経由で転送され、開発者には透過的で、消費電力も抑えられる。
-- **HTTPS 必須**：本番環境のネットワークリクエストは HTTPS でなければならない；ストア公開前に、リクエスト先ドメインを開発者バックエンドで**ホワイトリストとして事前に届け出る**必要がある。
-- **LAN 直接接続：非対応**（公式ガイドでは「開発中」とされ、ドキュメント目次では LAN の節に `status: unsupported` と標記）。
-
-### 2.14 Canvas 2D とバーコード検出
-
-出典：`skill: references/apis/canvas.md`
-
-- `CanvasRenderingContext2D`：パス／矩形／テキスト（`measureText` を含む）／変換／グラデーション／パターン／画像データ／`drawImage`（3/5/9 引数の 3 形式のみ）など；入口はページ内 `<canvas>`（`wx.createCanvasContext(id)`）またはスクリプトで生成する `new Canvas(w,h)`。
-- 色の解析は限定的：`#rrggbb`、`#rgb`、`rgb()`、`rgba()` と black/white/red/green/blue/yellow/transparent など少数の名前付き色のみ。
-- 出力：`canvas.convertToBlob({type, quality})`（PNG がデフォルト、JPEG の品質は 0–1；透明ピクセルは JPEG では黒背景に合成される）、グローバル `createImageBlob()`。
-- `BarcodeDetector`（`'barcode'` モジュールまたはグローバル）：`getSupportedFormats()` で対応するバーコード形式を照会（規範名は `qr_code`、`code_128`、`ean_13` など）；`detect(image)` は ImageData、エンコード済み画像 Blob、ImageBitmap を受け取り、`format`、`rawValue`、`boundingBox`、`cornerPoints` を返す。OffscreenCanvas/VideoFrame/HTML 要素系の入力には非対応。
-
-### 2.15 インタラクションイベント（ランタイム層）
-
-出典：`skill: references/events.md`。詳細は第 3 節のインタラクションモデルを参照。
-
-- テンプレートイベント：`bindtap`/`catchtap` など `bind<event>` バインディング；アニメーションイベント `bindanimationstart/iteration/end/cancel`。
-- キーイベント：Page の `onKeyDown/onKeyUp(event)`、`event.code` で振り分け（Rokid Glasses のマッピングは 3.2 を参照）。
-- 音声ウェイクアップコールバック：`onVoiceWakeup(event)`。
-- 環境認識（Page 内で `enableWorldAwareness()` を有効化する必要あり）：`onHeadGesture(event)`（ジェスチャ値の例 `'nod'`）、`onOrientationStabilityChange(event)`（`event.stable` 頭部の安定性）。
-- ネットワーク状態：App/Page の `onNetworkStatus(event)`。
-
-### 2.16 フレームワークとコンポーネント面
-
-出典：`skill: references/framework.md`、`skill: references/components.md`、`skill: references/apis/agent-worker.md`
-
-- プロジェクト構成：`app.json` + `app.js` + `AGENTS.md` + `pages/`（`.ink` 単一ファイル、または `.json/.wxml/.wxss/.js` の 4 点セット）+ 任意の `widgets/`、`workers/`、`components/`、`assets/`。
-- 組み込みコンポーネントは合計 **37 の記述可能なタグ**：コンテナ／テキスト／フォーム（button/input/textarea/switch）／メディア（image/video/lottie-view）／地図（map、map-gpx）／キャンバスとチャート（canvas/chart）／AI 生成 UI（a2ui）など。
-- Agent Worker：UI を持たないスクリプト（open でトリガー、`lifetime: 'instant'|'foreground'`、`background` は予約済みで無効）；タイマー、Promise、Crypto、Wasm、符号化ストリームはあるが、`window/document/fetch`、ルーティング、レンダリング、メディア収録は**ない**。
-- TypeScript エントリと WebAssembly モジュールに対応（プロジェクトのパッケージング手順を経由）。
-
-### 2.17 権限リスト（app.json.permissions、正確な名称）
-
-出典（2026-10-29 の全量監査で訂正）：`documentation/1-framework/open-agent-format/app-json.md` の権限表、全 **7 個**。名称は**大文字小文字を区別し**、認識されない名称にはいかなる能力も付与されない；リストへの宣言 ≠ システムの許可であり、呼び出し側では依然として拒否を処理する必要がある。注：aiui-dev Skill の `references/framework.md` は依然として最初の 3 つのみを列挙しており、これは上流ドキュメント内部の不整合である。framework ドキュメントを正とする。
-
-| 権限名 | 用途 |
+| 段 | 領域 |
 |---|---|
-| `GEOLOCATION` | 現在位置の取得／位置変化の監視 |
-| `CAMERA` | カメラへのアクセス、画像または動画の撮影 |
-| `RECORD_AUDIO` | マイクへのアクセス、音声の収録（ASR のマイク開放、録音はいずれもこれに依る；独立した ASR 権限はなく、旧 `SPEECH_RECOGNITION` 権限は Ink 0.19 で削除された） |
-| `READ_MEDIA_IMAGES` | システムのメディアライブラリ内の画像の一覧表示と読み取り |
-| `CREATE_MEDIA_IMAGES` | システムのメディアライブラリへの画像の追加（既存リソースの変更／上書きは含まない） |
-| `READ_MEDIA_AUDIO` | システムのメディアライブラリ内の音声の一覧表示と読み取り |
-| `CREATE_MEDIA_AUDIO` | システムのメディアライブラリへの音声の追加（既存リソースの変更／上書きは含まない） |
+| C1xxx | ハードウェアと表示 |
+| C2xxx | カメラと画像 |
+| C3xxx | オーディオ、音声、大規模モデル |
+| C4xxx | センサーと測位 |
+| C5xxx | 表示ランタイムとページ |
+| C6xxx | ストレージ、ファイル、ネットワーク |
+| C7xxx | 権限 |
+| C8xxx | インタラクションとホスト |
+| C9xxx | 配布と審査提出 |
 
-補足：審査提出の段階（Studio／ストア）には別途**宣言型のチェック項目**——ネットワーク、カメラ、マイク、スピーカー、Rokid アカウント情報など——があり、項目ごとに用途を記入する必要がある。リスト権限とは別の仕組みである。出典：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/bundle/publish.md
+検証状態は 4 種の値だけを使う。**文書**：公式文書の根拠だけがあり、実機ではまだ検証していない。**実機検証済み**：実機から返ってきた結果や挙動の証拠がある。**ビルド検証済み / Studio 検証済み**：パッケージングや Studio のフローの中で検証した。**検証待ち**：プローブは既にあるがデータが戻ってきておらず、プローブは第 4 節にある。バージョン規則：条目の追加または条目の結論の変化で MINOR を上げ、構造や規則の変化で MAJOR を上げ、文言の修正で PATCH を上げる。
 
----
+## 2. 総則
 
-## 3. インタラクションモデル
+総則は条目ではなく、シナリオの答えを導くときに条目と同等に適用される規則である。
 
-### 3.1 ウェイクアップ
+- **R1 クローズドループの位置づけ**（公式見解、2026-10-29）：Agent は本質的にクローズドループを完結させる。1 つの Agent は、自ら宣言した権限と呼び出し可能な API によって、自分の内部で 1 件の物事を入口から結果までやり遂げる。ループの外側にあるホストの能力、すなわちシステム設定、他の Agent、ホストの構成は、Agent には委ねられない。出典：公式回答。本レジストリのメンテナによる伝達。
+- **R2 リストこそが境界**：公式 API リファレンスは閉じたリストである。見つからない API、パラメータ、列挙値はすべて存在しないものとして扱い、ブラウザや WeChat ミニプログラムの慣習で仮定しない。
+- **R3 インタラクションゲート**：収集系と接続系の呼び出し（撮影、録音、ASR の開始、BLE 接続など）は、属するビューがインタラクティブな状態にあることを要求し、通常はユーザー操作によるトリガーも必要とする。インタラクティブでない状態での呼び出しはそのまま失敗する。リソースは使い終わったら解放しなければならない。マイクとカメラの track は stop し、BLE のスキャンと接続は切断し、watchPosition は clearWatch し、AudioContext は close する。
+- **R4 宣言は認可ではない**：権限を app.json に書くのは宣言にすぎず、システムは呼び出しの地点でなお拒否できる。コードは拒否される分岐を処理しなければならない。
+- **R5 シミュレータは実機ではない**：Web シミュレータではセンサーは模擬値であることが多く、性能と発熱は実機とは異なる。条目の検証状態が「文書」となっているものは、結論は実機での再検証を基準とする。
 
-- 製品レベルのウェイクワード：**"Hi Rokid"**。
-- ランタイムの `onVoiceWakeup(event)`：音声でもタッチでもトリガーできる；既知の `event.keyword` の値には `乐奇`（中国語のウェイクワード）、`Hi Rokid`、`clickAiAssist`（タッチによるウェイクアップ）がある。デフォルトでは keyword でフィルタしないこと；`event.preventDefault()` でホストのデフォルト動作を引き継げる。
+## 3. 条目
 
-### 3.2 テンプルのタッチとキーマッピング
+### 3.1 ハードウェアと表示
 
-ランタイムは**キーイベント**の形で配信する（`onKeyDown/onKeyUp` + `event.code`）。Rokid Glasses のマッピングは以下の通り：
+根拠：公式グローバル製品ページ https://global.rokid.com/products/b-h-rokid-glasses-with-display 。英国公式サイトの同じスペックで相互に裏付ける。
 
-| `event.code` | 意味 | デフォルト動作（onKeyUp の後） |
+| 番号 | プリミティブ | 結論 | 実測 |
+|---|---|---|---|
+| C1001 | メインチップ | Snapdragon AR1。製品ページには別に「デュアルチップ」のうたい文句があるが、公式スペック表には 2 つ目のチップの型番は載っていない | 文書 |
+| C1002 | メモリとストレージ | 2 GB / 32 GB | 文書 |
+| C1003 | 表示技術 | 両眼 Micro LED と回折導波路 | 文書 |
+| C1004 | 表示色 | モノクロ緑、単一の緑色発光チャネルであり、フルカラーではない | 文書 |
+| C1005 | パネル解像度 | 480 × 400、製品スペックとしての数値。ランタイムキャンバス C5002 の数値と併存する。未明事項の第 1 項を参照 | 文書 |
+| C1006 | 視野角 | 30° | 文書 |
+| C1007 | 輝度 | 1500 nits | 文書 |
+| C1008 | カメラハードウェア | 12 MP、写真 3024 × 4032、F2.25。センサーの型番とカメラの視野角は公式には公表されていない | 文書 |
+| C1009 | マイクハードウェア | 4 マイクアレイ | 文書 |
+| C1010 | スピーカー | デュアルリニア指向性ハイファイスピーカー | 文書 |
+| C1011 | バッテリーと充電 | 210 mAh。駆動時間は公式でも複数の数値があり、未明事項の第 4 項を参照。磁気吸着充電、20 分で 80% まで充電、充電ケースで約 10 回満充電できる | 文書 |
+| C1012 | ワイヤレス接続 | Wi-Fi 6、Bluetooth 5.3 | 文書 |
+| C1013 | 本体パラメータ | 49 g、IPX4。テンプル長 155.5 mm、ヒンジ間隔 146.3 mm、フレームは TR90 とチタン合金ヒンジ | 文書 |
+| C1014 | 度付きレンズ | 度数 +15 から −15 まで対応、公式の度付きレンズサービスと磁気吸着式の度付きフレーム | 文書 |
+| C1015 | カメラインジケータランプ | 対応し、撮影時に表示される | 文書 |
+| C1016 | オペレーティングシステム | 名称とバージョンは公式には公表されていない。ランタイムは Ink コンテナであることが分かっている。C5001 を参照 | 文書 |
+| C1017 | 製品レベルの本体機能 | リアルタイム翻訳 89 言語、AI アシスタント、通知、ナビゲーション、テレプロンプター、メモ、会議の文字起こしなどは、メガネのシステムと公式 App の機能であり、Agent が呼び出せる API ではない。Agent が使えるのは本表に登録されたプリミティブだけである | 文書 |
+
+### 3.2 カメラと画像
+
+根拠：`skill: references/apis/media.md`、`skill: references/apis/wx.md`。権限 C7002 が必要。
+
+| 番号 | プリミティブ | 結論 | 実測 |
+|---|---|---|---|
+| C2001 | ビデオストリーム getUserMedia | MediaStream を取得できる。制約は facingMode、width、height、frameRate、deviceId をサポートし、最終値は track の getSettings で読み取る | 文書 |
+| C2002 | 撮影 ImageCapture.takePhoto | エンコード済みの Blob を返す。モードは 3 種：wide はバーコードスキャン用の広角、telephoto は遠くの文字を読む用、default は通常撮影。ほかに quality、enableSystemPreview のオプションがある | 文書 |
+| C2003 | 撮影の出力サイズ | wide 2016 × 2688、telephoto 2016 × 1512、default 3024 × 4032。Blob 自体には幅と高さが含まれないため、createImageBitmap でデコードする必要がある | 文書 |
+| C2004 | フレーム取得 ImageCapture.grabFrame | 未エンコードの ImageBitmap 画素フレームを返す。使用後は close が必要 | 文書 |
+| C2005 | wx 撮影 CameraContext.takePhoto | ArrayBuffer と mimeType を返す。モード選択のパラメータはなく、モードは C2002 による。インタラクションゲートの呼び出し地点でトリガーしなければならない | 文書 |
+| C2006 | 録画 MediaRecorder | オーディオ・ビデオストリームを録画する。ビデオの mime は isTypeSupported での照会が基準で、判明しているのは video/webm;codecs=vp8,opus と video/mp4 | 文書 |
+| C2007 | バーコード検出 BarcodeDetector | 対応するコード形式はまず getSupportedFormats で調べる。detect の入力は ImageData、エンコード済み画像 Blob、ImageBitmap に限られ、format、rawValue、boundingBox、cornerPoints を返す | 文書 |
+| C2008 | OCR インターフェース | 存在しない。文字を読む道筋は telephoto 撮影と大規模モデルへの画像入力である。C3016 を参照 | 文書 |
+| C2009 | 持続フレームストリーム | 文書には持続的にフレームを取得する際の頻度の上限とバックグラウンドでの挙動が示されていない。getUserMedia ストリームと grabFrame の持続的な可用性はプローブで検証する。第 4 節を参照 | 検証待ち |
+| C2010 | 文字と顔の検出 | TextDetector、FaceDetector は存在せず、公式リストにこの条目は載っていない | 文書 |
+
+### 3.3 オーディオ、音声、大規模モデル
+
+根拠：`skill: references/apis/media.md`、`skill: references/apis/ai.md`。録音には権限 C7003 が必要。
+
+| 番号 | プリミティブ | 結論 | 実測 |
+|---|---|---|---|
+| C3001 | 録音ソース captureSource | microphone（マイク）または system-audio（システム音声の内部録音）。system-audio は echoCancellation や microphoneMode と組み合わせられず、組み合わせると OverconstrainedError になる。システム音声はマイクへ自動的にはフォールバックしない | 文書 |
+| C3002 | マイクモード microphoneMode | 4 種：wearer（着用者優先）、far-field（遠距離）、near-field（近距離）、omnidirectional（全方向）。getUserMedia の収集ストリームにだけ有効で、デバイスの対応は保証されず、非対応なら OverconstrainedError を返す。実際に効いている値は getSettings で読み取る | 文書 |
+| C3003 | マイクモードとホスト認識の関係 | モードは自分で収集したストリームにだけ作用し、ホストの音声認識には作用しない。ホスト認識はホストのマイクを使い、モード設定とは無関係である | 文書 |
+| C3004 | 録音エンコード MediaRecorder | オーディオは audio/wav、audio/ogg;codecs=opus に対応する | 文書 |
+| C3005 | wx 録音 RecorderManager | start、pause、resume、stop とフレームコールバック。既定のマイクを使い、ソースとモードを選ぶパラメータはない。モードを選びたい場合は C3001、C3002 を使う | 文書 |
+| C3006 | 音声合成 speechSynthesis.speak | 直接合成して再生し、ランタイムの統一プレーヤーのキューを通る。mode は enqueue（既定）または immediate | 文書 |
+| C3007 | 音声合成 speechSynthesis.synthesize | 生成だけを行い再生せず、abort 可能なタスクを返す。オプションには字幕の粒度 none、sentence、word、オーディオ形式 pcm、mp3、ogg_opus、サンプリングレート、チャネル数、ビットレートが含まれ、SpeechAudioPlayer と組み合わせて独立に再生する | 文書 |
+| C3008 | 合成音声の音色 | 固定の音色 ID が計 11 個：female-tianmei、English_radiant_girl、English_expressive_narrator、male-qn-qingse、male-qn-jingying、female-yujie、Chinese (Mandarin)_News_Anchor、Chinese (Mandarin)_Radio_Host、clever_boy、lovely_girl、English_Trustworthy_Man。getVoices はない | 文書 |
+| C3009 | 合成の制御面 | utterance の lang 属性は効かず、生成言語は変わらない。cancel、pause、resume はない。pitch、rate、volume の既定値はいずれも 1 | 文書 |
+| C3010 | wx 読み上げ wx.speech.playTTS | 1 文の読み上げで、リクエスト ID の文字列を返し、失敗すると空文字列を返す | 文書 |
+| C3011 | 音声認識 SpeechRecognition | ホストのマイクで認識する。属性は lang、continuous、interimResults、maxAlternatives。start はビューがインタラクティブな状態を保っていることを要求し、そうでなければ InvalidStateError になる。lang が空のときはホストが既定言語を選ぶ | 文書 |
+| C3012 | 音声認識 SpeechRecognitionSession | 外部オーディオストリームを認識し、セッション自体はマイクを開かない。ホットワード phrases と boost、セグメンテーション auto、vad、semantic、updateContext による動的コンテキストに対応する。使用前に getCapabilities でホストの実際の能力を調べる | 文書 |
+| C3013 | 認識エラーのカテゴリ | error イベントのエラーカテゴリの値について、公式は列挙表を示していない。カテゴリ別にエラー処理を分けるのは未検証の仮定であり、依存してはならない | 文書 |
+| C3014 | 大規模モデルの可用性 LanguageModel.availability | available または unavailable だけを返し、提供元、モデルのリスト、エンドポイントは公開されない | 文書 |
+| C3015 | 大規模モデルセッション LanguageModel.create | 基盤はホストの OpenAI 互換 chat-completions ストリーミングチャネルである。モデルの解決順序は明示した model、ホストの defaultModel の順。system は initialPrompts の先頭の 1 件にしか置けない | 文書 |
+| C3016 | 大規模モデルのマルチモーダル入力 | user メッセージの content 配列は text と image_url に対応し、画像は data: URL でもよい。構造化された content は user ロールに限られる | 文書 |
+| C3017 | 大規模モデルのツール呼び出し | tools は提供元のリクエストボディへ転送される。呼び出しはセッションの toolcall イベントで返ってきて、callId、functionName、arguments を含む。自動では実行されず、構造化された往復プロトコルの保証はない | 文書 |
+| C3018 | 大規模モデルのリクエスト prompt と promptStreaming | ストリーミングはポーリング式の read であり、WHATWG Stream でも async iterator でもない。同一セッションでは進行中のリクエストは同時に 1 つだけ。destroy 後は使えない | 文書 |
+| C3019 | オーディオ再生 AudioPlayer | 汎用プレーヤーで、ローカルパッケージ内のファイルまたはネットワーク URL を扱う。pcm、ogg_opus のストリーミング append 再生と字幕テキストトラックに対応する | 文書 |
+| C3020 | 効果音 Sound | ローカルの効果音の短い再生で、ローカルファイルだけを受け付け、http と https の URL は拒否する | 文書 |
+| C3021 | Web Audio | AudioContext と createBuffer、Oscillator、Gain、BiquadFilter、Analyser、MediaStreamSource、decodeAudioData などが使え、波形とスペクトラムの解析ができる | 文書 |
+
+### 3.4 センサーと測位
+
+根拠：`skill: references/apis/device.md`、`skill: references/apis/geo/geolocation.md`、公式 IMU ガイド。測位には権限 C7001 が必要。
+
+| 番号 | プリミティブ | 結論 | 実測 |
+|---|---|---|---|
+| C4001 | 加速度計 Accelerometer | 3 軸加速度 x、y、z と timestamp。イベントは activate、reading、error。コンストラクタパラメータ frequency はホストへのベストエフォートのヒントにすぎない | 文書 |
+| C4002 | ジャイロスコープ Gyroscope | 3 軸角速度 x、y、z と timestamp。イベントと frequency の意味は C4001 と同じ | 文書 |
+| C4003 | 絶対方位 AbsoluteOrientationSensor | 絶対方位のクォータニオン quaternion [x, y, z, w] と timestamp。可用性はデバイスのハードウェア対応に依存する | 文書 |
+| C4004 | サンプリングレートの保証 | 最高頻度と精度について公式に公表された数値はない。公式ガイドの例では 60 を使い、30 から 60 Hz で始めることを勧めている | 文書 |
+| C4005 | その他のセンサーインターフェース | 地磁気、光、近接の各センサーには単独の API はなく、公式リストには現れていない | 文書 |
+| C4006 | 頭部ジェスチャ onHeadGesture | Page の中で enableWorldAwareness を有効にする必要がある。公式の例にあるジェスチャ値は nod（うなずき）だけで、完全な列挙は公表されていない。未明事項の第 8 項を参照 | 文書 |
+| C4007 | 頭部の安定イベント onOrientationStabilityChange | 同じくワールドアウェアネスの有効化が必要。event.stable が頭部の安定性の変化を表す | 文書 |
+| C4008 | アイトラッキング | 存在しない。いわゆる視線は、頭部の向き C4003 と頭部の安定 C4007、うなずき C4006 で実現する | 文書 |
+| C4009 | 測位 geolocation | getCurrentPosition と watchPosition があり、clearWatch で解放する。coords には latitude、longitude、accuracy（メートル）と、null になりうる altitude、altitudeAccuracy、heading、speed が含まれる。オプションは enableHighAccuracy（既定 false）、timeout、maximumAge。エラーコードは 1 が拒否、2 が利用不可、3 がタイムアウト | 文書 |
+| C4010 | GPX GPXDocument | GPX ルートの解析、作成、エクスポート：setStartPoint、addWaypoint、appendTrackPoint、toString、toBlob。map と map-gpx コンポーネントと組み合わせて軌跡を表示する | 文書 |
+| C4011 | Bluetooth BLE | セントラル側の役割：getAvailability、getDevices、requestDevice、scanDevices（Ink 独自）、GATT connect、readValue、writeValue、startNotifications。requestDevice、scanDevices、connect、startNotifications はビューがインタラクティブな状態であることを要求する | 文書 |
+| C4012 | Bluetooth のペリフェラルとアドバタイズ | 存在せず、公式リストに peripheral 能力は載っていない | 文書 |
+
+### 3.5 表示ランタイムとページ
+
+根拠：`skill: references/framework.md`、`skill: references/apis/window.md`、`skill: references/apis/canvas.md`、`skill: references/events.md`、公式ランタイム環境ドキュメント。
+
+| 番号 | プリミティブ | 結論 | 実測 |
+|---|---|---|---|
+| C5001 | ランタイム Ink | 論理層とビュー層は QuickJS と Skia で構築された独自コンテナ Ink の中で動く。ES2023、ESM | 文書 |
+| C5002 | 基準キャンバス | フルスクリーン Page の基準キャンバスは 480 × 352。安全マージンは左右 16 px、上下 12 px で、有効なコンテンツ幅は 448 px | 文書 |
+| C5003 | モノクロ緑の設計制約 | 基調色 #40ff5e、6 段階の輝度ステップ。黒は透明な背景と等しく、不透明な黒いパネルで現実を遮ることは期待できない。意味を色だけで担わせてはならず、アイコン、文字、線種を重ねる。本文の輝度は 72% 以上、装飾線は 24% 以下が推奨され、重要な情報は中央の快適な視野に置く | 文書 |
+| C5004 | ビューポートサイズ | window.innerWidth、innerHeight は読み取り専用の論理ピクセル | 文書 |
+| C5005 | Widget のサイズ | サイズファミリーは 1x1 が 239 × 140、1x2 が 480 × 140。メガネには Widget のグリッド位置が計 4 つある。family はサイズのカテゴリにすぎず、ルートノードをそのピクセル値に固定して書くことは禁止されている | 文書 |
+| C5006 | 画面を開く window.open | app.json に宣言済みの Widget だけを開ける。target は _widget のみで、overlay の重ね表示に対応する。他の Page や外部 URL は開けない | 文書 |
+| C5007 | インスタンスを閉じる window.close | ホストに現在の Agent インスタンスを閉じるよう要求する | 文書 |
+| C5008 | Agent 間のジャンプ | 存在しない。公式リストに openAgent の類の条目はなく、wx.navigateTo は自 Agent 内のページに限られる。総則 R1 を参照 | 文書 |
+| C5009 | ホスト設定ページを開くこと | 到達できない。そのような API はなく、「何々 の設定を開く」類のインテントは、ホストがアプリケーション自体を開くところまでしか実行しない。総則 R1 を参照 | 文書 |
+| C5010 | プロジェクト構成 | app.json と app.js と AGENTS.md と pages。ページは .ink の単一ファイル、または .json、.wxml、.wxss、.js の 4 点セット。任意で widgets、workers、components、assets | 文書 |
+| C5011 | 組み込みコンポーネント | 記述できるタグは計 37 個で、コンテナ、テキスト、フォーム、メディア、地図、キャンバス、チャートと、AI 生成 UI の a2ui を含む | 文書 |
+| C5012 | Agent Worker | UI のないスクリプトで、open でトリガーされる。lifetime は instant または foreground で、background は予約されているが無効。タイマー、Promise、Crypto、Wasm、エンコーディングストリームがある。window、document、fetch、ルーティング、レンダリング、メディア収集はない | 文書 |
+| C5013 | 言語とモジュール | TypeScript のエントリと WebAssembly モジュールに対応し、プロジェクトのパッケージングフローを通る | 文書 |
+| C5014 | Canvas 2D | パス、矩形、measureText を含むテキスト、変換、グラデーション、パターン、drawImage は引数 3、5、9 個の 3 形式のみ。色の解析は #rrggbb、#rgb、rgb、rgba と少数の名前付き色のみ。出力は convertToBlob と createImageBlob を通り、canvas.toDataURL は存在しない | 文書 |
+| C5015 | WXML テンプレート | template は未対応 | 文書 |
+| C5016 | 会話フローカード | 既定では表示のみ。インタラクティブな画面にはフルスクリーン Page または Widget が必要 | 文書 |
+| C5017 | デバイス情報 navigator | id は Agent とデバイスに結びついた不透明な ID で、認証情報として扱ってはならない。userAgent と versions.ink、versions.skia がバージョン文字列を与える。language、languages、region は空の場合がある。onLine と connection がオンライン状態と接続の推定値を与える。renderingEnabled は現在のインスタンスがレンダリングできるかどうかを表す | 文書 |
+| C5018 | バッテリー getBattery | Promise を返す BatteryManager。ホストにバッテリー能力がない場合は Promise が拒否される。詳細の文書は不完全で、未明事項の第 9 項を参照 | 文書 |
+| C5019 | シリアル番号とトークン | getDeviceSerialNumber と requestDeviceToken はシステムレベルの Agent だけが使え、通常の Agent では空文字列が返るか、依存してはならない | 文書 |
+| C5020 | グローバルなエンコードツール | window.atob、btoa とグローバルの createImageBlob が使え、createImageBlob は PNG、JPEG のエンコードを行う | 文書 |
+
+### 3.6 ストレージ、ファイル、ネットワーク
+
+根拠：`skill: references/apis/web.md`、`skill: references/apis/wx.md`、公式ネットワークガイド。
+
+| 番号 | プリミティブ | 結論 | 実測 |
+|---|---|---|---|
+| C6001 | ローカルストレージ localStorage | 現在の Agent に隔離された文字列 KV：getItem、setItem、removeItem、clear | 文書 |
+| C6002 | wx ストレージ | setStorage、getStorage、removeStorage、clearStorage と Sync の同期版。データは JSON でシリアライズされる | 文書 |
+| C6003 | StorageManager navigator.storage | 文書には「永続ファイルストレージへの入口」の 1 文だけがあり、メソッドの詳細は示されていない。未明事項の第 10 項を参照 | 文書 |
+| C6004 | 汎用ファイルシステム | 存在しない。リソースはすべてプロジェクト内パスから解決され、任意パスの読み取り、書き込み、ディレクトリ一覧のインターフェースはない | 文書 |
+| C6005 | FileReader | 存在せず、実機では必ず FileReader is not defined が投げられる。Blob から dataURL への変換は blob.arrayBuffer と分割した btoa で行う。関連エラーコード E2005 | 実機検証済み |
+| C6006 | 存在しないブラウザ API | 以下はいずれも Ink ランタイムには存在せず、コードに書けば誤りになる：sessionStorage、XMLHttpRequest、URL.createObjectURL、DOMParser、structuredClone、queueMicrotask、Notification、クリップボード API、IntersectionObserver、MutationObserver、ServiceWorker、new Worker、OffscreenCanvas、getDisplayMedia、applyConstraints、getVoices、navigator.permissions | 文書 |
+| C6007 | fetch と Web の機構 | fetch、Headers、body のストリーミング読み取りを含む Response、WebSocket、File、FormData、URL と URLSearchParams、Streams 一式が使える | 文書 |
+| C6008 | wx ネットワーク | wx.request のタイムアウトの解決順序は options.timeout、app.json の設定、既定 60000 ms の順。wx.createSocket、connectSocket、SSE 用の wx.createEventSource | 文書 |
+| C6009 | Web Crypto | randomUUID、getRandomValues（上限 65536 バイト）が使える。subtle は SHA-1、256、384、512 のダイジェストと HMAC のみ。暗号化、復号、RSA、ECDSA、JWK は未対応 | 文書 |
+| C6010 | スマートフォン経由のプロキシ接続 | メガネが Wi-Fi に接続していないときでも、Bluetooth でスマートフォンの App とつながっていれば、fetch と wx.request は自動的にスマートフォンのリンク経由で転送されてインターネットに出る。開発者には透過的である | 文書 |
+| C6011 | HTTPS とドメインのホワイトリスト | 本番環境でのネットワークリクエストは HTTPS でなければならない。ストアへ公開する前に、リクエスト先ドメインを開発者バックエンドでホワイトリストに登録する必要がある | 文書 |
+| C6012 | LAN への直接接続 | 未対応。公式ガイドでは開発中とされ、ドキュメント目次には unsupported と記されている | 文書 |
+| C6013 | データのプリフェッチ | prefetch は未対応 | 文書 |
+| C6014 | ソースマップによるデバッグ | 未対応 | 文書 |
+
+### 3.7 権限
+
+根拠：公式 framework ドキュメント app-json.md の権限表。2026-10-29 の全量監査で訂正した。計 7 個で、名称は大文字小文字を区別し、認識されない名称はいかなる能力も付与しない。あわせて C7008 の上流側の不整合に注意する。
+
+| 番号 | プリミティブ | 結論 | 実測 |
+|---|---|---|---|
+| C7001 | 権限 GEOLOCATION | 現在位置の取得と位置変化の監視。C4009 を参照 | 文書 |
+| C7002 | 権限 CAMERA | カメラへのアクセス、画像や動画の撮影。3.2 節を参照 | 文書 |
+| C7003 | 権限 RECORD_AUDIO | マイクへのアクセスとオーディオの収集。ASR のマイク開始もこれに依拠し、独立した ASR 権限はない。旧 SPEECH_RECOGNITION は Ink 0.19 で削除された | 文書 |
+| C7004 | 権限 READ_MEDIA_IMAGES | システムのメディアライブラリ内の画像を列挙し読み取る | 文書 |
+| C7005 | 権限 CREATE_MEDIA_IMAGES | システムのメディアライブラリへ画像を新規追加する。既存リソースの変更と上書きは含まない | 文書 |
+| C7006 | 権限 READ_MEDIA_AUDIO | システムのメディアライブラリ内のオーディオを列挙し読み取る | 文書 |
+| C7007 | 権限 CREATE_MEDIA_AUDIO | システムのメディアライブラリへオーディオを新規追加する。既存リソースの変更と上書きは含まない | 文書 |
+| C7008 | 権限リストの文書上の口径 | aiui-dev skill の framework リファレンスには今も最初の 3 つの権限しか載っておらず、上流ドキュメント内部の不整合である。framework の正式ドキュメントの 7 名を基準とする | 文書 |
+
+### 3.8 インタラクションとホスト
+
+根拠：`skill: references/events.md`、Hi Rokid App 内蔵の操作ガイド（ジェスチャ部分。実機の挙動はこちらを基準とする）。
+
+| 番号 | プリミティブ | 結論 | 実測 |
+|---|---|---|---|
+| C8001 | ウェイクアップ onVoiceWakeup | 音声でもタッチでもトリガーできる。event.keyword の判明している値：乐奇、Hi Rokid、clickAiAssist（タッチによるウェイクアップ）。既定では keyword でフィルタしない。event.preventDefault でホストの既定動作を引き継げる | 文書 |
+| C8002 | キーイベント | Page の onKeyDown、onKeyUp は event.code で振り分けられる：Enter が確定、Backspace が戻る、ArrowUp と ArrowDown がスクロール、GlobalHook がテンプルタッチ専用のデバイス信号。ホストの既定動作は onKeyUp の後に発動する | 文書 |
+| C8003 | 1 本指のシングルタップ | 確定、Enter に対応 | 文書 |
+| C8004 | 1 本指のダブルタップ | 戻る、Backspace に対応。戻るページがない場合は Agent を閉じるよう要求する | 文書 |
+| C8005 | 1 本指のスワイプ | スクロール、ArrowUp、ArrowDown に対応。スクロール方向は App で変更できる | 文書 |
+| C8006 | 1 本指の長押し | アシスタントを起こす。App でメガネの AI アシスタントかスマートフォンのアシスタントかを選べる | 文書 |
+| C8007 | 2 本指のダブルタップ | 画面消灯 | 文書 |
+| C8008 | 2 本指の前後スワイプ | 音量の増減。既定ではこの割り当てで、App で変更できる | 文書 |
+| C8009 | 2 本指長押し AI クイックコマンド | 選んだトリガー対象へ固定の指令を 1 件送る。テキストの上限は 500 字。トリガー対象には特定のカスタム Agent やデバッグ Agent を選ぶことができ、すなわち ASR を介さず、固定テキストを決定的に指定した Agent へ届ける | 実機検証済み |
+| C8010 | シーン別ジェスチャ | 音楽シーン：シングルタップで再生または一時停止、前後スワイプで曲の切り替え。通話シーン：着信時のダブルタップで拒否、通話中のシングルタップでミュートの切り替え、ダブルタップで通話終了 | 文書 |
+| C8011 | クリックだけをバインドしたボタン | bindtap だけをバインドしたボタンは、メガネ上ではジェスチャでトリガーできない。ページはキーと動作の対応付けを自前で行わなければならず、ボタンのクリックだけに頼ることはできない | 実機検証済み |
+| C8012 | 音声ウェイクアップの失敗する層 | 固定文型によるウェイクアップの失敗は、音声認識の転写の層で起きるもので、テキストが正しく転写された後のマッチングの層ではない。Agent 名を短くしたり整えたりしても転写を緩和できるだけで、回避はできない。決定的な入口は C8009 を参照 | 実機検証済み |
+| C8013 | スマートフォンのコンパニオン App の役割 | ネットワークプロキシは C6010 を参照。そのほか、デバイス管理と設定、メディア管理、AI 機能の入口、メガネ用リソースパッケージの配布を担う | 文書 |
+
+### 3.9 配布と審査提出
+
+根拠：公式の公開ドキュメント publish.md、AIX ドキュメント。インポートの挙動はメンテナが 2026-10-24 に Global AIUI Studio で実測したものである。
+
+| 番号 | プリミティブ | 結論 | 実測 |
+|---|---|---|---|
+| C9001 | 配布形式 AIX | AI eXecutable で、Open Agent Format に準拠し、コード、構成、静的リソースを自己完結で含む。パッケージング時に一意な UUID の VERSION ファイルが自動生成され、バージョン検証に使われる | 文書 |
+| C9002 | パッケージサイズの上限 | 公式には数値が公表されていない | 文書 |
+| C9003 | パッケージング除外 .aixignore | .agents、.aix、artifacts、*.aix、skills-lock.json、node_modules を除外しなければならず、除外しないと開発用ファイルがパッケージに入り、実測では 2.3 KB から 107 KB へ膨らみうる | ビルド検証済み |
+| C9004 | Studio のインポート挙動 | インポートダイアログには URL 入力欄が 1 つだけある。/tree/ より後ろの内容は全体が 1 つの ref として扱われ、サブディレクトリのアドレスではインポートに失敗する。リポジトリのルートのアドレスでインポートすると空のコードツリーが得られる。1 セグメントのブランチ名で、ブランチのルートに 1 つの Agent の全ファイルを置くと、完全なプロジェクトとしてインポートに成功する | Studio 検証済み |
+| C9005 | 審査提出のレッドライン | 名称は必須で 20 文字以内、他者と重複してはならず、テストや test、beta などの語と最上級の表現を含んではならない。アイコンは必須で既定アイコンは使えない。機能紹介は 500 文字以内。オープニングメッセージは必須で 300 字以内が推奨される。プレビュー素材は 3 から 5 ファイルで、少なくとも画像 1 点と動画 1 点を含み、動画は 60 秒以内。各権限について用途を 1 件ずつ明記する | 文書 |
+| C9006 | 審査提出の申告チェック | Studio の審査提出には別に申告系のチェック項目がある：ネットワーク、カメラ、マイク、スピーカー、Rokid アカウント情報など。3.7 節のリスト権限とは別の体系である | 文書 |
+| C9007 | 公開フロー | ビルド、Web シミュレーション、AIX パッケージングとクラウドへのアップロード、実機デバッグ、審査提出資料の整備、審査への提出 | 文書 |
+| C9008 | バージョンと ID の生成 | バージョン番号と Agent ID はいずれもシステムが生成し、開発者は編集できない | 文書 |
+
+## 4. 未検証プローブ
+
+プローブは条目を検証するために作られた検証装置である。本節にはプローブと、それが答えるべき条目番号だけを登録する。プローブのデータがそろったら、結論を対応する条目に書き戻してその検証状態を更新し、本節の該当行は削除する。
+
+| プローブ | 検証する条目 | 状態 |
 |---|---|---|
-| `Enter` | 確定／アクティブ化 | ナビゲーションモードに入る、または現在のターゲットをアクティブ化 |
-| `Backspace` | 戻る | 一つ前の階層へ戻る；戻るページがない場合はエージェントの終了を要求 |
-| `ArrowUp` / `ArrowDown` | 上／下方向 | 現在のナビゲーションパス内で移動、またはルートビューをスクロール |
-| `GlobalHook` | **テンプルのボタンタッチ**に対するデバイス固有の信号（標準の Web キー値ではない） | デフォルト動作なし；ドキュメントでは onKeyDown でのみ高速応答に使い、戻る／確定の区別には Backspace/Enter を使うことが推奨されている |
+| 能力ベンチマーク Agent、23 項目で基盤を 1 件ずつ測る | C2002、C2004、C3002、C3011、C4001 から C4007、C5002 など | 構築済み、実機での再検証は未完了 |
+| 映像・音声キャプチャシリーズ 10 Agent、それぞれ 1 件の映像・音声境界を担う | C2002、C2004、C2006、C2007、C3001、C3002、C3021 | 構築済み、ハードウェアチェーンは実機データの戻り待ち |
+| ストップモーション Agent とログ返送クライアント | C6005 の再検証；エラーログを外部チャネルで返送することの実現可能性 | 構築済み、実機で 1 ラウンド回すのを待っている |
+| なぞり書きプローブ、結印と手話の 2 件 | C3016 画像入力による静止画判定の可用性と命中率 | 構築済み、正式版への収録は実機データで決める |
+| 連続ビデオストリームプローブ | C2009 | 企画済み、未実行 |
+| 認識エラーカテゴリの収集 | C3013 | 実機で各種類のエラーを起こした後に原文と照合する |
 
-製品側の補足：製品ページには "Quick Action Shortcuts — Tap to launch the features you use most"（テンプルをタップしてよく使う機能をクイック起動）と独立した撮影操作（"One word or one press" で撮影）があると記されている。
+## 5. 未明点と矛盾
 
-### 3.2.1 テンプルタッチパッド完全ジェスチャ表（実機で実証、Hi Rokid App「操作ガイド」）
+以下は条目ではない。公式ソース自体の食い違い、あるいは公式が示していない点であり、関連する条目の下にぶら下げてある。公式の見解か検証で明らかになったら、条目に取り込むか削除する。
 
-出典：Hi Rokid App 内蔵の操作ガイド（実機の挙動であり、これを正とする；タッチ位置はテンプルの中段）。これは §3.2 のキーイベントに対する製品レイヤーの完全なマッピングであり、ランタイムの `Enter`/`Backspace`/`ArrowUp/Down` の発生源はこれらのジェスチャである。
-
-**1 本指のインタラクション（汎用）**
-
-| ジェスチャ | システムの挙動 | ランタイム対応 |
-|---|---|---|
-| シングルタップ | 確定 | `Enter` |
-| ダブルタップ | 戻る | `Backspace` |
-| タッチパッド長押し | アシスタントを起動（App で「メガネ AI アシスタント（デフォルト）」または「スマートフォンアシスタント」を選択可能） | `onVoiceWakeup`（keyword `clickAiAssist`） |
-| スワイプ | 前方向スクロール（方向は App で変更可能） | `ArrowUp` / `ArrowDown` |
-
-**1 本指・シナリオ別**：音楽——ホーム画面でのシングルタップ = なし；音楽アプリ内でのシングルタップ = 再生／一時停止；前／後スワイプ = 次の曲／前の曲。通話——着信中のダブルタップ = 拒否；通話中のシングルタップ = ミュート／ミュート解除；通話中のダブルタップ = 終話。
-
-**2 本指のインタラクション（2 本指を開いてテンプル中段に触れる）**
-
-| ジェスチャ | システムの挙動 |
-|---|---|
-| ダブルタップ | 画面オフ |
-| 長押し | **AI クイック指令**：選択した「トリガー対象」へ固定の指令を送信する（下記参照） |
-| 前後スワイプ | 音量の増減（デフォルト、変更可能） |
-
-**AI クイック指令（2 本指長押し）**：App でオン／オフ可能；指令はプリセット（「看一下面前这是什么」「拍照翻译成中文」「今天天气」）から選ぶか、カスタムテキスト（500 字まで）が使える。重要な点：**トリガー対象には特定のカスタム／デバッグ Agent を選べる**——すなわち 2 本指長押し = ASR ゼロで、決定的に固定テキストを指定した Agent へ届ける手段であり、音声ウェイクアップの誤認識を回避するハードウェアレベルの入口である（実機で動作確認済み）。
-
-
-### 3.3 「注視」とは実際には何か：頭部の向きであり、アイトラッキングではない
-
-**結論：AIUI にアイトラッキング（eye tracking）API はない；いわゆる「注視」は頭部の姿勢で実現される。**
-
-根拠：
-1. 公式 API リファレンス（skill の全 apis ファイル）には、アイトラッキング／視線座標の API は一切存在しない；全文検索でも eye-tracking に関する項目はない。
-2. 指向能力は IMU が提供する：`AbsoluteOrientationSensor` が頭部の向きのクォータニオンを与える（2.7）。
-3. ワールド認識コールバックは 2 つのみ：`onHeadGesture(event)`（ドキュメント化されたジェスチャ値の例は `'nod'` うなずき）と `onOrientationStabilityChange(event)`（頭部の安定性の変化）——すなわち「対象を見て頭を静止させる → トリガー」というインタラクションパラダイムは**頭部の静止検出**に依拠しており、公式の例もまさに `event.gesture === 'nod'` のときに確定するものである。出典：`skill: references/events.md`
-4. 製品ページとドキュメントは、アイトラッキング用ハードウェアを謳ったことがない；仕様表のセンサーは "IMU: Supported" とのみ記載。
-
-したがって：「注視」系インタラクションの開発 = 頭部の向き（クォータニオン／方向）+ 頭部静止イベント + うなずきによる確定。**首振り（shake）など他のジェスチャ値は公式ドキュメントに列挙されていない**——`onHeadGesture` の完全なジェスチャ列挙は公式未公表である（第 5 節を参照）。
-
-### 3.4 音声インタラクションのフロー
-
-
-ウェイクワード／タッチウェイクアップ → `onVoiceWakeup` → Agent 内で `SpeechRecognition`（ホスト認識）または `SpeechRecognitionSession`（自前の音声ストリーム）による ASR → `LanguageModel` セッション推論（画像入力も可）→ `speechSynthesis.speak/synthesize` または `AudioPlayer` による読み上げ。会話フローカード（conversation-flow card）はデフォルトでは**表示のみ**であり、インタラクティブな UI には全画面 Page または Widget が必要である（`skill: SKILL.md` Core Rules）。
-
-### 3.5 スマートフォンコンパニオンアプリの役割
-
-
-- ネットワークプロキシ：メガネに Wi-Fi がないとき、Bluetooth 経由でスマートフォンアプリ（海外版 **Hi Rokid**、パッケージ名 `com.rokid.sprite.global.aiapp`）を介して通信する（2.13）。
-- デバイス管理とリソース配信：メガネの接続／管理、設定の調整、メディアの管理、AI 機能の入口（翻訳／字幕／プロンプター／デバイス制御）——製品ページ FAQ。
-- Agent の配信チェーン：Studio でパッケージしてクラウドへアップロード → App がメガネのリソースパッケージを更新 → メガネ側で実行（本プロジェクトの既定フロー；公式ガイドの公開フローは「ビルド → Web シミュレーション → AIX パッケージをクラウドへアップロード → 実機デバッグ」、出典：publish.md）。
-
----
-
-## 4. プラットフォームの制限と制約（開発者の視点）
-
-### 4.1 ディスプレイ／UI の制約
-
-- 単一のグリーンチャネル：可視ピクセルはすべて同一のグリーンの異なる輝度でしかない（基調色 `#40ff5e`、6 段階の輝度階調）；**黒 = 透明な背景**であり、不透明な黒いパネルで現実の環境を遮蔽することは期待できない。
-- 意味を色だけに依存させてはならない：状態／重要度にはアイコン、テキストラベル、線種、アニメーションなどの冗長な符号化を重ねる必要がある。
-- 基準キャンバス 480 × 352、重要な情報は中央の快適な視野内に収めること；本文テキストの輝度は 72% 以上を推奨、装飾線は 24% 以下。
-
-### 4.2.aix パッケージの制約
-
-- AIX = "AI eXecutable"、AIUI が定義する独自の配布フォーマットで、内部は OAF（Open Agent Format）規範に準拠し、コード（WXML/WXSS/JS）、設定（JSON）、静的リソースを自己完結的に含む。
-- パッケージング時に一意の UUID を持つ `VERSION` ファイルが自動生成され、バージョン検証／ホットアップデートに使われる；パッケージングは PNG/JPEG 圧縮と JSON の難読化圧縮に対応。
-- **パッケージサイズの上限：公式未公表**（調査したドキュメントに数値なし）。
-- プロジェクト側のレッドライン：`.aixignore` で `.agents/`、`.aix/`、`artifacts/`、`*.aix`、`skills-lock.json`、`node_modules/` を必ず除外すること。さもなければ開発ファイルがパッケージに入る（実測 2.3 KB → 107 KB）。出典：本プロジェクトのルート README（リポジトリ sakai55/rokid）。
-
-### 4.3 AIUI が明確に公開しない／対応しない機能
-
-| 機能 | 状態 | 根拠 |
-|---|---|---|
-| **OCR（文字認識）API** | **存在しない** | 公式 API リファレンスの全リスト（skill apis ディレクトリ）と公式ドキュメント目次に OCR の項目はない；「文字を読む」ための公式の経路は telephoto 撮影 + LLM 画像入力（2.3 / 2.9） |
-| アイトラッキング | 存在しない | 3.3 を参照 |
-| LAN 直接接続通信 | 非対応（開発中） | 公式ネットワークガイド + ドキュメント目次 `lan: status unsupported` |
-| データのプリフェッチ prefetch | 非対応 | ドキュメント目次 `prefetch: status unsupported` |
-| Source map デバッグ | 非対応 | ドキュメント目次 `sourcemap: status unsupported` |
-| WXML `<template>` | 非対応 | ドキュメント目次に unsupported と標記 |
-| Agent Worker のバックグラウンド常駐 | 非対応 | `lifetime: 'background'` は予約済みで無効；Worker には fetch もない |
-| Web Crypto の暗号アルゴリズム | SHA ダイジェスト + HMAC のみ | `skill: references/apis/web.md` に RSA/ECDSA/暗号化・復号/JWK は非対応と明記 |
-| TTS の言語切り替え | `lang` 属性が効かない | `skill: references/apis/ai.md` に明記 |
-| TTS のキュー制御 | cancel/pause/resume/getVoices なし | 同上 |
-| 汎用ファイルシステム | 任意パスへのファイル API なし | 2.12 |
-| デバイスのシリアル番号／トークン | システムレベルエージェントのみ | 2.1 |
-| LLM プロバイダ情報 | availability() は提供しない | 2.9 |
-
-### 4.4 審査／公開の制約
-
-> 注意：この公式ドキュメントが記述するのは **Rokid Ai エージェントストア（中国大陸）** への公開フローである；Global 版は Global AIUI Studio の Submit タブから行い、要求は概ね一致する（本プロジェクトで実測）。
-
-- 名称：必須、20 文字以内、他者と重複不可、「测试/test/beta」、価格・販促、極端な表現を含めてはならない；コピーでは「官方/权威/推荐/TOP1」などの示唆的な語や「100% 准确」のような絶対的な訴求は禁止。
-- アイコン：必須かつ**デフォルトアイコンは使用不可**、ぼやけ／引き伸ばし／透かし・QR コード入り／単色＋文字のみは不可。
-- 機能紹介は 500 文字以内；オープニングメッセージは必須、300 字以内を推奨；バージョン番号と Agent ID はいずれもシステムが生成し、開発者は編集できない。
-- 権限：実際に使用するすべての権限を正直にチェックし、項目ごとに用途を明記すること。「最小限必要 + 用途の真実性」に従う；未宣言なのに呼び出す、説明が曖昧、コードの挙動と一致しない場合は却下され得る。
-- プレビュー素材：**3–5 ファイル**が必須、画像 1 点以上 + 動画 1 本以上；画像は JPG/PNG（1:1 を推奨）、動画は MP4（1:1 を推奨）、長さ 60 秒以内（15–45 秒を推奨）、単一ファイル 50 MB 以下を推奨；動画では 1–2 個のコアフローを完全にデモすること。
-- コンテンツ安全：UGC には安全フィルタが必要；AI 生成・合成コンテンツには法令に従い標識を付すこと；エージェントは正常に起動、インタラクション、復帰ができ、頻繁にクラッシュしてはならない。
-- フロー：ビルド → Web シミュレーション → AIX パッケージをクラウドへアップロード → 実機デバッグ → 審査資料の整備 → 審査提出 → 結果（却下の場合は修正して再パッケージのうえ再提出；承認後はストアに公開）。
-
-### 4.5 ランタイムとインタラクティブゲートの制約
-
-- **インタラクティブゲート（interactive gate）**：BLE の requestDevice/scanDevices/connect/startNotifications、SpeechRecognition.start、RecorderManager.start、CameraContext.takePhoto、getUserMedia による収録などはいずれも、所属ビューがインタラクティブ状態にあることを要求し、通常はユーザー操作によるトリガーも必要である；非インタラクティブ状態での呼び出しは直接エラー／失敗となる。
-- リソースのライフサイクル：マイク／カメラの track は使い終わったら必ず stop；BLE スキャンは停止し、GATT は切断する；watchPosition は clearWatch；AudioContext は close する。公式チェックリストではこれらが納品のレッドラインとされている（`skill: references/checklist.md`）。
-- シミュレータ ≠ 実機：DevTools 内のセンサーは多くが模擬値であり、性能／発熱／スロットリングは実機と異なる。公式は実機を正とするよう要求している（env.md）。
-
----
-
-## 5. 矛盾と未確認事項
-
-1. **ディスプレイ解像度の口径の不一致**：公式製品仕様表には **480 × 400** とある；AIUI の設計規範と Widget サイズファミリーは **480 × 352** の基準キャンバスに基づく（1x2 Widget の幅 480 もこれと一致）。いずれも公式ソースである——480×400 がパネルの物理解像度、480×352 がランタイムの安全キャンバスと推測されるが、公式はこの説明をしていない。
-2. **FOV に関する第三者の説**：非公式のレビュー（Notebookcheck など）は 23° とするが、公式製品ページは **30°**。公式を正とし、23° は**公式未確認**と標記する。
-3. **ディスプレイ解像度に関する第三者の説**：一部の非公式レビューは 640×480 とするが、公式の 480×400 と一致せず、**公式未確認**。
-4. **連続使用時間の口径が複数**：公式の同一製品ページ内で、FAQ は日常使用 8–10 時間、比較表は混合使用 6 時間／ケース併用 30 時間と記載；統一されたテスト条件下での公称値は示されていない。
-5. **第 2 のチップ**：製品ページには "Dual-Chip Performance" の宣伝文句があるが、公式仕様表の SoC は Snapdragon AR1 のみを列挙；第 2 のチップの型番（第三者が言う NXP RT600 など）は**公式仕様ページでは未確認**。
-6. **カメラの詳細が欠落**：センサーの型番（マーケティング文案は Sony と称するが仕様表に型番なし）、カメラの FOV（第三者は 109° とする）はいずれも**公式未公表**。
-7. **IMU の詳細が欠落**：製品ページは "IMU: Supported" のみ；軸数、型番、サンプリング周波数の上限、精度はいずれも公表されていない；API 側の frequency はベストエフォートのヒントにすぎず、保証値はない。
-8. **頭部ジェスチャの列挙が未公表**：`onHeadGesture` の公式例は `'nod'` のみを示す；首振り、顔上げなど他のジェスチャ値が存在するか、名称は何かは、公式ドキュメントに完全には列挙されていない。
-9. **`navigator.getBattery()` のダングリング参照**：navigator リファレンスはバッテリー取得メソッドを device リファレンスで参照するが、device リファレンスには BatteryManager の章がない——API の存在は navigator リファレンスを正とし、詳細（プロパティ／イベント）は skill には示されていない。
-10. **`navigator.storage`（StorageManager）の詳細が欠落**：navigator リファレンスは "Persistent file storage entry point" の一文のみで、メソッドシグネチャはない；localStorage/wx ストレージとの境界は skill には説明されていない。
-11. **デバイス世代間の差異が未検証**：events リファレンスは **Rokid Glasses 2** と**第 1 世代フルカラーメガネ**のキーマッピングが "remain unverified" であることを明記しており、Rokid Glasses（第 1 世代・単色グリーン）のマッピングを流用してはならない；設計規範の対象デバイスは RokidGlasses1 / RokidGlasses2 と記されている。
-12. **ドキュメントのバージョンが二重化**：公式ドキュメントには現在 2 つのサイトがある——open.rokid.com/aiui（現行版）と js.rokid.com（旧版、AI 開発ガイドは /AIUI/guide/quickstart/ai-dev に所在）；本アーカイブの API 契約は公式リポジトリの現行 `documentation/` と `skills/aiui-dev` を正とし、両サイトの内容差異はページ単位では比較していない。
-13. **OS は未公表**：メガネの OS 名／バージョンは公式製品ページにもドキュメントにも記載されていない（判明しているのはランタイムが Ink/QuickJS+Skia コンテナであることのみ）。
-14. **.aix パッケージサイズの上限は未公表**；ドメインホワイトリストの届出先／審査所要時間も公開ドキュメントには詳述されていない。
-
----
+1. 表示解像度の二重の数値：製品スペック 480 × 400（C1005）とランタイムキャンバス 480 × 352（C5002）が併存し、両者の関係は公式には説明されていない。
+2. FOV についての第三者の説 23° と、表示解像度についての第三者の説 640 × 480 は、いずれも公式には裏付けられておらず、C1006、C1005 を基準とする。
+3. 駆動時間の数値が複数ある：同じ製品ページで、FAQ は日常使用で 8 から 10 時間、比較表は混合使用で 6 時間、充電ケース併用で 30 時間としており、統一した測定条件がない（C1011）。
+4. 2 つ目のチップの型番は公式には裏付けられていない（C1001）。
+5. カメラセンサーの型番と視野角は公式には公表されていない（C1008）。
+6. IMU の軸数、型番、サンプリングレートの上限と精度は公式には公表されていない（C4001 から C4004）。
+7. 頭部ジェスチャの完全な列挙は公式には公表されていない（C4006）。
+8. getBattery の詳細な文書が不完全である：navigator リファレンスではバッテリーのメソッドは device リファレンスを見よとしているが、device リファレンスにその章がない（C5018）。
+9. StorageManager のメソッドの詳細は公式には示されていない（C6003）。
+10. デバイス世代の差異：Rokid Glasses 2 と第 1 世代のフルカラーメガネのキーマッピングは、公式 events リファレンスの中で未検証と注記されており、本表 3.8 節のマッピングを流用してはならない。
+11. 公式ドキュメントの二重化：open.rokid.com/aiui が現行版、js.rokid.com が旧版であり、両サイトの差異はページ単位では照合していない。本表は公式リポジトリの documentation と aiui-dev skill を基準とする。
+12. パッケージサイズの上限、ドメインのホワイトリスト登録の入口、審査にかかる時間は、公式には詳しく示されていない（C9002、C6011）。
 
 ## 6. 公式ソース一覧
 
 **製品とプラットフォーム**
-- Rokid Glasses 公式グローバル製品ページ（仕様の主たる出典）：https://global.rokid.com/products/b-h-rokid-glasses-with-display
-- Rokid 英国公式サイト AI 製品ライン（仕様の相互裏付け）：https://gb.rokid.com/collections/rokid-ai-lineup
-- 公式 Academy チュートリアル『3.6 Glasses AIUI』（Craft/Studio ワークフロー）：https://global.rokid.com/de/blogs/academy-glasses/glasses-3-6-aiui
+
+- Rokid Glasses 公式グローバル製品ページ（スペックの主ソース）：https://global.rokid.com/products/b-h-rokid-glasses-with-display
+- Rokid 英国公式サイト AI 製品ライン（スペックの相互裏付け）：https://gb.rokid.com/collections/rokid-ai-lineup
+- 公式 Academy チュートリアル『3.6 Glasses AIUI』：https://global.rokid.com/de/blogs/academy-glasses/glasses-3-6-aiui
 
 **公式ドキュメントサイト**
+
 - AIUI ドキュメント（現行版）：https://open.rokid.com/aiui
 - AIUI ドキュメント（旧版）：https://js.rokid.com/AIUI/guide/quickstart/ai-dev
 
-**公式 GitHub リポジトリ yodaos-project/AIUI（jsar-project/AIUI はここへリダイレクトされる）**
-- リポジトリトップ／README（位置づけ、Samples 索引）：https://github.com/yodaos-project/AIUI
-- Samples ディレクトリ（bluetooth / capabilities / cut-card / games / gyroscope-test / meal-card / navigator-info / realtime-voice-intelligence / scanner / tts）：https://github.com/yodaos-project/AIUI/tree/main/samples
-- aiui-dev skill（本アーカイブの API 契約の主たる出典）：https://github.com/yodaos-project/AIUI/tree/main/skills/aiui-dev
-- 審査と公開：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/bundle/publish.md
+**公式 GitHub リポジトリ yodaos-project/AIUI**
+
+- リポジトリのトップ：https://github.com/yodaos-project/AIUI
+- aiui-dev skill（API 契約の主ソース）：https://github.com/yodaos-project/AIUI/tree/main/skills/aiui-dev
+- 審査提出と公開：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/bundle/publish.md
 - AIX とは：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/bundle/aix.md
 - ランタイム環境：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/runtime/env.md
 - IMU ガイド：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/device/imu.md
-- ネットワーク利用説明（モバイルプロキシ / HTTPS / ドメインホワイトリスト / LAN）：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/network/usage.md
-- ドキュメント目次（lan/prefetch/sourcemap などの unsupported 標記を含む）：https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
+- ネットワーク利用の説明：https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/network/usage.md
+- ドキュメント目次（lan、prefetch、sourcemap などの unsupported 表記を含む）：https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
+
+## 7. 変更履歴
+
+### v2.0.0 2026-10-29
+
+構造をアトミックレジストリへ再構成した。全文を 9 つの段に分けて 123 件の番号付き条目とし、各条目にプリミティブ、結論、検証状態を含めた。番号とガバナンス、総則、未検証プローブの 3 節を新設した。旧第 5 節の矛盾と未明点は、条目番号を付けて保持した。シナリオ類の問いは今後は個別に収録せず、条目と総則から導くことに統一した。
+
+### v1.1.0 2026-10-29
+
+第 4 節にプラットフォームの位置づけに関する公式見解「Agent は本質的にクローズドループを完結させる」を加え、4.3 の表に Agent 間のジャンプとホスト設定ページを開くことの 2 件を新規に追加した。全文の見出しから括弧書きの注記を取り除き、注記の内容は本文へ移した。はじめにと本変更履歴を新設した。
+
+### v1.0.0 2026-10-29
+
+リポジトリへの公開版。本アーカイブは 2026-10-24 に作成し、公式製品ページ、公式ドキュメントサイト、公式リポジトリの aiui-dev リファレンスをまとめたものである。リポジトリに入れるにあたり汎用化の処理を行い、開発者内部の作業方針と個人の使用痕跡を取り除いた。能力に関する事実は変えていない。

@@ -47,7 +47,7 @@ rokid/
 ├── screenshots/<slug>/        # Preview screenshots stored centrally; agent READMEs embed them directly
 ├── skills/                    # Project skill library (official aiui-dev + in-house SOP / screenshot pipeline)
 ├── mcp/                       # MCP registry (servers in use, how they are accessed, where credentials are kept)
-├── docs/                      # Docs: capability dossier CAPABILITIES.md (platform capability boundaries)
+├── docs/                      # Docs: atomic capability registry CAPABILITIES.md (platform primitives and boundaries)
 ├── assets/                    # README assets (such as the workflow diagram workflow.svg)
 └── branch agent-<slug>        # One branch per agent; the branch root is that agent's project root
 ```

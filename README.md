@@ -46,7 +46,7 @@ rokid/
 ├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
 ├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
 ├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
-├── docs/                      # 文档：能力档案 CAPABILITIES.md（底座能力边界）
+├── docs/                      # 文档：能力原子注册表 CAPABILITIES.md（底座原语与边界）
 ├── assets/                    # README 素材（如工作流图 workflow.svg）
 └── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
 ```

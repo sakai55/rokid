@@ -16,7 +16,7 @@ The glasses ship with a complete set of built-in features. If an agent rebuilds 
 
 ## The default capability baseline (always check the latest version before judging)
 
-The baseline comes only from official/public sources, never from impressions. Current baseline (set on 2026-10-25; sources: the official capability dossier `~/memory/rokid-glasses-capabilities.md` §1.1/§3.5, the official global product page, and public hands-on reviews):
+The baseline comes only from official/public sources, never from impressions. Current baseline (set on 2026-10-25; sources: the official capability registry `docs/CAPABILITIES.md` entries C1017 and C8013, the official global product page, and public hands-on reviews):
 
 1. **Real-time translation** (89 languages): conversation translation captions, photo translation of text/menus/signs; the AI shortcut commands already include a preset "take a photo and translate it into Chinese".
 2. **Real-time captions (Intelligent Captioning)**: same-language conversations shown on screen in real time, with the captions kept in history and available for later review.

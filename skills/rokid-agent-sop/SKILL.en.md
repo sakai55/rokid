@@ -28,7 +28,7 @@ Execution rules:
 
 ## Capability red lines (official-source verified, 2026-10-24)
 
-Full dossier: `docs/CAPABILITIES.en.md` in this repo (platform capability boundaries, official sources). Never design beyond these:
+Full registry: `docs/CAPABILITIES.en.md` in this repo (atomic capability registry; cite entries as C####). Never design beyond these:
 
 - **No eye tracking.** "Gaze" = camera field centre + head orientation (`AbsoluteOrientationSensor`), head-steady confirm via `onOrientationStabilityChange`, nod confirm via `onHeadGesture('nod')`.
 - **No OCR API.** Reading text = camera photo + LLM image input. Photo modes via `ImageCapture.takePhoto`: `telephoto` (distant small text, 2016×1512), `wide` (barcode/large field, 2016×2688), `default` (3024×4032). Barcodes: native `BarcodeDetector`.
@@ -41,7 +41,7 @@ Full dossier: `docs/CAPABILITIES.en.md` in this repo (platform capability bounda
 
 - **Voice interaction — post-MVP adjustment (GO, 2026-10-24)**: Rokid AIUI Agents can interact by voice (ASR input + TTS replies), and GO has flagged that the current fleet's designs are all operation/gesture-driven. The voice-interaction rework (voice flow as a primary channel: spoken input/commands, voice confirmation/correction, TTS feedback) is DEFERRED until the current MVP ends — do not change in-production designs for it now; it belongs to the post-MVP interaction-definition phase, same as the UI unification below.
 
-- **Gestures first, minimal buttons (GO, 2026-10-24)**: the temple touchpad is the primary controller — tap = confirm (`Enter`), double-tap = back (`Backspace`), swipe = scroll/switch (`ArrowUp/Down`), head-steady + nod = gaze confirm; single-finger long-press wakes the assistant, two-finger long-press fires the AI Shortcut Command (a fixed text, ≤500 chars, delivered to a chosen agent — a hardware entry that bypasses ASR entirely). Full verified gesture table: capability dossier §3.2.1. Design pages so the main flow runs on gestures alone; keep on-screen buttons to the minimum and state the agent's gesture mapping in its README. (A fleet-wide UI unification for "too many same-style buttons" is deliberately deferred by GO until all 120 agents are done — do not start it early.)
+- **Gestures first, minimal buttons (GO, 2026-10-24)**: the temple touchpad is the primary controller — tap = confirm (`Enter`), double-tap = back (`Backspace`), swipe = scroll/switch (`ArrowUp/Down`), head-steady + nod = gaze confirm; single-finger long-press wakes the assistant, two-finger long-press fires the AI Shortcut Command (a fixed text, ≤500 chars, delivered to a chosen agent — a hardware entry that bypasses ASR entirely). Full verified gesture table: capability registry entries C8002–C8010. Design pages so the main flow runs on gestures alone; keep on-screen buttons to the minimum and state the agent's gesture mapping in its README. (A fleet-wide UI unification for "too many same-style buttons" is deliberately deferred by GO until all 120 agents are done — do not start it early.)
 
 If a feature cannot be wired to a real API, label it honestly in UI + README as sample/placeholder with the pending link named (see gaze-translate). Never fake a capability.
 

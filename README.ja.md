@@ -47,7 +47,7 @@ rokid/
 ├── screenshots/<slug>/        # プレビュー画像を集約保管、Agent の README が直接埋め込む
 ├── skills/                    # プロジェクトの Skill ライブラリ（公式 aiui-dev + 自作 SOP / スクリーンショットパイプライン）
 ├── mcp/                       # MCP 登録簿（使用中サーバー、接続方式、認証情報の保管場所）
-├── docs/                      # ドキュメント：能力アーカイブ CAPABILITIES.md（基盤能力の境界）
+├── docs/                      # ドキュメント：能力原子レジストリ CAPABILITIES.md（基盤の原語と境界）
 ├── assets/                    # README 用素材（ワークフロー図 workflow.svg など）
 └── ブランチ agent-<slug>       # 1 Agent 1 ブランチ、ブランチのルート = その Agent のプロジェクトルート
 ```

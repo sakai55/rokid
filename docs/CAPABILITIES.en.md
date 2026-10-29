@@ -1,412 +1,300 @@
-# Rokid Glasses Capability Dossier (Official Sources Edition)
+# Rokid Glasses Capability Registry — Atomic Entries
 
 [中文](CAPABILITIES.md) | English | [日本語](CAPABILITIES.ja.md)
 
-Translated from the Chinese version (last updated 2026-10-29). In case of conflict, the Chinese version prevails.
+Translated from the Chinese version v2.0.0 (2026-10-29). In case of conflict, the Chinese version prevails.
 
-> Compiled: 2026-10-24; last updated: 2026-10-29
-> Source policy: **official Rokid sources only** (official product pages, the official documentation site, the official GitHub repository `yodaos-project/AIUI` and the `aiui-dev` skill reference bundled with it). Every non-trivial claim is annotated with its source.
-> Annotation convention: **** = stated explicitly in the text of an official page/document; **** = reasonably inferred from the presence/absence of official API documentation, and flagged as such; **Not officially published** = not found in any of the official sources consulted, and never guessed.
-> Unified citation for the local skill reference: the official repository's `skills/aiui-dev` (https://github.com/yodaos-project/AIUI/tree/main/skills/aiui-dev); citations below are written as `skill: references/…`.
+> Compiled on 2026-10-24; current version v2.0.0, 2026-10-29
+> Source policy: **Rokid official sources only** (the official product page, the official documentation site, the official GitHub repository `yodaos-project/AIUI` and its bundled `aiui-dev` skill references), plus the registry maintainer's own on-device and build testing, with test-derived conclusions marked separately in each entry. The official repository's `skills/aiui-dev` is the primary source for the API contract; sources below are cited as `skill: references/…`.
 
----
+## Foreword
 
-## 1. Hardware Specifications
+This registry is maintained by a Rokid AIUI developer; it is not an official Rokid document. It breaks the capabilities of the Rokid Glasses base platform down into atomic entries: each entry covers exactly one base primitive, with a stable number, a one-sentence conclusion, the official basis, and a verification status. Before designing an agent, check here whether the primitives it needs exist and where their boundaries are.
 
-Primary source of record: the official global product page: https://global.rokid.com/products/b-h-rokid-glasses-with-display
-(The specifications on the official UK site, https://gb.rokid.com/collections/rokid-ai-lineup, corroborate it.)
+This registry records primitives only, not application scenarios. Scenarios are combinations of primitives and can be written endlessly; cataloguing them one by one would turn this into a never-ending Q&A set. Any scenario question is answered the same way: break the scenario down into the primitives it requires and look each one up here — if the primitive exists, the combination works; if it does not, the answer is that it cannot be done, and no separate entry is opened for that question. The official API reference is itself a closed list: an API that is not on the list does not exist, and that is the basis for most determinations in this registry.
 
-| Item | Specification | Notes |
-|---|---|---|
-| SoC | Snapdragon AR1 (Qualcomm) | The product page's Performance section says only "Snapdragon AR1", with no generation suffix; the page also carries a "Dual-Chip Performance" tagline, but the official spec table does not list a model for the second chip |
-| RAM / storage | 2 GB / 32 GB | |
-| Display technology | Binocular Micro LED + diffractive waveguide (Binocular Micro LED waveguide); the optical design is "1 Micro LED + waveguide" | |
-| Display color | **Monochrome green** (Single green display) | Not full color; the AIUI design specification likewise defines a single green emissive channel (`skill: references/design/monochrome-green.md`) |
-| Display resolution | **480 × 400** | ⚠️ Inconsistent with the AIUI runtime reference canvas of 480 × 352; see Section 5 |
-| FOV | 30° | |
-| Brightness | 1500 nits | |
-| Camera | 12 MP, photo resolution 3024 × 4032, aperture F2.25 | Marketing copy on the product page calls it a "Sony sensor", but the spec table gives no sensor model; camera FOV not officially published |
-| Photo formats | 4K 3:4, 4K 9:16, 3K 4:3 | |
-| Video formats | Up to 3K 30fps (9:16); also 2.5K 30fps (3:4 / 4:3), 2K 30fps (9:16 / 9:19.5) | |
-| Microphones | **4-microphone array** | |
-| Speakers | Dual linear directional high-fidelity speakers | |
-| Sensors | IMU: Supported | The official product page does not publish the IMU's axis count or model; the sensors callable from AIUI are listed in 2.7 |
-| Battery | 210 mAh | Battery-life figures vary; see below |
-| Battery life | The FAQ claims about **8–10 hours** of daily use; the comparison table on the same page claims **up to 6 h mixed use**, and **up to 30 h** with the charging case | |
-| Charging | Magnetic charging; fast charge to 80% in 20 minutes; the charging case can fully charge the glasses about 10 times; an optional Power Capsule accessory is also available | |
-| Wireless connectivity | Wi-Fi 6, Bluetooth 5.3 (BT 5.3) | |
-| Weight | 49 g | |
-| Dimensions | Temple length 155.5 mm, hinge spacing 146.3 mm, lens width 49 mm, frame height 44.4 mm | Frame material TR90, hinges titanium alloy |
-| Ingress protection | IPX4 | |
-| Wake word | "Hi Rokid" | For the Chinese wake word, see 3.1 (runtime documentation) |
-| Prescription support | Supports prescriptions from +15 to −15 diopters; official prescription service + magnetic prescription frame | |
-| System / OS | **Not officially published** | Neither the product page nor the documentation names the glasses' operating system or version; what is known is that the agent runtime is the in-house Ink container (QuickJS + Skia); see 2.1 and https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/runtime/env.md |
-| Camera indicator light | Supported (Camera indicator: supported) | Lights up while capturing; a privacy design feature |
+Maintenance mirrors the error-code table `ERROR-CODES.md`: entries are only appended at the end of a segment and numbers are never reused; an entry whose conclusion is overturned gets its conclusion revised with a trace left in the change log, and its number is not deleted; when conclusions change, the version is bumped and superseded versions are archived under `base/capabilities/` with an index. The Chinese version is authoritative; the English and Japanese versions are translations, and the Chinese version prevails in case of conflict.
 
-### 1.1 Official Feature List (product level, not Agent APIs)
+## 1. Numbering and Governance
 
-Features listed on the official product page for the device as a whole: real-time translation (89 languages supported), 13 UI languages, an AI assistant (Voice AI + Vision AI, with models such as Qwen and ChatGPT mentioned), notifications (visual + audio), navigation, a teleprompter, notes, meeting transcription, SDK support.
-Note: these are **features of the glasses system / official app**, not APIs callable by AIUI Agents (see Section 2).
+Numbers look like `C2003`: the letter C plus four digits, where the thousands digit is the segment and entries are numbered sequentially within a segment.
 
----
-
-## 2. AIUI Runtime Capabilities (APIs an Agent Can Actually Call)
-
-Runtime environment: on Rokid Glasses, an agent's logic layer and view layer run inside **Ink**, an in-house container built on **QuickJS** (JS engine) and **Skia** (rendering), optimized for the low power / memory / CPU budgets of wearable devices. Source: https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/runtime/env.md
-The API contract follows the skill reference cited below (`skill: references/apis/*.md`); that skill is the development contract document shipped with the official repository.
-
-### 2.1 Device Information and System State (`navigator`)
-
-Source: `skill: references/apis/navigator.md`
-
-| API | Capability | Limits / notes |
-|---|---|---|
-| `navigator.id` | An opaque ID bound to the agent + device | Generally stable across ordinary restarts/upgrades; must not be used as a credential |
-| `navigator.userAgent` / `versions.ink` / `versions.skia` | Runtime and rendering-engine version strings | |
-| `navigator.language` / `languages` / `region` | Language preferences (BCP 47) and region | May be empty strings |
-| `navigator.renderingEnabled` | Whether the current instance can render a visible UI | |
-| `navigator.onLine` / `navigator.connection` | Online state and connection info: `type` (none/wifi/ethernet/cellular/bluetooth/other/unknown), `effectiveType`, `downlink`, `rtt`, `saveData`, plus the `change` event | Estimates only; does not guarantee service reachability; when relayed over the phone's Bluetooth link, `type` may report `bluetooth` |
-| `navigator.getBattery()` | Returns `Promise<BatteryManager>` | The promise is rejected when the host has no battery capability; ⚠️ the navigator reference says the battery methods are in the device reference, but the device reference actually has no battery section (see Section 5) |
-| `navigator.getDeviceSerialNumber()` | Device serial number | Available to **system-level agents only**; ordinary agents get an empty string |
-| `navigator.requestDeviceToken()` | Device token | **System-level agents only**; ordinary agents must not rely on it |
-
-### 2.2 Display and Windows (`window`)
-
-Sources: `skill: references/apis/window.md`, `skill: references/framework.md`
-
-- `window.innerWidth` / `innerHeight`: read-only viewport size (logical pixels).
-- Full-screen Page reference canvas: **480 × 352 px** (defined by the design specification; target devices RokidGlasses1 / RokidGlasses2), with safe margins of 16 px left/right and 12 px top/bottom, for an effective content width of 448 px. Source: `skill: references/design/monochrome-green.md`
-- Widget (home-screen widget) size family: `1x1` = 239 × 140, `1x2` = 480 × 140; the glasses have **4 Widget grid slots** in total. `family` is only a size category; the root node must not be hard-coded to those pixel values.
-- `window.open(url, '_widget')`: can only open Widgets declared in `app.json` (the only target is `_widget`; `placement: 'overlay'` is supported); it cannot open other Pages or external URLs.
-- `window.close()`: asks the host to close the current agent instance.
-- `window.atob/btoa`, and the global `createImageBlob(bitmap, …)` (PNG/JPEG encoding).
-
-### 2.3 Camera
-
-Sources: `skill: references/apis/media.md`, `skill: references/apis/wx.md`. The `CAMERA` permission must be declared.
-
-| API | Capability | Key parameters / limits |
-|---|---|---|
-| `navigator.mediaDevices.getUserMedia({video})` | Acquire a video stream (MediaStream) | Constraints support `facingMode`, `width`, `height`, `frameRate`, `deviceId`; read the final values from `track.getSettings()` |
-| `ImageCapture.takePhoto(options?)` | Take a photo; returns the encoded `Blob` | **Three modes**: `mode: 'wide'` (wide angle for barcode scanning), `mode: 'telephoto'` (telephoto for reading distant text), `mode: 'default'` (ordinary photo); also `quality` and `enableSystemPreview` options |
-| Default photo output sizes | wide = 2016 × 2688; telephoto = 2016 × 1512; default = 3024 × 4032 | May differ from the video stream size; the Blob itself carries no width/height, so decode it with `createImageBitmap()` |
-| `ImageCapture.grabFrame()` | Returns an unencoded `ImageBitmap` pixel frame | The bitmap must be closed after use |
-| `wx.media.createCameraContext().takePhoto()` | wx-style photo capture; returns `{ data: ArrayBuffer, mimeType}` | Must be triggered from an interactive call site (the interactive gate); no mode-selection parameter (mode selection goes through the Web `ImageCapture`) |
-| `MediaRecorder` | Record audio/video streams | Supports `video/webm;codecs=vp8,opus`, `video/mp4`, etc. (check with `isTypeSupported()` first) |
-
-### 2.4 Microphone and Recording
-
-Source: `skill: references/apis/media.md`. The `RECORD_AUDIO` permission must be declared, and capture must originate from a valid user interaction.
-
-| API / parameter | Capability | Key limits |
-|---|---|---|
-| `getUserMedia({audio:{captureSource}})` | Recording source selection: `'microphone'` (the microphone) or `'system-audio'` (the device's playback mix, i.e. internal system-audio capture) | system-audio cannot be combined with `echoCancellation: true` or `microphoneMode`, otherwise `OverconstrainedError`; system audio does not automatically fall back to the microphone |
-| `microphoneMode` (microphone mode) | **Four modes**: `'wearer'` (default; prioritizes the wearer's voice), `'far-field'` (distant sounds), `'near-field'` (nearby sounds), `'omnidirectional'` (no directional preference) | Applies to the microphone source only; device support for each mode is not guaranteed — unsupported modes raise `OverconstrainedError`; read the effective value from the track's `getSettings()` |
-| `MediaRecorder` | Audio encoding | Supports `audio/wav`, `audio/ogg;codecs=opus` |
-| `wx.media.getRecorderManager()` | wx-style recording (start/pause/resume/stop, frame callbacks, etc.) | **Uses the default microphone and offers no source/mode selection parameters**; mode selection requires the Web `getUserMedia` |
-
-### 2.5 Audio Playback and Web Audio
-
-Source: `skill: references/apis/media.md`
-
-- `AudioPlayer`: a general player (files inside the local package or network URLs), supporting streamed `append()` playback of `pcm` / `ogg_opus`, and subtitle text tracks (`TextTrack`/`VTTCue`).
-- `Sound`: short playback of local sound effects (local files only; http(s) URLs are rejected).
-- Web Audio: `AudioContext` plus `createBuffer/Oscillator/Gain/BiquadFilter/Analyser/MediaStreamSource`, `decodeAudioData`, etc.; can be used for microphone waveform/spectrum analysis.
-
-### 2.6 Speech Synthesis (TTS)
-
-Source: `skill: references/apis/ai.md`
-
-| API | Capability | Key limits |
-|---|---|---|
-| `speechSynthesis.speak(utterance, mode?)` | Synthesize and play directly (queued by the runtime's unified player) | `mode`: `'enqueue'` (default) / `'immediate'` |
-| `speechSynthesis.synthesize(utterance, options?)` | Generate without playing; returns a `SpeechSynthesisTask` (audio chunk events, abortable; pair with `SpeechAudioPlayer` for independent playback) | Options: subtitle granularity `subtitles: 'none'/'sentence'/'word'`, audio format `pcm/mp3/ogg_opus`, sample rate, channels, bit rate, `AbortSignal` |
-| `SpeechSynthesisUtterance` | text/lang/voice/volume/pitch/rate | **The `lang` attribute currently has no effect** (the documentation states explicitly that it is unsupported and does not change the generation language); pitch/rate/volume default to 1 |
-| Official voice IDs (11 in total) | `female-tianmei`, `English_radiant_girl`, `English_expressive_narrator`, `male-qn-qingse`, `male-qn-jingying`, `female-yujie`, `Chinese (Mandarin)_News_Anchor`, `Chinese (Mandarin)_Radio_Host`, `clever_boy`, `lovely_girl`, `English_Trustworthy_Man` | No `getVoices()`, no `cancel()/pause()/resume()` (the documentation states explicitly that they are not exposed) |
-| `wx.speech.playTTS(text)` | wx-style one-shot speech playback | Returns a string (the request ID); returns an empty string on failure |
-
-### 2.7 Sensors (IMU)
-
-Sources: `skill: references/apis/device.md`, and the official guide https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/device/imu.md
-
-| API | Data | Events / notes |
-|---|---|---|
-| `new Accelerometer({frequency?})` | Three-axis acceleration `x/y/z` + `timestamp` | Events `activate`/`reading`/`error`; `frequency` is only a best-effort hint to the host |
-| `new Gyroscope({frequency?})` | Three-axis angular velocity `x/y/z` + `timestamp` | Same as above |
-| `new AbsoluteOrientationSensor({frequency?})` | Absolute orientation quaternion `quaternion` ([x,y,z,w]) + `timestamp` | Availability depends on device hardware support |
-| Sampling rate | The official guide's examples use 60; starting at 30–60 Hz and raising as needed is recommended | No officially published maximum frequency / accuracy figures |
-
-Note: the API layer exposes only the three sensors above; no separate geomagnetic / ambient-light / proximity sensor API appears in the official API reference.
-
-### 2.8 Speech Recognition (ASR)
-
-Source: `skill: references/apis/ai.md`. **There is no separate `SPEECH_RECOGNITION` permission** (the documentation states explicitly that it was removed); opening the microphone still requires `RECORD_AUDIO`.
-
-| API | Capability | Key limits |
-|---|---|---|
-| `new SpeechRecognition()` | Host-microphone recognition: `lang`, `continuous`, `interimResults`, `maxAlternatives`; a full Web Speech-style event set including `result`/`nomatch`/`error` | `start()` requires the owning view to remain in the interactive state; in a non-interactive state it immediately raises `InvalidStateError`; when `lang` is empty the host picks the default language |
-| `new SpeechRecognitionSession(options?)` | Recognition of an external audio stream (you feed audio chunks with a MediaRecorder into the writable stream `session.audio`); the session itself does not open the microphone | Options include hot words `phrases: [{phrase, boost}]`, segmentation `segmentation: 'auto'/'vad'/'semantic'/{mode:'vad', silenceDurationMs}`, and dynamic context via `updateContext(messages)` |
-| `SpeechRecognitionSession.getCapabilities()` | Query the host's real capabilities: audio formats/sample rates, `maxChunkBytes`, whether interim results / hot words / context / VAD threshold ranges are supported | Capabilities vary by host; always query before use |
-
-### 2.9 Large Language Model (LLM)
-
-Source: `skill: references/apis/ai.md`
-
-| API | Capability | Key limits |
-|---|---|---|
-| `LanguageModel.availability()` | Returns `'available'/'unavailable'` | Does **not** expose the provider, model list, or endpoint information |
-| `LanguageModel.create({model?, initialPrompts?, tools?})` | Create a session; model resolution order: explicit `model` → host `defaultModel` | Underneath is the host's **OpenAI-compatible chat-completions streaming channel**; `system` may only appear as the first entry of initialPrompts |
-| Multimodal input | The content array of user messages supports `{type:'text'}` and `{type:'image_url', image_url:{url}}` (including data: URLs) | Structured content is limited to the user role |
-| Tool calls | `tools` (function type) are forwarded into the provider request body; tool calls come back as `toolcall` events on the session (callId/functionName/arguments) | **Not** executed automatically: the JS side must handle the events itself, and there is no guarantee of a structured tool-call round-trip protocol |
-| `session.prompt(input)` / `promptStreaming(input)` | One-shot answer / streaming answer (polling-style `read()`; not a WHATWG Stream, not an async iterator) | Only one in-flight request per session at a time; after `destroy()` the session cannot be used again |
-| `wx.speech.startRecognition()` | wx-style recognition entry point (returns a string) | A different entry point from 2.8 |
-
-### 2.10 Geolocation
-
-Source: `skill: references/apis/geo/geolocation.md`. The `GEOLOCATION` permission must be declared (the system may still deny it after declaration).
-
-- `navigator.geolocation.getCurrentPosition(success, error?, options?)` / `watchPosition(...)` (returns a numeric watch ID; release it with `clearWatch`).
-- Options: `enableHighAccuracy` (default false), `timeout`, `maximumAge` (host-determined when omitted).
-- Result: `coords` contains `latitude`, `longitude`, `accuracy` (meters), and the nullable `altitude`, `altitudeAccuracy`, `heading`, `speed`; error codes 1/2/3 (denied / unavailable / timeout).
-- A companion `GPXDocument` API (the `'gpx'` module): GPX route parsing, creation, and export (setStartPoint/addWaypoint/appendTrackPoint/toString/toBlob), used with the `<map>` / `<map-gpx>` components for track display. Sources: `skill: references/apis/geo/gpx-document.md`, `skill: references/components.md`
-
-### 2.11 Bluetooth BLE (Client)
-
-Source: `skill: references/apis/device.md`
-
-- `navigator.bluetooth`: `getAvailability()`, `getDevices()`, `requestDevice({acceptAllDevices?, optionalServices?, filters?:[{name?, services?}]})`, `scanDevices(options?)` (Ink-specific, not standard Web Bluetooth).
-- GATT: `device.gatt.connect()/disconnect()/getPrimaryService(s)/…`, characteristic `readValue()` (returns `Promise<number[]>`), `writeValue(With/WithoutResponse)`, `startNotifications()` plus the `characteristicvaluechanged` event.
-- Limits: `requestDevice`, `scanDevices`, `gatt.connect()`, and `startNotifications()` all require the owning view to remain in the **interactive state**; `getAvailability/getDevices` are exempt. The role is BLE **central (client)**; the official API reference contains no BLE peripheral (advertising) capability.
-
-### 2.12 Storage and Files
-
-Sources: `skill: references/apis/web.md`, `skill: references/apis/wx.md`, `skill: references/apis/navigator.md`, `skill: references/framework.md`
-
-- `localStorage`: a string key-value store isolated per agent (getItem/setItem/removeItem/clear).
-- wx storage: `wx.setStorage/getStorage/removeStorage/clearStorage` plus `Sync` synchronous variants; data is JSON-serialized.
-- `navigator.storage`: a StorageManager, defined in the documentation as the "Persistent file storage entry point" — ⚠️ the skill reference gives no method details for it (see Section 5).
-- File model: resources are always resolved from **paths inside the project** (e.g. `/assets/icon.png` packaged into the .aix); the official framework documentation explicitly warns **not to assume arbitrary access to the device file system**. The official API reference contains no general-purpose file system API (no read/write/list-directory interfaces for arbitrary paths).
-- ⚠️ **`FileReader` does not exist (verified on real hardware, 2026-10-28; global error code E2005)**: the Ink runtime has no `FileReader`, and the full official aiui-dev reference contains no such API either. `Blob → dataURL` conversion must go through `blob.arrayBuffer()` + chunked `btoa` encoding (or bitmap-direct storage); any `new FileReader()` / `readAsDataURL` will throw `FileReader is not defined` on real hardware and kill every frame. When developing, treat the official API reference list as authoritative: an API that is not in the list does not exist — do not assume it from browser habits.
-
-### 2.13 Networking
-
-Sources: `skill: references/apis/web.md`, `skill: references/apis/wx.md`, and the official guide https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/network/usage.md
-
-- `fetch` / `Headers` / `Response` (including streamed reading of `body` as a ReadableStream, and BYOB), `WebSocket`, `File`/`FormData`, `URL`/`URLSearchParams`, and the full Streams family (Readable/Writable/Transform).
-- `wx.request` (timeout resolution order: options.timeout → the app.json setting → the 60000 ms default), `wx.createSocket/connectSocket`, `wx.createEventSource` (SSE).
-- `crypto`: `randomUUID`, `getRandomValues` (capped at 65,536 bytes); `crypto.subtle` supports **only** SHA-1/256/384/512 digests and HMAC (generateKey/importKey/exportKey/sign/verify) — encryption/decryption, RSA, ECDSA, and JWK are **not supported**.
-- **Mobile Proxy networking**: when the glasses are not on Wi-Fi, as long as Bluetooth is connected to the phone app (Rokid AI App / Hi Rokid), `fetch`/`wx.request` traffic is automatically forwarded over the phone link — transparent to the developer, and more power-efficient.
-- **HTTPS mandatory**: network requests in production must use HTTPS; before publishing to the store, request domains must be **filed on the allowlist** in the developer console.
-- **Direct LAN connections: not supported** (the official guide says "under development"; the LAN section of the documentation catalog is marked `status: unsupported`).
-
-### 2.14 Canvas 2D and Barcode Detection
-
-Source: `skill: references/apis/canvas.md`
-
-- `CanvasRenderingContext2D`: paths/rectangles/text (including `measureText`)/transforms/gradients/patterns/image data/`drawImage` (only the 3/5/9-argument forms); entry points are a page `<canvas>` (`wx.createCanvasContext(id)`) or a script-created `new Canvas(w,h)`.
-- Restricted color parsing: only `#rrggbb`, `#rgb`, `rgb()`, `rgba()`, and a few named colors such as black/white/red/green/blue/yellow/transparent.
-- Output: `canvas.convertToBlob({type, quality})` (PNG by default; JPEG quality 0–1; transparent pixels are composited onto black in JPEG), and the global `createImageBlob()`.
-- `BarcodeDetector` (the `'barcode'` module or a global): `getSupportedFormats()` lists the supported symbologies (canonical names such as `qr_code`, `code_128`, `ean_13`); `detect(image)` accepts ImageData, an encoded image Blob, or an ImageBitmap, and returns `format`, `rawValue`, `boundingBox`, `cornerPoints`. OffscreenCanvas/VideoFrame/HTML-element inputs are not supported.
-
-### 2.15 Interaction Events (Runtime Layer)
-
-Source: `skill: references/events.md`. See Section 3 for the interaction model.
-
-- Template events: `bind<event>` bindings such as `bindtap`/`catchtap`; animation events `bindanimationstart/iteration/end/cancel`.
-- Key events: a Page's `onKeyDown/onKeyUp(event)`, dispatched by `event.code` (for the Rokid Glasses mapping, see 3.2).
-- Voice wakeup callback: `onVoiceWakeup(event)`.
-- World awareness (must be enabled inside a Page with `enableWorldAwareness()`): `onHeadGesture(event)` (an example gesture value is `'nod'`), `onOrientationStabilityChange(event)` (`event.stable`, head stability).
-- Network state: App/Page `onNetworkStatus(event)`.
-
-### 2.16 Framework and Component Surface
-
-Sources: `skill: references/framework.md`, `skill: references/components.md`, `skill: references/apis/agent-worker.md`
-
-- Project structure: `app.json` + `app.js` + `AGENTS.md` + `pages/` (a single `.ink` file, or the four-piece `.json/.wxml/.wxss/.js` set) + optional `widgets/`, `workers/`, `components/`, `assets/`.
-- **37 authorable built-in component tags** in total: containers/text/forms (button/input/textarea/switch)/media (image/video/lottie-view)/maps (map, map-gpx)/canvas and charts (canvas/chart)/AI-generated UI (a2ui), and more.
-- Agent Worker: a UI-less script (triggered by open; `lifetime: 'instant'|'foreground'`; `background` is reserved and ineffective); it has timers, Promise, Crypto, Wasm, and encoding streams, but **no** `window/document/fetch`, routing, rendering, or media capture.
-- TypeScript entry points and WebAssembly modules are supported (through the project packaging pipeline).
-
-### 2.17 Permission List (app.json.permissions, Exact Names)
-
-Source (corrected by the full audit of 2026-10-29): the permission table in `documentation/1-framework/open-agent-format/app-json.md` — **7 in total**. The names are **case-sensitive**; unrecognized names grant no capability; declaring a permission in the manifest ≠ system authorization, so call sites must still handle denial. Note: the aiui-dev skill's `references/framework.md` still lists only the first three — an internal inconsistency in the upstream documentation; the framework document governs.
-
-| Permission name | Purpose |
+| Segment | Domain |
 |---|---|
-| `GEOLOCATION` | Get the current position / watch position changes |
-| `CAMERA` | Access the camera; capture images or video |
-| `RECORD_AUDIO` | Access the microphone and capture audio (ASR microphone use and recording both rely on it; there is no separate ASR permission — the old `SPEECH_RECOGNITION` permission was removed in Ink 0.19) |
-| `READ_MEDIA_IMAGES` | List and read images in the system media library |
-| `CREATE_MEDIA_IMAGES` | Add images to the system media library (does not include modifying/overwriting existing assets) |
-| `READ_MEDIA_AUDIO` | List and read audio in the system media library |
-| `CREATE_MEDIA_AUDIO` | Add audio to the system media library (does not include modifying/overwriting existing assets) |
+| C1xxx | Hardware and display |
+| C2xxx | Camera and imaging |
+| C3xxx | Audio, speech and LLM |
+| C4xxx | Sensors and positioning |
+| C5xxx | Display runtime and pages |
+| C6xxx | Storage, files and network |
+| C7xxx | Permissions |
+| C8xxx | Interaction and host |
+| C9xxx | Distribution and review |
 
-In addition: the review stage (Studio/store) has a separate set of **declaration checkboxes** — networking, camera, microphone, speaker, Rokid account information, etc. — each requiring a stated purpose; these are a separate mechanism from the manifest permissions. Source: https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/bundle/publish.md
+The verification status takes only four values: **Docs** — supported by official documentation only, not yet verified on a real device; **Device-verified** — backed by results or behavior returned by a real device; **Build-verified / Studio-verified** — verified in the packaging or Studio flow; **Pending** — a probe exists but its data has not come back yet, see section 4 for the probes. Version rules: adding an entry or changing an entry's conclusion bumps MINOR, a structural or rule change bumps MAJOR, a wording fix bumps PATCH.
 
----
+## 2. General Rules
 
-## 3. Interaction Model
+The general rules are not entries; they are rules that apply alongside the entries when deriving an answer for a scenario.
 
-### 3.1 Wakeup
+- **R1 Closed-loop positioning** (official position, 2026-10-29): an agent essentially completes a closed loop — an agent uses its own declared permissions and callable APIs to take one job from entry to result inside itself; host capabilities outside that loop, including system settings, other agents and host configuration, are not delegated to agents. Source: an official reply, relayed by this registry's maintainer.
+- **R2 The list is the boundary**: the official API reference is a closed list. Any API, parameter or enum value that cannot be found there is treated as non-existent; never assume it exists by browser or WeChat Mini Program habit.
+- **R3 The interaction gate**: capture and connection calls (taking photos, recording audio, starting ASR, BLE connections and the like) require the owning view to be in an interactive state, and usually must also be triggered by user interaction; calls made in a non-interactive state fail outright. Resources must be released when done: microphone and camera tracks must be stopped, BLE scans and connections disconnected, watchPosition cleared with clearWatch, AudioContext closed.
+- **R4 Declaration is not grant**: writing a permission into app.json is only a declaration; the system can still refuse at the call site, and the code must handle the refusal branch.
+- **R5 The simulator is not the device**: in the web simulator, sensor values are mostly simulated and performance and heat differ from the real device; for entries whose verification status is "Docs", the conclusion is subject to re-testing on a real device.
 
-- Product-level wake word: **"Hi Rokid"**.
-- Runtime `onVoiceWakeup(event)`: can be triggered by voice or touch; known `event.keyword` values include `乐奇` (the Chinese wake word), `Hi Rokid`, and `clickAiAssist` (touch wakeup). Do not filter by keyword by default; `event.preventDefault()` can take over the host's default action.
+## 3. Entries
 
-### 3.2 Temple Touch and Key Mapping
+### 3.1 Hardware and Display
 
-The runtime delivers these as **key events** (`onKeyDown/onKeyUp` + `event.code`); the Rokid Glasses mapping is:
+Basis: the official global product page https://global.rokid.com/products/b-h-rokid-glasses-with-display , cross-checked against the same specifications on the official UK site.
 
-| `event.code` | Meaning | Default behavior (after onKeyUp) |
+| No. | Primitive | Conclusion | Verified |
+|---|---|---|---|
+| C1001 | Main chip | Snapdragon AR1. The product page also carries a "dual-chip" marketing line, but the official specification table does not list a model for the second chip | Docs |
+| C1002 | Memory and storage | 2 GB / 32 GB | Docs |
+| C1003 | Display technology | Binocular Micro LED with diffractive waveguide | Docs |
+| C1004 | Display color | Monochrome green, a single green emission channel, not full color | Docs |
+| C1005 | Panel resolution | 480 × 400 by product specification; this coexists with the runtime canvas figure in C5002, see unresolved item 1 | Docs |
+| C1006 | Field of view | 30° | Docs |
+| C1007 | Brightness | 1500 nits | Docs |
+| C1008 | Camera hardware | 12 MP, photos at 3024 × 4032, F2.25; the sensor model and the camera's field of view have not been published officially | Docs |
+| C1009 | Microphone hardware | 4-microphone array | Docs |
+| C1010 | Speakers | Dual linear directional high-fidelity speakers | Docs |
+| C1011 | Battery and charging | 210 mAh; the official battery-life figures come in several versions, see unresolved item 4; magnetic charging, 80% in 20 minutes, the charging case refills the glasses about 10 times | Docs |
+| C1012 | Wireless connectivity | Wi-Fi 6, Bluetooth 5.3 | Docs |
+| C1013 | Whole-device parameters | 49 g, IPX4; temple length 155.5 mm, hinge spacing 146.3 mm, TR90 frame with titanium-alloy hinges | Docs |
+| C1014 | Prescription support | Supports prescriptions from +15 to −15, with an official prescription service and magnetic prescription frames | Docs |
+| C1015 | Camera indicator light | Supported; it lights up while shooting | Docs |
+| C1016 | Operating system | Name and version not published officially; the known runtime is the Ink container, see C5001 | Docs |
+| C1017 | Product-level whole-device features | Real-time translation in 89 languages, the AI assistant, notifications, navigation, teleprompter, notes, meeting transcription and the like are features of the glasses system and the official app, not APIs an agent can call; agents can only use the primitives registered in this table | Docs |
+
+### 3.2 Camera and Imaging
+
+Basis: `skill: references/apis/media.md`, `skill: references/apis/wx.md`; requires permission C7002.
+
+| No. | Primitive | Conclusion | Verified |
+|---|---|---|---|
+| C2001 | Video stream getUserMedia | Can obtain a MediaStream; constraints support facingMode, width, height, frameRate and deviceId, and the final values are read from the track's getSettings | Docs |
+| C2002 | Photo capture ImageCapture.takePhoto | Returns an encoded Blob; three modes: wide (wide angle, for barcode scanning), telephoto (for reading distant text), default (ordinary photos); also has quality and enableSystemPreview options | Docs |
+| C2003 | Photo output sizes | wide 2016 × 2688, telephoto 2016 × 1512, default 3024 × 4032; the Blob itself carries no width or height, decoding requires createImageBitmap | Docs |
+| C2004 | Frame grab ImageCapture.grabFrame | Returns an unencoded ImageBitmap pixel frame; must be closed after use | Docs |
+| C2005 | wx photo capture CameraContext.takePhoto | Returns an ArrayBuffer plus mimeType; there is no mode-selection parameter, modes go through C2002; it must be triggered at an interaction-gate call point | Docs |
+| C2006 | Video recording MediaRecorder | Records audio/video streams; the video mime is whatever isTypeSupported reports, known values are video/webm;codecs=vp8,opus and video/mp4 | Docs |
+| C2007 | Barcode detection BarcodeDetector | Look up supported formats with getSupportedFormats first; detect accepts ImageData, an encoded image Blob or an ImageBitmap, and returns format, rawValue, boundingBox and cornerPoints | Docs |
+| C2008 | OCR interface | Does not exist. The path for reading text is a telephoto photo plus image input to the LLM, see C3016 | Docs |
+| C2009 | Continuous frame stream | The documentation gives no upper frequency limit or background behavior for continuous frame capture; the sustained availability of the getUserMedia stream and grabFrame awaits probe verification, see section 4 | Pending |
+| C2010 | Text and face detection | TextDetector and FaceDetector do not exist; there is no such entry in the official list | Docs |
+
+### 3.3 Audio, Speech and LLM
+
+Basis: `skill: references/apis/media.md`, `skill: references/apis/ai.md`; recording requires permission C7003.
+
+| No. | Primitive | Conclusion | Verified |
+|---|---|---|---|
+| C3001 | Recording source captureSource | microphone, or system-audio for internal capture of system sound; system-audio cannot be combined with echoCancellation or microphoneMode, otherwise OverconstrainedError; system sound does not fall back to the microphone automatically | Docs |
+| C3002 | Microphone mode microphoneMode | Four modes: wearer (wearer-first), far-field, near-field, omnidirectional; they apply only to getUserMedia capture streams, device support is not guaranteed, an unsupported mode raises OverconstrainedError, and the value actually in effect is read from getSettings | Docs |
+| C3003 | Microphone modes vs. host recognition | The modes act only on self-captured streams, not on host speech recognition; host recognition uses the host microphone and is unrelated to the mode setting | Docs |
+| C3004 | Recording encoding MediaRecorder | Audio supports audio/wav and audio/ogg;codecs=opus | Docs |
+| C3005 | wx recording RecorderManager | start, pause, resume, stop and frame callbacks; uses the default microphone, with no source or mode selection parameters — to select a mode use C3001 and C3002 | Docs |
+| C3006 | Speech synthesis speechSynthesis.speak | Synthesizes and plays directly, queued through the runtime's unified player; mode is enqueue (default) or immediate | Docs |
+| C3007 | Speech synthesis speechSynthesis.synthesize | Generates without playing and returns an abortable task; options include caption granularity none, sentence or word, audio formats pcm, mp3 and ogg_opus, sample rate, channels and bitrate; pair with SpeechAudioPlayer for independent playback | Docs |
+| C3008 | Synthesis voices | 11 fixed voice IDs in total: female-tianmei, English_radiant_girl, English_expressive_narrator, male-qn-qingse, male-qn-jingying, female-yujie, Chinese (Mandarin)_News_Anchor, Chinese (Mandarin)_Radio_Host, clever_boy, lovely_girl, English_Trustworthy_Man; there is no getVoices | Docs |
+| C3009 | Synthesis control surface | The utterance lang attribute has no effect and does not change the generated language; there is no cancel, pause or resume; pitch, rate and volume default to 1 | Docs |
+| C3010 | wx announcement wx.speech.playTTS | Announces one sentence, returns a request ID string, and returns an empty string on failure | Docs |
+| C3011 | Speech recognition SpeechRecognition | Recognition on the host microphone; properties lang, continuous, interimResults, maxAlternatives; start requires the view to stay interactive, otherwise InvalidStateError; when lang is empty the host picks a default language | Docs |
+| C3012 | Speech recognition SpeechRecognitionSession | Recognizes an external audio stream; the session itself does not open a microphone; supports hotword phrases with boost, auto segmentation, vad, semantic, and updateContext for dynamic context; check getCapabilities first for the host's real capabilities | Docs |
+| C3013 | Recognition error categories | The official documentation gives no enumeration of the error event's category values; error handling subdivided by category is an unverified assumption and must not be relied on | Docs |
+| C3014 | LLM availability LanguageModel.availability | Returns only available or unavailable; does not expose the provider, model list or endpoints | Docs |
+| C3015 | LLM session LanguageModel.create | Underneath is the host's OpenAI-compatible chat-completions streaming channel; model resolution order is an explicit model, then the host defaultModel; system may only appear as the first of initialPrompts | Docs |
+| C3016 | LLM multimodal input | The content array of a user message supports text and image_url, and an image may be a data: URL; structured content is limited to the user role | Docs |
+| C3017 | LLM tool calls | tools are forwarded into the provider request body; calls come back as session toolcall events carrying callId, functionName and arguments; they are not executed automatically and there is no guaranteed structured round-trip protocol | Docs |
+| C3018 | LLM requests prompt and promptStreaming | Streaming is poll-based read, not a WHATWG Stream and not an async iterator; only one in-flight request is allowed per session at a time; after destroy the session cannot be used again | Docs |
+| C3019 | Audio playback AudioPlayer | General-purpose player for files inside the local package or network URLs; supports pcm and ogg_opus streaming append playback and caption text tracks | Docs |
+| C3020 | Sound effects Sound | Short playback of local sound effects, local files only; http and https URLs are rejected | Docs |
+| C3021 | Web Audio | AudioContext with createBuffer, Oscillator, Gain, BiquadFilter, Analyser, MediaStreamSource, decodeAudioData and more is available, enough for waveform and spectrum analysis | Docs |
+
+### 3.4 Sensors and Positioning
+
+Basis: `skill: references/apis/device.md`, `skill: references/apis/geo/geolocation.md`, the official IMU guide; positioning requires permission C7001.
+
+| No. | Primitive | Conclusion | Verified |
+|---|---|---|---|
+| C4001 | Accelerometer | Three-axis acceleration x, y, z plus timestamp; events activate, reading, error; the constructor parameter frequency is only a best-effort hint to the host | Docs |
+| C4002 | Gyroscope | Three-axis angular velocity x, y, z plus timestamp; events and frequency semantics as in C4001 | Docs |
+| C4003 | Absolute orientation AbsoluteOrientationSensor | Absolute-orientation quaternion [x, y, z, w] plus timestamp; availability depends on device hardware support | Docs |
+| C4004 | Sampling-rate guarantee | No officially published maximum frequency or precision figures; the official guide's examples use 60, suggesting a start at 30 to 60 Hz | Docs |
+| C4005 | Other sensor interfaces | Geomagnetic, light and proximity sensors have no separate API and do not appear in the official list | Docs |
+| C4006 | Head gesture onHeadGesture | Requires enableWorldAwareness turned on inside the Page; the only gesture value in the official examples is nod, and the full enumeration has not been published, see unresolved item 8 | Docs |
+| C4007 | Head-stability event onOrientationStabilityChange | Also requires world awareness turned on; event.stable reports changes in head stability | Docs |
+| C4008 | Eye tracking | Does not exist. So-called gaze is implemented with head orientation C4003 plus head stability C4007 plus nod C4006 | Docs |
+| C4009 | Positioning geolocation | getCurrentPosition and watchPosition, released with clearWatch; coords include latitude, longitude, accuracy (in meters) and the nullable altitude, altitudeAccuracy, heading and speed; options enableHighAccuracy (default false), timeout, maximumAge; error codes 1 denied, 2 unavailable, 3 timeout | Docs |
+| C4010 | GPX GPXDocument | GPX route parsing, creation and export: setStartPoint, addWaypoint, appendTrackPoint, toString, toBlob; displayed with the map and map-gpx components | Docs |
+| C4011 | Bluetooth BLE | Central-device role: getAvailability, getDevices, requestDevice, scanDevices (Ink-specific), GATT connect, readValue, writeValue, startNotifications; requestDevice, scanDevices, connect and startNotifications require the view to be interactive | Docs |
+| C4012 | Bluetooth peripheral and advertising | Does not exist; the official list has no peripheral capability | Docs |
+
+### 3.5 Display Runtime and Pages
+
+Basis: `skill: references/framework.md`, `skill: references/apis/window.md`, `skill: references/apis/canvas.md`, `skill: references/events.md`, the official runtime-environment documentation.
+
+| No. | Primitive | Conclusion | Verified |
+|---|---|---|---|
+| C5001 | Runtime Ink | The logic and view layers run in Ink, an in-house container built on QuickJS plus Skia; ES2023, ESM | Docs |
+| C5002 | Reference canvas | The full-screen Page reference canvas is 480 × 352; safe margins are 16 px left and right, 12 px top and bottom, giving an effective content width of 448 px | Docs |
+| C5003 | Monochrome-green design constraints | Base color #40ff5e with a 6-step brightness ladder; black equals a transparent background, so an opaque black panel cannot be counted on to occlude reality; meaning must not be carried by color alone and needs icons, text or line styles on top; body-text brightness is recommended at no less than 72%, decorative lines at no more than 24%, and key information belongs in the central comfortable field of view | Docs |
+| C5004 | Viewport size | window.innerWidth and innerHeight are read-only logical pixels | Docs |
+| C5005 | Widget sizes | The size family 1x1 is 239 × 140 and 1x2 is 480 × 140; the glasses have 4 Widget grid slots in total; family is only a size category, and the root node must not be hard-coded to those pixel values | Docs |
+| C5006 | Opening UI window.open | Can only open a Widget declared in app.json, the sole target is _widget, with overlay support; it cannot open another Page or an external URL | Docs |
+| C5007 | Closing an instance window.close | Requests the host to close the current agent instance | Docs |
+| C5008 | Cross-agent navigation | Does not exist: the official list has no openAgent-type entry, and wx.navigateTo is limited to pages inside the same agent, see general rule R1 | Docs |
+| C5009 | Opening a host settings page | Unreachable: there is no such API, and "open such-and-such settings" intents are carried out by the host only as far as opening the app itself, see general rule R1 | Docs |
+| C5010 | Project structure | app.json plus app.js plus AGENTS.md plus pages; a page is either a single .ink file or the four-piece set .json, .wxml, .wxss, .js; optional widgets, workers, components, assets | Docs |
+| C5011 | Built-in components | 37 authorable tags in total, covering containers, text, forms, media, maps, canvas, charts and a2ui for AI-generated UI | Docs |
+| C5012 | Agent Worker | A UI-less script, triggered by open; lifetime is instant or foreground, background is reserved and ineffective; it has timers, Promise, Crypto, Wasm and encoding streams; it has no window, document, fetch, routing, rendering or media capture | Docs |
+| C5013 | Languages and modules | TypeScript entry points and WebAssembly modules are supported through the project packaging flow | Docs |
+| C5014 | Canvas 2D | Paths, rectangles, text including measureText, transforms, gradients, patterns, and drawImage in only the 3-, 5- and 9-argument forms; color parsing covers only #rrggbb, #rgb, rgb, rgba and a few named colors; output goes through convertToBlob and createImageBlob, and canvas.toDataURL does not exist | Docs |
+| C5015 | WXML templates | template is not supported | Docs |
+| C5016 | Conversation-flow cards | Display-only by default; interactive UI needs a full-screen Page or a Widget | Docs |
+| C5017 | Device information navigator | id is an opaque ID bound to the agent plus device and must not be treated as a credential; userAgent and versions.ink, versions.skia give version strings; language, languages and region may be empty; onLine and connection give online status and a connection estimate; renderingEnabled reports whether the current instance can render | Docs |
+| C5018 | Battery getBattery | Returns a Promise of a BatteryManager; on a host with no battery capability the Promise is rejected; the documentation is incomplete, see unresolved item 9 | Docs |
+| C5019 | Serial number and token | getDeviceSerialNumber and requestDeviceToken are available only to system-level agents; ordinary agents get an empty string back or must not rely on them | Docs |
+| C5020 | Global encoding tools | window.atob, btoa and the global createImageBlob are available; createImageBlob performs PNG and JPEG encoding | Docs |
+
+### 3.6 Storage, Files and Network
+
+Basis: `skill: references/apis/web.md`, `skill: references/apis/wx.md`, the official network guide.
+
+| No. | Primitive | Conclusion | Verified |
+|---|---|---|---|
+| C6001 | Local storage localStorage | A string KV isolated per agent: getItem, setItem, removeItem, clear | Docs |
+| C6002 | wx storage | setStorage, getStorage, removeStorage, clearStorage and their Sync synchronous versions; data is JSON-serialized | Docs |
+| C6003 | StorageManager navigator.storage | The documentation gives only one line, "persistent file storage entry point", with no method details, see unresolved item 10 | Docs |
+| C6004 | General file system | Does not exist: resources are always resolved from paths inside the project, and there is no interface for reading, writing or listing arbitrary paths | Docs |
+| C6005 | FileReader | Does not exist; on a real device it invariably throws FileReader is not defined; converting a Blob to a data URL goes through blob.arrayBuffer plus chunked btoa; related error code E2005 | Device-verified |
+| C6006 | Browser APIs verified absent | None of the following exist in the Ink runtime, and writing them into code is an error: sessionStorage, XMLHttpRequest, URL.createObjectURL, DOMParser, structuredClone, queueMicrotask, Notification, the clipboard API, IntersectionObserver, MutationObserver, ServiceWorker, new Worker, OffscreenCanvas, getDisplayMedia, applyConstraints, getVoices, navigator.permissions | Docs |
+| C6007 | fetch and web facilities | fetch, Headers, Response including streaming body reads, WebSocket, File, FormData, URL and URLSearchParams, and the full Streams family are available | Docs |
+| C6008 | wx network | The wx.request timeout resolves in the order options.timeout, app.json configuration, default 60000 ms; wx.createSocket and connectSocket; wx.createEventSource provides SSE | Docs |
+| C6009 | Web Crypto | randomUUID and getRandomValues up to 65536 bytes are available; subtle provides only SHA-1, 256, 384, 512 digests and HMAC; encryption, decryption, RSA, ECDSA and JWK are not supported | Docs |
+| C6010 | Phone-proxied networking | When the glasses are not on Wi-Fi, as long as Bluetooth is connected to the phone app, fetch and wx.request are automatically forwarded over the phone link, transparently to the developer | Docs |
+| C6011 | HTTPS and domain allowlist | In the production environment, network requests must use HTTPS; before publishing to the store, request domains must be filed on an allowlist in the developer backend | Docs |
+| C6012 | LAN direct connection | Not supported; the official guide calls it in development, and the documentation index marks it unsupported | Docs |
+| C6013 | Data prefetch | prefetch is not supported | Docs |
+| C6014 | Source-map debugging | Not supported | Docs |
+
+### 3.7 Permissions
+
+Basis: the permissions table in the official framework document app-json.md, corrected by the full audit of 2026-10-29. There are 7 in total; names are case-sensitive, and an unrecognized name grants no capability; also note the upstream inconsistency in C7008.
+
+| No. | Primitive | Conclusion | Verified |
+|---|---|---|---|
+| C7001 | Permission GEOLOCATION | Obtains the current position and watches position changes, see C4009 | Docs |
+| C7002 | Permission CAMERA | Accesses the camera and captures images or video, see section 3.2 | Docs |
+| C7003 | Permission RECORD_AUDIO | Accesses the microphone and captures audio; ASR also relies on it to open the microphone, and there is no separate ASR permission — the old SPEECH_RECOGNITION was removed in Ink 0.19 | Docs |
+| C7004 | Permission READ_MEDIA_IMAGES | Lists and reads images in the system media library | Docs |
+| C7005 | Permission CREATE_MEDIA_IMAGES | Adds images to the system media library, excluding modification or overwriting of existing assets | Docs |
+| C7006 | Permission READ_MEDIA_AUDIO | Lists and reads audio in the system media library | Docs |
+| C7007 | Permission CREATE_MEDIA_AUDIO | Adds audio to the system media library, excluding modification or overwriting of existing assets | Docs |
+| C7008 | Documentation stance of the permission list | The framework reference inside the aiui-dev skill still lists only the first three permissions, an internal inconsistency in the upstream documentation; the seven names in the formal framework document govern | Docs |
+
+### 3.8 Interaction and Host
+
+Basis: `skill: references/events.md`, the operation guide built into the Hi Rokid App (the gesture part; on-device behavior there governs).
+
+| No. | Primitive | Conclusion | Verified |
+|---|---|---|---|
+| C8001 | Wakeup onVoiceWakeup | Can be triggered by voice or touch; known event.keyword values: 乐奇, Hi Rokid, and clickAiAssist for touch wakeup; by default do not filter on keyword; event.preventDefault can take over the host's default action | Docs |
+| C8002 | Key events | A Page's onKeyDown and onKeyUp dispatch on event.code: Enter confirm, Backspace back, ArrowUp and ArrowDown scroll, GlobalHook is a device-specific signal for temple touch; the host's default action fires after onKeyUp | Docs |
+| C8003 | Single-finger tap | Confirm, corresponds to Enter | Docs |
+| C8004 | Single-finger double tap | Back, corresponds to Backspace; when there is no page to go back to, it requests closing the agent | Docs |
+| C8005 | Single-finger swipe | Scroll, corresponds to ArrowUp and ArrowDown; the scroll direction can be changed in the app | Docs |
+| C8006 | Single-finger long press | Wakes the assistant; the app offers a choice between the glasses AI assistant and the phone assistant | Docs |
+| C8007 | Two-finger double tap | Screen off | Docs |
+| C8008 | Two-finger front/back swipe | Volume up and down, by default; can be changed in the app | Docs |
+| C8009 | Two-finger long press, AI Shortcut Command | Sends one fixed command to a chosen trigger target, with a text limit of 500 characters; the trigger target can be a specific custom or debug agent, i.e. a fixed text delivered deterministically to a designated agent with zero ASR | Device-verified |
+| C8010 | Contextual gestures | Music context: tap to play or pause, front/back swipe to change track; call context: double tap to reject an incoming call, tap during a call to mute or unmute, double tap to hang up | Docs |
+| C8011 | Buttons bound only to click | A button bound only with bindtap cannot be triggered by gestures on the glasses; a page must map keys to actions itself and cannot rely on button clicks alone | Device-verified |
+| C8012 | The failing layer of voice wakeup | Failures of fixed-phrase wakeup occur at the transcription layer of speech recognition, not at the matching layer after correct transcription; shortening or regularizing an agent's name can only ease transcription, not bypass it — for a deterministic entry point see C8009 | Device-verified |
+| C8013 | Role of the phone companion app | For the network proxy see C6010; it also handles device management and settings, media management, AI feature entry points and delivery of glasses resource packages | Docs |
+
+### 3.9 Distribution and Review
+
+Basis: the official publishing document publish.md and the AIX documentation; the import behavior is the maintainer's own testing in Global AIUI Studio on 2026-10-24.
+
+| No. | Primitive | Conclusion | Verified |
+|---|---|---|---|
+| C9001 | Distribution format AIX | AI eXecutable, following the Open Agent Format, self-contained code, configuration and static resources; packaging automatically generates a VERSION file with a unique UUID for version checking | Docs |
+| C9002 | Package size limit | No figure published officially | Docs |
+| C9003 | Packaging exclusions .aixignore | Must exclude .agents, .aix, artifacts, *.aix, skills-lock.json and node_modules, otherwise development files enter the package — measured to bloat a package from 2.3 KB to 107 KB | Build-verified |
+| C9004 | Studio import behavior | The import dialog has a single URL field; everything after /tree/ is treated as one ref, so subdirectory addresses fail to import; a repository-root address imports with an empty code tree; with a single-segment branch name and one agent's complete files at the branch root, the import succeeds as a complete project | Studio-verified |
+| C9005 | Review red lines | The name is required, at most 20 characters, must not duplicate someone else's, and must not contain words like test or beta or superlative claims; an icon is required and must not be the default icon; the feature description is at most 500 characters; an opening message is required, recommended at no more than 300 characters; preview media is 3 to 5 files with at least 1 image plus 1 video, and video at most 60 seconds; every permission's purpose must be stated item by item | Docs |
+| C9006 | Review declaration checkboxes | Studio review has a separate set of declaration checkboxes — network, camera, microphone, speaker, Rokid account information and the like — which are a different thing from the list permissions in section 3.7 | Docs |
+| C9007 | Publishing flow | Build, web simulation, AIX packaging and upload to the cloud, on-device debugging, completing the review materials, submitting for review | Docs |
+| C9008 | Generation of version and ID | The version number and the Agent ID are both generated by the system; the developer cannot edit them | Docs |
+
+## 4. Open Probes
+
+A probe is a test rig built to verify entries. This section registers only the probes and the entry numbers they are meant to answer; once a probe's data is complete, the conclusion is written back into the corresponding entry, its verification status is updated, and the row here is deleted.
+
+| Probe | Entries verified | Status |
 |---|---|---|
-| `Enter` | Confirm / activate | Enter navigation mode or activate the current target |
-| `Backspace` | Back | Go back one level; when there is no page to go back to, request closing the agent |
-| `ArrowUp` / `ArrowDown` | Up / down | Move within the current navigation path or scroll the root view |
-| `GlobalHook` | Device-specific signal for a **temple key touch** (not a standard Web key value) | No default action; the documentation recommends using it only for fast response in onKeyDown — use Backspace/Enter to distinguish back/confirm |
+| Capability benchmark agent, 23 items testing the base platform one by one | C2002, C2004, C3002, C3011, C4001 to C4007, C5002 and more | Built; the on-device re-test is not complete |
+| Audiovisual capture series, 10 agents, each pushing one audiovisual boundary | C2002, C2004, C2006, C2007, C3001, C3002, C3021 | Built; the hardware chain awaits on-device backfill |
+| Stop-motion agent plus a log-return client | Re-verification of C6005; the feasibility of returning error logs over an external channel | Built; awaiting one on-device run |
+| Tracing probes, one for seals and one for sign language | The usability and hit rate of C3016 image input for still-frame judgment | Built; on-device data will decide inclusion in the full versions |
+| Continuous video stream probe | C2009 | Project approved, not yet run |
+| Recognition error-category collection | C3013 | After triggering each error type on a real device, compare against the original text |
 
-Product-side supplement: the product page mentions "Quick Action Shortcuts — Tap to launch the features you use most" (tap the temple to quick-launch frequently used features) and a dedicated capture action ("One word or one press" to take a photo).
+## 5. Unresolved and Conflicting Points
 
-### 3.2.1 Complete Temple Touchpad Gesture Table (verified on real hardware; Hi Rokid app "User Guide")
+The following are not entries: they are points where the official sources disagree with each other or give nothing, hung under the related entries until an official position or a test clarifies them, at which point they are merged into an entry or deleted.
 
-Source: the user guide built into the Hi Rokid app (real-device behavior; this governs; the touch area is the middle section of the temple). This is the complete product-level mapping behind the §3.2 key events — the runtime's `Enter`/`Backspace`/`ArrowUp/Down` originate from these gestures.
+1. Two figures for display resolution: the product specification's 480 × 400 (C1005) coexists with the runtime canvas's 480 × 352 (C5002), and the official sources do not explain the relationship between the two.
+2. Third-party claims of a 23° FOV and of a 640 × 480 display resolution are both unconfirmed officially; C1006 and C1005 govern.
+3. Several battery-life figures: the same product page's FAQ says 8 to 10 hours of daily use, its comparison table says 6 hours of mixed use and 30 hours with the charging case, with no unified test conditions (C1011).
+4. The second chip's model is unconfirmed officially (C1001).
+5. The camera sensor model and field of view have not been published officially (C1008).
+6. The IMU's axis count, model, sampling-rate ceiling and precision have not been published officially (C4001 to C4004).
+7. The full enumeration of head gestures has not been published officially (C4006).
+8. The getBattery documentation is incomplete: the navigator reference says the battery methods are in the device reference, but the device reference has no such section (C5018).
+9. StorageManager method details have not been given officially (C6003).
+10. Device-generation differences: the key mappings for Rokid Glasses 2 and the first-generation full-color glasses are marked unverified in the official events reference and must not be assumed to follow the mappings in section 3.8 of this registry.
+11. Two tracks of official documentation: open.rokid.com/aiui is the current version and js.rokid.com an earlier one; the differences between the two sites have not been compared page by page; this registry follows the official repository's documentation and the aiui-dev skill.
+12. The package size limit, the entry point for filing the domain allowlist, and review turnaround times have not been detailed officially (C9002, C6011).
 
-**Single-finger interaction (general)**
-
-| Gesture | System behavior | Runtime equivalent |
-|---|---|---|
-| Single tap | Confirm | `Enter` |
-| Double tap | Back | `Backspace` |
-| Long-press the touchpad | Wake the assistant (in the app you can choose "Glasses AI assistant (default)" or "Phone assistant") | `onVoiceWakeup` (keyword `clickAiAssist`) |
-| Swipe | Scroll forward (direction can be changed in the app) | `ArrowUp` / `ArrowDown` |
-
-**Single-finger, scenario-specific**: Music — a single tap on the home screen does nothing; in the music app a single tap = play/pause; swipe forward/back = next/previous track. Calls — double tap during an incoming call = reject; single tap during a call = mute/unmute; double tap during a call = hang up.
-
-**Two-finger interaction (two fingers spread, touching the middle section of the temple)**
-
-| Gesture | System behavior |
-|---|---|
-| Double tap | Screen off |
-| Long press | **AI Quick Command**: send a fixed command to a selected "trigger target" (see below) |
-| Swipe forward/back | Volume up/down (default; changeable) |
-
-**AI Quick Command (two-finger long press)**: can be toggled in the app; the command can be a preset ("Look at what's in front of me", "Take a photo and translate it into Chinese", "What's the weather today") or custom text (≤500 characters). Key point: **the trigger target can be a specific custom/debug Agent** — that is, a two-finger long press deterministically delivers a fixed text to a designated Agent with zero ASR, a hardware-level entry point that bypasses voice-wakeup misrecognition (verified working on real hardware).
-
-
-### 3.3 What "Gaze" Actually Is: Head Orientation, Not Eye Tracking
-
-**Conclusion: AIUI has no eye-tracking API; so-called "gaze" is implemented through head pose.**
-
-Evidence:
-1. No eye-tracking / gaze-coordinate API exists anywhere in the official API reference (all of the skill's apis files); a full-text search finds no eye-tracking entries.
-2. Pointing capability is provided by the IMU: `AbsoluteOrientationSensor` yields the head orientation quaternion (2.7).
-3. There are only two world-awareness callbacks: `onHeadGesture(event)` (the documented example gesture value is `'nod'`) and `onOrientationStabilityChange(event)` (head stability changes) — i.e. the "look at something and hold your head steady → trigger" interaction paradigm relies on **head-stability detection**, and the official example confirms exactly on `event.gesture === 'nod'`. Source: `skill: references/events.md`
-4. Neither the product page nor the documentation ever claims eye-tracking hardware; the spec table's sensor entry says only "IMU: Supported".
-
-Therefore: developing "gaze"-style interaction = head orientation (quaternion/direction) + head-stability events + nod confirmation. **Other gesture values such as shake are not listed in the official documentation** — the complete gesture enumeration for `onHeadGesture` has not been officially published (see Section 5).
-
-### 3.4 Voice Interaction Flow
-
-
-Wake word / touch wakeup → `onVoiceWakeup` → inside the Agent, use `SpeechRecognition` (host recognition) or `SpeechRecognitionSession` (your own audio stream) for ASR → `LanguageModel` session inference (image input supported) → speak via `speechSynthesis.speak/synthesize` or `AudioPlayer`. The conversation-flow card is **display-only** by default; interactive UIs require a full-screen Page or a Widget (`skill: SKILL.md` Core Rules).
-
-### 3.5 The Role of the Phone Companion App
-
-
-- Network proxy: when the glasses have no Wi-Fi, they get online via Bluetooth through the phone app (the overseas **Hi Rokid**, package name `com.rokid.sprite.global.aiapp`) (2.13).
-- Device management and resource distribution: connect/manage the glasses, adjust settings, manage media, AI feature entry points (translation/subtitles/teleprompter/device control) — product page FAQ.
-- Agent distribution chain: Studio packaging and cloud upload → the app updates the glasses resource package → the agent runs on the glasses (this project's established flow; the official guide's publishing flow is "build → web simulation → AIX packaging and cloud upload → real-device debugging", source: publish.md).
-
----
-
-## 4. Platform Limits and Constraints (Developer View)
-
-### 4.1 Display / UI Constraints
-
-- Single green channel: every visible pixel is just a brightness level of the same green (base color `#40ff5e`, 6 brightness steps); **black = transparent background**, so you cannot count on an opaque black panel to occlude the real environment.
-- Semantics must not rely on color alone: states/severity must be redundantly encoded with icons, text labels, line styles, or motion.
-- Reference canvas 480 × 352; key information must fall within the central comfortable field of view; body text brightness of ≥72% is recommended, decorative lines ≤24%.
-
-### 4.2 .aix Package Constraints
-
-- AIX = "AI eXecutable", AIUI's proprietary distribution format; internally it follows the OAF (Open Agent Format) specification and is self-contained: code (WXML/WXSS/JS), configuration (JSON), and static assets.
-- Packaging automatically generates a `VERSION` file with a unique UUID for version verification / hot update; packaging supports PNG/JPEG compression and JSON obfuscation/minification.
-- **Package size limit: not officially published** (no figure in the documentation consulted).
-- Project-side red line: `.aixignore` must exclude `.agents/`, `.aix/`, `artifacts/`, `*.aix`, `skills-lock.json`, and `node_modules/`, or development files will end up in the package (measured: 2.3 KB → 107 KB). Source: this project's root README (repository sakai55/rokid).
-
-### 4.3 Capabilities AIUI Explicitly Does Not Expose / Support
-
-| Capability | Status | Basis |
-|---|---|---|
-| **OCR (text recognition) API** | **Does not exist** | No OCR entry anywhere in the complete official API reference list (the skill's apis directory) or the official documentation catalog; the official path for "reading text" is a telephoto photo + LLM image input (2.3 / 2.9) |
-| Eye tracking | Does not exist | See 3.3 |
-| Direct LAN communication | Not supported (under development) | Official networking guide + documentation catalog `lan: status unsupported` |
-| Data prefetch | Not supported | Documentation catalog `prefetch: status unsupported` |
-| Source map debugging | Not supported | Documentation catalog `sourcemap: status unsupported` |
-| WXML `<template>` | Not supported | Marked unsupported in the documentation catalog |
-| Agent Worker background residency | Not supported | `lifetime: 'background'` is reserved and ineffective; Workers also have no fetch |
-| Web Crypto encryption algorithms | SHA digests + HMAC only | `skill: references/apis/web.md` states explicitly that RSA/ECDSA/encryption-decryption/JWK are unsupported |
-| TTS language switching | The `lang` attribute has no effect | Stated explicitly in `skill: references/apis/ai.md` |
-| TTS queue control | No cancel/pause/resume/getVoices | Same as above |
-| General file system | No arbitrary-path file API | 2.12 |
-| Device serial number / token | System-level agents only | 2.1 |
-| LLM provider information | availability() does not provide it | 2.9 |
-
-### 4.4 Review / Publishing Constraints
-
-> Note: the official document in question describes publishing to the **Rokid Ai agent store (mainland China)**; the Global edition goes through the Submit tab of Global AIUI Studio, with broadly matching requirements (verified by this project in practice).
-
-- Name: required, ≤20 characters, must not duplicate another's name, must not contain "test/beta"-type words, prices or promotions, or superlatives; copy must not use implication words such as "official/authoritative/recommended/TOP1" or absolute claims like "100% accurate".
-- Icon: required and **the default icon must not be used**; it must not be blurry/stretched, carry a watermark or QR code, or be a plain color with text.
-- Feature description ≤500 characters; the opening message is required and ≤300 characters is recommended; the version number and Agent ID are both system-generated and cannot be edited by the developer.
-- Permissions: truthfully check all permissions actually used and state each one's purpose, following "minimum necessary + truthful purpose"; calling undeclared permissions, vague descriptions, or inconsistency with the code's behavior can all lead to rejection.
-- Preview assets: **3–5 files** are required, at least 1 image + 1 video; images in JPG/PNG (1:1 recommended), videos in MP4 (1:1 recommended), duration ≤60 seconds (15–45 seconds recommended), a single file ≤50 MB recommended; the video must fully demonstrate 1–2 core flows.
-- Content safety: UGC requires safety filtering; AI-generated synthetic content must be labeled as required by law; the agent must start, interact, and return normally, and must not crash frequently.
-- Flow: build → web simulation → AIX packaging and cloud upload → real-device debugging → complete the review materials → submit for review → result (if rejected, fix, repackage, and resubmit; if approved, it is listed in the store).
-
-### 4.5 Runtime and Interactive-Gate Constraints
-
-- **Interactive gate**: BLE requestDevice/scanDevices/connect/startNotifications, SpeechRecognition.start, RecorderManager.start, CameraContext.takePhoto, getUserMedia capture, and the like all require the owning view to be in the interactive state, and usually also need to be triggered by a user interaction; calling them in a non-interactive state throws/fails directly.
-- Resource lifecycle: microphone/camera tracks must be stopped when done; BLE scanning must be stopped and GATT disconnected; watchPosition must be clearWatch'ed; AudioContext must be closed. The official checklist lists these as delivery red lines (`skill: references/checklist.md`).
-- Simulator ≠ real device: in DevTools, sensors are mostly simulated values, and performance/heat/throttling differ from real hardware; the official documentation requires real hardware to govern (env.md).
-
----
-
-## 5. Contradictions and Unresolved Items
-
-1. **Inconsistent display-resolution figures**: the official product spec table says **480 × 400**; the AIUI design specification and the Widget size family use the **480 × 352** reference canvas (the 1x2 Widget width of 480 is consistent with this too). Both are official sources — presumably 480×400 is the panel's physical resolution and 480×352 the runtime safe canvas, but officials have not stated this.
-2. **Third-party FOV claims**: unofficial reviews (Notebookcheck, etc.) claim 23°, while the official product page says **30°**. The official figure governs; 23° is marked **not officially confirmed**.
-3. **Third-party display-resolution claims**: some unofficial reviews claim 640×480, which does not match the official 480×400 — **not officially confirmed**.
-4. **Multiple battery-life figures**: within the same official product page, the FAQ says 8–10 hours of daily use while the comparison table says 6 hours mixed use / 30 hours with the case; no nominal figure under a unified test protocol is given.
-5. **The second chip**: the product page carries a "Dual-Chip Performance" tagline, but the official spec table lists only Snapdragon AR1 as the SoC; the second chip's model (e.g. the NXP RT600 claimed by third parties) is **not confirmed on the official spec page**.
-6. **Missing camera details**: the sensor model (marketing copy says Sony; the spec table gives no model) and camera FOV (third parties claim 109°) are both **not officially published**.
-7. **Missing IMU details**: the product page says only "IMU: Supported"; the axis count, model, sampling-rate ceiling, and accuracy are all unpublished; on the API side, frequency is only a best-effort hint with no guaranteed value.
-8. **Head-gesture enumeration unpublished**: official examples for `onHeadGesture` give only `'nod'`; whether other gesture values (head shake, look up, etc.) exist and what they are called is not fully listed in the official documentation.
-9. **Dangling `navigator.getBattery()` documentation reference**: the navigator reference says the battery methods are in the device reference, but the device reference has no BatteryManager section — the API's existence follows the navigator reference, while the details (properties/events) are not given in the skill.
-10. **Missing `navigator.storage` (StorageManager) details**: the navigator reference gives only the single sentence "Persistent file storage entry point", with no method signatures; its boundary with localStorage/wx storage is not explained in the skill.
-11. **Device-generation differences unverified**: the events reference states explicitly that the key mappings for **Rokid Glasses 2** and the **first-generation full-color glasses** "remain unverified" and must not borrow the mapping of Rokid Glasses (first-generation monochrome green); the design specification names RokidGlasses1 / RokidGlasses2 as target devices.
-12. **Dual-track documentation versions**: the official documentation currently has two sites — open.rokid.com/aiui (current) and js.rokid.com (an earlier version; its AI development guide is at /AIUI/guide/quickstart/ai-dev); this dossier's API contract follows the official repository's current `documentation/` and `skills/aiui-dev`, and the two sites' contents have not been compared page by page.
-13. **OS unpublished**: the glasses' operating system name/version appears in neither the official product page nor the documentation (only the Ink / QuickJS + Skia container runtime is known).
-14. **.aix package size limit unpublished**; the filing entry point and review turnaround for the domain allowlist are likewise not detailed in the public documentation.
-
----
-
-## 6. Official Source List
+## 6. Official Sources
 
 **Product and platform**
-- Rokid Glasses official global product page (primary specification source): https://global.rokid.com/products/b-h-rokid-glasses-with-display
-- Rokid official UK site, AI product line (specification corroboration): https://gb.rokid.com/collections/rokid-ai-lineup
-- Official Academy tutorial "3.6 Glasses AIUI" (Craft/Studio workflow): https://global.rokid.com/de/blogs/academy-glasses/glasses-3-6-aiui
 
-**Official documentation sites**
-- AIUI documentation (current): https://open.rokid.com/aiui
+- Rokid Glasses official global product page (primary specification source): https://global.rokid.com/products/b-h-rokid-glasses-with-display
+- Rokid UK official site, AI product line (specification cross-check): https://gb.rokid.com/collections/rokid-ai-lineup
+- Official Academy tutorial "3.6 Glasses AIUI": https://global.rokid.com/de/blogs/academy-glasses/glasses-3-6-aiui
+
+**Official documentation site**
+
+- AIUI documentation (current version): https://open.rokid.com/aiui
 - AIUI documentation (earlier version): https://js.rokid.com/AIUI/guide/quickstart/ai-dev
 
-**Official GitHub repository yodaos-project/AIUI (jsar-project/AIUI redirects here)**
-- Repository home/README (positioning, Samples index): https://github.com/yodaos-project/AIUI
-- Samples directory (bluetooth / capabilities / cut-card / games / gyroscope-test / meal-card / navigator-info / realtime-voice-intelligence / scanner / tts): https://github.com/yodaos-project/AIUI/tree/main/samples
-- aiui-dev skill (the primary source for this dossier's API contract): https://github.com/yodaos-project/AIUI/tree/main/skills/aiui-dev
+**Official GitHub repository yodaos-project/AIUI**
+
+- Repository home: https://github.com/yodaos-project/AIUI
+- aiui-dev skill (primary API-contract source): https://github.com/yodaos-project/AIUI/tree/main/skills/aiui-dev
 - Review and publishing: https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/bundle/publish.md
-- What is AIX: https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/bundle/aix.md
+- What AIX is: https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/bundle/aix.md
 - Runtime environment: https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/runtime/env.md
 - IMU guide: https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/device/imu.md
-- Network usage notes (mobile proxy / HTTPS / domain allowlist / LAN): https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/network/usage.md
-- Documentation catalog (including the unsupported markings for lan/prefetch/sourcemap, etc.): https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
+- Network usage notes: https://github.com/yodaos-project/AIUI/blob/main/documentation/0-guide/basic/network/usage.md
+- Documentation index (with unsupported markings for lan, prefetch, sourcemap and more): https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
+
+## 7. Change Log
+
+### v2.0.0 2026-10-29
+
+Restructured into an atomic registry: the whole text was split by the nine segments into 123 numbered entries, each carrying a primitive, a conclusion and a verification status; three new sections — numbering and governance, general rules, and open probes; the former section 5's conflicting and unresolved points were kept, re-hung under entry numbers. Scenario-type questions are no longer catalogued one by one; they are uniformly derived from the entries and the general rules.
+
+### v1.1.0 2026-10-29
+
+Section 4 gained the official positioning statement "an agent essentially completes a closed loop", and its 4.3 table gained two rows, cross-agent navigation and opening a host settings page; parenthetical notes were removed from headings throughout, with their content moved into the body text; the foreword and this change log were added.
+
+### v1.0.0 2026-10-29
+
+First version published in this repository. This dossier was compiled on 2026-10-24 from the official product page, the official documentation site and the aiui-dev references in the official repository; on entering the repository it was generalized, removing developer-internal working policies and traces of personal use, with the capability facts untouched.
