@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-posture-guard
 ```
 
+**AIX 直接下载**（最新版）：[posture-guard.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/posture-guard.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI32 个。低头看手机、看电脑
 久了脖子僵——你不是不知道要抬头，你是没意识到这一低头就
