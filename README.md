@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-cross-street
 ```
 
+**AIX 直接下载**（最新版）：[cross-street.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/cross-street.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI34 个。过马路出事，往往不是不会看，而是走神——低头看手机、想着心事，一侧根本没看就迈了步。本 Agent 在你起步之前管住你的头：先左转头停稳、再右转头停稳（顺序可反），两侧都确认了才播报「左右都看过了」。
 
