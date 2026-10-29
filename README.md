@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-trace-origami
 ```
 
+**AIX 直接下载**（最新版）：[trace-origami.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/trace-origami.aix)
+
 描红系列 TR04：中央范本 + 边上步骤 + 做一步验一步。照着眼镜一步步折完一件折纸作品：每步范本是 Canvas 自绘的折形图（本步折线最亮），折完把纸举到眼前拍照验形，只查粗项，过了才进下一步；折错当步就知道，不等成品散架。
 
 ## 功能（6 页闭环）
