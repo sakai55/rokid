@@ -1,5 +1,5 @@
 <script def>
-{"title": "Trace Probe Seals"}
+{"title": "Trace Probe Kuji"}
 </script>
 
 <script setup>
@@ -7,19 +7,19 @@ import wx from 'wx';
 import { loadKey, saveKey } from '../../judge.js';
 import { SEALS } from '../../data.js';
 
-// 结果页：逐项表（目标 / LLM 认成什么 / 对错）+ 汇总认对数。
-// 对错以 GO 的真值确认为准；未测的印如实标「未测」。
-const KEY = 'trace.probe.seals.v1';
-const MENU = ['清空重测', '返回 BACK'];
+// 結果ページ：一覧表（目標 / LLMの読み / 正解・不正解）＋ 集計。
+// 正しさは装着者の確定が基準。測っていない印は「未テスト」と正直に出す。
+const KEY = 'trace.probe.kuji.v1';
+const MENU = ['記録を消して最初から', 'BACK もどる'];
 
 export default {
   data: {
-    status: '结果：真值以你的确认为准',
-    sumLine: '汇总：—',
+    status: '結果：真値はあなたの確定が基準',
+    sumLine: '集計：―',
     rows: [],
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v2.0.0'
   },
   onLoad() { this._focus = 1; this._render(); },
   onShow() { this._render(); },
@@ -28,25 +28,25 @@ export default {
     let right = 0, wrong = 0, judged = 0;
     const rows = SEALS.map(function (s, i) {
       const r = Array.isArray(recs) ? recs[i] : null;
-      let tail = '未测';
+      let tail = '未テスト';
       if (r && r.at) {
         judged++;
-        if (r.truth === 'right') { right++; tail = '判定对'; }
-        else if (r.truth === 'wrong') { wrong++; tail = '判定错'; }
-        else tail = '已判未确认';
-        return { idx: i, label: s.name + ' → 认成「' + (r.guess || '没认出') + '」 · ' + tail };
+        if (r.truth === 'right') { right++; tail = '正解'; }
+        else if (r.truth === 'wrong') { wrong++; tail = '不正解'; }
+        else tail = '判定済み・未確定';
+        return { idx: i, label: s.name + '（' + s.sub + '） → 「' + (r.guess || '読み取れず') + '」と判定 ・ ' + tail };
       }
-      return { idx: i, label: s.name + ' → ' + tail };
+      return { idx: i, label: s.name + '（' + s.sub + '） → ' + tail };
     });
     this.setData({
       rows: rows,
-      sumLine: '汇总：已确认 ' + (right + wrong) + ' / ' + SEALS.length + ' · 认对 ' + right + ' · 认错 ' + wrong + ' · 已判未确认 ' + (judged - right - wrong),
-      focusLine: '焦点：' + MENU[this._focus] + '（上下切换，Enter 执行）'
+      sumLine: '集計：確定 ' + (right + wrong) + ' / ' + SEALS.length + ' ・ 正解 ' + right + ' ・ 不正解 ' + wrong + ' ・ 判定済み未確定 ' + (judged - right - wrong),
+      focusLine: 'フォーカス：' + MENU[this._focus] + '（上下で切替、Enterで実行）'
     });
   },
   clearTap() {
-    if (!saveKey(KEY, [])) { this.setData({ status: '清空失败：E5001', evt: 'EVT: clear FAIL E5001' }); return; }
-    this.setData({ status: '已清空，可从说明页重新开始轮测', evt: 'EVT: cleared' });
+    if (!saveKey(KEY, [])) { this.setData({ status: '記録を消せなかった：E5001', evt: 'EVT: clear FAIL E5001' }); return; }
+    this.setData({ status: '記録を消した。説明ページから輪測をやり直せる', evt: 'EVT: cleared' });
     this._render();
   },
   backTap() { try { wx.navigateBack({}); } catch (e) {} },
@@ -66,15 +66,15 @@ export default {
 
 <page>
   <view class="page">
-    <text class="title">结印探针 · 结果</text>
+    <text class="title">印を結ぶ ・ 結果</text>
     <text class="status">{{status}}</text>
     <text class="sum">{{sumLine}}</text>
     <view class="rows">
       <view ink:for="{{rows}}" class="row"><text class="rtxt">{{item.label}}</text></view>
     </view>
-    <text class="note">回传方式：把本页汇总数口述给维护者即可；逐项原判定保存在本机记录里。收录门槛：认对进计分、认错只进练习、看不清复测后不收、全集认对不足一半，正式版降级自评。</text>
-    <button class="banner ghost" bindtap="actTap" data-idx="0">清空重测</button>
-    <button class="banner" bindtap="actTap" data-idx="1">BACK 返回</button>
+    <text class="note">伝え方：このページの集計を口頭でメンテナに伝える。判定の原文は端末内の記録に残る。収録の目安：正解=計分範囲へ、不正解=練習のみ、判別できない印は再測のうえ収録しない。全体の正解が半分未満なら、正式版は自己評価方式に下げる。</text>
+    <button class="banner ghost" bindtap="actTap" data-idx="0">記録を消して最初から</button>
+    <button class="banner" bindtap="actTap" data-idx="1">BACK もどる</button>
     <text class="line dim">{{focusLine}}</text>
     <text class="foot">{{evt}} · {{ver}}</text>
   </view>

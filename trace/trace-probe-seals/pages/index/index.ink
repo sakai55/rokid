@@ -1,5 +1,5 @@
 <script def>
-{"title": "Trace Probe Seals"}
+{"title": "Trace Probe Kuji"}
 </script>
 
 <script setup>
@@ -7,27 +7,31 @@ import wx from 'wx';
 import { loadKey, speak } from '../../judge.js';
 import { SEALS } from '../../data.js';
 
-// 结印探针说明页：讲清一轮怎么跑、摆位、视角与真值口径。
-// 本探针不占描红系列编号、不上清单；结果决定 TR02 正式版收录范围。
-const KEY = 'trace.probe.seals.v1';
-const MENU = ['开始轮测（12 印）', '查看结果', '返回 BACK'];
+// 九字印プローブの説明ページ：一巡の進め方、姿勢、視点、真値の決め方。
+// 本プローブは描紅シリーズの番号を持たず、一覧にも載らない。
+// 結果が TR02 正式版の収録範囲を決める。
+const KEY = 'trace.probe.kuji.v1';
+const MENU = ['輪測をはじめる（9印）', '結果を見る', 'BACK もどる'];
 
 export default {
   data: {
-    status: '结印识别探针：先看说明，再开始轮测',
-    doneLine: '进度：未开始',
+    status: '九字印の認識テスト：説明を読んでから輪測へ',
+    doneLine: '進捗：まだ始まっていない',
+    artLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v2.0.0'
   },
   onLoad() { this._focus = 0; this._render(); },
   onShow() { this._render(); },
   _render() {
     const recs = loadKey(KEY, []);
     const done = Array.isArray(recs) ? recs.filter(function (r) { return r && r.truth; }).length : 0;
+    const withArt = SEALS.filter(function (s) { return !!s.art; }).length;
     this.setData({
-      doneLine: '进度：已测 ' + done + ' / ' + SEALS.length + ' 印（结果页可看逐项表）',
-      focusLine: '焦点：' + MENU[this._focus] + '（上下切换，Enter 执行，点头=执行）'
+      doneLine: '進捗：確定済み ' + done + ' / ' + SEALS.length + ' 印（結果ページで一覧できる）',
+      artLine: withArt === SEALS.length ? '見本データ：全印収録済み（再描画線画・装着者視点）' : ('見本データ：準備中（収録済み ' + withArt + ' / ' + SEALS.length + ' 印）。無い印は輪測で「見本準備中」と表示される'),
+      focusLine: 'フォーカス：' + MENU[this._focus] + '（上下で切替、Enterで実行、うなずき=実行）'
     });
   },
   startTap() { try { wx.navigateTo({ url: '/pages/test/index' }); } catch (e) { this.setData({ evt: 'EVT: nav FAIL E8001' }); } },
@@ -49,21 +53,21 @@ export default {
 
 <page>
   <view class="page">
-    <text class="title">结印探针 · 识别试验</text>
+    <text class="title">印を結ぶ ・ 認識プローブ</text>
     <text class="status">{{status}}</text>
     <view class="card">
-      <text class="line">目的：测 LLM 拍照认十二基本印（子丑寅卯辰巳午未申酉戌亥）到底准不准，认对的才进正式版计分范围。</text>
-      <text class="line">一轮约 10 分钟：逐印看连续 3 帧范本（起手→交指中段→成印定格），照要点摆到定格，点头拍照判定。</text>
-      <text class="line">摆位：双手举到眼前约 30–40cm，背景尽量素、光线均匀；每个印只拍一张（拍糊可重拍一次）。</text>
-      <text class="line">视角：范本是佩戴者视角线条示意图（你看自己手背的方向），手指配置以要点文字为准。</text>
-      <text class="line">真值：判定后由你点「判定对 / 判定错」定对错，LLM 说了不算；结果落盘，结果页可逐项回看。</text>
+      <text class="line">目的：LLMが定格写真で九字印（臨・兵・闘・者・皆・陳・烈・在・前）をどれだけ正しく読めるか測る。読めた印だけが正式版の計分範囲に入る。</text>
+      <text class="line">進め方：1印ずつ見本と要点を示す。結べたら、うなずいて撮影し、LLMが9印の中から判定する。1巡およそ10分。</text>
+      <text class="line">姿勢：両手を目の前およそ50cmに構える（見本は装着者視点＝自分の手の甲を見る向き）。背景は無地に近く、明るさは均一に。撮影は1印1回だけ（ぼけたら撮り直し可）。</text>
+      <text class="line">真値：判定の正しさは、あなたが「正解／不正解」で決める。LLMの答えがそのまま真値にはならない。</text>
     </view>
-    <button class="banner" bindtap="actTap" data-idx="0">开始轮测（12 印）</button>
-    <button class="banner ghost" bindtap="actTap" data-idx="1">查看结果</button>
-    <button class="banner ghost" bindtap="actTap" data-idx="2">BACK 返回</button>
+    <button class="banner" bindtap="actTap" data-idx="0">輪測をはじめる（9印）</button>
+    <button class="banner ghost" bindtap="actTap" data-idx="1">結果を見る</button>
+    <button class="banner ghost" bindtap="actTap" data-idx="2">BACK もどる</button>
     <text class="line dim">{{doneLine}}</text>
+    <text class="line dim">{{artLine}}</text>
     <text class="line dim">{{focusLine}}</text>
-    <text class="foot">{{evt}} · {{ver}} · 探针不占编号</text>
+    <text class="foot">{{evt}} · {{ver}} · プローブ（番号なし）</text>
   </view>
 </page>
 

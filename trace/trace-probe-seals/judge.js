@@ -6,7 +6,7 @@ import wx from 'wx';
 import { ERR, codedError, fail } from './err.js';
 
 var SLUG = 'trace-probe-seals';
-var VERSION = '1.0.0';
+var VERSION = '2.0.0';
 
 export function loadKey(key, fallback) {
   try {
