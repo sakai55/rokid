@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-home-find
 ```
 
+**AIX 直接下载**（最新版）：[home-find.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/home-find.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI26 个（F 组家居生活第一个）。
 东西一收起来就找不到：护照塞进哪个柜子了？备用钥匙挂哪儿了？
