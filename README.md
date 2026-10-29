@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-shinkansen-quiet
 ```
 
+**AIX 直接下载**（最新版）：[shinkansen-quiet.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/shinkansen-quiet.aix)
+
 JP01 · 日本本地化系列。交互哲学：**沉默守卫 Silence Keeper**。在静音车厢里，最难自知的是「我自己的声音有多大」：戴着耳机说话会不自觉放大音量，电话响起时慌忙接听的前几秒最吵。本 Agent 把「自己有没有越线」外包给眼镜：它只监测佩戴者近场发声强度，平时一个字都不显示，只有越线才出现，并提醒你去连接处。它不转写、不录音、不评价别人——那是实时字幕和会议转写（底座能力）的事，与它无关。
 
 ## 预览截图
