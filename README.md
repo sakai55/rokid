@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-freeze-step-cue
 ```
 
+**AIX 直接下载**（最新版）：[freeze-step-cue.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/freeze-step-cue.aix)
+
 CC10 · 路缘坡（CC）。v2.0.0 原地重做：精品线首批复查后，GO 裁定本 Agent 不合并（帕金森人群会被稀释）、原地加厚重做。v1 是单页薄形态；v2 是三页结构＋真实节拍器与记步接线＋跨会话记录。一句话场景：帕金森步态冻结者在门口、电梯口迈不开步时，选一组节律，跟着视线内的节律线与 TTS 拍子一步一拍走起来；走不起来就超时扶稳休息。
 
 ## 预览截图
