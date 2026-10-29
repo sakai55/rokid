@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-trace-probe-seals
 ```
 
+**AIX 直接下载**（最新版）：[trace-probe-seals.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/trace-probe-seals.aix)
+
 描红系列的识别可行性探针，**不占 TR 编号、不上根清单**：测 LLM 靠一张定格照片认九字印（臨・兵・闘・者・皆・陳・烈・在・前）到底准不准。结果决定 TR02「印を結ぶ」正式版的收录范围（事先定死的门槛：认对进计分档、认错只进不计分练习档、看不清复测后不收、全集认对不足一半则正式版降级为自评描红）。
 
 v2.0.0 起：内容集由十二地支印改为九字印 9 印，**UI 全日语**，存储键换为 `trace.probe.kuji.v1`（旧键数据不迁移）。v1.x 的十二印中文版已废弃。
