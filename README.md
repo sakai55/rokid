@@ -14,7 +14,7 @@ https://github.com/sakai55/rokid/tree/agent-trace-brush
 |---|---|
 | 今日 | 今日一字（按日期轮换）、上次练到哪、已练字数 / 累计次数 |
 | 字库 | 20 字总表：每字标拼音、笔画数、练过次数，选字进学字页 |
-| 学字 | 中央范字逐笔渲染：当前笔最亮绿、已学笔中绿、未学笔暗绿；右侧笔顺步骤 + 本笔要点，TTS 同步念要点；逐笔推进 |
+| 学字 | **范字全屏**（v1.1.0 改版）：画布占满整页，逐笔渲染（当前笔最亮绿、已学笔中绿、未学笔暗绿）；每笔起笔点旁标**笔顺数字**（圆圈序号）、末段带**方向箭头**，数字 / 箭头与笔画同一坐标变换，明暗同规则；底部窄栏只放「第 X 笔 / 共 N 笔（笔型）+ 本笔要点一句」与最少控件，TTS 同步念要点；逐笔推进 |
 | 字义笔法 | 读音、字义一句、结构、重心提示、逐笔类型清单 |
 | 验收 | 低头对准自己写的字拍照，LLM 对照范字粗查三项：有没有少笔多笔、结构重心偏没偏、最明显的 1–2 处；看不清如实说、重拍 |
 | 点评 | 一句人话点评 + 三项结果；用户可自己确认「这字算过」覆盖机器判定，覆盖落盘计数 |
@@ -47,7 +47,7 @@ https://github.com/sakai55/rokid/tree/agent-trace-brush
 | 项 | 值 |
 |---|---|
 | Studio name | （待导入后回填） |
-| Version / Build | 1.0.0 |
+| Version / Build | 1.1.0 |
 | App Category | （待导入后回填） |
 | Intent Description | 毛笔字描红：20 字逐笔范字学写，拍照粗查三项，本人改判，进度续练 |
 | Agent ID | （待导入后回填） |
@@ -67,6 +67,7 @@ https://github.com/sakai55/rokid/tree/agent-trace-brush
 ![今日页](../../screenshots/trace-brush/preview-trace-brush-index.png)
 ![字库页](../../screenshots/trace-brush/preview-trace-brush-library.png)
 ![学字页](../../screenshots/trace-brush/preview-trace-brush-learn.png)
+![学字页·已学2笔状态](../../screenshots/trace-brush/preview-trace-brush-learn2.png)
 ![字义笔法页](../../screenshots/trace-brush/preview-trace-brush-detail.png)
 ![验收页](../../screenshots/trace-brush/preview-trace-brush-verify.png)
 ![点评页](../../screenshots/trace-brush/preview-trace-brush-review.png)
@@ -74,7 +75,8 @@ https://github.com/sakai55/rokid/tree/agent-trace-brush
 
 ## 提审资料 (Review Submission)
 
-- **Feature Description**（≤500 字）：毛笔字描红练习：20 个常用字逐笔范字浮在眼前（当前笔最亮），跟着在真纸上用真毛笔写，写完低头拍照，只查少笔多笔、结构重心和最明显的差别，给一句人话点评；判定可由本人改判，进度保存、下次续练，还有只给拼音的复习抽查。
+- **Feature Description**（≤500 字）：毛笔字描红练习：20 个常用字逐笔范字全屏浮在眼前（当前笔最亮，每笔带笔顺数字和方向箭头），跟着在真纸上用真毛笔写，写完低头拍照，只查少笔多笔、结构重心和最明显的差别，给一句人话点评；判定可由本人改判，进度保存、下次续练，还有只给拼音的复习抽查。
 - **Opening Message**：今天练一个字：一笔一笔看清，在纸上写完，拍照看看差在哪。
-- **Preview Media**：见「预览截图」7 张（图片）；视频待真机阶段补（提审需 3–5 个文件、含 ≥1 视频 ≤60s）。
+- **Preview Media**：见「预览截图」8 张（图片，含学字页已学 2 笔状态图）；视频待真机阶段补（提审需 3–5 个文件、含 ≥1 视频 ≤60s）。
+- **Change Log**（Build 1.1.0）：Features added — 无；Improvements — 学字页改版：范字全屏（画布占满整页、底部窄栏放笔次与要点），每笔加笔顺数字（起笔点旁圆圈序号）与方向箭头（沿 medians 末段方向），明暗与原逐笔规则一致；Fixes — 无。
 - **Change Log**（Build 1.0.0）：Features added — 7 页闭环（今日 / 字库 / 学字 / 字义笔法 / 验收 / 点评 / 进度）、20 字分笔字库、逐笔 TTS 要点、拍照粗查三项、本人改判、跨会话进度与复习抽查；Improvements — 无；Fixes — 无。
