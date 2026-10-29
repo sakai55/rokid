@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-matsuri-game-shuu
 ```
 
+**AIX 直接下载**（最新版）：[matsuri-game-shuu.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/matsuri-game-shuu.aix)
+
 JP32 · 日本在地 × 游戏 × 注意力 × 指向性。夏祭りの待ち時間、家族が眼鏡一本で20の屋台ゲームを回す
 
 ## 预览截图
