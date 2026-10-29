@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-elder-ear
 ```
 
+**AIX 直接下载**（最新版）：[elder-ear.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/elder-ear.aix)
+
 注意力外挂系列 SO03（SOCIAL 社交型，本组第三个，系列第 38 个）。陪老人聊天，老人反复叮嘱的事（吃药、门锁、子女电话）记不全、回头就忘。本 Agent 把叮嘱外包出去：wearer/far-field 守听聊天，只把「叮嘱/需求」类句子存成清单，聊完 TTS 复述给你逐条确认；结束出小结（叮嘱几条、已确认几条、只听过几段）。
 
 ## 解决的问题
