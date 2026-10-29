@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-gift-clue
 ```
 
+**AIX 直接下载**（最新版）：[gift-clue.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/gift-clue.aix)
+
 注意力外挂系列 SO05（SOCIAL 社交型，本组最后一个，系列第 40 个）。朋友随口提的喜好/想要的东西，当时没在意，生日送礼时全想不起来。本 Agent 把记线索外包出去：wearer/far-field 守听日常聊天，命中「想要/喜欢/缺一个」类句子默记成线索卡（不亮屏、不出声），你点 PERSON 给当前卡手动指定归属人，送礼时点 GIFT 按人回放该人的线索卡；结束出小结（线索几张、已归档几人、只听过几段）。
 
 ## 解决的问题
