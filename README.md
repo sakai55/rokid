@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-left-home-proof
 ```
 
+**AIX 直接下载**（最新版）：[left-home-proof.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/left-home-proof.aix)
+
 CC11 · 路缘坡（CC）。轻度失智/健忘者出门后焦虑“燃气关没、门锁没”时，用出门前拍下的证据回放断循环。交互哲学：**出门证据回放 Home Proof**。
 
 ## 预览截图
