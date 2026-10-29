@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-word-spot
 ```
 
+**AIX 直接下载**（最新版）：[word-spot.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/word-spot.aix)
+
 拍照现实交互游戏系列 GA43。每轮出一个目标字符（固定顺序：数字 7 → 字母 A → 数字 3 → 汉字「门」→ 字母 S），在招牌、门牌、包装、书脊上找到它，对准拍清楚，单击拍照。
 
 与指向性系列 DI sign-reader（读招牌工具）的区别：sign-reader 是把远处招牌全文读给你的出行工具；本作只判「目标字符在不在画面文字里」并计分，是找字游戏，读出的文字仅作判定凭据展示。
