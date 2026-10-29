@@ -5,6 +5,8 @@
 https://github.com/sakai55/rokid/tree/agent-karuta-tori
 ```
 
+**AIX 直接下载**（最新版）：[karuta-tori.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/karuta-tori.aix)
+
 一句话场景：家族が待ち時間に、頭の動きだけでかるたを取る。
 
 ## 方向构成
