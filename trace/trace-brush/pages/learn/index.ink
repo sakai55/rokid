@@ -26,6 +26,9 @@ import { CHARS } from '../../chars.js';
 // 笔画所有状态一致，不再分档），高亮只给笔顺标注——弧恢复最亮
 // 绿 + 实心箭头头、序号圈亮绿；箭头方向改按本笔行笔方向
 // （arc.endDir），不取短弧弦向（「大」第 1 笔曾被弦向带偏）。
+// v1.3.3（GO 看图定版）：v1.3.2 除弧外全部冻结；弧形箭头改回
+// v1.2 式沿笔画平行伴行弧、只取末段缩短版（见 _parallelArc），
+// 硬校验保与字身拉开距离，不重蹈 v1.2 缎带覆辙。
 // 笔画拆分仍按 GF0023-2020（如永 = 5
 // 笔）。笔位逐步落盘（trace.brush.learn）：平台无常亮 / wake
 // lock API（官方文档全量查无，见 README 平台边界），描红中熄屏
@@ -41,7 +44,7 @@ export default {
     barLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.3.2'
+    ver: 'v1.3.3'
   },
   onLoad() {
     this._focus = 1; this._step = 0; this._useMedians = false;
@@ -324,6 +327,97 @@ export default {
     if (softAny) return softAny;
     return null;
   },
+  _parallelArc(lines, polys, idx, cx, cy) {
+    // 笔顺弧 v1.3.3（GO 指定）：回到 v1.2 的形态——弧沿本笔中线
+    // 平行伴行（中线 Catmull-Rom 重采样后逐点沿法线外推），但只
+    // 取末段缩短版：段长 = 中线总长 × 0.35（26–56px 钳制），箭
+    // 头落在笔末、方向取行笔方向。v1.2 当年失败在弧贴着轮廓描
+    // 边（缎带），本版保留 v1.3 的硬校验：整段采样点 + 箭头翼尖
+    // 逐点验 _distPolys ≥6.5 且不出画布，推距 30/36/42 逐档试、
+    // 两侧都试；全不过则返回 null，由 _geom 退回 v1.3 短弧兜底。
+    const line = lines[idx];
+    if (!line || line.length < 2) return null;
+    const self = this;
+    const hyp = function (a, b) { return Math.sqrt(a * a + b * b); };
+    // Catmull-Rom 重采样（端点复制补齐），72 样点 + 逐点切向
+    const P = [line[0]].concat(line, [line[line.length - 1]]);
+    const dense = [];
+    const SEG = 72;
+    for (let s = 0; s < P.length - 3; s++) {
+      const p0 = P[s], p1 = P[s + 1], p2 = P[s + 2], p3 = P[s + 3];
+      const steps = Math.max(2, Math.round(SEG / (P.length - 3)));
+      for (let k = (s === 0 ? 0 : 1); k <= steps; k++) {
+        const t = k / steps, t2 = t * t, t3 = t2 * t;
+        dense.push([
+          0.5 * ((2 * p1[0]) + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3),
+          0.5 * ((2 * p1[1]) + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3)
+        ]);
+      }
+    }
+    if (dense.length < 4) return null;
+    const cum = [0];
+    for (let k = 1; k < dense.length; k++) cum.push(cum[k - 1] + hyp(dense[k][0] - dense[k - 1][0], dense[k][1] - dense[k - 1][1]));
+    const total = cum[cum.length - 1];
+    if (!(total > 8)) return null;
+    const segLen = Math.min(total, Math.max(26, Math.min(56, total * 0.35)));
+    const cut = total - segLen;
+    let si = 1;
+    while (si < cum.length && cum[si] < cut) si++;
+    const segIdx = [];
+    for (let k = Math.max(0, si - 1); k < dense.length; k++) segIdx.push(k);
+    const normalAt = function (k) {
+      const a = dense[Math.max(0, k - 1)], b = dense[Math.min(dense.length - 1, k + 1)];
+      let tx = b[0] - a[0], ty = b[1] - a[1];
+      const tl = hyp(tx, ty);
+      if (tl < 1e-6) return null;
+      return [-ty / tl, tx / tl];
+    };
+    const midK = segIdx[Math.floor(segIdx.length / 2)];
+    const midN = normalAt(midK);
+    if (!midN) return null;
+    const away = (midN[0] * (dense[midK][0] - cx) + midN[1] * (dense[midK][1] - cy)) >= 0 ? 1 : -1;
+    const sides = [away, -away];
+    const pushes = [30, 36, 42];
+    const wingTips = function (pts, dir) {
+      const back = Math.min(13, Math.max(7, segLen * 0.55));
+      const half = Math.min(7.5, Math.max(3.5, segLen * 0.28));
+      const tx = pts[pts.length - 1][0], ty = pts[pts.length - 1][1];
+      const px = -dir[1], py = dir[0];
+      return [[tx - dir[0] * back + px * half, ty - dir[1] * back + py * half], [tx - dir[0] * back - px * half, ty - dir[1] * back - py * half]];
+    };
+    for (let s2 = 0; s2 < sides.length; s2++) {
+      const side = sides[s2];
+      for (let p2 = 0; p2 < pushes.length; p2++) {
+        const push = pushes[p2];
+        const pts = [];
+        let bad = false;
+        for (let q = 0; q < segIdx.length; q++) {
+          const k = segIdx[q];
+          const nv = normalAt(k);
+          if (!nv) { bad = true; break; }
+          const pt = [dense[k][0] + nv[0] * side * push, dense[k][1] + nv[1] * side * push];
+          if (pt[0] < 3 || pt[0] > W - 3 || pt[1] < 3 || pt[1] > H - 3) { bad = true; break; }
+          if (self._distPolys(pt[0], pt[1], polys) < 6.5) { bad = true; break; }
+          pts.push(pt);
+        }
+        if (bad || pts.length < 3) continue;
+        // 箭头翼尖校验（方向 = 段末切向，与 _arrow 的 endDir 同向近似）
+        const e0 = pts[pts.length - 1], e1 = pts[Math.max(0, pts.length - 3)];
+        let dx = e0[0] - e1[0], dy = e0[1] - e1[1];
+        const dl = hyp(dx, dy);
+        if (dl < 1e-6) continue;
+        dx /= dl; dy /= dl;
+        const wt = wingTips(pts, [dx, dy]);
+        let wok = true, md = 1e9;
+        for (let w = 0; w < wt.length; w++) { const d = self._distPolys(wt[w][0], wt[w][1], polys); if (d < 6) { wok = false; break; } }
+        if (!wok) continue;
+        for (let k = 0; k < pts.length; k++) md = Math.min(md, self._distPolys(pts[k][0], pts[k][1], polys));
+        const n0v = normalAt(segIdx[0]);
+        return { pts: pts, n0: n0v ? [n0v[0] * side, n0v[1] * side] : [0, -1], minDist: md, mode: 'parallel' };
+      }
+    }
+    return null;
+  },
   _shortenArc(arc, cx, cy) {
     // v1.3.1：只保留原弧的末段约 1/4——从弧末向前量目标长度，起
     // 点在原采样点之间插值；新点列是原弧子集，不会新增侵入。原弧
@@ -428,8 +522,14 @@ export default {
     const arcs = [];
     for (let i = 0; i < c.medians.length; i++) {
       try {
-        const baseArc = this._arcFor(lines, polys, i, ccx, ccy);
-        const arc = baseArc ? this._shortenArc(baseArc, ccx, ccy) : null;
+        // v1.3.3：首选平行伴行弧（_parallelArc）；放不下才退回
+        // v1.3 的分离短弧（_arcFor + _shortenArc）。
+        let arc = null;
+        try { arc = this._parallelArc(lines, polys, i, ccx, ccy); } catch (e2) { arc = null; }
+        if (!arc) {
+          const baseArc = this._arcFor(lines, polys, i, ccx, ccy);
+          arc = baseArc ? this._shortenArc(baseArc, ccx, ccy) : null;
+        }
         if (arc) {
           // 箭头头方向 = 本笔中线末段方向（自末点回溯 ≥10px 取向）：
           // v1.3.2 修正——短弧自身的弦向会偏（如「大」第 1 笔横，短

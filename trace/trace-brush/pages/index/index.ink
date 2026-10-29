@@ -20,7 +20,7 @@ export default {
     sumLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.3.2'
+    ver: 'v1.3.3'
   },
   onLoad() { this._focus = 0; this._render(); },
   onShow() { this._render(); },

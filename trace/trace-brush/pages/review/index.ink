@@ -24,7 +24,7 @@ export default {
     countLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.3.2'
+    ver: 'v1.3.3'
   },
   onLoad() {
     this._focus = 0;
