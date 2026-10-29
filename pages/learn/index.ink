@@ -21,9 +21,12 @@ import { CHARS } from '../../chars.js';
 // 沿行笔方向补一支终段小弧。序号圈在弧尾外侧以 16 方位搜索落位
 // （校验对轮廓 / 全部弧线 / 已放圈的距离）。
 // v1.3.1（GO 看图定版）：弧只保留原弧末段约 1/4（原弧过短时保
-// 16px 最低可读长度），箭头头随弧长收小且一律描边不填充；状态
-// 不再用高亮色 / 实心填充区分，笔画、弧与序号统一只靠透明度分
-// 已学 / 当前 / 未学三档。笔画拆分仍按 GF0023-2020（如永 = 5
+// 16px 最低可读长度），箭头头随弧长收小。
+// v1.3.2（GO 看图再定）：笔画本体统一低亮度（半透明淡绿，所有
+// 笔画所有状态一致，不再分档），高亮只给笔顺标注——弧恢复最亮
+// 绿 + 实心箭头头、序号圈亮绿；箭头方向改按本笔行笔方向
+// （arc.endDir），不取短弧弦向（「大」第 1 笔曾被弦向带偏）。
+// 笔画拆分仍按 GF0023-2020（如永 = 5
 // 笔）。笔位逐步落盘（trace.brush.learn）：平台无常亮 / wake
 // lock API（官方文档全量查无，见 README 平台边界），描红中熄屏
 // 无法从 Agent 侧阻止，靠重进同字恢复当前笔缓解。
@@ -38,7 +41,7 @@ export default {
     barLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.3.1'
+    ver: 'v1.3.2'
   },
   onLoad() {
     this._focus = 1; this._step = 0; this._useMedians = false;
@@ -426,7 +429,19 @@ export default {
     for (let i = 0; i < c.medians.length; i++) {
       try {
         const baseArc = this._arcFor(lines, polys, i, ccx, ccy);
-        arcs.push(baseArc ? this._shortenArc(baseArc, ccx, ccy) : null);
+        const arc = baseArc ? this._shortenArc(baseArc, ccx, ccy) : null;
+        if (arc) {
+          // 箭头头方向 = 本笔中线末段方向（自末点回溯 ≥10px 取向）：
+          // v1.3.2 修正——短弧自身的弦向会偏（如「大」第 1 笔横，短
+          // 弧弦向斜下、看着像方向错了），箭头只认行笔方向。
+          const line = lines[i], n = line.length;
+          let ei = n - 2;
+          while (ei > 0 && Math.sqrt((line[n - 1][0] - line[ei][0]) * (line[n - 1][0] - line[ei][0]) + (line[n - 1][1] - line[ei][1]) * (line[n - 1][1] - line[ei][1])) < 10) ei--;
+          let vx = line[n - 1][0] - line[ei][0], vy = line[n - 1][1] - line[ei][1];
+          const vl = Math.sqrt(vx * vx + vy * vy);
+          if (vl > 1e-6) arc.endDir = [vx / vl, vy / vl];
+        }
+        arcs.push(arc);
       } catch (e) { arcs.push(null); }
     }
     const allPts = [];
@@ -442,25 +457,31 @@ export default {
     return this._geomCache;
   },
   _arrow(ctx, arc, state, col) {
-    // 沿弧点列画短弧，末端按弧末方向加描边箭头头（不填充、不用
-    // 高亮）：箭头随后掠 / 半宽随弧长收小（上限仍为原 13 / 7.5，
-    // 与序号落位校验的保守几何兼容）。透明度由 col 的 alpha 决定。
+    // 笔顺弧 = 高亮标注（GO v1.3.2 定）：最亮绿、实心箭头头，三档
+    // 一致；箭头头随后掠 / 半宽随弧长收小（上限 13 / 7.5，与序号
+    // 落位校验的保守几何兼容）。箭头方向优先用 arc.endDir（本笔
+    // 行笔方向，_geom 注入），短弧弦向不作数；缺失时退回弧末回
+    // 溯 ≥5px 的局部切向。
     if (!arc || !arc.pts || arc.pts.length < 2) return;
     const pts = arc.pts, n = pts.length;
     let arcLen = 0;
     for (let j = 1; j < n; j++) arcLen += Math.sqrt((pts[j][0] - pts[j - 1][0]) * (pts[j][0] - pts[j - 1][0]) + (pts[j][1] - pts[j - 1][1]) * (pts[j][1] - pts[j - 1][1]));
-    ctx.strokeStyle = col; ctx.lineWidth = state === 1 ? 2.2 : (state === 0 ? 1.9 : 1.5);
+    ctx.strokeStyle = col; ctx.lineWidth = 2.4;
     ctx.beginPath();
     for (let j = 0; j < n; j++) {
       if (j === 0) ctx.moveTo(pts[j][0], pts[j][1]); else ctx.lineTo(pts[j][0], pts[j][1]);
     }
     ctx.stroke();
-    let ei = n - 2;
-    while (ei > 0 && Math.sqrt((pts[n - 1][0] - pts[ei][0]) * (pts[n - 1][0] - pts[ei][0]) + (pts[n - 1][1] - pts[ei][1]) * (pts[n - 1][1] - pts[ei][1])) < 8) ei--;
-    let dx = pts[n - 1][0] - pts[ei][0], dy = pts[n - 1][1] - pts[ei][1];
-    const dl = Math.sqrt(dx * dx + dy * dy);
-    if (dl < 0.5) return;
-    dx /= dl; dy /= dl;
+    let dx = 0, dy = 0;
+    if (arc.endDir) { dx = arc.endDir[0]; dy = arc.endDir[1]; }
+    else {
+      let ei = n - 2;
+      while (ei > 0 && Math.sqrt((pts[n - 1][0] - pts[ei][0]) * (pts[n - 1][0] - pts[ei][0]) + (pts[n - 1][1] - pts[ei][1]) * (pts[n - 1][1] - pts[ei][1])) < 5) ei--;
+      dx = pts[n - 1][0] - pts[ei][0]; dy = pts[n - 1][1] - pts[ei][1];
+      const dl0 = Math.sqrt(dx * dx + dy * dy);
+      if (dl0 < 0.5) return;
+      dx /= dl0; dy /= dl0;
+    }
     const tx = pts[n - 1][0], ty = pts[n - 1][1];
     const px = -dy, py = dx;
     const back = Math.min(13, Math.max(7, arcLen * 0.55));
@@ -468,8 +489,8 @@ export default {
     const w1 = [tx - dx * back + px * half, ty - dy * back + py * half];
     const w2 = [tx - dx * back - px * half, ty - dy * back - py * half];
     ctx.beginPath();
-    ctx.moveTo(w1[0], w1[1]); ctx.lineTo(tx, ty); ctx.lineTo(w2[0], w2[1]);
-    ctx.stroke();
+    ctx.moveTo(tx, ty); ctx.lineTo(w1[0], w1[1]); ctx.lineTo(w2[0], w2[1]); ctx.closePath();
+    ctx.fillStyle = col; ctx.fill();
   },
   _badgePosFallback(med) {
     // 无弧时（如 medians 不足）的数字圈位置：起笔点旁、向字心反方向
@@ -483,17 +504,17 @@ export default {
     return [bx, by];
   },
   _badge(ctx, pos, num, state) {
-    // 笔顺数字：统一深色半透明底，圆圈与数字只靠透明度分状态——
-    // 当前笔不做实心高亮（位置由 _badgePos 定，落位半径仍按 11）。
+    // 笔顺数字：与笔顺弧同属高亮标注（GO v1.3.2 定）——深色半透
+    // 明底 + 最亮绿圈与数字，三档一致（位置由 _badgePos 定，落
+    // 位半径仍按 11）。
     if (!pos) return;
     const bx = pos[0], by = pos[1];
     const r = 10;
-    const alpha = state === 1 ? 0.88 : (state === 0 ? 0.62 : 0.40);
     ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(4,20,10,0.88)'; ctx.fill();
-    ctx.strokeStyle = 'rgba(64,255,94,' + alpha + ')'; ctx.lineWidth = state === 1 ? 1.4 : 1;
+    ctx.strokeStyle = 'rgba(125,255,158,0.95)'; ctx.lineWidth = 1.4;
     ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = 'rgba(125,255,158,' + alpha + ')';
+    ctx.fillStyle = 'rgba(125,255,158,0.95)';
     ctx.font = '11px sans-serif';
     ctx.fillText(String(num), bx - 3.2, by + 3.8);
   },
@@ -512,9 +533,10 @@ export default {
       const g = this._geom();
       const arcs = g.arcs;
       // 空心描边：路径只 stroke 不 fill（字帖式空心字，内部透黑）；
-      // 三档不用高亮色，只以同一绿色的透明度区分（已学 / 当前 / 未学）
-      const cols = ['rgba(64,255,94,0.52)', 'rgba(64,255,94,0.78)', 'rgba(64,255,94,0.20)'];
-      const widths = [1.6, 2.0, 1.1];
+      // 笔画本体统一低亮度（GO v1.3.2 定：撇捺那种半透明淡绿效果，
+      // 所有笔画、所有状态一致），高亮只给笔顺弧与序号。
+      const cols = ['rgba(64,255,94,0.42)', 'rgba(64,255,94,0.42)', 'rgba(64,255,94,0.42)'];
+      const widths = [1.5, 1.5, 1.5];
       for (let i = 0; i < c.strokes.length; i++) {
         const state = i < this._step ? 0 : (i === this._step ? 1 : 2);
         const col = cols[state];
@@ -538,7 +560,7 @@ export default {
       // 弧线层（与字身分离的笔顺弧 + 弧末箭头头）+ 数字层（弧尾外侧，最后画）
       for (let i = 0; i < c.strokes.length; i++) {
         const state = i < this._step ? 0 : (i === this._step ? 1 : 2);
-        const acol = state === 1 ? 'rgba(64,255,94,0.72)' : (state === 0 ? 'rgba(64,255,94,0.50)' : 'rgba(64,255,94,0.30)');
+        const acol = '#7dff9e';
         this._arrow(ctx, arcs[i], state, acol);
       }
       for (let i = 0; i < c.strokes.length; i++) {
