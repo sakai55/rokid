@@ -9,7 +9,7 @@
 - TR03 trace-sign — 手语描红（日本手语 JSL 静态手势，探针先行）
 - ✅ TR04 trace-origami — 折纸描红（8 件作品 63 步逐折范本 + 逐步拍照验形；已建成：6 页、.aix 28.31 KB、截图 6 张、分支 agent-trace-origami，待真机测试）
 - TR05 trace-knots — 绳结描红
-- TR06 trace-sketch — 简笔画描红
+- ✅ TR06 trace-sketch — 简笔画描红（12 幅 83 笔自绘分笔图集 + 整幅拍照对形 + 复习抽查；已建成：6 页、.aix 26.87 KB、截图 6 张、分支 agent-trace-sketch，待真机测试）
 - TR07 trace-plating — 摆盘描红
 - TR08 trace-cube — 魔方描红（探针先行）
 
