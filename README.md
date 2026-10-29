@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-sign-filter
 ```
 
+**AIX 直接下载**（最新版）：[sign-filter.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/sign-filter.aix)
+
 注意力外挂系列 FI02（FILTER 过滤型，本组第二位）。在陌生街区找一家店或一个门牌，最累的不是走路，而是满街牌子都在抢你的注意力：每块牌都得看一眼、读一遍、判断一次「是不是它」，找了三条街，脑子比腿还累。本 Agent 把这个判断外包出去：出发前先声明目标（示例目标：全家 / 星巴克 / 中山路128号 / 7-ELEVEN），然后只管转头扫街——每块看向的牌子停稳拍照，LLM 读出牌面文字；只有读出的文字包含目标时，它才亮起横幅并 TTS 报一次「找到了」和拍照时的面向；不匹配的牌，只在「已看过」计数里默默加一，不亮屏、不出声、不打断你。
 
 ## 解决的问题
