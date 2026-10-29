@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-shiyakusho-tetsuzuki
 ```
 
+**AIX 直接下载**（最新版）：[shiyakusho-tetsuzuki.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/shiyakusho-tetsuzuki.aix)
+
 一句话场景：市役所办手续的高龄者，照着清单带齐文件、守着号码不错过叫号。
 
 ## 方向构成
