@@ -3,12 +3,12 @@
 [中文](README.md) | English | [日本語](README.ja.md)
 Translated from the Chinese version (as of 2026-10-29).
 
-Attention add-on series · IDs HO01–HO05, 5 in total. No more keeping a repeater running in your head.
+Attention add-on series · IDs HO01–HO05 · 5 agents. No more keeping a mental loop running just to hold on to a number.
 
-- HO01 [number-catch](number-catch/) — Photograph a number, enlarge and check it; it stays in your view, no need to rehearse it silently
-- HO02 [code-hold](code-hold/) — Repeat a temporary code once to store it; shown segment by segment when you need to type it
-- HO03 [voice-list](voice-list/) — Repeat items into a list that hangs in your view; look at the shelf and nod items off one by one
-- HO04 [route-hold](route-hold/) — Repeat a route to store the steps; while walking only the current step shows, nod to advance
-- HO05 [seat-catch](seat-catch/) — Photograph the stub to store the seat number; row by row, seat by seat, reports only the relative difference
+- HO01 [number-catch](number-catch/) — Photo a number, see it enlarged and checked; it stays in your view — no silent rehearsing needed
+- HO02 [code-hold](code-hold/) — Say a temporary code once to stash it; when it's time to type it, it shows it segment by segment
+- HO03 [voice-list](voice-list/) — Speak your list and it hangs in your view; look along the shelf and nod items off one by one
+- HO04 [route-hold](route-hold/) — Speak a route and it stores the steps; while you walk, it shows only the current step — nod to advance
+- HO05 [seat-catch](seat-catch/) — Photo your ticket stub to stash the seat number; row by row, seat by seat, it reports only how far off you are
 
-For the full list, see the Agent list at the end of the [repository root README](../README.md).
+For the full list, see the Agent index at the end of the [root README](../README.md).

@@ -3,9 +3,9 @@
 [中文](ERROR-CODES.md) | English | [日本語](ERROR-CODES.ja.md)
 Translated from the Chinese canonical, v1.14.0 (2026-10-29). In case of conflict, the Chinese version prevails.
 
-Set by GO on 2026-10-28: whenever any Agent hits any error, the glasses show a unified error code. The user only has to report the code, and it can be located in this table.
+Adopted by GO on 2026-10-28: whatever goes wrong in any agent, the glasses display one standard error code. The user reads the code off the screen, and that alone is enough to pinpoint the failure in this table.
 
-**This is the only file you need**: the coding rules, governance, integration spec (with copy-ready code examples), and the full code table are all in this one file. See the contents for the sections. Any developer or AI agent can take the whole file and use it as is.
+**This file is the whole thing.** The format rules, the governance, the integration guide (with code you can copy as-is), and the complete table all live here — see the contents below. Any developer or AI agent can lift the file wholesale and put it to work.
 
 ## Contents
 
@@ -20,54 +20,54 @@ Set by GO on 2026-10-28: whenever any Agent hits any error, the glasses show a u
 
 ## Before you start
 
-These error codes are not an official spec. They are a convention one developer has actually used across their own projects, shared with other developers and AI agents working on Rokid AIUI Agents. To wire error codes into an Agent, just follow the five steps below:
+First, what this is — and what it isn't. These codes are not an official Rokid spec. They are a working convention from one developer's own projects, written up for anyone else building AIUI agents for Rokid glasses. Wiring the codes into an agent takes five steps:
 
-1. **Only codes from this table** (Section 4): use only codes that exist in the table. Do not invent codes, do not change what a code means, do not add any prefix. The only form is the bare code `E####`.
-2. **Integration steps are in Section 3**: five things — single-point definition, full mapping of failure points, the same code in three places, a section in the README, and a static self-check. The code examples can be copied as is and then renamed or trimmed to fit your Agent. Do not design a different structure.
-3. **How to pick a code**: look up the closest code for the failure point, segment by segment, in Section 4. If nothing fits, use the fallback code `E9001`, keep the original error text in `lastError`, and apply for a new code afterwards following the process in Section 2. Do not ship a self-invented code before the Registry replies.
-4. **Three things not to do**: do not show the raw English error text directly to the user — the original text goes only into `lastError`. Do not use retired codes (currently E6006). Do not scatter code strings through business code; always go through the single-point definition module.
-5. **Before packaging, run the static self-check in Section 3, step (5)**, and keep the grep results on record.
+1. **This table is the only source of codes** (Section 4). Use codes that exist here. Don't invent your own, don't bend a code's meaning, and don't add prefixes — the bare code, `E####`, is the only form there is.
+2. **Section 3 is the how-to.** Five jobs: define the codes in one place, map every failure point, surface the same code in three places, give the README a section of its own, and run a static self-check. The sample code is meant to be copied and then trimmed or extended for your agent — don't invent a different structure.
+3. **Picking a code.** Work through Section 4 range by range and take the closest match for the failure at hand. Nothing fits? Fall back to `E9001`, stash the original error text in `lastError`, and request a new code afterwards through the process in Section 2. Never ship a code you made up while you wait for the registry to answer.
+4. **Three things to avoid.** Never put raw error text in front of the user — the original wording belongs in `lastError` only. Never use a retired code (right now, that's E6006). And never sprinkle code literals through business code; everything goes through the single definition module.
+5. **Run the static self-check in Section 3, step (5) before you package**, and keep the grep output on file.
 
-One more overarching principle: **error handling must not create new errors**. Code that reports, records, or sends back errors must never throw and never disturb the user. Details are at the start of Section 3.
+One principle sits above all of it: **error handling must never create errors of its own.** The code that displays, records, and ships back errors must never throw and never hassle the user. Section 3 spells out what that means in practice.
 
 ## 1. Coding rules
 
-- **Only form: the bare code `E<4 digits>`**, e.g. E2005. Code definitions, the glasses display, TTS readout, `lastError`, READMEs, and debugging conversations all use only the bare code, with no prefix of any kind.
-- **Same code, same meaning**: the same code means the same thing in every Agent. Which Agent it came from is pinned down by the error context and by the slug and version recorded in `lastError`.
-- **Segments are split by error domain**, not by Agent:
+- **One form only: the bare code, `E` plus four digits** — E2005, say. Definitions in code, the on-screen display, the TTS readout, `lastError`, READMEs, and debugging threads all use the bare code. No prefixes, ever.
+- **A code means the same thing everywhere.** E2005 in one agent is E2005 in every agent. Which agent produced a given report comes from context, plus the slug and version recorded in `lastError`.
+- **Ranges are organized by what failed**, not by which agent failed:
   - 1xxx Camera and image capture
-  - 2xxx Frame data and encoding conversion
-  - 3xxx Voice ASR / TTS
-  - 4xxx Recording, composition, and playback
+  - 2xxx Frame data and encoding
+  - 3xxx Speech: ASR and TTS
+  - 4xxx Recording, compositing, and playback
   - 5xxx Storage and files
-  - 6xxx Network and large models
-  - 7xxx Sensors, positioning, and detection
+  - 6xxx Networking and the LLM
+  - 7xxx Sensors, location, and detection
   - 8xxx Pages and runtime
-  - 9xxx System fallback: E9001 uncategorized fallback, E9002 host or system-level exception
+  - 9xxx System catch-alls: E9001 for anything unclassified, E9002 for host- or system-level failures
 
 ## 2. Governance
 
-- **Maintainer**: this table is maintained solely by the Registry. New code assignment and segment expansion both go through the Registry. Do not occupy a code on your own.
-- Once assigned, a code **never changes meaning and is never reused**. Retired codes keep their original meaning and are marked "Retired".
-- **Table expansion convention** — to add a new code to this table, follow these six rules:
-  1. **Check for a synonym first**: search the whole table for a code with the same meaning or one that can be reused. If one exists, use it; do not open a new code.
-  2. **Append only at the end of the segment**: new codes go in order at the end of their segment. No inserting numbers, and do not take over a slot left empty by a retired code.
-  3. **One code, one meaning; the code follows the failure**: one code corresponds to exactly one kind of failure. The same failure uses the same code in whichever Agent it appears; do not create separate codes per Agent or per page.
-  4. **Three things in an application**: the failure point, the original trigger text, and your proposed segment. The Registry checks and then assigns and replies with the code. Do not ship a self-proposed code before the reply. In an urgent field situation, use E9001 as a fallback first, keep the original text in `lastError`, and apply for the proper code afterwards.
-  5. **When a new segment may be opened**: only when none of the nine segments fits, or a segment's numbers are exhausted, may the Registry open a new segment, and the changelog must state the new segment's domain.
-  6. **Write the full entry when it lands**: write the new code's description and typical trigger clearly, with the trigger describing a concrete situation. If you can judge whether the simulator can reproduce the cause, decide at the same time whether to add the "simulator" badge.
-- **Version rules**: adding codes only bumps the minor version; changes to rules or format bump the major version; pure wording or layout fixes bump the patch version. Every version bump gets one entry in the changelog.
-- **Version archive**: at every version bump, a full snapshot of the superseded version is stored in `base/error/ERROR-CODES-v<old version>.md`, and the repo root keeps only the latest version. Current rules and code meanings follow the root latest version only.
-- Integration for each Agent follows Section 3, "Integration spec".
-- This table's version: v1.14.0, 2026-10-29. Location: `ERROR-CODES.md` at the repo root. Copies may be kept inside individual Agent projects; in case of conflict, the root version prevails.
+- **One maintainer.** This table is kept by a single registry — the maintainer who owns it. New code assignments and new ranges alike go through the registry; nobody reserves a code unilaterally.
+- **Codes are forever.** Once assigned, a code never changes meaning and is never recycled. A retired code keeps its original meaning and is marked "Retired".
+- **Adding a code to the table** follows six rules:
+  1. **Look for a synonym first.** Search the whole table for a code that already means this, or one that can be reused. If there is one, use it — don't mint a new code.
+  2. **Append at the end of the range.** New codes take the next number at the tail of their range, in order. No inserting numbers mid-range, and no backfilling the slot a retired code left behind.
+  3. **One code, one failure — the code follows the failure.** A code names exactly one kind of failure, and that failure takes the same code in every agent where it occurs. No per-agent or per-page variants.
+  4. **A request has three parts:** the failure point, the original text that triggered it, and the range you propose. The registry checks it, assigns the code, and replies. Don't ship a code you assigned yourself ahead of that reply. In a live incident, park it under E9001 with the original text in `lastError` and file the request afterwards.
+  5. **Opening a new range** takes a real reason: none of the nine ranges fits, or a range has run out of numbers. Only the registry opens a range, and the changelog records the new range's domain.
+  6. **Write the entry in full.** A new code lands with a clear description and a typical trigger stated as a concrete situation. If you can tell whether the simulator reproduces the cause, settle the "simulator" badge question at the same time.
+- **Versioning.** Adding codes only: bump the minor version. Rule or format changes: bump the major. Wording or layout only: bump the patch. Every bump gets a changelog entry.
+- **Archiving.** Each release snapshots the version it replaces into `base/error/ERROR-CODES-v<old version>.md`; the repo root holds only the current version. For current rules and code meanings, the root copy is the only one that counts.
+- Wiring codes into an agent follows the integration spec in Section 3.
+- This table is v1.14.0, dated 2026-10-29, and lives at the repo root as `ERROR-CODES.md`. An agent may carry a copy inside its own project; if a copy and the root version ever disagree, the root version wins.
 
 ## 3. Integration spec
 
-**Overarching principle: error handling must not create new errors.** Code added for the sake of error reporting — on-screen display, speech readout, writing `lastError`, log queues and log return — must never become a new source of errors itself: the unified failure exit never throws; each action that fails is swallowed silently on its own; whether the main flow succeeds or fails must not change because of an error-reporting action. Log return is an independent optional extra. Not wiring it in does not affect any rule in this spec. If it is wired in but no key is configured, or a send fails, it likewise stays completely silent and does not add confusion for the user.
+**The standing rule: error handling must never create new errors.** Everything added for reporting's sake — the on-screen display, the spoken readout, the `lastError` write, a log queue and its upload — must never turn into a fresh source of failures. The single failure exit never throws; if a reporting action fails, it fails silently, on its own; and the main flow's outcome never hinges on whether reporting worked. Log upload is a strictly optional extra: leaving it out changes nothing in this spec, and if you do wire it in, a missing key or a failed send stays just as silent — nothing about it reaches the user.
 
-To wire an agent into this table, do five things:
+Five jobs wire an agent into this table:
 
-**(1) Single-point definition.** Create an error-code module in the project (like `err.js` below) and define the codes this Agent uses, as bare-code literals, in exactly one place. Do not scatter code strings through business code, and do not build prefixes at runtime. The module below can be copied as is; just add or remove entries in the `ERR` and `MESSAGES` tables to match the codes your Agent uses:
+**(1) Define the codes in exactly one place.** Give the project an error-code module (`err.js`, below) that declares every code the agent uses, once, as bare-code literals. No code strings scattered through business code, and no prefixes assembled at runtime. Copy the module as-is, and adjust the `ERR` and `MESSAGES` tables to the codes your agent actually uses:
 
 ```js
 // err.js — single-point error code definitions + unified failure exit
@@ -116,7 +116,7 @@ export function fail(code, raw, opts = {}) {
 }
 ```
 
-**(2) Map every failure point.** Walk through every call in the code that can fail (camera, encoding, ASR/TTS, LLM, network, storage, sensors, page navigation, …) and map each failure point to one code from the table. When there is no fitting code, use E9001 and keep the original text. Do not just throw the raw text and be done with it — the original text is only an attached diagnostic, shown truncated or kept only in `lastError`. Wire it up following the two examples below:
+**(2) Map every failure point.** Audit every call that can fail — camera, encoding, ASR/TTS, the LLM, networking, storage, sensors, page navigation, and so on — and map each failure point to one code from the table. Where nothing fits, use E9001 and keep the original text. Never throw raw error text at the user and call it handled: the original wording is diagnostic material only, shown truncated if it is shown at all, and otherwise confined to `lastError`. The two wirings below are the pattern to follow:
 
 ```js
 // Example 1: photo failure point — call fail() in the catch, then degrade and return; never throw the raw error
@@ -137,13 +137,13 @@ rec.onerror = (event) => {
 };
 ```
 
-**(3) The same code in three places.** When a failure happens, the same code appears in three places:
+**(3) The same code in three places.** When something fails, one and the same code shows up in all three:
 
-- **On-screen display**: the code in large type + one line of description (e.g. `E2005 Encoding to text failed`);
-- **TTS**: for errors that stop the machine or stop capture automatically, read only the code itself (e.g. "E2005"), never the original text;
-- **`lastError`**: written to this Agent's persistent storage, with fields for the code, this Agent's slug, its version, and the original error text. After the user reports the code, the maintainer uses this to locate the entry in the table.
+- **On screen:** the code in large type plus one line of plain description — `E2005 Encoding to text failed`, for instance.
+- **In speech:** for errors that halt the agent or stop capture outright, TTS reads the code itself ("E2005") and nothing more — never the original text.
+- **In `lastError`:** persisted in the agent's own storage, carrying the code, the agent's slug, its version, and the original error text. When a user reports a code, that record is what lets the maintainer find the failure in this table.
 
-**(4) A section in the README.** Add an "Error codes" section to the Agent's README, listing the codes this Agent actually uses and one line about how to report (template):
+**(4) Give the README a section.** The agent's README gets an "Error codes" section listing the codes it actually uses, plus one line on how to report problems. Template:
 
 ```markdown
 ## Error codes
@@ -152,7 +152,7 @@ and the most recent error is kept in lastError. When reporting a problem, please
 Used by this Agent: E1001, E1002, E2005, E3001, E9001.
 ```
 
-**(5) Static self-check.** Before packaging, run the three commands below and keep the results on record:
+**(5) Run the static self-check.** Before packaging, run the three greps below and keep the output on file:
 
 ```bash
 grep -rn "FileReader" <project dir>                 # must be 0 hits (this API does not exist in the runtime)
@@ -161,7 +161,7 @@ grep -rn "'E[0-9]" <business code dir> --include=*.js | grep -v err.js
                                                  # code strings scattered in business code; must be 0 hits
 ```
 
-**Appendix example: the correct way to convert a Blob to a dataURL (where E2005 came from).** The AIUI API surface is a fixed list: browser APIs that are not in the official reference (such as `FileReader`) do not exist in the runtime. When you need to turn a Blob into text, write it as below; do not use FileReader:
+**Worked example: turning a Blob into a dataURL, done right (this is where E2005 came from).** The AIUI API surface is a closed list: a browser API that isn't in the official reference — FileReader is the famous case — does not exist in the runtime. When you need a Blob as text, write it like this, not with FileReader:
 
 ```js
 // blobToDataUrl — arrayBuffer + chunked btoa (converting a large image in one block overflows the stack; chunking is required)
@@ -178,9 +178,9 @@ export async function blobToDataUrl(blob) {
 
 ## 4. Code table
 
-(The `E####` form in the table below is the only form in use — the same across the whole fleet, with no prefix.)
+(The `E####` codes in this table are the only form in use — identical across every agent, with no prefix of any kind.)
 
-A typical-trigger cell ending with the struck-through "simulator" badge <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator"> means the failure cause behind that trigger cannot be reproduced by the simulator (for example, an interface missing from the real-device runtime, or the real behavior of the glasses hardware and host services); it can only be met in real-device testing. Triggers without the badge are environment-independent and happen in the simulator too. There are 29 badge occurrences in the whole table. When registering a new code, judge at the same time whether to add the badge.
+Some trigger cells end with a struck-through "simulator" badge, <img src="assets/badges/badge-nosim.en.svg" height="20" alt="Cannot be triggered in the simulator">. The badge marks a failure the simulator cannot reproduce — an API missing from the real-device runtime, say, or the real behavior of the glasses' hardware and host services — so the only way to run into it is on actual hardware. A trigger without the badge is environment-independent and happens in the simulator just as well. There are 29 badges in the table in total, and when you register a new code you decide about its badge at the same time.
 
 ### 1xxx Camera and framing
 | Code | Description | Typical trigger |
@@ -304,133 +304,129 @@ A typical-trigger cell ending with the struck-through "simulator" badge <img src
 
 ## 5. Field cases
 
-Cases that really happened on a real device and were located via an error code. Each entry records four things: symptom, reported code, root cause, handling.
+Real failures, on real hardware, that an error code tracked down. Each case records four things: the symptom, the code reported, the root cause, and the handling.
 
 ### Case 1, E2005: stop-motion, not a single frame came out
 
-- Symptom: a stop-motion Agent's first real-device test — shooting ran the full 180 seconds and exited automatically, with 0 frames.
-- Reported code: the glasses showed E2005; after the user reported the code, it was located in the table at the encoding-to-text step.
-- Root cause: per-frame encoding used FileReader, which is not in the Ink runtime's API list; the simulator is a complete Web environment, so it was never exposed there.
-- Handling: switched to the blob's arrayBuffer plus chunked btoa — see the appendix example in Section 3. FileReader was also added to the static check list.
+- **Symptom:** On its first real-device test, the stop-motion agent ran a capture for the full 180 seconds, exited on its own, and had produced zero frames.
+- **Reported code:** The glasses showed E2005. The user reported the code, and the table pointed straight at the encode-to-text step.
+- **Root cause:** Each frame was being encoded with FileReader, which is not on the Ink runtime's API list. The simulator is a full web environment, so the problem never surfaced there.
+- **Handling:** Encode from the blob's `arrayBuffer()` with chunked `btoa` instead — the recipe is the worked example at the end of Section 3. FileReader also went onto the static-check list.
 
 ## 6. Changelog
 
 ### v1.14.0 2026-10-29
 
-Table expansion convention (GO directive): Section 2 gains the six-rule "Table expansion convention" — check for a synonym first, append only at the end of the segment, one code one meaning and the code follows the failure, three things in an application, the conditions for opening a new segment, and write the full entry when it lands. The previous application process and append rule are folded into this convention, and the version rule becomes its own item. The meanings of the 84 codes are unchanged, not a word (MINOR: spec addition).
+Rules for growing the table (GO's direction). Section 2 gains the six rules for adding codes: check for a synonym first; append only at the tail of a range; one code, one meaning, with the code following the failure; the three-part request; when a new range may be opened; and write the entry in full. The old request process and append rule fold into these six, and the versioning rule stands as its own item. All 84 code meanings untouched, word for word. (MINOR: spec addition.)
 
 ### v1.13.0 2026-10-29
 
-Field records change form (GO directive): the "Field-reported codes" section deleted in the previous version returns as "Field cases" in Section 5 — each case records four things (symptom, reported code, root cause, handling), the first being E2005, stop-motion with not a single frame out. The following sections shift to 6 Changelog and 7 Why error codes. The meanings of the 84 codes are unchanged, not a word (MINOR: structural adjustment).
-
+Field notes change shape (GO's direction). The "Field-reported codes" section deleted in the previous release returns as Section 5, "Field cases" — each case records four things (symptom, reported code, root cause, handling), the first of them E2005, the stop-motion shoot that produced not a single frame. The sections after it renumber to 6 Changelog and 7 Why error codes. All 84 code meanings untouched, word for word. (MINOR: structural adjustment.)
 
 ### v1.12.0 2026-10-29
 
-Section removed (GO directive): the "Field-reported codes" section is removed, and the following sections shift to 5 Changelog and 6 Why error codes. Where E2005 came from is still written in the appendix example in Section 3 and in Section 6. The meanings of the 84 codes are unchanged, not a word (MINOR: structural slimming).
-
+A section comes out (GO's direction). "Field-reported codes" is deleted, and the sections after it renumber to 5 Changelog and 6 Why error codes. Where E2005 came from is still told in Section 3's worked example and in Section 6. All 84 code meanings untouched, word for word. (MINOR: structural slimming.)
 
 ### v1.11.1 2026-10-29
 
-No brackets in titles or the contents (GO directive): the instruction section is renamed "Before you start"; the top-level title drops the English bracketed note; Section 3's title drops its bracketed suffix; the dates in the changelog entry subheadings drop their brackets; the contents are synced. Content and the meanings of the 84 codes unchanged (PATCH: layout).
-
+No parentheses in headings or the contents (GO's direction). The instruction section is renamed "Before you start"; the H1 loses its bracketed English note; Section 3's title loses its bracketed suffix; dates in the changelog subheadings lose their brackets; the contents list follows suit. Content and all 84 code meanings unchanged. (PATCH: layout.)
 
 ### v1.11.0 2026-10-29
 
-Overarching principle enters the spec (GO directive): the start of Section 3 establishes "error handling must not create new errors" — the failure exit never throws, each action's failure is silent on its own, and whether the main flow succeeds does not change because of error-reporting actions. It also states plainly that log return is an independent optional extra, completely silent when no key is configured or a send fails. A matching overarching-principle note is added at the end of the instruction section. Section 4's table and the meanings of the 84 codes are unchanged, not a word (MINOR: spec addition).
+The standing rule joins the spec (GO's direction). Section 3 opens by establishing "error handling must never create new errors": the failure exit never throws, each reporting action fails silently on its own, and the main flow's outcome does not hinge on reporting actions. The section also states plainly that log upload is an independent, optional extra, completely silent when no key is configured or a send fails. A matching note is added at the end of the opening section. Section 4's table and all 84 code meanings untouched, word for word. (MINOR: spec addition.)
 
 ### v1.10.1 2026-10-29
 
-Tone: the opening of the instruction section loses its commanding tone and is reworded as a plain statement of a convention shared between developers, stating plainly that these error codes are not an official spec and that the maintainer is also just one of the developers. "Three prohibitions" is renamed "Three things not to do". Content and the meanings of the 84 codes unchanged (PATCH: wording).
+Tone. The opening section drops its commanding voice and is rewritten as one developer plainly sharing a convention with peers, stating up front that these codes are not an official specification and that the maintainer, too, is just one of the developers. "Three prohibitions" becomes "Three things not to do". Content and all 84 code meanings unchanged. (PATCH: wording.)
 
 ### v1.10.0 2026-10-29
 
-Full-text slimming (GO directive): the "Why" section moves to the end of the document and is compressed; the "Prefixes (abolished)" section is deleted, its history staying in the v1.2.0 to v1.4.0 entries of this log; the coding rules, governance, instructions, and field records lose their internal phrasing and bracketed asides and are rewritten in a general developer register; the title drops "fleet"; sections are renumbered as 1 Coding rules / 2 Governance / 3 Integration spec / 4 Code table / 5 Field-reported codes / 6 Changelog / 7 Why. The content of Sections 3 and 4 and the meanings of the 84 codes are unchanged, not a word (MINOR: structure and phrasing slimming).
-
+A full slimming pass (GO's direction). The "Why" section moves to the end of the document and is tightened; the "Prefixes (abolished)" section is deleted, its history staying in this log's v1.2.0 through v1.4.0 entries; the coding rules, governance, opening instructions, and field notes shed their internal phrasing and bracketed asides and are recast in a general developer register; the title drops "fleet"; the sections renumber to 1 Coding rules / 2 Governance / 3 Integration spec / 4 Code table / 5 Field-reported codes / 6 Changelog / 7 Why. The content of Sections 3 and 4 and all 84 code meanings are unchanged, word for word. (MINOR: structure and phrasing slimming.)
 
 ### v1.9.2 2026-10-29
 
-Archive system (GO directive): snapshots of old versions are uniformly stored in `base/error/` (file name `ERROR-CODES-v<version>.md`, with an archive banner as the first line), the repo root keeps only the latest version, and the governance section gains a "Version archive" item. This round backfills 17 historical snapshots, v1.1.0–v1.9.1, into the archive. v1.0.0 has no surviving standalone snapshot (the canonical landed at the repo root starting from v1.1.0), and v1.5.3 landed in the same commit as v1.5.4 with no standalone snapshot; both gaps are noted in the archive index. The meanings of the 84 codes are unchanged, not a word (PATCH: governance addition).
+Archiving (GO's direction). Snapshots of superseded versions now live uniformly in `base/error/` — file name `ERROR-CODES-v<version>.md`, an archive banner as the first line — while the repo root keeps only the latest version, and the governance section gains a "Version archive" item. This release backfills 17 historical snapshots, v1.1.0 through v1.9.1, into the archive. Two gaps are noted in the archive index: v1.0.0 has no surviving standalone snapshot (the canonical only reached the repo root at v1.1.0), and v1.5.3 shipped in the same commit as v1.5.4, so it has no standalone snapshot either. All 84 code meanings untouched, word for word. (PATCH: governance addition.)
 
 ### v1.9.1 2026-10-29
 
-Layout: the changelog changes from a two-column table to entry form — one entry per version, with the first line "version (date)" as a subheading and the content as a paragraph (GO directive). The content of all previous versions and the meanings of the 84 codes are unchanged, not a word (PATCH: layout).
+Layout. The changelog changes from a two-column table to entry form — one entry per version, the first line "version (date)" as a subheading and the content as a paragraph (GO's direction). The content of every earlier version and all 84 code meanings are unchanged, word for word. (PATCH: layout.)
 
 ### v1.9.0 2026-10-29
 
-Single-file final form (GO directive): only one file is needed — the distribution edition `ROKID-ERROR-CODES.md` is retired and deleted, its content merged into this file. This file gains a contents list and numbered sections (1 Rationale / 2 Rules / 3 Governance / 4 Integration spec / 5 Code table / 6 Prefixes / 7 Field codes / 8 Changelog), and an "Instructions for AI agents" section is added at the start. Section 4's code examples are completed into copy-ready full form (the complete err.js module, photo/ASR wiring examples, three static self-check greps, and the appendix with the correct Blob-to-dataURL writing). The meanings of the 84 codes are unchanged, not a word (MINOR: structure and spec completion).
+One file, settled (GO's direction). Only one file is needed: the distribution edition `ROKID-ERROR-CODES.md` is retired and deleted, its content merged into this file. This file gains a contents list and numbered sections (1 Rationale / 2 Rules / 3 Governance / 4 Integration spec / 5 Code table / 6 Prefixes / 7 Field codes / 8 Changelog), and an instructions section for AI agents is added at the front. Section 4's code examples are filled out into complete, copy-as-is form: the full err.js module, the photo and ASR wiring examples, the three static self-check greps, and the appendix with the correct way to turn a Blob into a dataURL. All 84 code meanings untouched, word for word. (MINOR: structure and spec completion.)
 
 ### v1.8.0 2026-10-29
 
-Spec merged in (GO directive): the distribution edition's "Integration instructions" are merged into this table, adding the "Integration spec (for developers and AI agents)" section — single-point definition (with an err.js reference form), full mapping of failure points, the same code in three places, the README template, and the static self-check: five things. The governance section's integration requirement now points to that section. The meanings of the 84 codes are unchanged, not a word (MINOR: spec addition).
+Spec merged in (GO's direction). The distribution edition's integration instructions are folded into this table as a new "Integration spec (for developers and AI agents)" section — single-point definition (with a reference err.js form), mapping every failure point, the same code in three places, the README template, and the static self-check: five jobs in all. The governance section's integration requirement now points to that section. All 84 code meanings untouched, word for word. (MINOR: spec addition.)
 
 ### v1.7.0 2026-10-29
 
-E6006 retired (GO ruling): the code's original trigger was written as availability being in a downloadable / downloading intermediate state — a full audit of the official docs the same day established that `LanguageModel.availability()` has only the two states available / unavailable; that premise was a guess made back then following Chrome habits and does not exist. The code's meaning is kept as is and never reused, and new development must not reference it again; when the large model is unavailable, use E6001 in all cases. All other codes unchanged, not a word (MINOR: code status change).
+E6006 retired (GO's ruling). The code's trigger had been written as `availability` passing through a downloadable / downloading intermediate state — but a full audit of the official documentation that same day established that `LanguageModel.availability()` has exactly two states, available and unavailable, with nothing in between. The premise was a guess carried over from Chrome habits back then; the state does not exist. The code's meaning stays as written and will never be reused, and new development must not reference it again; an unavailable LLM is E6001 in all cases. Every other code unchanged, word for word. (MINOR: code status change.)
 
 ### v1.6.3 2026-10-29
 
-Honest attribution in the first paragraph: GO pointed out that the original wording looked like shifting the blame to the simulator — the official API reference is a fixed list and FileReader is not on it, so the first fault lies on the development side for not checking against the list. Rewritten as: development-side use of an off-list API came first, the complete Web environment of the simulator and local preview hid the fault after that, and the real device exposed it via E2005. The rationale for the table and the judgments are unchanged (PATCH).
+Owning the first fault. GO pointed out that the original wording read as if it shifted the blame to the simulator: the official API reference is a closed list and FileReader is not on it, so the first fault was on the development side, for not checking against the list. The passage is rewritten in that order — an off-list API used first; the full web environment of the simulator and local preview hiding the fault second; the real device exposing it through E2005. The case for the table and the calls themselves are unchanged. (PATCH.)
 
 ### v1.6.2 2026-10-29
 
-Changelog relayout: per GO directive it changes to a two-column table (version date | content), and future entries are appended in this format. The content of every version is unchanged, not a word (PATCH).
+Changelog reformatted. At GO's direction it becomes a two-column table (version and date | content), and new entries are added in that format from here on. Every version's content unchanged, word for word. (PATCH.)
 
 ### v1.6.1 2026-10-29
 
-Badge made conspicuous: per GO directive — the struck-through "simulator" badge changes from dark gray to bright red (#e53935), and its inline display height goes from 18 to 20, visible at a glance. Judgments and code meanings unchanged (PATCH).
+A louder badge. At GO's direction, the struck-through "simulator" badge changes from dark gray to bright red (#e53935), and its inline display height goes from 18 to 20, so it reads at a glance. The calls and code meanings are unchanged. (PATCH.)
 
 ### v1.6.0 2026-10-29
 
-Marks become badges: per GO directive the "Cannot be triggered in the simulator" column is deleted — the marks for the 29 codes change to a struck-through "simulator" badge at the end of the typical-trigger sentence (new file `assets/badges/badge-nosim.en.svg`; a mark dedicated to this table, not a series badge). The judged set and the meanings of the 84 codes are unchanged, not a word.
+Marks become badges. At GO's direction, the "Cannot be triggered in the simulator" column is deleted; in its place, each of the 29 codes carries a struck-through "simulator" badge at the end of its typical-trigger cell (new asset `assets/badges/badge-nosim.en.svg` — a marker private to this table, not a series badge). The marked set and all 84 code meanings are unchanged, word for word.
 
 ### v1.5.5 2026-10-29
 
-Deduplication of explanation: GO directive — history already recorded in the changelog is not restated in the body text: the coding rules drop the prefix trial history, the governance version rule drops the exception narrative, the version line of this table keeps only the version number and date, and the prefix section and field records are tightened in sync. The rules themselves and the 84 codes are unchanged, not a word. From now on the body text states only current rules, and history goes only into this log.
+No double-telling. At GO's direction, history already recorded in this changelog is no longer restated in the body: the coding rules drop the prefix trial history, the governance version rule drops its exception narrative, this table's version line keeps only the version number and date, and the prefix section and field notes are tightened in step. The rules themselves and the 84 codes are unchanged, word for word. From here on, the body states current rules only, and history lives in this log alone.
 
 ### v1.5.4 2026-10-29
 
-Column definition tightened: GO pointed out that the original explanation of the "Cannot be triggered in the simulator" column was ambiguous. The definition becomes one sentence — **Yes = the failure cause behind this code cannot be produced by the simulator** (for example, an interface missing from the real-device runtime, or the real behavior of the glasses hardware and host services); it does not really happen in the simulator. No = the cause is environment-independent and happens in the simulator too. The per-code judgments are unchanged, not a word (29 yes / 55 no), and the meanings of the 84 codes are unchanged.
+Column definition tightened. GO pointed out that the original explanation of the "Cannot be triggered in the simulator" column was ambiguous; the definition now fits in one sentence — **yes = the failure cause behind the code is one the simulator cannot reproduce** (an interface missing from the real-device runtime, or the real behavior of the glasses' hardware and host services), so it never genuinely occurs there; **no = the cause is environment-independent and occurs in the simulator too**. The per-code calls are unchanged, word for word (29 yes / 55 no), and so are all 84 code meanings.
 
 ### v1.5.3 2026-10-29
 
-Generalization: GO directive — this document is made into a general-purpose piece for other AI agents to use directly, and the whole text drops pointers to a specific AI assistant and internal working environment: the party who locates entries in the table is renamed "maintainer", the Registry no longer points to a specific working environment and serves only as a general maintainer, and environment-specific local mirror path explanations are deleted. The meanings of the 84 codes and the judgments in every column are unchanged, not a word.
+Made generic. At GO's direction, this document becomes a general-purpose piece that other AI agents can use directly, and the whole text drops its pointers to any one specific AI assistant and to an internal working environment: the party who looks a failure up in the table is renamed "the maintainer", the registry no longer points at a specific working environment and serves only as a general maintainer, and explanations of an environment-specific local mirror path are deleted. All 84 code meanings and every column's calls are unchanged, word for word.
 
 ### v1.5.2 2026-10-29
 
-The "Why this table" section reorganized: per GO directive, the argument GO endorsed is arranged into this section — using AV11 / FileReader as a ready counterexample (all green in the simulator, all dead on the real device, located via E2005 in the table), drawing the line between what the simulator can and cannot cover (and citing the official line that "the final experience should be based on the real device"), making plain that the official real-device chain ends at delivery and the runtime period is a black box, and adding one more layer: error codes are not only a debugging tool, but also the only failure language a user can remember and report under small monochrome screen conditions with no other information channel. Conclusion: the two are a division of labor, not a duplication. Pure text reorganization; the meanings of the 84 codes and the judgments in every column are unchanged, not a word.
+"Why this table" reorganized. At GO's direction, the argument GO endorsed is arranged into the section: AV11 and FileReader serve as the ready counterexample (all green in the simulator, all dead on the real device, located through E2005 in this table); the line is drawn between what the simulator can cover and what it cannot, citing the official position that the final experience is judged on the real device; it is stated plainly that the official real-device pipeline ends at delivery and that runtime is a black box; and one further layer is added — error codes are not just a debugging tool but also the only failure language a user can remember and report under a small monochrome screen with no other information channel. The conclusion: the two are a division of labor, not a duplication. A wording reorganization only; all 84 code meanings and every column's calls unchanged, word for word.
 
 ### v1.5.1 2026-10-29
 
-The "Why this table" section: per GO directive, a rationale for the table is added before the coding rules: the official real-device chain only signals delivery (packaging upload results, resource pack download success); runtime errors have no return path, no record, and no viewing entry. The simulator is a different runtime, and the triggers of 29 codes do not exist in it. On the glasses the screen is small, information is fleeting, screenshots are impossible while the camera is busy, and relaying the original text inevitably distorts it — hence short codes with the same meaning across the whole fleet, shown on screen + read by TTS + aligned in debugging via `lastError`. Pure explanatory addition; the meanings of the 84 codes and the judgments in every column are unchanged, not a word.
+"Why this table" added. At GO's direction, the case for the table goes in ahead of the coding rules: the official real-device pipeline only ever confirms delivery (packaging and upload results, a resource-pack download success), while runtime errors have no return path, no record, and no entry point for viewing them; the simulator is a different runtime, in which the triggers of 29 codes do not exist; and on the glasses the screen is small, information is fleeting, screenshots are impossible while the camera is occupied, and relayed error text always comes out garbled — hence short codes meaning the same across the whole fleet, shown on screen, read by TTS, and reconciled in debugging through `lastError`. An explanatory addition only; all 84 code meanings and every column's calls unchanged, word for word.
 
 ### v1.5.0 2026-10-28
 
-The "Cannot be triggered in the simulator" column: per GO directive, which codes' triggers the Studio web simulator cannot reproduce was checked, and the code table gains a column marking each code. Judgment standard: a typical trigger that depends on the real-device Ink runtime / glasses hardware / host services / device resource state is marked "yes" (the simulator does not have that condition); environment-independent triggers, or ones where the browser has a similar mechanism, are marked "no". Result: 29 codes marked "yes" — 1xxx: 3 (E1003/E1006/E1010), 2xxx: 4 (E2002/E2005/E2006/E2007), 3xxx: 7 (E3001/E3007/E3008/E3010/E3012/E3014/E3015), 4xxx: 3 (E4006/E4007/E4011), 5xxx: 1 (E5005), 6xxx: 1 (E6010), 7xxx: 7 (E7001/E7005/E7006/E7007/E7008/E7009/E7010), 8xxx: 3 (E8002/E8004/E8005), 9xxx: 0; the remaining 55 codes marked "no". The meanings of the 84 codes are unchanged, not a word. This column is exactly the "real-device coverage only" list: an all-green simulator proves nothing about these 29 codes not triggering (the first field code, E2005, is one of them).
+The "Cannot be triggered in the simulator" column. At GO's direction, the codes were checked for which triggers the Studio web simulator cannot reproduce, and the code table gained a column marking each one. The standard: a typical trigger that depends on the real-device Ink runtime, the glasses' hardware, host services, or device resource state is marked "yes" (the simulator has no such condition); a trigger independent of the environment, or one the browser has a like mechanism for, is marked "no". The result: 29 codes marked "yes" — 1xxx 3 (E1003/E1006/E1010), 2xxx 4 (E2002/E2005/E2006/E2007), 3xxx 7 (E3001/E3007/E3008/E3010/E3012/E3014/E3015), 4xxx 3 (E4006/E4007/E4011), 5xxx 1 (E5005), 6xxx 1 (E6010), 7xxx 7 (E7001/E7005/E7006/E7007/E7008/E7009/E7010), 8xxx 3 (E8002/E8004/E8005), 9xxx 0 — and the remaining 55 codes marked "no". All 84 code meanings unchanged, word for word. This column is, in effect, the "only real-device testing covers these" list: a clean run through the simulator proves none of these 29 codes will stay quiet (and the first field code, E2005, is one of them).
 
 ### v1.4.0 2026-10-28
 
-Bare codes finalized: GO reversed the ruling — the numeric segment itself has one unique meaning across the whole fleet, and series prefixes add no extra locating information; they are superfluous. The only form returns to the bare code `E####` (code definitions / display / TTS / lastError / README / debug all use it), and series prefixes and the BA / short-code prefixes are all abolished. Agent identity is pinned by context and the slug in `lastError`. The format changed three times on the night it was finalized (numbered form → series form → bare codes), and none of them formed existing stock (the only build that used the full concatenated form, AV11 v1.1.2 awaiting re-verification, has been notified to fix it in its next version), so it is still recorded with a minor version; this is the final format and will not change again unless GO orders otherwise. The meanings of the 84 codes are unchanged, not a word.
+Bare codes, settled. GO reversed the earlier call: the numeric range itself carries one meaning across the whole fleet, so a series prefix adds no locating information — it is redundant. The only form returns to the bare `E####` (code definitions, display, TTS, `lastError`, README, and debug all use it); series prefixes and the BA and short-code prefixes are all abolished. Which agent failed is pinned down by context and by the slug in `lastError`. The format changed three times on the night it was settled (numbered form → series form → bare codes), and none of the forms took hold anywhere — the one build that used the full concatenated form, AV11 v1.1.2 awaiting re-verification, was notified to correct it in its next version — so the change is still recorded as a minor version. This is the final format; absent a fresh order from GO, it will not change again. All 84 code meanings unchanged, word for word.
 
 ### v1.3.0 2026-10-28
 
-Only form finalized: per GO directive, the whole fleet uses one set of coding rules — the full code `<series code>E<4 digits>` is set as the only form (code definitions / display / TTS / lastError / README / debug all align on it), the bare `E####` is demoted to the registration form used only inside this table, forbidden at runtime and in communication. Inside agent code, full codes are defined as literals and no longer concatenated at runtime. The meanings of the 84 codes are unchanged, not a word.
+One form, settled. At GO's direction, the whole fleet uses a single coding convention: the full code `<series code>E<4 digits>` becomes the only form (code definitions, display, TTS, `lastError`, README, and debug all align on it), and the bare `E####` is demoted to the registration form used inside this table only, forbidden at runtime and in communication. Within agent code, full codes are defined as literals and are no longer assembled at runtime. All 84 code meanings unchanged, word for word.
 
 ### v1.2.0 2026-10-28
 
-Merged format-fix edition: GO's 23:22 correction of the reporting format — the prefix changes to a **series code**, fully concatenated with no separator (AVE2005 / CCE1234 / BOE0002). The unit number does not occupy code digits; which specific unit it is gets pinned by the error context. The Registry confirms that the unnumbered base series uniformly uses the **BA** prefix, and v1.0.0's BENCH / PROBE / DABIAO / MYAGT short codes are abolished before ever being used. This version merges that format fix with the Registry's v1.1.0 expansion (+39 codes) into the final form: the meanings of the 84 codes are unchanged, not a word; only the format and the prefix register changed.
+Format fix, merged edition. GO's 23:22 correction of the reporting format: the prefix becomes the **series code**, written fully concatenated with no separator (AVE2005 / CCE1234 / BOE0002); the agent number occupies no code digits, and which specific agent it was is pinned down by the error context. The registry confirms that the unnumbered base series uniformly takes the **BA** prefix, and v1.0.0's short codes BENCH / PROBE / DABIAO / MYAGT, never enabled, are abolished unused. This release merges that format fix with the registry's v1.1.0 expansion (+39 codes) into the settled version: all 84 code meanings unchanged, word for word; only the format and the prefix register changed.
 
 ### v1.1.0 2026-10-28
 
-Registry expansion: the Registry takes over this table. It enumerates all error information currently knowable and encodes it. Basis: red lines from the capability dossier, a full inspection of fleet code (OverconstrainedError in 23 places, six kinds of ASR error events, LanguageModel availability calls in 41 places, and the reference surface of isTypeSupported / decodeAudioData / createImageBitmap / getCurrentPosition, among others), plus existing real-device lessons. 39 codes are added: 1xxx +5 (E1007–E1011), 2xxx +3 (E2011–E2013), 3xxx +10 (E3006–E3015), 4xxx +6 (E4006–E4011, with the segment title expanded to "Recording, composition, and playback"), 5xxx +2 (E5004–E5005), 6xxx +6 (E6006–E6011), 7xxx +4 (E7007–E7010), 8xxx +3 (E8004–E8006), 9xxx +0. The meanings of the existing 45 codes are unchanged, not a word. Governance gains the "Applying for a new code" process and the version rules; the canonical lands at the repo root.
+The registry expands the table. The registry takes over this table and codes up every error currently knowable, working from the capability dossier's red lines, a full sweep of fleet code (OverconstrainedError in 23 places, six kinds of ASR error events, `LanguageModel` availability calls in 41 places, and the usage surface of isTypeSupported / decodeAudioData / createImageBitmap / getCurrentPosition, among others), and lessons already learned on real devices. 39 codes are added: 1xxx +5 (E1007–E1011), 2xxx +3 (E2011–E2013), 3xxx +10 (E3006–E3015), 4xxx +6 (E4006–E4011, the section title widening to "Recording, composition, and playback"), 5xxx +2 (E5004–E5005), 6xxx +6 (E6006–E6011), 7xxx +4 (E7007–E7010), 8xxx +3 (E8004–E8006), 9xxx +0. The existing 45 codes' meanings are unchanged, word for word. Governance gains the new-code request process and the version rules; the canonical takes its place at the repo root.
 
 ### v1.0.0 2026-10-28
 
-Table established: grown out of AV11's field table — the reporting format, numbered prefix rules, roughly 45 codes in nine segments, a register of unnumbered prefixes (BENCH/PROBE/DABIAO/MYAGT), and the governance skeleton.
+The table is founded, expanded from AV11's field table: the reporting format, the numbered-prefix rules, some 45 codes across nine ranges, a register of unnumbered prefixes (BENCH/PROBE/DABIAO/MYAGT), and the governance skeleton.
 
 ## 7. Why error codes
 
-During the real-device runtime period there is no log return: Studio's packaging result and the phone App's resource-pack download prompt only prove that the package reached the glasses. Errors that occur after the Agent starts running have no return path, no record, and no viewing entry; they can only be reported by the user.
+At runtime on the real device there is no channel for logs to come back. Studio's packaging result and the phone app's resource-pack download notice prove only that the package reached the glasses; errors an agent hits once it is running have no return path, no record, and no place to view them. They can only come back as a user's report.
 
-The simulator cannot stand in for the real device: the simulator is a complete Web environment, and its API list does not match the real-device runtime's. A whole class of problems shows no sign at all in the simulator and is exposed only on the real device. For example, FileReader runs fine in the simulator and simply does not exist in the real-device runtime. For the 29 codes marked in the code table in Section 4 of this document, the failure causes cannot be produced by the simulator.
+Nor can the simulator stand in for the real device. The simulator is a complete web environment, and its API list does not line up with the real-device runtime's: a whole class of problems shows no symptom at all in the simulator and surfaces only on the hardware. FileReader is the standing example — it runs in the simulator and simply does not exist in the device runtime. For the 29 codes marked in Section 4's table, the failure causes behind them cannot be produced by the simulator at all.
 
-On the glasses the screen is small and monochrome, and information is fleeting. When an error occurs, the user cannot remember the English original text, and relaying it inevitably distorts it; the only thing that can be reported accurately is a short code. Hence the unified convention: errors are shown in large type on screen, read aloud by TTS as codes, and written to `lastError` for keeping. The user reports one code, and the maintainer can restore the failure point by looking it up in the table.
+And the glasses themselves leave little room: a small, monochrome screen where information is gone in a moment. When something fails, the user cannot memorize the English error text, and retelling it garbles it beyond use; the one thing that can be reported exactly is a short code. Hence the standing convention — the error goes on screen in large type, TTS reads the code aloud, and the failure is written to `lastError` and kept. The user reports a single code, and the maintainer looks it up in this table and reconstructs the failure point.

@@ -5,8 +5,8 @@
 [中文](README.md) | English | [日本語](README.ja.md)
 Translated from the Chinese version (as of 2026-10-29). In case of conflict, the Chinese version prevails.
 
-**AIUI agent repository for Rokid AI glasses · Global edition**
-Agents only, no apps. One repository holds every agent, and each one is imported into Studio through its own **branch**.
+**AIUI agents for Rokid AI glasses — the Global edition.**
+Agents only, never apps. Every agent lives in this one repo, and each is imported into Studio from its own **branch**.
 
 ![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
 ![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
@@ -16,19 +16,19 @@ Agents only, no apps. One repository holds every agent, and each one is imported
 </div>
 
 > [!IMPORTANT]
-> **The import rule**: to import a single agent into Global AIUI Studio, use only its dedicated branch URL
+> **One way to import — no exceptions.** To get a single agent into Global AIUI Studio, use its dedicated branch URL and nothing else:
 > `https://github.com/sakai55/rokid/tree/agent-<slug>`.
-> Subdirectory URLs, the repository root URL and blob URLs have all been tested and disproven (see [Studio Import](#studio-导入实测结论)).
-> Fallback route: download `<slug>.aix` from the `aix/` directory and go through **Import from AIX**.
+> Subdirectory URLs, the repo root URL, and blob URLs were all tried and all fail — see [Studio Import](#studio-导入实测结论).
+> Plan B: download `<slug>.aix` from `aix/` and go through **Import from AIX**.
 
 ## Contents
 
 - [Repository Structure](#仓库结构)
 - [Quick Start](#快速开始)
 - [Standard Workflow](#标准工作流)
-- [Studio Import (Tested Conclusions)](#studio-导入实测结论)
+- [Studio Import (Field-Tested)](#studio-导入实测结论)
 - [Agent List](#agent-清单)
-- [Overseas Chain (Global End to End, No Exceptions)](#海外链路全链路海外缺一不可)
+- [The Global Chain (Every Link, No Exceptions)](#海外链路全链路海外缺一不可)
 - [Real-Device Testing (Cloud Delivery)](#真机测试云端下发)
 - [Review Submission](#提交审核)
 - [Maintenance Conventions](#维护约定)
@@ -64,8 +64,8 @@ aix preview .                               # Local preview (starts a server / -
 ```
 
 > [!WARNING]
-> Before packing, the project root must have a `.aixignore` excluding `.agents/`, `.aix/`, `artifacts/`, `*.aix`,
-> `skills-lock.json` and `node_modules/` — otherwise development files end up in the package (measured: 2.3 KB → 107 KB).
+> The project root needs a `.aixignore` before you pack — one that excludes `.agents/`, `.aix/`, `artifacts/`, `*.aix`,
+> `skills-lock.json`, and `node_modules/`. Skip it and your dev files ship inside the package (measured: the package balloons from 2.3 KB to 107 KB).
 
 ## Standard Workflow
 
@@ -75,87 +75,86 @@ aix preview .                               # Local preview (starts a server / -
 
 </div>
 
-1. **Local development** — Develop and edit pages in the `<category>/<slug>/` directory.
-2. **Preview** — `aix preview` produces preview images of **all pages** of the agent, stored in `screenshots/<slug>/`.
-3. **Push to GitHub** — Push the directory to main; repack `<slug>.aix` into the `aix/` directory; sync the same files to the **root** of branch `agent-<slug>`.
-4. **Studio import** — Paste the branch URL to import (see the next section); one branch imports one agent.
-5. **Real-device testing** — Cloud delivery, see [Real-Device Testing](#真机测试云端下发).
-6. **Review submission** — After real-device testing passes and the maintainer confirms, submit on the **Submit** tab (see [Review Submission](#提交审核)).
+1. **Develop locally** — write code and edit pages in `<category>/<slug>/`.
+2. **Preview** — run `aix preview`, capture previews of **every page** of the agent, and save them to `screenshots/<slug>/`.
+3. **Push to GitHub** — push the directory to `main`, rebuild `<slug>.aix` into `aix/`, and mirror the same files to the **root** of branch `agent-<slug>`.
+4. **Import into Studio** — paste the branch URL (see the next section). One branch, one agent.
+5. **Test on a real device** — delivered from the cloud; see [Real-Device Testing](#真机测试云端下发).
+6. **Submit for review** — once real-device testing passes and the maintainer signs off, submit from the **Submit** tab (see [Review Submission](#提交审核)).
 
-## Studio Import (Tested Conclusions)
+## Studio Import (Field-Tested)
 
-The import dialog (`IMPORT PROJECT` / "GitHub Subdirectory Import") has **only one URL input field**,
-with no branch/path picker; Studio treats the whole segment after `/tree/` **as a single ref** and does not split it into "ref + path".
-Tested one by one on 2026-10-24:
+The import dialog (`IMPORT PROJECT` / "GitHub Subdirectory Import") gives you exactly one field: a URL.
+There is no branch or path picker — Studio takes everything after `/tree/` as **a single ref** and never splits it into ref + path.
+Every form below was tried on 2026-10-24:
 
 | URL form | Result |
 |---|---|
-| ✅ `…/tree/agent-<slug>` | **The only one that works**: imports the branch root = one complete agent, full file tree; tested runnable and packageable |
-| ❌ `…/tree/main/<slug>` (subdirectory) | `GitHub ref not found: main/<slug>` (the official repo `JellyFlow/AIUI/tree/main/samples/scanner` fails the same way) |
-| ❌ `…/tree/<full commit SHA>/<slug>` | Same ref not found |
-| ❌ Repository root URL | Imports, but produces a **hollow agent** (empty Code file tree) |
-| ❌ `…/blob/main/<slug>/app.json` | Passes the import check, but Run reports "请先创建Agent的项目文件" |
+| ✅ `…/tree/agent-<slug>` | **The only form that works** — imports the branch root as one complete agent with its full file tree; verified to run and to package |
+| ❌ `…/tree/main/<slug>` (subdirectory) | `GitHub ref not found: main/<slug>` (the official repo's `JellyFlow/AIUI/tree/main/samples/scanner` fails the same way) |
+| ❌ `…/tree/<full commit SHA>/<slug>` | The same ref-not-found error |
+| ❌ Repository root URL | Imports — but you get an **empty shell**: the Code file tree is empty |
+| ❌ `…/blob/main/<slug>/app.json` | Passes the import check, then Run fails with "请先创建Agent的项目文件" |
 
-**Key points of the branch method**
+**How the branch scheme works**
 
-- The branch name must be a **single segment** (`agent-<slug>`), and the branch **root** holds the agent's complete file set.
-- The imported Draft is named `sakai55/rokid`; rename it after entering Studio.
-- To re-import after code changes: first sync the branch root, then paste the branch URL to import again, then follow the real-device flow.
+- Branch names are **single-segment** (`agent-<slug>`), and the agent's complete file set sits at the branch **root**.
+- The imported draft comes in named `sakai55/rokid`; rename it once you're inside Studio.
+- Changed the code? Sync the branch root, paste the branch URL again to re-import, then run the device flow.
 
 <details>
-<summary><b>Alternative: AIX import (fallback route)</b></summary>
+<summary><b>Fallback: import from AIX</b></summary>
 
-1. In the repository's `aix/` directory, open `<slug>.aix` and download it locally.
-2. Global AIUI Studio → New Agent → **Import from AIX**, and upload the file.
-3. The import produces a Draft whose file tree is the complete project inside the package; from there follow the same Device Debug packaging → real-device testing flow.
+1. Open `<slug>.aix` in the repo's `aix/` directory and download it.
+2. Global AIUI Studio → New Agent → **Import from AIX**, then upload the file.
+3. You get a draft whose file tree is the complete project from inside the package; from there it's the same Device Debug packaging → real-device testing flow.
 
-It does not depend on GitHub URL parsing; use it when in a hurry or when the GitHub import misbehaves. The branch method is the everyday first choice.
+No GitHub URL parsing is involved, so reach for this when you're in a hurry or the GitHub import is acting up. Day to day, the branch method is the default.
 
 </details>
 
 ## Agent List
 
-All agents at a glance, in reverse order of completion, newest first; a newly finished agent is added at the top of the table.
-For each agent's real-device status and review materials, see the README in its own directory.
+Every agent in the repo, newest first — each newly finished agent is added at the top of the table.
+For an agent's real-device status and its review materials, see the README in that agent's own directory.
 
-**How to read the badges: the third column of each row holds the badges, from left to right: the ID badge, the series badge, and the conflict-status badge (one of three: Direct Conflict / High Overlap / Pending).**
-An ID is 2 letters + 2 digits: the letters are the first two letters of the category's English name, the digits are the number within the group. **IDs are unique across the whole table: each letter pair belongs to only one series, and each ID appears only once** (the base items `my-agent` / `glasses-benchmark` are unnumbered and badgeless).
+**Reading the badges: the third column of each row holds three badges, left to right — the ID badge, the series badge, and the conflict-status badge (exactly one of Direct Conflict / High Overlap / Pending).**
+An ID is two letters plus two digits: the letters are the first two letters of the category's English name, the digits the agent's number within its group. **IDs are unique across the whole table — a letter pair belongs to exactly one series, and no ID ever repeats** (the base entries `my-agent` / `glasses-benchmark` are unnumbered and carry no badges).
 
 **Badge legend**:
 
 <table>
-<tr><td width="110"><img src="assets/badges/badge-di01.svg" alt="DI01"></td><td>A unique ID: the first two letters are the category, the last two digits the number within the group</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-directional.en.svg" alt="Directional"></td><td>Directional series: solving everyday problems with the gaze-coaxial view and head orientation</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-attention.en.svg" alt="Attention"></td><td>Attention add-on series: outsourcing the attention you would otherwise keep occupied to the glasses</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-curbcut.en.svg" alt="Curb Cut"></td><td>Curb-cut series: solve a hard problem for a specific group first, then let it spill over to everyone else</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-game.en.svg" alt="Games"></td><td>Head-motion mini-games series: minimalist games played with head movements</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-av.en.svg" alt="AV"></td><td>AV series: centered on photo, video and voice interaction, each one pushing against a base audio/video capability boundary</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-trace.en.svg" alt="Trace"></td><td>Trace series: a model in the center and steps at the side; learn by doing one step and verifying one step</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-conflict.en.svg" alt="Direct Conflict"></td><td>In <strong>direct conflict</strong> with the glasses' built-in capabilities: the thing itself is the built-in capability with only a small twist added</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-overlap.en.svg" alt="High Overlap"></td><td><strong>Highly overlapping</strong> with the glasses' built-in capabilities: the built-in feature can do most of it, leaving only a thin closing loop</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-pending.en.svg" alt="Pending"></td><td>Neither a direct conflict nor a high overlap; whether it conflicts is to be confirmed by real-device testing</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-di01.svg" alt="DI01"></td><td>A unique ID: the first two letters name the category, the last two digits are the number within the group</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-directional.en.svg" alt="Directional"></td><td>Directional series — agents driven by head orientation: what you face is what you act on</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-attention.en.svg" alt="Attention"></td><td>Attention Offload series — the glasses keep watch over things so your attention doesn't have to</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-curbcut.en.svg" alt="Curb Cut"></td><td>Curb Cut series — solve one specific group's hard problem first, then let everyone else benefit</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-game.en.svg" alt="Games"></td><td>Head-motion mini-games — tiny games played entirely with head movements</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-av.en.svg" alt="AV"></td><td>AV series — photo, video, and voice agents, each probing a different edge of the platform's media capabilities</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-trace.en.svg" alt="Trace"></td><td>Trace series — a model up front and the steps alongside: do one step, check one step, learn by doing</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-conflict.en.svg" alt="Direct Conflict"></td><td>In <strong>direct conflict</strong> with a built-in capability: at its core it is the built-in feature itself, with one small twist added</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-overlap.en.svg" alt="High Overlap"></td><td><strong>High overlap</strong> with a built-in capability: the built-in feature already does most of the work and only a thin loop is left over</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-pending.en.svg" alt="Pending"></td><td>Pending — neither a direct conflict nor a high overlap; real-device testing will settle which it is</td></tr>
 </table>
 
-The base items (`my-agent`, `glasses-benchmark`) have no badges at all.
-Reading example: the badges at the end of the `gaze-translate` row — ![DI01](https://img.shields.io/badge/DI01-24292F?style=flat-square) ![Directional](https://img.shields.io/badge/Directional-2196F3?style=flat-square) ![Direct Conflict](https://img.shields.io/badge/Direct%20Conflict-C62828?style=flat-square) — mean ID DI01 · Directional series · in direct conflict with the built-in capabilities; the ones on the `drop-search` row — ![CC01](https://img.shields.io/badge/CC01-24292F?style=flat-square) ![Curb Cut](https://img.shields.io/badge/Curb%20Cut-FF9800?style=flat-square) ![Pending](https://img.shields.io/badge/Pending-607D8B?style=flat-square) — mean ID CC01 · Curb-cut series · conflict status pending testing.
+The base entries (`my-agent`, `glasses-benchmark`) carry no badges at all.
+How to read a row: the badges on `gaze-translate` — ![DI01](https://img.shields.io/badge/DI01-24292F?style=flat-square) ![Directional](https://img.shields.io/badge/Directional-2196F3?style=flat-square) ![Direct Conflict](https://img.shields.io/badge/Direct%20Conflict-C62828?style=flat-square) — read as ID DI01 · Directional series · in direct conflict with a built-in capability. The badges on `drop-search` — ![CC01](https://img.shields.io/badge/CC01-24292F?style=flat-square) ![Curb Cut](https://img.shields.io/badge/Curb%20Cut-FF9800?style=flat-square) ![Pending](https://img.shields.io/badge/Pending-607D8B?style=flat-square) — read as ID CC01 · Curb Cut series · conflict status pending.
 
-- **No letters (`—`)**: base items, belonging to no series — `my-agent` is the official scaffolding sample, `glasses-benchmark` is a full-function self-check tool for the glasses. Directory: `base/`
-- **`DI01`–`DI50`**: the **Directional series** (50) — using the glasses' directional abilities such as the gaze-coaxial view and head orientation, one agent solves one everyday problem; the ID takes the first two letters of Directional, and inside there are ten life-scene groups A–J. Directory: `directional/`
-- **Two letters + `01`–`05`**: the **Attention add-on series** (50, 10 groups × 5) — outsourcing to the glasses the attention you would otherwise have to keep occupied; the letters are the first two letters of each outsourcing type's English name:
-  - `WA` = **WATCH**: keeps watching one signal for you (a pot, a called number, a doorbell), directory `watch/`
-  - `HO` = **HOLD**: remembers for you the numbers, passphrases, lists and routes you would otherwise keep repeating to yourself, directory `hold/`
-  - `CO` = **COVER**: proves for you that "everything has been looked at", guarding against missed checks, missed scans and missed items, directory `cover/`
-  - `FI` = **FILTER**: lets through only the kind of information you declared you want and blocks the rest, directory `filter/`
-  - `DU` = **DUAL**: you do the main line while it manages the side line for you (children, luggage, queue numbers), directory `dual/`
-  - `RE` = **REVIEW**: answers "just now…" for you, reviewing from its records afterwards, directory `review/`
-  - `CU` = **CUE**: looking at a certain scene is what triggers the matching reminder, directory `cue/`
-  - `SO` = **SOCIAL**: shares the social attention of hosting guests, listening and remembering favors for you, directory `social/`
-  - `BO` = **BODY**: watches body signals for you — eyes, drinking water, breathing, sitting too long, directory `body/`
-  - `AM` = **AMBIENT**: watches environmental changes for you — light, sky, noise, directory `ambient/`
-- **`CC01`–`CC20`**: the **Curb-cut series** (20) — first solve one concrete hard problem for one specific group of people, then let it spill over to ordinary people in situational difficulty; the ID takes the initials **CC** of Curb Cut. Directory: `curb-cut/`
-- **`GA01`–`GA20`**: the **Head-motion mini-games series** (20, ID from the first two letters of Game) — minimalist games played with head movements, including voice-guided segmented neck exercises (segments only, always return to center, never circle). Directory: `games/`
-- **`JP01`–`JP10` / `KR01`–`KR10`**: the **Japan/Korea localization series** (20) — designed around Japan's and Korea's own local systems and etiquette; the IDs take the common country abbreviations JP / KR. Directories: `japan/`, `korea/`
-
+- **No letters (`—`)** — the base entries, in no series: `my-agent` is the official scaffolding sample and `glasses-benchmark` is a full self-test tool for the glasses. Directory: `base/`
+- **`DI01`–`DI50`** — the **Directional series** (50 agents): every agent puts head orientation and the line-of-sight view to work on one everyday problem. The ID takes the first two letters of Directional, and inside, the fifty split into ten everyday-scenario groups, A–J. Directory: `directional/`
+- **Two letters + `01`–`05`** — the **Attention Offload series** (50 agents, 10 groups × 5): these agents take over attention you would otherwise have to spend yourself. The letters are the first two letters of each offload type's English name:
+  - `WA` = **WATCH** — keeps an eye on a signal for you (a pot on the stove, your number being called, the doorbell), directory `watch/`
+  - `HO` = **HOLD** — holds the numbers, codes, lists, and routes in view so you don't have to keep repeating them in your head, directory `hold/`
+  - `CO` = **COVER** — proves you've actually looked at everything, so nothing gets missed in a check, a scan, or a packing list, directory `cover/`
+  - `FI` = **FILTER** — passes only the kind of information you said you want and blocks the rest, directory `filter/`
+  - `DU` = **DUAL** — you run the main thread while it runs a side thread for you (the kids, the luggage, your place in line), directory `dual/`
+  - `RE` = **REVIEW** — answers "what just happened?" from its log, replaying it back to you afterwards, directory `review/`
+  - `CU` = **CUE** — a reminder that fires only when you look at the scene it belongs to, directory `cue/`
+  - `SO` = **SOCIAL** — shares the social workload: hosting guests, listening, keeping track of favors, directory `social/`
+  - `BO` = **BODY** — watches your body's signals for you: eyes, hydration, breathing, how long you've been sitting, directory `body/`
+  - `AM` = **AMBIENT** — watches your surroundings for you: light, daylight, noise, directory `ambient/`
+- **`CC01`–`CC20`** — the **Curb Cut series** (20 agents): each one first solves a concrete problem for a specific group, then spills over to anyone caught in a situational version of the same problem. The ID is the initials of Curb Cut. Directory: `curb-cut/`
+- **`GA01`–`GA20`** — the **head-motion mini-games series** (20 agents, ID from the first two letters of Game): tiny games played with your head, including voice-guided neck routines — segmented movements only, always back to center, never full circles. Directory: `games/`
+- **`JP01`–`JP10` / `KR01`–`KR10`** — the **Japan / Korea localization series** (20 agents): designed around each country's own systems and etiquette, not just translated into its language. The IDs are the standard country codes, JP / KR. Directories: `japan/`, `korea/`
 
 <table>
 <tr><td><a href="trace/trace-sketch/">trace-sketch</a></td><td>Trace simple drawings: stroke-by-stroke model plus whole-picture shape check</td><td><img src="https://img.shields.io/badge/TR06-24292F?style=flat-square" alt="TR06"> <img src="https://img.shields.io/badge/Trace-00897B?style=flat-square" alt="Trace"> <img src="https://img.shields.io/badge/Pending-607D8B?style=flat-square" alt="Pending"></td></tr>
@@ -380,55 +379,54 @@ Reading example: the badges at the end of the `gaze-translate` row — ![DI01](h
 <tr><td><a href="base/glasses-benchmark/">glasses-benchmark</a></td><td>A full-function self-check of the glasses: 21 items run in one tap, with results</td><td></td></tr>
 <tr><td><a href="base/my-agent/">my-agent</a></td><td>The official scaffolding sample: tap to switch greetings between Chinese and English</td><td></td></tr>
 </table>
-
-## Overseas Chain (Global End to End, No Exceptions)
+## The Global Chain (Every Link, No Exceptions)
 
 > [!CAUTION]
-> Only when all four points below are in place does it count as overseas-edition development; if any link uses the domestic edition, the chain breaks.
-> Accounts and projects on the domestic site (aiui.rokid.com) and the Global site are **not interchangeable**.
+> This only counts as Global-edition development when all four links below are global. Slip a domestic link in anywhere and the chain doesn't connect.
+> Accounts and projects on the domestic site (aiui.rokid.com) and the Global site **don't talk to each other**.
 
-| Link | Must use | Must not use |
+| Link | Use this | Not this |
 |---|---|---|
-| Account | Register on the **English edition** of [account-web.rokid.com](https://account-web.rokid.com/) (this project's region: Japan) | An account registered on the domestic edition |
+| Account | Sign up on the **English** site at [account-web.rokid.com](https://account-web.rokid.com/) (this project's region: Japan) | An account registered on the domestic edition |
 | Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
-| Delivery | Studio package & save → **cloud delivery** to the glasses | ADB / direct install over a data cable |
+| Delivery | Package and save in Studio → **cloud delivery** to the glasses | ADB / sideloading over a data cable |
 | Phone app | **Hi Rokid** (package name `com.rokid.sprite.global.aiapp`) | The domestic Rokid Ai app |
 
 ## Real-Device Testing (Cloud Delivery)
 
 <details>
-<summary><b>Expand the full steps</b></summary>
+<summary><b>Show the full procedure</b></summary>
 
-1. Go to the **Device Debug** tab and fill in **Basic Information**:
+1. Open the **Device Debug** tab and fill in **Basic Information**:
    - Agent Icon (1:1 recommended), **Agent Name** (required)
    - **App Category** (required): Life / Work / Entertainment / Learning
-   - **Intent Description** (required, ≤500 characters): state clearly in what scenario, under what preconditions, and by what kind of user request it is invoked
-   - Version / Agent ID are generated by the system; **Version is the Build number and increments automatically on every Repackage and Save**
-2. In the **AIX Packaging** area, click **Repackage and Save** and wait for packaging to finish.
-3. **Success sign**: the green status at the top, **● Debug version ready — Ready for device debugging**.
-   If it does not appear, the save did not succeed and the app side cannot pull anything — do not wait in vain.
-4. On the phone, open **Hi Rokid** (overseas edition) → confirm the glasses are connected → "Settings → Developer Options → AIUI" →
-   "更新眼镜资源包" (Update glasses resource pack) → wait for "智能体资源包下载成功" (agent resource pack downloaded successfully).
-5. Open the agent by voice on the glasses (such as "乐奇，打开 xxx" — "Rokid, open xxx") and start testing.
-6. Iteration loop: change code → push to GitHub / sync the branch → re-import in Studio → Repackage and Save
-   → update the resource pack in Hi Rokid → test again. **If you only change code without repackaging and saving, the app still pulls the old version.**
+   - **Intent Description** (required, ≤500 characters): the scenario, the preconditions, and the kind of user request that should wake this agent
+   - Version and Agent ID are system-generated; **Version is the build number — it auto-increments on every Repackage and Save**
+2. Under **AIX Packaging**, click **Repackage and Save** and wait for the build to finish.
+3. **You're not done until you see it**: the green status at the top — **● Debug version ready — Ready for device debugging**.
+   No green status means the save didn't land and the phone app has nothing to pull. Don't wait around for it.
+4. On your phone, open **Hi Rokid** (the Global app) → make sure the glasses are connected → Settings → Developer Options → AIUI →
+   tap "更新眼镜资源包" (update the glasses resource pack) → wait for "智能体资源包下载成功" (agent resource pack downloaded).
+5. Wake the agent by voice on the glasses (say "乐奇，打开 xxx" — "Rokid, open xxx") and start testing.
+6. The iteration loop: edit code → push to GitHub / sync the branch → re-import in Studio → Repackage and Save
+   → update the resource pack in Hi Rokid → test again. **Change the code without repackaging and saving, and the app keeps pulling the old build.**
 
 </details>
 
 ## Review Submission
 
-After all real-device testing passes and the maintainer confirms "real-device testing complete":
+Once all real-device testing passes and the maintainer confirms "real-device testing complete":
 
 1. On the **Submit** tab, fill in **Review Information**: Feature Description, Opening Message,
-   Preview Media, Change Log. **All four are drafted in the "提审资料
-   (Review Submission)" section of each agent's own README, written in segments and ready to copy as a whole**: Feature Description ≤500 characters,
-   Opening Message ≤500 characters with Markdown support, Preview Media 3–5 files with ≥1 image and ≥1 video.
-2. Permission declarations must match the code; the only available permissions are `GEOLOCATION`, `CAMERA` and `RECORD_AUDIO`.
-3. **Submit for Review** to submit; if rejected, fix according to the stated reason, then repackage and save, and submit again.
+   Preview Media, Change Log. **All four are already drafted in the "提审资料
+   (Review Submission)" section of each agent's own README — written section by section, ready to copy wholesale**: Feature Description ≤500 characters,
+   Opening Message ≤500 characters, Markdown supported; Preview Media 3–5 files, with ≥1 image and ≥1 video.
+2. The declared permissions must match the code; only three permissions exist: `GEOLOCATION`, `CAMERA`, `RECORD_AUDIO`.
+3. Hit **Submit for Review**. If it comes back rejected, fix what the rejection names, then repackage, save, and resubmit.
 
 ## Maintenance Conventions
 
-- **One agent, one directory**: on main, agents are placed by ID into English-named category directories; **one agent, one branch**: `agent-<slug>`, and the branch root is the project root.
-- Every agent's README must be complete: features, permissions, packaging/preview commands, the real-device info table, review materials and preview screenshots, with screenshots embedded via the path `../../screenshots/<slug>/…`.
-- Screenshots go only in `screenshots/<slug>/`; packaged `.aix` files go only in the repository's `aix/` directory and are kept in sync with the code.
-- GitHub operations go through the terminal `gh` / `git`, including binaries and branch maintenance.
+- **One agent, one directory**: on `main`, agents sit in English-named category directories, filed by ID; **one agent, one branch**: `agent-<slug>`, with the branch root as the project root.
+- Every agent's README has to be complete: features, permissions, pack/preview commands, the real-device info table, the review materials, and preview screenshots — screenshots embedded via `../../screenshots/<slug>/…`.
+- Screenshots live only in `screenshots/<slug>/`; built `.aix` packages live only in the repo's `aix/` directory and stay in sync with the code.
+- Do GitHub work from the terminal with `gh` / `git` — binaries and branch maintenance included.

@@ -3,12 +3,12 @@
 [中文](README.md) | English | [日本語](README.ja.md)
 Translated from the Chinese version (as of 2026-10-29).
 
-Attention add-on series · IDs WA01–WA05, 5 in total. You focus on A; it keeps an eye on B for you.
+Attention add-on series · IDs WA01–WA05 · 5 agents. You focus on A; it keeps an eye on B.
 
-- WA01 [stove-watch](stove-watch/) — Register multiple pots by looking and start timers; calls you back when it boils over
-- WA02 [bath-watch](bath-watch/) — Register the filling bathtub and keep listening; calls you to turn off the water before it is full
-- WA03 [laundry-watch](laundry-watch/) — Listens for the laundry-end buzzer; calls you to hang the clothes at once
-- WA04 [signal-watch](signal-watch/) — Queue numbers at hospitals, banks and food pickup; screen-rhythm reminders to look back, calls you to get ready 3 numbers ahead
-- WA05 [door-watch](door-watch/) — In a meeting in another room with headphones on; listens for the doorbell, knocks and deliveries and calls you back
+- WA01 [stove-watch](stove-watch/) — Register each pot with a look and its timer starts; it calls you back when one boils over
+- WA02 [bath-watch](bath-watch/) — Register the tub as it fills and it keeps listening; calls you to turn the water off before the tub is full
+- WA03 [laundry-watch](laundry-watch/) — Listens for the washer's end-of-cycle buzzer; the moment it sounds, it calls you to hang the laundry
+- WA04 [signal-watch](signal-watch/) — Queue numbers at hospitals, banks, and food pickup; the display rhythm reminds you to check, and it calls you to get ready when you're 3 numbers out
+- WA05 [door-watch](door-watch/) — You're in a meeting in the back room with headphones on; it listens for the doorbell, knocks, and couriers, and calls you back
 
-For the full list, see the Agent list at the end of the [repository root README](../README.md).
+For the full list, see the Agent index at the end of the [root README](../README.md).

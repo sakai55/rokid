@@ -3,10 +3,11 @@
 # `rokid` — Rokid AIUI Agents
 
 [中文](README.md) | [English](README.en.md) | 日本語
-中文版（2026-10-29 時点）からの翻訳。齟齬がある場合は中文版が優先する。
 
-**Rokid AI グラスの AIUI Agent リポジトリ · 海外版 / Global**
-作るのは **Agent** だけ、App は作らない。全 Agent を1つのリポジトリに収め、**ブランチ**単位で Studio にインポートする。
+この日本語版は中文版（2026-10-29 時点）をもとに作成した。食い違いがある場合は中文版を正とする。
+
+**Rokid AI グラス向け AIUI Agent のリポジトリ · 海外版 / Global**
+作るのは **Agent** だけ。App は作らない。Agent はすべてこのリポジトリに集め、Studio へは**ブランチ**単位で1つずつ取り込む。
 
 ![last commit](https://img.shields.io/github/last-commit/sakai55/rokid?style=flat-square)
 ![repo size](https://img.shields.io/github/repo-size/sakai55/rokid?style=flat-square)
@@ -16,10 +17,10 @@
 </div>
 
 > [!IMPORTANT]
-> **インポートの鉄則**：Global AIUI Studio に単一の Agent を入れる場合は、その専用ブランチのアドレスだけを使う
-> `https://github.com/sakai55/rokid/tree/agent-<slug>`。
-> サブディレクトリのアドレス、ルートのアドレス、blob のアドレスはいずれも実測で否定済み（[Studio インポート](#studio-インポート実測結果)を参照）。
-> 保底ルート：`aix/` ディレクトリの `<slug>.aix` をダウンロードして **Import from AIX** を使う。
+> **インポートの鉄則**：Global AIUI Studio に Agent を1つ取り込むときは、その Agent 専用ブランチのアドレスだけを使う。
+> `https://github.com/sakai55/rokid/tree/agent-<slug>`
+> サブディレクトリのアドレス、リポジトリのルートのアドレス、blob のアドレスは、いずれも実測で使えないことを確認済み（[Studio インポート](#studio-インポート実測結果) 参照）。
+> どうしても通らないときの代替手段：`aix/` にある `<slug>.aix` をダウンロードして **Import from AIX** で取り込む。
 
 ## 目次
 
@@ -64,97 +65,93 @@ aix preview .                               # ローカルプレビュー（サ�
 ```
 
 > [!WARNING]
-> パック前にプロジェクトルートに `.aixignore` が必須。`.agents/`、`.aix/`、`artifacts/`、`*.aix`、
-> `skills-lock.json`、`node_modules/` を除外する——さもないと開発ファイルがパッケージに入る（実測 2.3 KB → 107 KB）。
+> pack の前に、プロジェクトのルートに `.aixignore` を置くこと。`.agents/`、`.aix/`、`artifacts/`、`*.aix`、`skills-lock.json`、`node_modules/` を除外しておかないと、開発ファイルがパッケージに混入する（実測で 2.3 KB → 107 KB）。
 
 ## 標準ワークフロー
 
 <div align="center">
 
-<img src="assets/workflow.ja.svg" width="1000" alt="標準ワークフロー：ローカル開発 → プレビュー画像 → GitHub へプッシュ → ブランチ同期 → Studio インポート → パッケージ保存 → クラウド配信 → 実機テスト → 審査提出"/>
+<img src="assets/workflow.ja.svg" width="1000" alt="標準ワークフロー：ローカル開発 → プレビュー → GitHub に push → ブランチ同期 → Studio へ取込 → パッケージ保存 → クラウド配信 → 実機テスト → 審査提出"/>
 
 </div>
 
-1. **ローカル開発** — `<分類>/<slug>/` ディレクトリで開発し、ページを変更する。
-2. **プレビュー** — `aix preview` でその Agent の**全ページ**のプレビュー画像を出し、`screenshots/<slug>/` に保存する。
-3. **GitHub へプッシュ** — ディレクトリを main へプッシュ；`<slug>.aix` を再パックして `aix/` ディレクトリへ；同じファイル一式をブランチ `agent-<slug>` の**ルート**に同期する。
-4. **Studio インポート** — ブランチのアドレスを貼ってインポートする（次節を参照）。1ブランチで1 Agent。
-5. **実機テスト** — クラウド配信。[実機テスト](#実機テストクラウド配信)を参照。
-6. **審査提出** — 実機テストを通過し、メンテナーの確認後に **Submit** タブで提出する（[審査提出](#審査提出)を参照）。
+1. **ローカル開発** — `<分類>/<slug>/` でページを編集する。
+2. **プレビュー** — `aix preview` で、その Agent の**全ページ**を画像化し、`screenshots/<slug>/` に置く。
+3. **GitHub に push** — 本体は main へ push。`<slug>.aix` を作り直して `aix/` に入れ、同じファイル一式をブランチ `agent-<slug>` の**ルート**にも同期する。
+4. **Studio へインポート** — ブランチのアドレスを貼って取り込む（次節参照）。1ブランチで1 Agent。
+5. **実機テスト** — クラウド経由でグラスに届ける。[実機テスト](#実機テストクラウド配信) 参照。
+6. **審査提出** — 実機テストを通り、メンテナーの確認が取れたら **Submit** タブから提出する（[審査提出](#審査提出) 参照）。
 
 ## Studio インポート（実測結果）
 
-インポートダイアログ（`IMPORT PROJECT` / "GitHub Subdirectory Import"）は**URL の入力欄が1つだけ**で、
-ブランチ/パスの選択はない。Studio は `/tree/` の後ろ**全体を1つの ref として扱い**、「ref + パス」に分割しない。
-2026-10-24 に1件ずつ実測：
+インポートダイアログ（`IMPORT PROJECT` / "GitHub Subdirectory Import"）の入力欄は URL の1つだけ。ブランチやパスを選ぶ UI はない。Studio は `/tree/` 以降を**丸ごと1つの ref として解釈**し、「ref + パス」には分解しない。2026-10-24 に各形式を1つずつ試した結果は次の通り。
 
 | アドレスの形式 | 結果 |
 |---|---|
-| ✅ `…/tree/agent-<slug>` | **唯一利用可能**：そのブランチのルート = 完全な Agent 1本をインポート、ファイルツリーも完全；実行・パッケージ可能と実測済み |
-| ❌ `…/tree/main/<slug>`（サブディレクトリ） | `GitHub ref not found: main/<slug>`（公式リポジトリ `JellyFlow/AIUI/tree/main/samples/scanner` でも同様に失敗） |
-| ❌ `…/tree/<完全な commit SHA>/<slug>` | 同様に ref not found |
-| ❌ リポジトリのルートアドレス | インポートはできるが**中身のない Agent**（Code のファイルツリーが空） |
-| ❌ `…/blob/main/<slug>/app.json` | インポートは通るが、Run で「请先创建Agent的项目文件」（まず Agent のプロジェクトファイルを作成してください）と出る |
+| ✅ `…/tree/agent-<slug>` | **これだけが使える**：ブランチのルート = Agent 1本まるごとを取り込む。ファイルツリーも欠けず、実行とパッケージまで確認済み |
+| ❌ `…/tree/main/<slug>`（サブディレクトリ） | `GitHub ref not found: main/<slug>`（公式リポジトリ `JellyFlow/AIUI/tree/main/samples/scanner` でも同じく失敗） |
+| ❌ `…/tree/<完全な commit SHA>/<slug>` | 同じく ref not found |
+| ❌ リポジトリのルートのアドレス | 取り込み自体はできるが、**中身が空の Agent** になる（Code のファイルツリーが空） |
+| ❌ `…/blob/main/<slug>/app.json` | 取り込みは通るが、Run すると「请先创建Agent的项目文件」（まず Agent のプロジェクトファイルを作成してください）と出る |
 
 **ブランチ方式の要点**
 
-- ブランチ名は**1セグメント**（`agent-<slug>`）でなければならず、ブランチの**ルート**にその Agent のファイル一式を置く。
-- インポート後に生成される Draft 名は `sakai55/rokid` で、Studio に入ってから改名する。
-- コードを変更して再インポートする場合：まずブランチのルートに同期し、再度ブランチのアドレスを貼ってインポートして、その後実機フローを進める。
+- ブランチ名は**単一セグメント**（`agent-<slug>`）とし、ブランチの**ルート**にその Agent のファイルをすべて置く。
+- 取り込んだ Draft の名前は `sakai55/rokid` になる。名前は Studio 側で付け替える。
+- コードを直して取り込み直すときは、ブランチのルートへ同期し、アドレスを貼り直してインポートし直し、それから実機テストの流れに入る。
 
 <details>
-<summary><b>代替：AIX インポート（保底ルート）</b></summary>
+<summary><b>代替手段：AIX からインポートする（フォールバック）</b></summary>
 
-1. リポジトリの `aix/` ディレクトリで `<slug>.aix` を開き、ローカルにダウンロードする。
+1. リポジトリの `aix/` で `<slug>.aix` を開き、手元にダウンロードする。
 2. Global AIUI Studio → New Agent → **Import from AIX** で、そのファイルをアップロードする。
-3. インポート後に Draft が生成され、ファイルツリーはパッケージ内の完全なプロジェクトになる。以後は同様に Device Debug でパッケージ → 実機テストへ。
+3. Draft ができ、ファイルツリーにはパッケージの中身がそのまま入る。以降は通常通り、Device Debug でパッケージ → 実機テストへ進む。
 
-GitHub のアドレス解決に依存しない。急ぐ場合や GitHub インポートに異常がある場合に使う；通常はブランチ方式を優先する。
+GitHub のアドレス解釈に依存しないので、急ぎのときや GitHub インポートが不調なときの逃げ道になる。通常はブランチ方式を使う。
 
 </details>
 
 ## Agent 一覧
 
-全 Agent の一覧。完成順の降順で、最後に完成したものが先頭にある；新しい Agent が完成したら表の先頭に加える。
-各 Agent の実機ステータス、審査提出資料は、その Agent 自身のディレクトリの README を見る。
+全 Agent の一覧。新しいものほど上に並ぶ（完成順の逆順）で、Agent が完成したら表の先頭に1行足す。各 Agent の実機ステータスと審査提出資料は、その Agent のディレクトリにある README を見ること。
 
-**バッジの読み方：各行の3列目がバッジで、左から順に番号バッジ、シリーズバッジ、競合状態バッジ（競合状態は三者択一：直接競合 / 高度に重複 / テスト待ち）。**
-番号 = 2文字 + 2桁の数字：文字は分類の英語名の先頭2文字、数字はグループ内の通し番号。**表全体で番号は一意：各文字は1つのシリーズにだけ属し、同じ番号は1回だけ現れる**（基礎項目の `my-agent` / `glasses-benchmark` は番号なし、バッジなし）。
+**バッジの読み方：各行の3列目がバッジで、左から番号、シリーズ、競合状態の順に並ぶ（競合状態は 直接競合 / 高度に重複 / テスト待ち のいずれか）。**
+番号は英字2文字 + 数字2桁。英字は分類の英語名の先頭2文字、数字はグループ内の連番。**番号は表全体で重複しない**：英字は1つのシリーズにだけ属し、同じ番号は1度しか現れない（基礎項目の `my-agent` / `glasses-benchmark` は番号なし、バッジなし）。
 
 **バッジの説明**：
 
 <table>
-<tr><td width="110"><img src="assets/badges/badge-di01.svg" alt="DI01"></td><td>一意な番号：最初の2文字が分類、後ろ2桁がグループ内の通し番号</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-directional.ja.svg" alt="指向性"></td><td>指向性シリーズ：視線と同軸の頭部方向で生活の課題を解く</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-attention.ja.svg" alt="注意力"></td><td>注意力アウトソース・シリーズ：占有し続ける注意力をグラスに外注する</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-curbcut.ja.svg" alt="カーブカット"></td><td>カーブカット・シリーズ：まず特定の困りごとを抱える人の課題を解き、一般の人にも広げる</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-game.ja.svg" alt="ゲーム"></td><td>頭部動作ミニゲーム・シリーズ：頭の動きで遊ぶ極小ゲーム</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-av.ja.svg" alt="映像音声"></td><td>映像音声シリーズ：写真・録画・音声対話を軸に、1台ごとに基盤の映像音声能力の限界を試す</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-trace.ja.svg" alt="なぞり"></td><td>なぞりシリーズ：中央のお手本と脇の手順で、一手ごとに確認しながら学ぶ</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-conflict.ja.svg" alt="直接競合"></td><td>グラスのデフォルト機能と<strong>直接競合</strong>：本体がデフォルト機能そのもので、小さなひねりを加えただけ</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-overlap.ja.svg" alt="高度に重複"></td><td>グラスのデフォルト機能と<strong>高度に重複</strong>：デフォルト機能で大半が完了し、薄い完結ループが残るだけ</td></tr>
-<tr><td width="110"><img src="assets/badges/badge-pending.ja.svg" alt="テスト待ち"></td><td>直接競合でも高度な重複でもない。競合の有無は実機テストで確認する</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-di01.svg" alt="DI01"></td><td>固有の番号：先頭2文字が分類、末尾2桁がグループ内の連番</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-directional.ja.svg" alt="指向性"></td><td>指向性シリーズ：視線の軸と頭の向きを使って、日常の困りごとを解く</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-attention.ja.svg" alt="注意力"></td><td>注意力シリーズ：抱え続けるのが重い注意を、グラスに任せる</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-curbcut.ja.svg" alt="カーブカット"></td><td>カーブカット・シリーズ：まず支援を必要とする人の困りごとを解き、そこから一般の人にも広げる</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-game.ja.svg" alt="ゲーム"></td><td>頭部動作ミニゲーム・シリーズ：頭の動きだけで遊ぶ、ごく小さなゲーム</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-av.ja.svg" alt="映像音声"></td><td>映像音声シリーズ：撮影・録画・音声まわりを軸に、1台ごとに基盤の映像音声能力の限界を確かめる</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-trace.ja.svg" alt="なぞり"></td><td>なぞりシリーズ：中央のお手本と脇の手順を見ながら、一手ごとに確認して学ぶ</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-conflict.ja.svg" alt="直接競合"></td><td>グラスの標準機能と<strong>直接競合</strong>：本体が標準機能そのもので、小さな工夫を足しただけ</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-overlap.ja.svg" alt="高度に重複"></td><td>グラスの標準機能と<strong>高度に重複</strong>：大半は標準機能で足りてしまい、残る独自部分は薄い</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-pending.ja.svg" alt="テスト待ち"></td><td>直接競合でも大きな重なりでもない。競合するかどうかは実機テストで見極める</td></tr>
 </table>
 
-基礎項目（`my-agent`、`glasses-benchmark`）にバッジはない。
+基礎項目（`my-agent`、`glasses-benchmark`）にはバッジがない。
 読み例：`gaze-translate` の行末の ![DI01](https://img.shields.io/badge/DI01-24292F?style=flat-square) ![指向性](https://img.shields.io/badge/%E6%8C%87%E5%90%91%E6%80%A7-2196F3?style=flat-square) ![直接競合](https://img.shields.io/badge/%E7%9B%B4%E6%8E%A5%E7%AB%B6%E5%90%88-C62828?style=flat-square) = 番号 DI01 ・ 指向性シリーズ ・ デフォルト機能と直接競合；`drop-search` の行末の ![CC01](https://img.shields.io/badge/CC01-24292F?style=flat-square) ![カーブカット](https://img.shields.io/badge/%E3%82%AB%E3%83%BC%E3%83%96%E3%82%AB%E3%83%83%E3%83%88-FF9800?style=flat-square) ![テスト待ち](https://img.shields.io/badge/%E3%83%86%E3%82%B9%E3%83%88%E5%BE%85%E3%81%A1-607D8B?style=flat-square) = 番号 CC01 ・ カーブカット・シリーズ ・ 競合の有無はテスト待ち。
 
-- **文字なし（`—`）**：基礎項目で、どのシリーズにも属さない——`my-agent` は公式スキャフォールドのサンプル、`glasses-benchmark` はグラス全機能のセルフチェックツール。ディレクトリ：`base/`
-- **`DI01`–`DI50`**：**指向性シリーズ**（50本）——グラスの視線同軸・頭部方向といった指向性能力を使い、1 Agent で生活の課題を1つ解く；番号は Directional の先頭2文字、内部は A–J の10の生活シーンに分かれる。ディレクトリ：`directional/`
-- **2文字 + `01`–`05`**：**注意力アウトソース・シリーズ**（50本、10グループ × 5）——本来占有し続ける注意力をグラスに外注する。文字は外注タイプの英語名の先頭2文字：
-  - `WA` = **見守り型 WATCH**：信号（鍋、呼び出し番号、チャイム）を代わりに見続ける。ディレクトリ `watch/`
-  - `HO` = **暗唱型 HOLD**：繰り返し唱える番号、合言葉、リスト、ルートを代わりに覚える。ディレクトリ `hold/`
-  - `CO` = **カバー型 COVER**：「全部見た」ことを代わりに証明し、点検漏れ、スキャン漏れ、詰め込み漏れを防ぐ。ディレクトリ `cover/`
-  - `FI` = **フィルター型 FILTER**：宣言した種類の情報だけを通し、他は遮る。ディレクトリ `filter/`
-  - `DU` = **並行型 DUAL**：本線は自分が進め、副線（子ども、荷物、順番待ち番号）はグラスが管理する。ディレクトリ `dual/`
-  - `RE` = **再生型 REVIEW**：「さっき……」に代わりに答え、記録で後から振り返る。ディレクトリ `review/`
-  - `CU` = **キュー型 CUE**：特定のシーンを見たときだけ、対応するリマインダーを出す。ディレクトリ `cue/`
-  - `SO` = **社交型 SOCIAL**：接客、傾聴、人付き合いの記憶といった社交の注意力を分担する。ディレクトリ `social/`
-  - `BO` = **身体型 BODY**：目、水分、呼吸、座りっぱなしなどの身体信号に気を配る。ディレクトリ `body/`
-  - `AM` = **環境型 AMBIENT**：光、空模様、騒音などの環境変化に気を配る。ディレクトリ `ambient/`
-- **`CC01`–`CC20`**：**カーブカット・シリーズ**（20本）——まず特定の人々の具体的な困りごとを1つ解き、状況的な困難の中にある一般の人にも広げる；番号は Curb Cut の頭文字 **CC**。ディレクトリ：`curb-cut/`
-- **`GA01`–`GA20`**：**頭部動作ミニゲーム・シリーズ**（20本、番号は Game の先頭2文字）——頭の動きで遊ぶ極小ゲーム。音声ガイド付きの首の分割運動を含む（分割のみ、必ず正面に戻る、回さない）。ディレクトリ：`games/`
-- **`JP01`–`JP10` / `KR01`–`KR10`**：**日韓ローカライズ・シリーズ**（20本）——日本、韓国それぞれの現地の制度とマナーに合わせて設計；番号は国の通称コード JP / KR。ディレクトリ：`japan/`、`korea/`
+- **番号なし（`—`）**：基礎項目。どのシリーズにも属さない。`my-agent` は公式スキャフォールドのサンプル、`glasses-benchmark` はグラスの全機能を一括で点検するツール。ディレクトリは `base/`。
+- **`DI01`–`DI50`**：**指向性シリーズ**（全50本）——視線の軸や頭の向きといった「向ける」力を使い、Agent 1本で生活の困りごとを1つ解く。番号は Directional の先頭2文字。内部は生活シーン別に A–J の10グループに分かれる。ディレクトリは `directional/`。
+- **英字2文字 + `01`–`05`**：**注意力アウトソース・シリーズ**（全50本、10グループ × 5本）——本来ずっと抱えていなければならない注意を、グラスに任せる。英字は任せ方のタイプ名の先頭2文字：
+  - `WA` = **見守り型 WATCH**：信号が来るまで代わりに見張る（鍋、呼び出し番号、チャイム）。ディレクトリは `watch/`。
+  - `HO` = **暗唱型 HOLD**：頭の中で繰り返し唱える番号・合言葉・リスト・道順を、代わりに覚えておく。ディレクトリは `hold/`。
+  - `CO` = **カバー型 COVER**：「全部見た」ことを代わりに裏付け、見落とし・読み落とし・入れ忘れを防ぐ。ディレクトリは `cover/`。
+  - `FI` = **フィルター型 FILTER**：あらかじめ宣言した種類の情報だけを通し、それ以外は止める。ディレクトリは `filter/`。
+  - `DU` = **並行型 DUAL**：本筋は自分で進め、脇筋（子ども、荷物、順番待ちの番号）はグラスが受け持つ。ディレクトリは `dual/`。
+  - `RE` = **再生型 REVIEW**：「さっき何だっけ」に記録から答え、あとで振り返れるようにする。ディレクトリは `review/`。
+  - `CU` = **キュー型 CUE**：特定の場面を目にしたときにだけ、対応するリマインダーを出す。ディレクトリは `cue/`。
+  - `SO` = **社交型 SOCIAL**：接客、傾聴、人の顔と名前の記憶といった、人付き合いに要る注意を分け持つ。ディレクトリは `social/`。
+  - `BO` = **身体型 BODY**：目、水分、呼吸、座りすぎなど、体のサインを見張る。ディレクトリは `body/`。
+  - `AM` = **環境型 AMBIENT**：明るさ、空模様、騒音など、周囲の変化を見張る。ディレクトリは `ambient/`。
+- **`CC01`–`CC20`**：**カーブカット・シリーズ**（全20本）——まず特定の人々の具体的な困りごとを1つ解き、同じ仕組みを、一時的に不自由な状況にある一般の人にも広げる。番号は Curb Cut の頭文字 **CC**。ディレクトリは `curb-cut/`。
+- **`GA01`–`GA20`**：**頭部動作ミニゲーム・シリーズ**（全20本、番号は Game の先頭2文字）——頭の動きで遊ぶ小さなゲーム集。音声ガイドに沿って首を区切って動かす運動も含む（区切って動かし、必ず正面に戻す。ぐるぐる回す動きはしない）。ディレクトリは `games/`。
+- **`JP01`–`JP10` / `KR01`–`KR10`**：**日韓ローカライズ・シリーズ**（全20本）——日本と韓国、それぞれ現地の制度やマナーに合わせて設計する。番号は国の略号 JP / KR。ディレクトリは `japan/`、`korea/`。
 
 
 <table>
@@ -385,51 +382,51 @@ GitHub のアドレス解決に依存しない。急ぐ場合や GitHub イン�
 ## 海外チェーン（全リンク海外版必須）
 
 > [!CAUTION]
-> 以下の4点がそろって初めて海外版の開発になる；どこか1つでも国内版を使うと、チェーンは通らない。
-> 国内サイト（aiui.rokid.com）と Global サイトでは、アカウントもプロジェクトも**相互に通じない**。
+> 次の4つがすべて海外版でそろって、初めて「海外版の開発」になる。1つでも国内版が混ざると、チェーンはつながらない。
+> 国内サイト（aiui.rokid.com）と Global サイトの間では、アカウントもプロジェクトも行き来できない。
 
-| リンク | 必須 | 使用不可 |
+| 項目 | 使うもの | 使わないもの |
 |---|---|---|
-| アカウント | [account-web.rokid.com](https://account-web.rokid.com/) の**英語版**で登録（このプロジェクトの地域：Japan） | 国内版で登録したアカウント |
+| アカウント | [account-web.rokid.com](https://account-web.rokid.com/) の**英語版**で登録（本プロジェクトの地域は Japan） | 国内版で登録したアカウント |
 | Studio | [aiui-global.rokid.com/?lang=en-US](https://aiui-global.rokid.com/?lang=en-US) | aiui.rokid.com |
 | 配信 | Studio でパッケージして保存 → **クラウド配信**でグラスへ | ADB / データケーブルでの直接インストール |
-| スマホ App | **Hi Rokid**（パッケージ名 `com.rokid.sprite.global.aiapp`） | 国内版 Rokid Ai App |
+| スマホアプリ | **Hi Rokid**（パッケージ名 `com.rokid.sprite.global.aiapp`） | 国内版の Rokid Ai App |
 
 ## 実機テスト（クラウド配信）
 
 <details>
-<summary><b>完全な手順を展開</b></summary>
+<summary><b>手順を全部開く</b></summary>
 
-1. **Device Debug** タブに入り、**Basic Information** を記入する：
+1. **Device Debug** タブで **Basic Information** を入力する：
    - Agent Icon（1:1 推奨）、**Agent Name**（必須）
    - **App Category**（必須）：Life / Work / Entertainment / Learning
-   - **Intent Description**（必須、500字以内）：どんなシーンで、どんな前提で、どんなユーザーのリクエストで起動するかを明記する
-   - Version / Agent ID はシステムが生成する；**Version は Build 番号で、Repackage and Save のたびに自動で増える**
-2. **AIX Packaging** の欄で **Repackage and Save** を押し、パッケージ完了を待つ。
-3. **成功の目印**：上部の緑色ステータス **● Debug version ready — Ready for device debugging**。
-   出ていなければ保存が成功していない。App 側は取得できないので、無駄に待たない。
-4. スマホで **Hi Rokid**（海外版）を開く → グラスが接続済みか確認 →「設定 → 開発者オプション → AIUI」→
-   「眼鏡リソースパックを更新」→「エージェントリソースパックのダウンロード成功」を待つ。
-5. グラスに音声で Agent を開いて（例：「乐奇，打开 xxx」）テストを始める。
-6. 反復サイクル：コード変更 → GitHub へプッシュ / ブランチ同期 → Studio で再インポート → Repackage and Save
-   → Hi Rokid でリソースパックを更新 → 再テスト。**コードだけ変えて再パッケージ保存しなければ、App が取得するのは旧版のまま。**
+   - **Intent Description**（必須、500字以内）：どんな場面で、どんな前提のもと、どんなユーザーの依頼で起動するのかを書く
+   - Version と Agent ID はシステムが生成する。**Version はビルド番号で、Repackage and Save のたびに自動で増える**
+2. **AIX Packaging** の欄で **Repackage and Save** を押し、パッケージの完了を待つ。
+3. **完了の合図**：画面の上部に緑色で **● Debug version ready — Ready for device debugging** と出る。
+   出ていないうちは保存が済んでおらず、アプリ側には届かない。待っても無駄なので、まずここを確認する。
+4. スマホで **Hi Rokid**（海外版）を開く → グラスが接続されていることを確認 →「設定 → 開発者オプション → AIUI」→
+   「眼鏡リソースパックを更新」→「エージェントリソースパックのダウンロード成功」まで待つ。
+5. グラスに向けて音声で Agent を開き（例：「乐奇，打开 xxx」）、テストを始める。
+6. 以降は繰り返し：コードを直す → GitHub に push / ブランチへ同期 → Studio で取り込み直す → Repackage and Save
+   → Hi Rokid でリソースパックを更新 → 再テスト。**コードだけ直してパッケージし直さなければ、アプリが受け取るのは旧版のままになる。**
 
 </details>
 
 ## 審査提出
 
-実機テストが全て通過し、メンテナーが「実機テスト完了」を確認したら：
+実機テストがすべて通り、メンテナーが「実機テスト完了」と確認したら：
 
-1. **Submit** タブで **Review Information** を記入する：Feature Description、Opening Message、
-   Preview Media、Change Log。**この4項目の完成稿は、各 Agent 自身の README の「提审资料
-   (Review Submission)」の章に段落ごとに書いてあるので、そのままコピーする**：Feature Description は500字以内、
-   Opening Message は500字以内で Markdown 対応、Preview Media は3–5ファイル、画像1点以上・動画1点以上。
-2. 権限の宣言はコードと一致させる；使える権限は `GEOLOCATION`、`CAMERA`、`RECORD_AUDIO` の3種類だけ。
-3. **Submit for Review** で提出する；却下されたら理由に沿って修正し、再パッケージ保存して再提出する。
+1. **Submit** タブで **Review Information** を入力する：Feature Description、Opening Message、
+   Preview Media、Change Log の4つ。**完成稿は各 Agent 自身の README の「提审资料
+   (Review Submission)」の節に、項目ごとに分けて用意してあるので、丸ごとコピーすればよい**：Feature Description は500字以内、
+   Opening Message は500字以内で Markdown に対応、Preview Media は3–5ファイルで画像1点以上・動画1点以上。
+2. 権限の宣言はコードと一致させること。使える権限は `GEOLOCATION`、`CAMERA`、`RECORD_AUDIO` の3種類だけ。
+3. **Submit for Review** で提出する。差し戻されたら、理由に沿って直し、パッケージし直して再提出する。
 
 ## メンテナンス規約
 
-- **1 Agent 1 ディレクトリ**：main では番号順に英語の分類ディレクトリへ入れる；**1 Agent 1 ブランチ**：`agent-<slug>`、ブランチのルート = プロジェクトのルート。
-- 各 Agent の README には必ず全て書く：機能、権限、パッケージ/プレビューのコマンド、実機情報表、審査提出資料、プレビュー画像。画像の埋め込みパスは `../../screenshots/<slug>/…`。
-- 画像は `screenshots/<slug>/` にだけ置く；パッケージ済みの `.aix` はリポジトリの `aix/` ディレクトリにだけ置き、コードと同期して更新する。
-- GitHub の操作はターミナルの `gh` / `git` で行う。バイナリとブランチのメンテナンスを含む。
+- **1 Agent = 1 ディレクトリ、1 ブランチ**：main では番号で分けた英語名の分類ディレクトリに置く。ブランチは `agent-<slug>` で、そのルートがプロジェクトのルートになる。
+- 各 Agent の README には、機能、権限、パッケージとプレビューのコマンド、実機情報の表、審査提出資料、プレビューのスクリーンショットまで漏れなく書く。スクリーンショットの埋め込みパスは `../../screenshots/<slug>/…`。
+- スクリーンショットは `screenshots/<slug>/` にだけ置く。パッケージ済みの `.aix` はリポジトリの `aix/` にだけ置き、コードと一緒に更新する。
+- GitHub の操作はターミナルの `gh` / `git` で行う。バイナリやブランチの手入れも含む。

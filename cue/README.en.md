@@ -3,12 +3,12 @@
 [中文](README.md) | English | [日本語](README.ja.md)
 Translated from the Chinese version (as of 2026-10-29).
 
-Attention add-on series · IDs CU01–CU05, 5 in total. Reminders ring only in the right scene.
+Attention add-on series · IDs CU01–CU05 · 5 agents. A reminder should only go off in the right context.
 
-- CU01 [cue-door](cue-door/) — Looking at the door triggers the checklist; every item confirmed before you may leave
-- CU02 [cue-fridge](cue-fridge/) — Looking at the fridge triggers the list; tick each item taken, and on closing it reports anything missed
-- CU03 [cue-desk](cue-desk/) — Looking at the desk lights up today's three things; when you stand up, unfinished ones get a resume line
-- CU04 [cue-bag](cue-bag/) — Looking at the bag you will carry triggers the list; check compartments by looking, one by one, as you pack
-- CU05 [cue-mirror](cue-mirror/) — Looking at the mirror lights up three lines; confirm each as read, and ending early reports the unread ones
+- CU01 [cue-door](cue-door/) — Look at the front door and the checklist appears; every item has to check out before you're cleared to leave
+- CU02 [cue-fridge](cue-fridge/) — Look at the fridge and the list appears; tick off each thing you take, and when the door closes it reports what you missed
+- CU03 [cue-desk](cue-desk/) — Look at your desk and today's three tasks light up; stand up, and the unfinished ones come with a line to pick them back up
+- CU04 [cue-bag](cue-bag/) — Look at the bag you're taking and the list appears; confirm each item as packed by looking into its compartment
+- CU05 [cue-mirror](cue-mirror/) — Look at the mirror and three lines light up; confirm each one as read — finish early and it reports the unread ones
 
-For the full list, see the Agent list at the end of the [repository root README](../README.md).
+For the full list, see the Agent index at the end of the [root README](../README.md).
