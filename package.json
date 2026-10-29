@@ -1,1 +1,1 @@
-{"author":"","dependencies":{},"description":"Trace Probe Seals - 12-seal LLM photo-recognition feasibility probe for the Trace (miaohong) series; not a numbered agent.","keywords":[],"license":"ISC","main":"app.js","name":"trace-probe-seals","version":"1.0.0"}
+{"author":"","dependencies":{},"description":"Trace Probe Kuji - nine kuji-in seal LLM photo-recognition feasibility probe for the Trace (miaohong) series; Japanese UI; not a numbered agent.","keywords":[],"license":"ISC","main":"app.js","name":"trace-probe-seals","version":"2.0.0"}

@@ -1,5 +1,5 @@
 <script def>
-{"title": "Trace Probe Seals"}
+{"title": "Trace Probe Kuji"}
 </script>
 
 <script setup>
@@ -7,30 +7,31 @@ import wx from 'wx';
 import { loadKey, saveKey, speak, takePhotoDataUrl, judgePhoto, reportFail } from '../../judge.js';
 import { SEALS, SEAL_NAMES } from '../../data.js';
 
-// 轮测页：逐印出连续 3 帧范本（佩戴者视角线条示意），GO 摆到定格
-// 帧后点头拍照，LLM 从 12 印名单里认；真值由 GO 点选确认后落盘。
-const KEY = 'trace.probe.seals.v1';
-const ACTS = ['下一帧', '拍照判定（或点头）', '判定对', '判定错', '下一个', '返回 BACK'];
-const FRAMES = ['①起手', '②交指中段', '③成印定格'];
-const SYS = '你是忍者手印识别试验的判定员。照片里是佩戴者本人双手摆出的手印（佩戴者视角，手背朝向镜头）。你只能从给定名单里选答案，看不清就如实说看不清，绝不编造。';
+// 輪測ページ：1印ずつ見本（再描画線画・装着者視点・高さ92px表示）と
+// 要点を示し、結べたらうなずきで撮影。LLMが9印の候補から判定し、
+// 真値は装着者が「正解／不正解」で確定して保存する。
+// 見本データ（art）が無い印は「見本準備中」と表示し、代用図は描かない。
+const KEY = 'trace.probe.kuji.v1';
+const ACTS = ['撮影して判定', '正解', '不正解', '次の印', 'BACK もどる'];
+const SYS = 'あなたは九字印の認識テストの判定員です。写真は装着者本人の両手で、装着者視点（手の甲がカメラ側）です。答えは必ず候補一覧の中から選び、見えないときは見えないと正直に答えてください。作り話は禁止です。';
 
 export default {
   data: {
-    status: '轮测：照范本摆到定格帧，点头拍照',
+    status: '輪測：見本どおりに結び、うなずいて撮影',
     headLine: '',
     tipLine: '',
     diffLine: '',
-    frameLine: '',
-    judgeLine: '判定：未拍',
-    truthLine: '真值：未确认',
+    artLine: '',
+    judgeLine: '判定：まだ撮影していない',
+    truthLine: '真値：未確定',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v2.0.0'
   },
   onLoad() {
-    this._idx = 0; this._frame = 0; this._focus = 1; this._busy = false; this._phase = 'pose';
+    this._idx = 0; this._focus = 0; this._busy = false; this._phase = 'pose';
     this._recs = loadKey(KEY, []);
-    // 从第一个未确认的印续测
+    // 最初の未確定の印から再開する
     for (var i = 0; i < SEALS.length; i++) { var r = this._recs[i]; if (!r || !r.truth) { this._idx = i; break; } if (i === SEALS.length - 1) this._idx = 0; }
     this._cur = null;
     this._render();
@@ -41,76 +42,57 @@ export default {
     const it = this._item();
     const rec = this._recs[this._idx];
     this.setData({
-      headLine: '第 ' + (this._idx + 1) + ' / ' + SEALS.length + ' 印：' + it.name + '（' + it.sub + '）',
+      headLine: '第 ' + (this._idx + 1) + ' / ' + SEALS.length + ' 印：' + it.name + '（' + it.reading + '） ・ ' + it.sub,
       tipLine: '要点：' + it.tip,
-      diffLine: '区别：' + it.diff,
-      frameLine: '帧：' + FRAMES[this._frame] + '（共 3 帧，下方缩略带左→右）· 示意图，手指以要点为准',
-      judgeLine: this._cur ? ('判定：LLM 认成「' + (this._cur.guess || '没认出') + '」· ' + this._cur.matchText + (this._cur.finger ? ' · ' + this._cur.finger : '')) : (rec && rec.guess ? ('判定（上次）：LLM 认成「' + rec.guess + '」') : '判定：未拍'),
-      truthLine: rec && rec.truth ? ('真值：已确认——判定' + (rec.truth === 'right' ? '对' : '错')) : '真值：未确认（判定后点「判定对 / 错」）',
-      focusLine: '焦点：' + ACTS[this._focus] + '（上下切换，Enter 执行）'
+      diffLine: '見分け方：' + it.diff,
+      artLine: it.art ? '見本：装着者視点の線画（高さ92pxで表示）' : '見本：データ準備中（再描画版を収録予定。要点の文字だけを頼りに結ぶ）',
+      judgeLine: this._cur ? ('判定：LLMは「' + (this._cur.guess || '読み取れず') + '」と読んだ ・ ' + this._cur.matchText + (this._cur.finger ? ' ・ 指：' + this._cur.finger : '')) : (rec && rec.guess ? ('判定（前回）：LLMは「' + rec.guess + '」と読んだ') : '判定：まだ撮影していない'),
+      truthLine: rec && rec.truth ? ('真値：確定済み ― 判定は' + (rec.truth === 'right' ? '正解' : '不正解')) : '真値：未確定（判定のあと「正解／不正解」を押す）',
+      focusLine: 'フォーカス：' + ACTS[this._focus] + '（上下で切替、Enterで実行）'
     });
     const self = this;
-    setTimeout(function () { self._drawAll(); }, 60);
+    setTimeout(function () { self._drawArt(); }, 60);
   },
-  _hand(ctx, cx, cy, s, flip, frame, ext, bright) {
-    // 一只手的线条示意：掌 + 五指线。flip=+1 左手 / -1 右手（朝中央倾）
-    ctx.strokeStyle = bright; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.strokeRect(cx - 15 * s, cy - 6 * s, 30 * s, 34 * s);
-    var baseX = [-13, -6.5, 0, 6.5, 13];
-    var len = [20, 30, 34, 29, 21];
-    for (var i = 0; i < 5; i++) {
-      var bx = cx + baseX[i] * s;
-      var tilt = flip * frame * 2.2 * s;
-      var ex = ext && ext[i] ? 9 * s : 0;
-      ctx.beginPath(); ctx.moveTo(bx, cy - 6 * s); ctx.lineTo(bx + tilt, cy - (6 + len[i]) * s - ex); ctx.stroke();
-    }
-    // 拇指：内侧斜线
-    ctx.beginPath(); ctx.moveTo(cx + flip * 15 * s, cy + 12 * s); ctx.lineTo(cx + flip * 24 * s, cy - 4 * s); ctx.stroke();
-  },
-  _drawFrame(ctx, w, h, frame, main) {
-    const it = this._item();
-    ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, w, h);
-    var s = main ? 1.2 : 0.42;
-    var cx = w / 2, cy = h / 2 + (main ? 8 : 4);
-    var sep = [46, 25, 8][frame] * (main ? 1 : 0.62);
-    var bright = frame === 2 ? '#7dff9e' : '#40ff5e';
-    var dim = 'rgba(64,255,94,0.45)';
-    this._hand(ctx, cx - sep, cy, s, 1, frame, frame === 2 ? it.ext : null, bright);
-    this._hand(ctx, cx + sep, cy, s, -1, frame, frame === 2 ? it.ext.slice().reverse() : null, bright);
-    if (frame >= 1) {
-      // 交指中段起：双手之间画交叉线，帧 2 更密
-      ctx.strokeStyle = dim; ctx.lineWidth = 1.5;
-      var n = frame === 1 ? 2 : 4;
-      for (var i = 0; i < n; i++) {
-        var yy = cy - 26 * s + i * 13 * s;
-        ctx.beginPath(); ctx.moveTo(cx - sep - 8 * s, yy); ctx.lineTo(cx + sep + 8 * s, yy + 10 * s); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx + sep + 8 * s, yy); ctx.lineTo(cx - sep - 8 * s, yy + 10 * s); ctx.stroke();
-      }
-    }
-    if (!main && frame === this._frame) { ctx.strokeStyle = '#7dff9e'; ctx.lineWidth = 2; ctx.beginPath(); ctx.strokeRect(1, 1, w - 2, h - 2); }
-    ctx.flush();
-  },
-  _drawAll() {
+  _drawArt() {
+    // 見本の行程符号（runs）を 1px 線で描く。art が無い印は隅の印だけの
+    // 空枠にし、見本があるように見せない。
     try {
-      var main = wx.createCanvasContext('sealCanvas');
-      if (main) this._drawFrame(main, 252, 128, this._frame, true);
-      for (var f = 0; f < 3; f++) {
-        var tc = wx.createCanvasContext('thumb' + f);
-        if (tc) this._drawFrame(tc, 76, 40, f, false);
+      var ctx = wx.createCanvasContext('sealCanvas');
+      if (!ctx) return;
+      var W = 252, H = 128;
+      ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, W, H);
+      var it = this._item();
+      if (it.art && it.art.rows) {
+        var ox = Math.round((W - it.art.w) / 2);
+        var oy = Math.round((H - it.art.h) / 2);
+        ctx.fillStyle = '#7dff9e';
+        for (var r = 0; r < it.art.rows.length; r++) {
+          var row = it.art.rows[r];
+          var y = oy + row[0];
+          for (var k = 1; k + 1 < row.length; k += 2) ctx.fillRect(ox + row[k], y, row[k + 1], 1);
+        }
+      } else {
+        ctx.strokeStyle = 'rgba(64,255,94,0.45)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.strokeRect(76, 18, 100, 92);
+        ctx.beginPath();
+        ctx.moveTo(76, 30); ctx.lineTo(88, 18);
+        ctx.moveTo(176, 30); ctx.lineTo(164, 18);
+        ctx.moveTo(76, 98); ctx.lineTo(88, 110);
+        ctx.moveTo(176, 98); ctx.lineTo(164, 110);
+        ctx.stroke();
       }
+      ctx.flush();
     } catch (e) { this.setData({ evt: 'EVT: canvas draw FAIL E2002' }); }
   },
-  frameTap() { this._frame = (this._frame + 1) % 3; this.setData({ evt: 'EVT: frame ' + FRAMES[this._frame] }); this._render(); },
   async shootTap() {
     if (this._busy) return;
-    if (this._frame !== 2) { this.setData({ status: '先推进到 ③成印定格 帧再拍（判定只对定格）', evt: 'EVT: shoot refused - not frame3' }); return; }
     this._busy = true; this._phase = 'judging';
     const it = this._item();
-    this.setData({ status: '拍照中…摆稳别动', evt: 'EVT: shoot start ' + it.id });
+    this.setData({ status: '撮影中…そのまま保つ', evt: 'EVT: shoot start ' + it.id });
     try {
       const shot = await takePhotoDataUrl('default');
-      this.setData({ status: '已拍（' + shot.note + '），LLM 判定中…', evt: 'EVT: shot ' + shot.bytes + 'B judge start' });
-      const ask = '名单：' + SEAL_NAMES + '。目标印是「' + it.name + '」。请看照片回答三行：第一行 GUESS: 你认出的印名（名单里一个，认不出写 NONE）；第二行 MATCH: YES（就是目标）/ NO（是别的印）/ UNSURE（看不清）；第三行 FINGER: 哪根手指对不上（没有写 无，看不清写 看不清）。不要解释。';
+      this.setData({ status: '撮影できた（' + shot.note + '）。LLMが判定中…', evt: 'EVT: shot ' + shot.bytes + 'B judge start' });
+      const ask = '候補：' + SEAL_NAMES + '。目標の印は「' + it.name + '（' + it.sub + '）」です。写真を見て3行で答えてください。1行目 GUESS: 読み取った印の漢字1字（読み取れなければ NONE）。2行目 MATCH: YES（目標どおり）/ NO（別の印）/ UNSURE（判別できない）。3行目 FINGER: 合っていない指（なければ「なし」、判別できなければ「不明」）。説明は不要です。';
       const raw = await judgePhoto(shot.url, SYS, ask);
       const guess = this._field(raw, 'GUESS');
       const match = this._field(raw, 'MATCH').toUpperCase();
@@ -119,7 +101,7 @@ export default {
         target: it.name,
         guess: (guess && guess !== 'NONE') ? guess : '',
         match: match,
-        matchText: match === 'YES' ? '像目标' : (match === 'NO' ? '不像目标' : '看不清/没判明'),
+        matchText: match === 'YES' ? '目標どおり' : (match === 'NO' ? '別の印らしい' : '判別できない'),
         finger: finger || '',
         raw: raw.slice(0, 300),
         at: new Date().toISOString()
@@ -129,13 +111,13 @@ export default {
       rec.target = it.name; rec.guess = this._cur.guess; rec.match = match; rec.finger = this._cur.finger; rec.raw = this._cur.raw; rec.at = this._cur.at;
       this._recs[this._idx] = rec;
       saveKey(KEY, this._recs);
-      this.setData({ status: '判定回来：认成「' + (this._cur.guess || '没认出') + '」。请你定真值：你摆的对不对版？点「判定对 / 判定错」', evt: 'EVT: judged guess=' + (this._cur.guess || 'NONE') + ' match=' + match });
-      speak('判定认成' + (this._cur.guess || '没认出') + '，请确认对错');
+      this.setData({ status: '判定は「' + (this._cur.guess || '読み取れず') + '」。あなたが結んだ形と比べて、正解か不正解か教えてください', evt: 'EVT: judged guess=' + (this._cur.guess || 'NONE') + ' match=' + match });
+      speak('判定は' + (this._cur.guess || '読み取れません') + 'でした。正解かどうか教えてください');
     } catch (e) {
       const code = (e && e.code) || 'E9001';
       reportFail(code, e);
       this._phase = 'pose';
-      this.setData({ status: '本印未测成：' + code + '（如实记录，可重拍）', evt: 'EVT: shoot FAIL ' + code });
+      this.setData({ status: 'この印は測れなかった：' + code + '（記録に残る。撮り直せる）', evt: 'EVT: shoot FAIL ' + code });
     } finally { this._busy = false; this._render(); }
   },
   _field(text, key) {
@@ -148,29 +130,28 @@ export default {
   },
   truthTap(right) {
     const rec = this._recs[this._idx];
-    if (!rec || !rec.at) { this.setData({ status: '还没判定，先拍照判定再定真值', evt: 'EVT: truth refused - no judge' }); return; }
+    if (!rec || !rec.at) { this.setData({ status: 'まだ判定していない。先に撮影して判定する', evt: 'EVT: truth refused - no judge' }); return; }
     rec.truth = right ? 'right' : 'wrong';
     this._recs[this._idx] = rec;
-    if (!saveKey(KEY, this._recs)) { this.setData({ status: '真值保存失败：E5001（记录仍在内存，切页会丢）', evt: 'EVT: truth save FAIL E5001' }); return; }
+    if (!saveKey(KEY, this._recs)) { this.setData({ status: '真値の保存に失敗：E5001（記録はメモリ内のみ、ページを離れると消える）', evt: 'EVT: truth save FAIL E5001' }); return; }
     this._phase = 'recorded';
-    this.setData({ status: '真值已记：判定' + (right ? '对' : '错') + '。点「下一个」继续', evt: 'EVT: truth ' + rec.truth + ' ' + rec.target });
-    speak(right ? '已记判定对' : '已记判定错');
+    this.setData({ status: '真値を記録した：判定は' + (right ? '正解' : '不正解') + '。「次の印」へ進む', evt: 'EVT: truth ' + rec.truth + ' ' + rec.target });
+    speak(right ? '正解で記録しました' : '不正解で記録しました');
     this._render();
   },
   nextTap() {
-    if (this._idx >= SEALS.length - 1) { this.setData({ status: '已是最后一印，去结果页看汇总', evt: 'EVT: at last seal' }); try { wx.navigateTo({ url: '/pages/result/index' }); } catch (e) {} return; }
-    this._idx++; this._frame = 0; this._cur = null; this._phase = 'pose';
-    this.setData({ status: '下一印：照范本摆到定格帧，点头拍照', evt: 'EVT: next ' + this._item().id });
+    if (this._idx >= SEALS.length - 1) { this.setData({ status: '最後の印まで来た。結果ページで集計を見る', evt: 'EVT: at last seal' }); try { wx.navigateTo({ url: '/pages/result/index' }); } catch (e) {} return; }
+    this._idx++; this._cur = null; this._phase = 'pose';
+    this.setData({ status: '次の印：見本どおりに結び、うなずいて撮影', evt: 'EVT: next ' + this._item().id });
     this._render();
   },
   backTap() { try { wx.navigateBack({}); } catch (e) {} },
   actTap(e) { const idx = e && e.currentTarget && e.currentTarget.dataset ? Number(e.currentTarget.dataset.idx) : NaN; if (!isNaN(idx)) this._focus = idx; this.doAct(); },
   doAct() {
-    if (this._focus === 0) this.frameTap();
-    else if (this._focus === 1) this.shootTap();
-    else if (this._focus === 2) this.truthTap(true);
-    else if (this._focus === 3) this.truthTap(false);
-    else if (this._focus === 4) this.nextTap();
+    if (this._focus === 0) this.shootTap();
+    else if (this._focus === 1) this.truthTap(true);
+    else if (this._focus === 2) this.truthTap(false);
+    else if (this._focus === 3) this.nextTap();
     else this.backTap();
   },
   moveTap(d) { this._focus = (this._focus + d + ACTS.length) % ACTS.length; this.setData({ evt: 'EVT: focus ' + ACTS[this._focus] }); this._render(); },
@@ -187,7 +168,7 @@ export default {
 
 <page>
   <view class="page">
-    <text class="title">结印探针 · 轮测</text>
+    <text class="title">印を結ぶ ・ 輪測</text>
     <text class="status">{{status}}</text>
     <text class="head">{{headLine}}</text>
     <view class="stage">
@@ -195,23 +176,17 @@ export default {
       <view class="rail">
         <text class="rline">{{tipLine}}</text>
         <text class="rline dim">{{diffLine}}</text>
+        <text class="rline dim">{{artLine}}</text>
       </view>
     </view>
-    <view class="thumbs">
-      <canvas id="thumb0" width="76" height="40" class="thumb"></canvas>
-      <canvas id="thumb1" width="76" height="40" class="thumb"></canvas>
-      <canvas id="thumb2" width="76" height="40" class="thumb"></canvas>
-    </view>
-    <text class="line dim">{{frameLine}}</text>
     <text class="line">{{judgeLine}}</text>
     <text class="line">{{truthLine}}</text>
     <view class="acts">
-      <button class="act" bindtap="actTap" data-idx="0">下一帧</button>
-      <button class="act hot" bindtap="actTap" data-idx="1">拍照判定</button>
-      <button class="act" bindtap="actTap" data-idx="2">判定对</button>
-      <button class="act" bindtap="actTap" data-idx="3">判定错</button>
-      <button class="act" bindtap="actTap" data-idx="4">下一个</button>
-      <button class="act" bindtap="actTap" data-idx="5">BACK</button>
+      <button class="act hot" bindtap="actTap" data-idx="0">撮影・判定</button>
+      <button class="act" bindtap="actTap" data-idx="1">正解</button>
+      <button class="act" bindtap="actTap" data-idx="2">不正解</button>
+      <button class="act" bindtap="actTap" data-idx="3">次の印</button>
+      <button class="act" bindtap="actTap" data-idx="4">BACK</button>
     </view>
     <text class="line dim">{{focusLine}}</text>
     <text class="foot">{{evt}} · {{ver}}</text>
@@ -227,8 +202,6 @@ export default {
 .main-canvas { width: 252px; height: 128px; background-color: #04140a; border: 1px solid rgba(64,255,94,0.4); }
 .rail { display: flex; flex-direction: column; flex-grow: 1; }
 .rline { color: rgba(125,255,158,0.88); font-size: 11px; line-height: 15px; margin-top: 2px; }
-.thumbs { display: flex; flex-direction: row; gap: 8px; margin-top: 4px; }
-.thumb { width: 76px; height: 40px; background-color: #04140a; border: 1px solid rgba(64,255,94,0.3); }
 .line { color: rgba(125,255,158,0.88); font-size: 11px; line-height: 15px; margin-top: 2px; }
 .dim { color: rgba(64,255,94,0.55); }
 .acts { display: flex; flex-direction: row; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
