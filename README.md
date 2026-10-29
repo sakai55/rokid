@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-site-patrol
 ```
 
+**AIX 直接下载**（最新版）：[site-patrol.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/site-patrol.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI49 个。工地、仓库巡检最难的
 不是看，是**记**：六个点走一圈，双手拿着工具和材料，脑子里还
