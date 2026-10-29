@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-assemble-guide
 ```
 
+**AIX 直接下载**（最新版）：[assemble-guide.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/assemble-guide.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI13 个。组装平板家具时，零件
 几十个都长得差不多，纸质说明书放下就找不到读到哪一步，双手
