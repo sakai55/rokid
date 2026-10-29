@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-gomi-sort
 ```
 
+**AIX 直接下载**（最新版）：[gomi-sort.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/gomi-sort.aix)
+
 JP06 · 日本本地化系列。交互哲学：**分流裁判 Branching Referee**。本 Agent 的权威从来不是 AI，而是你自家的规则卡：先选你家自治体的模型卡（演示含渋谷区/世田谷区两张模型卡与一张自宅卡），每件物品你先自己判断落点，它再对照规则卡判对错——判错当场说清正确类别与收集日，并记进错题数。拍照+LLM 只给「候補」（候选建议），永远不替你落判。它不做通用识物问答（底座慧眼的事），只做一件事：让你家的垃圾，在你家的规则下，分对。
 
 ## 预览截图
