@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-cue-fridge
 ```
 
+**AIX 直接下载**（最新版）：[cue-fridge.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/cue-fridge.aix)
+
 注意力外挂系列 CU02（CUE 提示型，本组第二个，系列第 32 个）。站在冰箱前发呆想不起来要拿什么，关上门才想起。本 Agent 把待拿确认外包出去：看向冰箱停稳才触发清单——按你预设的待拿清单（牛奶 / 鸡蛋 / 面包 / 水果 / 酸奶）拿一样勾一样，缺货标缺货（关门不算漏拿），关门前先报漏拿；报完仍可关门，漏拿照实记进小结。
 
 ## 解决的问题
