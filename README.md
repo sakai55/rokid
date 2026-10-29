@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-meet-point
 ```
 
+**AIX 直接下载**（最新版）：[meet-point.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/meet-point.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI08 个。在商场、景区和朋友走散，
 电话里「我在那个店旁边」说了半天还是找不到人——本 Agent 把对方的
