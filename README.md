@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-motion-frame-watch
 ```
 
+**AIX 直接下载**（最新版）：[motion-frame-watch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/motion-frame-watch.aix)
+
 AV02 · 守一个固定点位（门口、工位、货架）时，先标定静止基线、再用帧差守望，变化超阈值自动存证判读并入账。顶边界 B2：grabFrame 帧差（ImageCapture.grabFrame + 64×48 降采样像素差）。
 
 ## 预览截图
