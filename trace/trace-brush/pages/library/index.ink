@@ -18,7 +18,7 @@ export default {
     rows: [],
     selLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.3.4'
+    ver: 'v1.3.5'
   },
   onLoad() { this._focus = 0; this._render(); },
   onShow() { this._render(); },

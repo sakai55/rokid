@@ -31,6 +31,8 @@ import { CHARS } from '../../chars.js';
 // 硬校验保与字身拉开距离，不重蹈 v1.2 缎带覆辙。
 // v1.3.4（GO 三点修正）：序号锚定弧尾并一律外侧（见 _badgePos），
 // 平行弧法线平滑、弧形贴合笔画自身走向；其余仍冻结。
+// v1.3.5（GO 定）：弧线箭头改放在起笔位置——平行弧取中线起始
+// 段，弧尾即起笔处、序号随之锚定起笔，箭头沿行笔方向指去向。
 // 笔画拆分仍按 GF0023-2020（如永 = 5
 // 笔）。笔位逐步落盘（trace.brush.learn）：平台无常亮 / wake
 // lock API（官方文档全量查无，见 README 平台边界），描红中熄屏
@@ -46,7 +48,7 @@ export default {
     barLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.3.4'
+    ver: 'v1.3.5'
   },
   onLoad() {
     this._focus = 1; this._step = 0; this._useMedians = false;
@@ -331,12 +333,14 @@ export default {
   },
   _parallelArc(lines, polys, idx, cx, cy) {
     // 笔顺弧 v1.3.3（GO 指定）：回到 v1.2 的形态——弧沿本笔中线
-    // 平行伴行（中线 Catmull-Rom 重采样后逐点沿法线外推），但只
-    // 取末段缩短版：段长 = 中线总长 × 0.35（26–56px 钳制），箭
-    // 头落在笔末、方向取行笔方向。v1.2 当年失败在弧贴着轮廓描
-    // 边（缎带），本版保留 v1.3 的硬校验：整段采样点 + 箭头翼尖
-    // 逐点验 _distPolys ≥6.5 且不出画布，推距 30/36/42 逐档试、
-    // 两侧都试；全不过则返回 null，由 _geom 退回 v1.3 短弧兜底。
+    // 平行伴行（中线 Catmull-Rom 重采样后逐点沿法线外推），段长
+    // = 中线总长 × 0.35（26–56px 钳制）。v1.3.5（GO 定）：弧放在
+    // 起笔位置——取中线的起始段，弧尾即起笔处（序号锚定于此），
+    // 箭头沿行笔方向指出这一笔的去向（endDir 取段末平滑切向）。
+    // v1.2 当年失败在弧贴着轮廓描边（缎带），本版保留 v1.3 的
+    // 硬校验：整段采样点 + 箭头翼尖逐点验 _distPolys ≥6.5 且不
+    // 出画布，推距 30/36/42 逐档试、两侧都试；全不过则返回
+    // null，由 _geom 退回 v1.3 短弧兜底。
     const line = lines[idx];
     if (!line || line.length < 2) return null;
     const self = this;
@@ -362,11 +366,9 @@ export default {
     const total = cum[cum.length - 1];
     if (!(total > 8)) return null;
     const segLen = Math.min(total, Math.max(26, Math.min(56, total * 0.35)));
-    const cut = total - segLen;
-    let si = 1;
-    while (si < cum.length && cum[si] < cut) si++;
+    // 起笔段：自中线起点起、长 segLen 的一段（v1.3.5）。
     const segIdx = [];
-    for (let k = Math.max(0, si - 1); k < dense.length; k++) segIdx.push(k);
+    for (let k = 0; k < dense.length; k++) { segIdx.push(k); if (cum[k] >= segLen) break; }
     const rawN = [];
     for (let k = 0; k < dense.length; k++) {
       const a = dense[Math.max(0, k - 1)], b = dense[Math.min(dense.length - 1, k + 1)];
@@ -387,51 +389,69 @@ export default {
       smN.push(sl < 1e-6 ? rawN[k] : [sx / sl, sy / sl]);
     }
     const normalAt = function (k) { return smN[k]; };
-    const midK = segIdx[Math.floor(segIdx.length / 2)];
-    const midN = normalAt(midK);
-    if (!midN) return null;
-    const away = (midN[0] * (dense[midK][0] - cx) + midN[1] * (dense[midK][1] - cy)) >= 0 ? 1 : -1;
-    const sides = [away, -away];
-    const pushes = [30, 36, 42];
-    const wingTips = function (pts, dir) {
-      const back = Math.min(13, Math.max(7, segLen * 0.55));
-      const half = Math.min(7.5, Math.max(3.5, segLen * 0.28));
-      const tx = pts[pts.length - 1][0], ty = pts[pts.length - 1][1];
-      const px = -dir[1], py = dir[0];
-      return [[tx - dir[0] * back + px * half, ty - dir[1] * back + py * half], [tx - dir[0] * back - px * half, ty - dir[1] * back - py * half]];
-    };
-    for (let s2 = 0; s2 < sides.length; s2++) {
-      const side = sides[s2];
-      for (let p2 = 0; p2 < pushes.length; p2++) {
-        const push = pushes[p2];
-        const pts = [];
-        let bad = false;
-        for (let q = 0; q < segIdx.length; q++) {
-          const k = segIdx[q];
-          const nv = normalAt(k);
-          if (!nv) { bad = true; break; }
-          const pt = [dense[k][0] + nv[0] * side * push, dense[k][1] + nv[1] * side * push];
-          if (pt[0] < 3 || pt[0] > W - 3 || pt[1] < 3 || pt[1] > H - 3) { bad = true; break; }
-          if (self._distPolys(pt[0], pt[1], polys) < 6.5) { bad = true; break; }
-          pts.push(pt);
+    const attempt = function (idxs) {
+      const midK = idxs[Math.floor(idxs.length / 2)];
+      const midN = normalAt(midK);
+      if (!midN) return null;
+      const away = (midN[0] * (dense[midK][0] - cx) + midN[1] * (dense[midK][1] - cy)) >= 0 ? 1 : -1;
+      const sides = [away, -away];
+      const pushes = [30, 36, 42, 24];
+      const segL = cum[idxs[idxs.length - 1]] - cum[idxs[0]];
+      const wingTips = function (pts, dir) {
+        const back = Math.min(13, Math.max(7, segL * 0.55));
+        const half = Math.min(7.5, Math.max(3.5, segL * 0.28));
+        const tx = pts[pts.length - 1][0], ty = pts[pts.length - 1][1];
+        const px = -dir[1], py = dir[0];
+        return [[tx - dir[0] * back + px * half, ty - dir[1] * back + py * half], [tx - dir[0] * back - px * half, ty - dir[1] * back - py * half]];
+      };
+      for (let s2 = 0; s2 < sides.length; s2++) {
+        const side = sides[s2];
+        for (let p2 = 0; p2 < pushes.length; p2++) {
+          const push = pushes[p2];
+          const pts = [];
+          let bad = false;
+          for (let q = 0; q < idxs.length; q++) {
+            const k = idxs[q];
+            const nv = normalAt(k);
+            if (!nv) { bad = true; break; }
+            const pt = [dense[k][0] + nv[0] * side * push, dense[k][1] + nv[1] * side * push];
+            if (pt[0] < 3 || pt[0] > W - 3 || pt[1] < 3 || pt[1] > H - 3) { bad = true; break; }
+            if (self._distPolys(pt[0], pt[1], polys) < 6.5) { bad = true; break; }
+            pts.push(pt);
+          }
+          if (bad || pts.length < 3) continue;
+          // 箭头翼尖校验（方向 = 段末切向，与 endDir 同向近似）
+          const e0 = pts[pts.length - 1], e1 = pts[Math.max(0, pts.length - 3)];
+          let dx = e0[0] - e1[0], dy = e0[1] - e1[1];
+          const dl = hyp(dx, dy);
+          if (dl < 1e-6) continue;
+          dx /= dl; dy /= dl;
+          const wt = wingTips(pts, [dx, dy]);
+          let wok = true, md = 1e9;
+          for (let w = 0; w < wt.length; w++) { const d = self._distPolys(wt[w][0], wt[w][1], polys); if (d < 6) { wok = false; break; } }
+          if (!wok) continue;
+          for (let k = 0; k < pts.length; k++) md = Math.min(md, self._distPolys(pts[k][0], pts[k][1], polys));
+          const n0v = normalAt(idxs[0]);
+          // 段末平滑切向 = 箭头方向（起笔段的行笔去向，v1.3.5）
+          const ek = idxs[idxs.length - 1];
+          const ea = dense[Math.max(0, ek - 3)], eb = dense[Math.min(dense.length - 1, ek + 1)];
+          let etx = eb[0] - ea[0], ety = eb[1] - ea[1];
+          const etl = hyp(etx, ety);
+          const endDir = etl > 1e-6 ? [etx / etl, ety / etl] : null;
+          return { pts: pts, n0: n0v ? [n0v[0] * side, n0v[1] * side] : [0, -1], minDist: md, mode: 'parallel', endDir: endDir };
         }
-        if (bad || pts.length < 3) continue;
-        // 箭头翼尖校验（方向 = 段末切向，与 _arrow 的 endDir 同向近似）
-        const e0 = pts[pts.length - 1], e1 = pts[Math.max(0, pts.length - 3)];
-        let dx = e0[0] - e1[0], dy = e0[1] - e1[1];
-        const dl = hyp(dx, dy);
-        if (dl < 1e-6) continue;
-        dx /= dl; dy /= dl;
-        const wt = wingTips(pts, [dx, dy]);
-        let wok = true, md = 1e9;
-        for (let w = 0; w < wt.length; w++) { const d = self._distPolys(wt[w][0], wt[w][1], polys); if (d < 6) { wok = false; break; } }
-        if (!wok) continue;
-        for (let k = 0; k < pts.length; k++) md = Math.min(md, self._distPolys(pts[k][0], pts[k][1], polys));
-        const n0v = normalAt(segIdx[0]);
-        return { pts: pts, n0: n0v ? [n0v[0] * side, n0v[1] * side] : [0, -1], minDist: md, mode: 'parallel' };
       }
+      return null;
+    };
+    let arc = attempt(segIdx);
+    if (!arc && segLen > 24) {
+      // 起笔处太挤时缩短一段再试（仍在起笔位置，v1.3.5）
+      const shortIdx = [];
+      const cap = Math.max(18, segLen * 0.65);
+      for (let k = 0; k < dense.length; k++) { shortIdx.push(k); if (cum[k] >= cap) break; }
+      if (shortIdx.length >= 3 && shortIdx.length < segIdx.length) arc = attempt(shortIdx);
     }
-    return null;
+    return arc;
   },
   _shortenArc(arc, cx, cy) {
     // v1.3.1：只保留原弧的末段约 1/4——从弧末向前量目标长度，起
@@ -565,13 +585,14 @@ export default {
         if (arc) {
           // 箭头头方向 = 本笔中线末段方向（自末点回溯 ≥10px 取向）：
           // v1.3.2 修正——短弧自身的弦向会偏（如「大」第 1 笔横，短
-          // 弧弦向斜下、看着像方向错了），箭头只认行笔方向。
+          // 弧弦向斜下、看着像方向错了），箭头只认行笔方向。起笔段
+          // 平行弧（v1.3.5）自带段末切向 endDir，不在此覆盖。
           const line = lines[i], n = line.length;
           let ei = n - 2;
           while (ei > 0 && Math.sqrt((line[n - 1][0] - line[ei][0]) * (line[n - 1][0] - line[ei][0]) + (line[n - 1][1] - line[ei][1]) * (line[n - 1][1] - line[ei][1])) < 10) ei--;
           let vx = line[n - 1][0] - line[ei][0], vy = line[n - 1][1] - line[ei][1];
           const vl = Math.sqrt(vx * vx + vy * vy);
-          if (vl > 1e-6) arc.endDir = [vx / vl, vy / vl];
+          if (vl > 1e-6 && !arc.endDir) arc.endDir = [vx / vl, vy / vl];
         }
         arcs.push(arc);
       } catch (e) { arcs.push(null); }
