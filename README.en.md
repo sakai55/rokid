@@ -71,7 +71,7 @@ aix preview .                               # Local preview (starts a server / -
 
 <div align="center">
 
-<img src="assets/workflow.svg" width="1000" alt="Standard workflow: local development → preview screenshots → push to GitHub → sync branch → Studio import → package and save → cloud delivery → real-device testing → review submission"/>
+<img src="assets/workflow.en.svg" width="1000" alt="Standard workflow: local development → preview screenshots → push to GitHub → sync branch → Studio import → package and save → cloud delivery → real-device testing → review submission"/>
 
 </div>
 

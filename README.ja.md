@@ -71,7 +71,7 @@ aix preview .                               # ローカルプレビュー（サ�
 
 <div align="center">
 
-<img src="assets/workflow.svg" width="1000" alt="標準ワークフロー：ローカル開発 → プレビュー画像 → GitHub へプッシュ → ブランチ同期 → Studio インポート → パッケージ保存 → クラウド配信 → 実機テスト → 審査提出"/>
+<img src="assets/workflow.ja.svg" width="1000" alt="標準ワークフロー：ローカル開発 → プレビュー画像 → GitHub へプッシュ → ブランチ同期 → Studio インポート → パッケージ保存 → クラウド配信 → 実機テスト → 審査提出"/>
 
 </div>
 
