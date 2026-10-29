@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-seoul-life-hub
 ```
 
+**AIX 直接下载**（最新版）：[seoul-life-hub.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/seoul-life-hub.aix)
+
 KR19 · 韩国在地 × 集合总控 × 注意力。在首尔生活一周的访客用一本手帳把20件日常工具回完
 
 ## 预览截图
