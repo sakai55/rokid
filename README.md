@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-word-look
 ```
 
+**AIX 直接下载**（最新版）：[word-look.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/word-look.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI36 个，H 组（学习记忆）第一个。
 看书、看路牌、看说明书，遇到一个生词，第一反应是掏手机——
