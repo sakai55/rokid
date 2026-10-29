@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-kasa-share
 ```
 
+**AIX 直接下载**（最新版）：[kasa-share.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/kasa-share.aix)
+
 JP14 · 日本在地 × 路缘坡 × 注意力（HOLD/WATCH）。雨天駅前、片手・車椅子の人がシェア傘を借りて返し忘れない。交互哲学：**駅前シェア傘帳簿 Umbrella Ledger**。
 
 ## 预览截图
