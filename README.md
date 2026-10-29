@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-jinja-bow
 ```
 
+**AIX 直接下载**（最新版）：[jinja-bow.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/jinja-bow.aix)
+
 JP02 · 日本本地化系列。交互哲学：**身体即输入 Ritual Sequence**。参拜的难处是双手要空出来、眼睛要看着神前，没法盯屏幕点按钮。本 Agent 把整套序列装进眼镜：你只管低头——鞠躬的深度就是确认键。每一步只显示一行，做完一步才亮下一步；二拝需要真的鞠两次躬，拍手步需要你拍完手再点头确认（拍手声感应不了，如实说明）。它不辨识神社、不讲解神话（那是慧眼问答的事），只守着「顺序」这一件事。
 
 ## 预览截图
