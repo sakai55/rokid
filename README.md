@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-nichijo-set
 ```
 
+**AIX 直接下载**（最新版）：[nichijo-set.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/nichijo-set.aix)
+
 JP22 · 日本在地 × 注意力 × 路缘坡（日常生活集合）。精品线合并重做：由 CC11 `left-home-proof`（出门存证回放，日本在地化）＋ JP18 `coin-laundry`（洗衣倒计时守候）＋ JP19 `origami-steps`（点头推进折纸）合并；原三个 Agent 原样封存、不删不改。一句话场景：日本家庭日常里，出门前逐点存证防焦虑、自助洗衣不取忘、双手占满时折纸不中断——三件家事各走完自己的闭环，进度都留在端末。
 
 ## 预览截图
