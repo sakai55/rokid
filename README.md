@@ -126,6 +126,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 <tr><td width="110"><img src="assets/badges/badge-curbcut.svg" alt="路缘坡"></td><td>路缘坡系列：先为特殊人群解决难题，再溢出到普通人</td></tr>
 <tr><td width="110"><img src="assets/badges/badge-game.svg" alt="游戏"></td><td>头部动作小游戏系列：用头部动作玩的极简小游戏</td></tr>
 <tr><td width="110"><img src="assets/badges/badge-av.svg" alt="影视听"></td><td>影视听系列：围绕拍照、录像与语音交互，逐台顶基座影音能力边界</td></tr>
+<tr><td width="110"><img src="assets/badges/badge-trace.svg" alt="描红"></td><td>描红系列：中央范本加边上步骤，做一步验一步地学着做</td></tr>
 <tr><td width="110"><img src="assets/badges/badge-conflict.svg" alt="直接冲突"></td><td>与眼镜默认能力<strong>直接冲突</strong>：本体就是默认能力，只加了一层小扭转</td></tr>
 <tr><td width="110"><img src="assets/badges/badge-overlap.svg" alt="高度重叠"></td><td>与眼镜默认能力<strong>高度重叠</strong>：默认功能能完成大半，只剩一层薄闭环</td></tr>
 <tr><td width="110"><img src="assets/badges/badge-pending.svg" alt="待测试"></td><td>既不直接冲突、也不高度重叠，冲突与否等真机测试确认</td></tr>
@@ -153,6 +154,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 
 <table>
+<tr><td><a href="trace/trace-brush/">trace-brush</a></td><td>毛笔字描红：逐笔范字加拍照粗查</td><td><img src="https://img.shields.io/badge/TR01-24292F?style=flat-square" alt="TR01"> <img src="https://img.shields.io/badge/%E6%8F%8F%E7%BA%A2-00897B?style=flat-square" alt="描红"> <img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试"></td></tr>
 <tr><td><a href="korea/seoul-life-hub/">seoul-life-hub</a></td><td>首尔一周：二十日常工具一本手账</td><td><img src="https://img.shields.io/badge/KR19-24292F?style=flat-square" alt="KR19"> <img src="https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square" alt="注意力"> <img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试"></td></tr>
 <tr><td><a href="korea/hanok-stay/">hanok-stay</a></td><td>韩屋初住：六房设施礼仪逐项确认</td><td><img src="https://img.shields.io/badge/KR18-24292F?style=flat-square" alt="KR18"> <img src="https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square" alt="路缘坡"> <img src="https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square" alt="注意力"> <img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试"></td></tr>
 <tr><td><a href="curb-cut/first-sentence/">first-sentence</a></td><td>口吃开口：第一句逐词定速显示</td><td><img src="https://img.shields.io/badge/CC17-24292F?style=flat-square" alt="CC17"> <img src="https://img.shields.io/badge/%E8%B7%AF%E7%BC%98%E5%9D%A1-FF9800?style=flat-square" alt="路缘坡"> <img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试"></td></tr>

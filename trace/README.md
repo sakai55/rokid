@@ -4,7 +4,7 @@
 
 编号 TR01–TR08（建设中，建成一台登记一台）：
 
-- TR01 trace-brush — 毛笔字描红练习（20 字逐笔范字 + 拍照验字）
+- ✅ TR01 trace-brush — 毛笔字描红练习（20 字逐笔范字 + 拍照验字；已建成：7 页、.aix 42.95 KB、截图 7 张、分支 agent-trace-brush，待真机测试）
 - TR02 trace-seals — 结印描红（十二基本印，连续多图范本，探针先行）
 - TR03 trace-sign — 手语描红（日本手语 JSL 静态手势，探针先行）
 - TR04 trace-origami — 折纸描红
