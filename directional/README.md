@@ -1,5 +1,7 @@
 # 指向性（directional/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 指向性系列 · 编号 DI01–DI50，共 50 个。利用视线同轴、头部朝向等指向性能力解决生活问题。
 
 - DI01 [gaze-translate](gaze-translate/) — 看着外文稳头，长焦拍下翻译并朗读

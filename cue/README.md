@@ -1,5 +1,7 @@
 # 提示型 CUE（cue/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 注意力外挂系列 · 编号 CU01–CU05，共 5 个。提醒要在对的场景才响。
 
 - CU01 [cue-door](cue-door/) — 看向大门触发清单，逐项确认全过才放行

@@ -5,6 +5,8 @@ description: "Render AIUI agent preview screenshots locally (480x352 canvas) fro
 
 # AIUI Preview Screenshots (local pipeline)
 
+中文 | [English](SKILL.en.md) | [日本語](SKILL.ja.md)
+
 Why: `aix preview` starts a local server, but the generated `preview.html` loads the Ink runtime from a CDN this environment cannot reliably reach, and the remote browser cannot open loopback URLs. This pipeline renders fully locally. Working tools live in `~/workspace/preview-tools/` (on the maintainer's machine).
 
 ## Steps

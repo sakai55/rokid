@@ -1,5 +1,7 @@
 # 社交型 SOCIAL（social/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 注意力外挂系列 · 编号 SO01–SO05，共 5 个。替你分担场面上的注意力。
 
 - SO01 [chat-catchup](chat-catchup/) — 谈话走神摇头求助，眼前给最近15秒要点摘要

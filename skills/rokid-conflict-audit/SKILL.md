@@ -5,6 +5,7 @@ version: "1.0.1"
 ---
 
 # Rokid 默认能力冲突排查 (Built-in Capability Conflict Audit)
+中文 | [English](SKILL.en.md) | [日本語](SKILL.ja.md)
 
 **Version: 1.0.1** — 版本迭代规则见文末。首版源头：2026-10-25 对全舰队 122 个 Agent 的首次排查（GO 指令），完整报告在维护方工作区 `~/workspace/rokid/audit-builtin-conflicts/REPORT.md`。
 

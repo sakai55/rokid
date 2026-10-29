@@ -1,5 +1,7 @@
 # 并行型 DUAL（dual/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 注意力外挂系列 · 编号 DU01–DU05，共 5 个。主线你做，副线它管。
 
 - DU01 [play-watch](play-watch/) — 游乐场副线定时提醒回看，未确认逐级升级

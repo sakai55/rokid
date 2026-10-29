@@ -5,6 +5,7 @@ version: "1.0.1"
 ---
 
 # Rokid Head-Movement Mini-Games
+中文 | [English](SKILL.en.md) | [日本語](SKILL.ja.md)
 
 The craft layer for GA games. The shared production pipeline (capability red lines, governing three gates, 9-step SOP, preview/README/GitHub sync) lives in `rokid-agent-sop` — this skill adds only what is specific to games whose whole input is head movement. Under the governing rule the games pass the loop gate by the games relaxation (single mechanic + complete play loop: start / win-lose / score), and new production folds games into the single collection hub `head-games-hub` instead of shipping standalone games; the standalone GA01–GA26 stay archived as built.
 

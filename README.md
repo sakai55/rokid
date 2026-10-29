@@ -2,6 +2,8 @@
 
 # `rokid` — Rokid AIUI Agents
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 **Rokid AI 眼镜的 AIUI 智能体仓库 · 海外版 / Global**
 只做 **Agent**，不做 App。一个仓库装下所有 Agent，靠**分支**逐个导入 Studio。
 
@@ -44,6 +46,7 @@ rokid/
 ├── screenshots/<slug>/        # 预览截图集中存放，Agent 的 README 直接嵌入
 ├── skills/                    # 项目 Skill 库（官方 aiui-dev + 自有 SOP / 截图管线）
 ├── mcp/                       # MCP 登记处（在用服务器、接入方式、凭据存放位置）
+├── docs/                      # 文档：能力档案 CAPABILITIES.md（底座能力边界）
 ├── assets/                    # README 素材（如工作流图 workflow.svg）
 └── 分支 agent-<slug>          # 每个 Agent 一个分支，分支根目录 = 该 Agent 工程根
 ```

@@ -1,5 +1,7 @@
 # 覆盖型 COVER（cover/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 注意力外挂系列 · 编号 CO01–CO05，共 5 个。它证明「都看过了」。
 
 - CO01 [last-glance](last-glance/) — 离开前环视存档最后画面，焦虑时按区回放

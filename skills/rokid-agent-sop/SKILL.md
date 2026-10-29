@@ -4,6 +4,7 @@ description: "Produce one Rokid AIUI Agent end-to-end for the sakai55/rokid repo
 ---
 
 # Rokid Agent Production SOP
+中文 | [English](SKILL.en.md) | [日本語](SKILL.ja.md)
 
 One agent = one complete scenario (see the governing rule below — it overrides the older "one life problem" framing). Walk all 9 steps; an agent is not done until step 8 is registered.
 
@@ -26,7 +27,7 @@ Execution rules:
 
 ## Capability red lines (official-source verified, 2026-10-24)
 
-Full dossier: `~/memory/rokid-glasses-capabilities.md` in the maintainer's memory store (repo summary in root README). Never design beyond these:
+Full dossier: `docs/CAPABILITIES.md` in this repo (platform capability boundaries, official sources). Never design beyond these:
 
 - **No eye tracking.** "Gaze" = camera field centre + head orientation (`AbsoluteOrientationSensor`), head-steady confirm via `onOrientationStabilityChange`, nod confirm via `onHeadGesture('nod')`.
 - **No OCR API.** Reading text = camera photo + LLM image input. Photo modes via `ImageCapture.takePhoto`: `telephoto` (distant small text, 2016×1512), `wide` (barcode/large field, 2016×2688), `default` (3024×4032). Barcodes: native `BarcodeDetector`.

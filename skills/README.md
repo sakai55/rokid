@@ -1,5 +1,7 @@
 # skills/ — Rokid 项目的 Skill 库
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 给 Coding Agent 用的技能包（`SKILL.md` + 参考资料）。开发任何 Agent 前先装对应 skill，
 不要凭 Web / 小程序的经验假设 AIUI 的 API 存在。
 

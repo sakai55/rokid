@@ -1,5 +1,7 @@
 # 环境型 AMBIENT（ambient/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 注意力外挂系列 · 编号 AM01–AM05，共 5 个。环境一直在变，它替你留意。
 
 - AM01 [light-change](light-change/) — 相机定时测光，光线暗了提醒开灯

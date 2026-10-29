@@ -1,5 +1,7 @@
 # 韩国本地化（korea/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 日韩本地化系列 · 编号 KR01–KR10，共 10 个。韩国在地场景的本地化 Agent。
 
 - KR01 [samgyeop-flip](samgyeop-flip/) — 烤五花肉翻面节律，到点喊翻面

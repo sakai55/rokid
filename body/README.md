@@ -1,5 +1,7 @@
 # 身体型 BODY（body/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 注意力外挂系列 · 编号 BO01–BO05，共 5 个。身体发的信号，它替你收着。
 
 - BO01 [eye-rest](eye-rest/) — 头稳凝视近处满20分钟提醒远眺，抬头确认

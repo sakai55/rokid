@@ -1,5 +1,7 @@
 # 基础项（base/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 不属于任何系列：my-agent 是官方脚手架示例，glasses-benchmark 是全功能基准自检，stream-probe 是持续视频流探针，dabiaoge 是通用消息通道的眼镜侧客户端。
 
 - [my-agent](my-agent/) — 官方脚手架示例，点击切换中英文问候

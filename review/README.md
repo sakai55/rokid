@@ -1,5 +1,7 @@
 # 回放型 REVIEW（review/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 注意力外挂系列 · 编号 RE01–RE05，共 5 个。替你回答「刚才……」。
 
 - RE01 [day-lookback](day-lookback/) — 白天凝视按时间朝向排线，晚上顺线复盘

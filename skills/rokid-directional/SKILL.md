@@ -5,6 +5,7 @@ version: "1.0.1"
 ---
 
 # Rokid Directional Design
+中文 | [English](SKILL.en.md) | [日本語](SKILL.ja.md)
 
 The design layer for DI agents. The shared production pipeline (capability red lines, governing three gates, 9-step SOP, pack/preview/README/GitHub sync) lives in `rokid-agent-sop` — this skill adds only what is specific to the directional series: how a directional agent is *conceived* and *checked*, not how it is shipped. An agent is DI only if all three hold: DI number, project under `directional/<slug>/`, and it passes the founding test below using at least two directional primitives (the series PLAN requires ≥2, named in the agent's README).
 

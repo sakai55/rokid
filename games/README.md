@@ -1,5 +1,7 @@
 # 头部动作小游戏（games/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 头部动作 + 拍照现实交互小游戏系列 · 编号 GA01–GA50：头部动作 GA01–GA40 与拍照游戏 GA41–GA50。用头部动作或拍照与现实互动玩的极简小游戏。
 
 - GA01 [nod-count](nod-count/) — 语音指导10次慢速点头，低头回正算一次

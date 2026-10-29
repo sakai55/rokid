@@ -6,6 +6,8 @@ version: "1.0.0"
 
 # Rokid Korea Localization
 
+中文 | [English](SKILL.en.md) | [日本語](SKILL.ja.md)
+
 The locale layer for KR agents. The shared production pipeline (capability red lines, three gates, 9-step SOP, pack/preview/README/GitHub sync) lives in `rokid-agent-sop` — this skill adds only what is specific to Korea. An agent is KR only if all three hold: KR number, project under `korea/<slug>/`, and a genuinely Korean scene (below).
 
 ## What counts as Korean locality

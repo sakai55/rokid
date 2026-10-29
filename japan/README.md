@@ -1,5 +1,7 @@
 # 日本本地化（japan/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 日韩本地化系列 · 编号 JP01–JP10，共 10 个。日本在地场景的本地化 Agent。
 
 - JP01 [shinkansen-quiet](shinkansen-quiet/) — 新干线静音守候，只监测自己的发声

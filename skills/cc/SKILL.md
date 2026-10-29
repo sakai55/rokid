@@ -6,6 +6,8 @@ version: "1.0.0"
 
 # Rokid Curb-Cut Design
 
+中文 | [English](SKILL.en.md) | [日本語](SKILL.ja.md)
+
 The design layer for CC agents. The shared production pipeline (capability red lines, governing three gates, 9-step SOP, pack/preview/README/GitHub sync) lives in `rokid-agent-sop` — this skill adds only what is specific to the curb-cut series. An agent is CC only if all three hold: CC number, project under `curb-cut/<slug>/`, and it passes the three founding questions below.
 
 ## The effect

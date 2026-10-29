@@ -1,5 +1,7 @@
 # mcp/ — Rokid 项目的 MCP 登记处
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 Model Context Protocol 服务器与连接方式的登记目录：本项目实际在用的 MCP、
 用途、接入方式都记在这里，新增一个登记一个，避免散落在各台机器的本地配置里。
 

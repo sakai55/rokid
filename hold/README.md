@@ -1,5 +1,7 @@
 # 默念型 HOLD（hold/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 注意力外挂系列 · 编号 HO01–HO05，共 5 个。脑子里不用再留个复读机。
 
 - HO01 [number-catch](number-catch/) — 号码拍下放大核对，常驻视线内不用默念

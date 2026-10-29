@@ -1,5 +1,7 @@
 # 过滤型 FILTER（filter/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 注意力外挂系列 · 编号 FI01–FI05，共 5 个。只放行你声明要的那一种。
 
 - FI01 [focus-shield](focus-shield/) — 只放行白名单声音，其余只记时间线休息时摘要

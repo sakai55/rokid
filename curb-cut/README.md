@@ -1,5 +1,7 @@
 # 路缘坡（curb-cut/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 路缘坡系列 · 编号 CC01–CC20（本目录现有 2 个，其余陆续完成）。先为一类特殊人群解决一个具体难题，再溢出到情境性障碍中的普通人。
 
 - CC01 [drop-search](drop-search/) — 掉落小物脚边 6 区逐区手摸，查完才报没找到

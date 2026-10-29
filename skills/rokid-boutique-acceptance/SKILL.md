@@ -5,6 +5,7 @@ version: "1.3.0"
 ---
 
 # Rokid Boutique Batch Acceptance
+中文 | [English](SKILL.en.md) | [日本語](SKILL.ja.md)
 
 The acceptance layer for the boutique line （精品线）. Production (three gates, 9-step SOP, pack/preview/README/GitHub sync) lives in `rokid-agent-sop` — this skill adds only how a finished batch is *verified*. A batch is accepted from its **built files**, never from its ledger, its PLAN notes, or its own report: a claim counts only when the built project shows the same fact.
 

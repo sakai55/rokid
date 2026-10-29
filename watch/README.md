@@ -1,5 +1,7 @@
 # 守望型 WATCH（watch/）
 
+中文 | [English](README.en.md) | [日本語](README.ja.md)
+
 注意力外挂系列 · 编号 WA01–WA05，共 5 个。你专心做 A，它替你盯着 B。
 
 - WA01 [stove-watch](stove-watch/) — 多锅看向登记计时，沸腾溢锅叫你回看

@@ -6,6 +6,8 @@ version: "1.0.0"
 
 # Rokid Japan Localization
 
+中文 | [English](SKILL.en.md) | [日本語](SKILL.ja.md)
+
 The locale layer for JP agents. The shared production pipeline (capability red lines, three gates, 9-step SOP, pack/preview/README/GitHub sync) lives in `rokid-agent-sop` — this skill adds only what is specific to Japan. An agent is JP only if all three hold: JP number, project under `japan/<slug>/`, and a genuinely Japanese scene (below).
 
 ## What counts as Japanese locality
