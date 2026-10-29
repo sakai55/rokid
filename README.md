@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-hotword-forge
 ```
 
+**AIX 直接下载**（最新版）：[hotword-forge.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/hotword-forge.aix)
+
 AV05 · 仓库盘点手忙时商品名必须被识别准——先把热词与分段参数按宿主真实能力锻好再上岗，顶边界 B5（SpeechRecognitionSession 外部流 ASR）。
 
 ## 预览截图
