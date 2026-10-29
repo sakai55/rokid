@@ -21,7 +21,7 @@ export default {
     rows: [],
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.3.0'
+    ver: 'v1.3.1'
   },
   onLoad() { this._focus = 0; this._armClear = false; this._off = 0; this._render(); },
   onShow() { this._render(); },

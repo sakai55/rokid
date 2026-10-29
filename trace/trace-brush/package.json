@@ -1,1 +1,1 @@
-{"author":"","dependencies":{},"description":"Trace Brush (TR01) - brush calligraphy tracing: 20 characters, per-stroke models, photo coarse check, learner override, cross-session progress.","keywords":[],"license":"ISC","main":"app.js","name":"trace-brush","version":"1.3.0"}
+{"author":"","dependencies":{},"description":"Trace Brush (TR01) - brush calligraphy tracing: 20 characters, per-stroke models, photo coarse check, learner override, cross-session progress.","keywords":[],"license":"ISC","main":"app.js","name":"trace-brush","version":"1.3.1"}
