@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-cafe-stamp
 ```
 
+**AIX 直接下载**（最新版）：[cafe-stamp.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/cafe-stamp.aix)
+
 KR13 · 韩国本地化系列。交互哲学：**도장 카드 Stamp Card**。本 Agent 是一张只记章的卡：10 格章盘，买一杯 STAMP 盖一章，满 10 章 FREE 换一杯并清盘重记，盖错 UNDO 撤回最后一章。换过的免费杯数单独计数。它不绑定任何店铺系统、不查余额，卡面规则（几章换一杯）以店内告示为准，界面明写。
 
 ## 预览截图
