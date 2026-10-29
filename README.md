@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-story-look
 ```
 
+**AIX 直接下载**（最新版）：[story-look.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/story-look.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI37 个，H 组（学习记忆）第二个。
 给孩子讲绘本，最容易变成家长一个人的独白：照着书一页一页念，
