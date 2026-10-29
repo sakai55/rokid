@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-gye-circle
 ```
 
+**AIX 直接下载**（最新版）：[gye-circle.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/gye-circle.aix)
+
 KR12 · 韩国本地化系列。交互哲学：**계 원형 Gye Circle**。本 Agent 是一本只记轮次的 계 账：四人轮流当「这次收的人」，轮盘中央就是本月收款人。PAY 记下本月已交齐，NEXT 才把轮盘转到下一个人；没交齐就转，声提醒拦住。转满一圈计一轮。它不收钱、不算利息、不催任何人，界面明写。
 
 ## 预览截图
