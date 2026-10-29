@@ -1,0 +1,1 @@
+{"author":"","dependencies":{},"description":"Tuho game: a family gathering arrow-throwing game using head direction only. Aim left, center, or right, throw 10 times across 3 distances, and keep the best score.","keywords":[],"license":"ISC","main":"app.js","name":"tuho-game","version":"1.0.0"}

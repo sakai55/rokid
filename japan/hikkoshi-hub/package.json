@@ -1,0 +1,10 @@
+{
+  "name": "hikkoshi-hub",
+  "version": "1.0.0",
+  "description": "Hikkoshi hub: a moving-house handbook. Twenty procedures and tools in one agent - checklists, sequential steps, memos, a timeline, a mover comparison, a cost calculator and a records page - with progress persisted across sessions.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
