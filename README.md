@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-nomikai-kanji
 ```
 
+**AIX 直接下载**（最新版）：[nomikai-kanji.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/nomikai-kanji.aix)
+
 JP08 · 日本本地化系列。交互哲学：**干事账簿 Host Ledger**。本 Agent 就是干事的那本账：人数、品目合计、人均（自动按 100 円单位向上凑整，这是割り勘的在地规矩）、终电倒计时，全在一张传票上。它永远不录音、不转写、不总结你们聊了什么——会议转写是底座能力，也不是酒桌需要的东西；它只记钱、人头和时间这三样干事必须持有的数字，点头即结账确认。
 
 ## 预览截图
