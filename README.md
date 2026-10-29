@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-greet-name-hold
 ```
 
+**AIX 直接下载**（最新版）：[greet-name-hold.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/greet-name-hold.aix)
+
 路缘坡效应系列 CC05（HOLD 拿住型）。面盲（面孔失认）的人最怕的一刻：熟人迎面热情打招呼，你知道他是熟人，却想不起名字——而你只有几秒钟必须回应。本 Agent 不认脸（本平台根本没有人脸识别 API，假装能认脸是撒谎），它只替你**拿住已经说出来的名字**：对方自报姓名时听下来，或者你口述刚听到的名字，整段对话期间名字一直显示在视线里，旁边还有你预存的一句备注，对话结束一键清除。
 
 ## 预览截图
