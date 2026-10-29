@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-eki-dekake
 ```
 
+**AIX 直接下载**（最新版）：[eki-dekake.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/eki-dekake.aix)
+
 JP20 · 日本在地 × 路缘坡 × 指向性。精品线合并重做：由 JP14 `kasa-share`（駅前シェア傘帳簿）与 JP16 `eki-barrier`（駅の昇降機側確認）按同一场景合并而成；原两个 Agent 原样封存、不删不改。一句话场景：雨天或初到车站时，行动不便者在眼镜上完成一段车站出行——找到有电梯的一侧 → 借共享伞 → 守住归还期限 → 确认归还，并留下跨会话的出行记录。
 
 ## 预览截图
