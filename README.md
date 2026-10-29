@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-hotel-checkin
 ```
 
+**AIX 直接下载**（最新版）：[hotel-checkin.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/hotel-checkin.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI43 个。住进酒店最怕的不是贵，是
 **没底**：床单换没换、淋浴有没有热水、门锁牢不牢——凭感觉扫一眼
