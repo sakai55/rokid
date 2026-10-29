@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-cue-bag
 ```
 
+**AIX 直接下载**（最新版）：[cue-bag.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/cue-bag.aix)
+
 注意力外挂系列 CU04（CUE 提示型，本组第四个，系列第 34 个）。换包/换外套出门，东西总落在上一个包里。本 Agent 把装包确认外包出去：看向今天要背的包停稳才触发按目的地清单——逐项看向包内格层确认装入，全装完说「都装好了」，提前结束当场点名未装项（提醒，不是拦门），小结照实记未装。
 
 ## 解决的问题
