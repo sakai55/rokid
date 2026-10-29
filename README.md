@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-konbini-basket
 ```
 
+**AIX 直接下载**（最新版）：[konbini-basket.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/konbini-basket.aix)
+
 JP03 · 日本本地化系列。交互哲学：**小票账本 Receipt Ledger**。本 Agent 是一本会自己落账的小票：出门前登记要买的四样东西，进店后每拿到一样就核销一行，合计行永远告诉你还差几件。结账环节它不做翻译（那是底座翻译的事），只把四句最高频的柜台定型句做成大字句卡——你指着给店员看，或照着念。条码扫描是可选的核销加速：扫到与当前物品对得上才落账，对不上如实报，对不上账的账本不开绿灯。
 
 ## 预览截图
