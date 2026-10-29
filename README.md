@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-color-catch
 ```
 
+**AIX 直接下载**（最新版）：[color-catch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/color-catch.aix)
+
 拍照现实交互游戏系列 GA42。每轮出一种颜色（固定顺序：红 → 黄 → 蓝 → 绿 → 橙 → 紫），语音同步播报。找一个以该颜色为主色的真实物体，对准占满画面，单击拍照。
 
 与路缘坡系列 CC04 color-order-check（按色序核对物品的辅助工具）的区别：那是给特定人群核对一排物品颜色顺序的工具；本作是出题—找色—拍照判定的计分游戏，判的是主体物主色，不是顺序核对。
