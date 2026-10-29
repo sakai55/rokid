@@ -29,6 +29,8 @@ import { CHARS } from '../../chars.js';
 // v1.3.3（GO 看图定版）：v1.3.2 除弧外全部冻结；弧形箭头改回
 // v1.2 式沿笔画平行伴行弧、只取末段缩短版（见 _parallelArc），
 // 硬校验保与字身拉开距离，不重蹈 v1.2 缎带覆辙。
+// v1.3.4（GO 三点修正）：序号锚定弧尾并一律外侧（见 _badgePos），
+// 平行弧法线平滑、弧形贴合笔画自身走向；其余仍冻结。
 // 笔画拆分仍按 GF0023-2020（如永 = 5
 // 笔）。笔位逐步落盘（trace.brush.learn）：平台无常亮 / wake
 // lock API（官方文档全量查无，见 README 平台边界），描红中熄屏
@@ -44,7 +46,7 @@ export default {
     barLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.3.3'
+    ver: 'v1.3.4'
   },
   onLoad() {
     this._focus = 1; this._step = 0; this._useMedians = false;
@@ -365,13 +367,26 @@ export default {
     while (si < cum.length && cum[si] < cut) si++;
     const segIdx = [];
     for (let k = Math.max(0, si - 1); k < dense.length; k++) segIdx.push(k);
-    const normalAt = function (k) {
+    const rawN = [];
+    for (let k = 0; k < dense.length; k++) {
       const a = dense[Math.max(0, k - 1)], b = dense[Math.min(dense.length - 1, k + 1)];
-      let tx = b[0] - a[0], ty = b[1] - a[1];
+      const tx = b[0] - a[0], ty = b[1] - a[1];
       const tl = hyp(tx, ty);
-      if (tl < 1e-6) return null;
-      return [-ty / tl, tx / tl];
-    };
+      rawN.push(tl < 1e-6 ? null : [-ty / tl, tx / tl]);
+    }
+    // 法线平滑（±3 样点均值，v1.3.4）：弧形贴合笔画自身走向，
+    // 不因样点间距不均鼓出假弯。
+    const smN = [];
+    for (let k = 0; k < dense.length; k++) {
+      let sx = 0, sy = 0, cnt = 0;
+      for (let j = Math.max(0, k - 3); j <= Math.min(dense.length - 1, k + 3); j++) {
+        if (rawN[j]) { sx += rawN[j][0]; sy += rawN[j][1]; cnt++; }
+      }
+      if (!cnt) { smN.push(null); continue; }
+      const sl = hyp(sx, sy);
+      smN.push(sl < 1e-6 ? rawN[k] : [sx / sl, sy / sl]);
+    }
+    const normalAt = function (k) { return smN[k]; };
     const midK = segIdx[Math.floor(segIdx.length / 2)];
     const midN = normalAt(midK);
     if (!midN) return null;
@@ -456,33 +471,47 @@ export default {
     return { pts: out, n0: n0, minDist: arc.minDist, endMismatch: arc.endMismatch, mode: (arc.mode || 'full') + '+quarter' };
   },
   _badgePos(arc, polys, allPts, placed, cx, cy) {
-    // 笔顺数字圈：落在弧尾（弧起点）外侧。16 方位 × 外推距离搜索，
-    // 方位按与弧起点外向的夹角排序（最贴规格者先试）；硬校验 = 圈
-    // 心距全字轮廓 ≥ 半径+6.5、不压任何弧线、不与已放圈重叠、且不
-    // 比弧起点更靠近字心（防落进字内空腔）。落位半径一律按 11 算
-    // （当前笔圈的最大档），保证换档放大不侵界。
+    // 笔顺数字圈（v1.3.4，GO 定）：序号锚定在本弧的尾部——候选点
+    // 全部绕弧尾 A（pts[0]）生成：弧线延长线后方、弧外侧法线
+    // n0、两者斜组合，再加 16 方位环搜；硬校验同前（圈心距全字
+    // 轮廓 ≥ 半径+6.5、不压任何弧线、与已放圈 ≥ 2r+8、且不比弧
+    // 尾更靠近字心）；有效候选不再取「先到先得」：先限弧尾
+    // 42px 内、按「离字心远（一律外侧） − 离弧尾距离（贴尾）」
+    // 打分取最优，无位才放宽；两个序号因此不会再挤到同一侧。
+    // 落位半径按 11 算。
     if (!arc || !arc.pts || !arc.pts.length) return null;
     const r = 11;
-    const A = arc.pts[0], n0 = arc.n0;
-    const dirs = [];
+    const A = arc.pts[0], n0 = arc.n0 || [0, -1];
+    const q = arc.pts[Math.min(3, arc.pts.length - 1)];
+    let tx = A[0] - q[0], ty = A[1] - q[1];
+    const tll = Math.sqrt(tx * tx + ty * ty);
+    if (tll < 1e-6) { tx = 0; ty = -1; } else { tx /= tll; ty /= tll; }
+    const cands = [];
+    const push = function (x, y) { cands.push([x, y]); };
+    const d0 = r + 10;
+    push(A[0] + tx * d0, A[1] + ty * d0);
+    push(A[0] + n0[0] * d0, A[1] + n0[1] * d0);
+    push(A[0] + tx * d0 + n0[0] * r * 0.8, A[1] + ty * d0 + n0[1] * r * 0.8);
+    push(A[0] + n0[0] * d0 + tx * r * 0.8, A[1] + n0[1] * d0 + ty * r * 0.8);
     for (let k = 0; k < 16; k++) {
       const a = k * Math.PI / 8;
-      dirs.push([Math.cos(a), Math.sin(a)]);
+      const dir = [Math.cos(a), Math.sin(a)];
+      for (let extra = 0; extra <= 44; extra += 6) {
+        push(A[0] + dir[0] * (d0 + extra), A[1] + dir[1] * (d0 + extra));
+      }
     }
-    const baseAng = Math.atan2(n0[1], n0[0]);
-    dirs.sort(function (u, v) {
-      const du = Math.abs(Math.atan2(u[1], u[0]) - baseAng), dv = Math.abs(Math.atan2(v[1], v[0]) - baseAng);
-      return du - dv;
-    });
     const aDist = Math.sqrt((A[0] - cx) * (A[0] - cx) + (A[1] - cy) * (A[1] - cy));
-    for (let di = 0; di < dirs.length; di++) {
-      const dir = dirs[di];
-      for (let extra = 0; extra <= 44; extra += 3) {
-        const bx = A[0] + dir[0] * (r + 10 + extra), by = A[1] + dir[1] * (r + 10 + extra);
+    const self = this;
+    const evaluate = function (cap) {
+      let best = null, bestScore = -1e18;
+      for (let ci = 0; ci < cands.length; ci++) {
+        const bx = cands[ci][0], by = cands[ci][1];
+        const dA = Math.sqrt((bx - A[0]) * (bx - A[0]) + (by - A[1]) * (by - A[1]));
+        if (dA > cap) continue;
         if (bx < r + 2 || bx > W - r - 2 || by < r + 2 || by > H - r - 2) continue;
         const cDist = Math.sqrt((bx - cx) * (bx - cx) + (by - cy) * (by - cy));
         if (cDist < aDist - 6) continue;
-        if (this._distPolys(bx, by, polys) < r + 6.5) continue;
+        if (self._distPolys(bx, by, polys) < r + 6.5) continue;
         let ok = true;
         for (let k = 0; k < allPts.length; k++) {
           const dd = Math.sqrt((bx - allPts[k][0]) * (bx - allPts[k][0]) + (by - allPts[k][1]) * (by - allPts[k][1]));
@@ -491,13 +520,16 @@ export default {
         if (!ok) continue;
         for (let k = 0; k < placed.length; k++) {
           const dd = Math.sqrt((bx - placed[k][0]) * (bx - placed[k][0]) + (by - placed[k][1]) * (by - placed[k][1]));
-          if (dd < 2 * r + 2) { ok = false; break; }
+          if (dd < 2 * r + 8) { ok = false; break; }
         }
         if (!ok) continue;
-        return [bx, by];
+        const score = cDist - dA;
+        if (score > bestScore) { bestScore = score; best = [bx, by]; }
       }
-    }
-    return null;
+      return best;
+    };
+    // 先在弧尾 42px 内选（贴尾优先），实在无位才放宽到全部候选。
+    return evaluate(42) || evaluate(1e9);
   },
   _geom() {
     // 本字几何（中线 / 轮廓 / 弧 / 序号位）只算一次并缓存：几何只与
