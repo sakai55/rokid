@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-parking-return
 ```
 
+**AIX 直接下载**（最新版）：[parking-return.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/parking-return.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI09 个。在大型停车场、地下车库
 回来时找不到自己的车——本 Agent 在你停车下车时把三样东西绑在
