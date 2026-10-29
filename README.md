@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-hangang-base
 ```
 
+**AIX 直接下载**（最新版）：[hangang-base.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/hangang-base.aix)
+
 KR05 · 韩国本地化系列。交互哲学：**营地持有 Basecamp Holder**。本 Agent 是坐在垫子上的那个人：交付点暗号、取餐号、垫子归还时刻、片付け四件套，全钉在垫面四格里。你去浪，它替你坐着记；回来瞥一眼，四格状态尽收眼底。它不导航去交付点（底座导航的事）、不替你点外卖，只持有「营地信息」这一件事——这正是出门玩时最容易被快乐冲散的注意力。
 
 ## 预览截图
