@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-jongnyang-gauge
 ```
 
+**AIX 直接下载**（最新版）：[jongnyang-gauge.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/jongnyang-gauge.aix)
+
 KR04 · 韩国本地化系列。交互哲学：**计量表 Volume Gauge**。本 Agent 是一把量表：左边是当前袋子的填充刻度（逐升登记），右边是账本——食物垃圾投放次数与估算费用、已排出几袋。刻度到 80% 它提醒「곧 가득 차요」，满格只能 THROW（封袋排出）再开新袋，不许在界面里假装还能塞。它不识别垃圾种类（分类是各自治体手册与 JP06 式规则卡的事），只守体积与重量这两本经济账。袋子容量可扫包装上的印刷数字来设定（暂定识别）。
 
 ## 预览截图
