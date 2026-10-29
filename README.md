@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-kaiten-tally
 ```
 
+**AIX 直接下载**（最新版）：[kaiten-tally.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/kaiten-tally.aix)
+
 JP12 · 日本本地化系列。交互哲学：**传送带盘数 Conveyor Tally**。本 Agent 是传送带边的盘数账：白盘 110 日元、红盘 220 日元、黑盘 330 日元，吃一盘按颜色加一盘，合计实时就是结账目安。它不识寿司、不判断好不好吃，只数盘子；结账时 GO 一次锁定合计，再 GO 一次为下一桌清零。最后点单（ラストオーダー）时间必须问店员，界面明写不替你报。
 
 ## 预览截图
