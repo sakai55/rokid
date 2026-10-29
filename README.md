@@ -5,6 +5,8 @@
 https://github.com/sakai55/rokid/tree/agent-home-narabi
 ```
 
+**AIX 直接下载**（最新版）：[home-narabi.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/home-narabi.aix)
+
 一句话场景：初めての駅ホームで車椅子・ベビーカー利用者が並ぶ列とドア位置を頭振りで確認し、到着を見逃さない。
 
 ## 方向构成
