@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-med-look
 ```
 
+**AIX 直接下载**（最新版）：[med-look.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/med-look.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI31 个（G 组健康安全开篇）。
 老人药瓶上的字小得看不清，多瓶药的吃法又容易记混 — 这瓶是
