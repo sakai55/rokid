@@ -9,21 +9,28 @@ import { CHARS } from '../../chars.js';
 
 // 学字页 v3（描红主页）：范字全屏——画布占满整页（464×252），只留
 // 底部窄栏放「第 X 笔 / 共 N 笔（笔型）+ 本笔要点」与最少控件。
-// v1.2.0：范字改空心描边（描红字帖式）——strokes 路径只 stroke 不
-// fill，当前笔描边最亮绿 #7dff9e 且略粗、已学 #40ff5e 中绿、未学压
-// 暗细线；路径异常退 medians 折线细描。笔顺箭头按 GO 参考图式改
-// 弧形：每笔把 medians 点列沿切线法线平移到笔画外侧（先 18px、侵
-// 入字身加大到 24px），成一条贴着笔画走向弯曲的平行弧，弧末端加
-// 箭头头（钩 / 折笔的弧沿折向弯、箭头指钩尖）；笔顺数字圈移到弧
-// 起点外侧。弧线 / 数字与所属笔同档明暗，与笔画共用同一坐标变换
-// （1024 系 → 画布）。笔画拆分仍按 GF0023-2020（如永 = 5 笔，不
-// 跟参考图的永字八法 8 标注）。笔位逐步落盘（trace.brush.learn）：
-// 平台无常亮 / wake lock API（官方文档全量查无，见 README 平台边
-// 界），描红中熄屏无法从 Agent 侧阻止，靠重进同字恢复当前笔缓解。
+// v1.3.0：范字主体按桌面描红距离口径缩放——眼到桌面约 40cm、字帖
+// 格字约 9cm 见方（张角约 12.8°，合纵向视场约 58%），20 字轮廓并
+// 集高度约 205px、居中（S=236），与低头看纸上字接近 1:1。笔顺弧
+// 第三次改版（v1.2.0 平行弧被裁定「不是空心、不是弧形笔顺」）：
+// 废弃逐点平行偏移，每笔构造一支与字身分离的简化弧——候选 = 二次
+// 贝塞尔（P0 / Pm / P1 沿逐点外向法线推出 22–38px）与三次贝塞尔
+// （双控点），内外两侧都试；候选逐采样点（含箭头翼尖）用全字轮
+// 廓多边形硬校验：不许进入任一笔画轮廓内部及其 6px 邻域（侵入必
+// 为 0），与轮廓最小距离 ≥14px 为达标档、≥6.5px 为可用档；完整
+// 弧不存在时缩短到不侵入的区段（宁短勿侵入），再不行在笔末外侧
+// 沿行笔方向补一支终段小弧。箭头头翼长 15px、当前笔实心。序号圈
+// 在弧尾外侧以 16 方位搜索落位（校验对轮廓 / 全部弧线 / 已放圈的
+// 距离）。弧与序号跟所属笔同档明暗；空心描边三档不变。几何结果
+// 77 笔离线全量验证：无弧 0、序号落位失败 0、末段方向偏差 >60°
+// 为 0。笔画拆分仍按 GF0023-2020（如永 = 5 笔）。笔位逐步落盘
+// （trace.brush.learn）：平台无常亮 / wake lock API（官方文档全量
+// 查无，见 README 平台边界），描红中熄屏无法从 Agent 侧阻止，靠
+// 重进同字恢复当前笔缓解。
 const TMP = 'trace.brush.tmp';
 const LEARN = 'trace.brush.learn'; // 笔位落盘（熄屏 / 重进恢复用，非进度）
 const ACTS = ['上一笔', '下一笔', '念要点', '写完去验收', '返回 BACK'];
-const W = 464, H = 252, S = 248, OX = 108, OY = 10;
+const W = 464, H = 252, S = 236, OX = 110, OY = 11;
 
 export default {
   data: {
@@ -31,7 +38,7 @@ export default {
     barLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.2.0'
+    ver: 'v1.3.0'
   },
   onLoad() {
     this._focus = 1; this._step = 0; this._useMedians = false;
@@ -76,7 +83,7 @@ export default {
     }
   },
   _segDist(px, py, ax, ay, bx, by) {
-    // 点到线段距离（箭头落位校验用）
+    // 点到线段距离（弧线 / 序号落位校验用）
     const abx = bx - ax, aby = by - ay;
     const t0 = abx * abx + aby * aby;
     let t = t0 > 0 ? ((px - ax) * abx + (py - ay) * aby) / t0 : 0;
@@ -118,138 +125,284 @@ export default {
     }
     return inside;
   },
+  _distPolys(px, py, polys) {
+    // 点到全字轮廓的最小距离；落进任一轮廓内返回 -1（硬约束判定）
+    let bd = 1e9;
+    for (let s2 = 0; s2 < polys.length; s2++) {
+      const poly = polys[s2];
+      if (!poly || poly.length < 3) continue;
+      if (this._inPoly(px, py, poly)) return -1;
+      for (let a = 0, b = poly.length - 1; a < poly.length; b = a++) {
+        const d = this._segDist(px, py, poly[b][0], poly[b][1], poly[a][0], poly[a][1]);
+        if (d < bd) bd = d;
+      }
+    }
+    return bd;
+  },
   _arcFor(lines, polys, idx, cx, cy) {
-    // 弧形笔顺箭头（按 GO 参考图式）：把该笔 medians 点列逐点沿切线
-    // 法线平移到笔画外侧，成一条贴着笔画走向弯曲的平行弧。选边 =
-    // 中点处远离字心的一侧（整笔同一侧，法线随切线连续旋转，钩 /
-    // 折笔的弧自然沿折向弯过去）；偏移 18px 起、侵入字身加大到
-    // 24px，候选弧经逐点排斥松弛绕开邻笔后按「落进笔画轮廓内的采
-    // 样比例」评分，外侧优先（见下方 intrOf 处注释）。返回
-    // { pts 弧点列（画布坐标）, n0 弧起点处的单位外移方向 }，数字
-    // 圈据 n0 落在弧起点外侧。
+    // 笔顺弧 v1.3.0（与字身分离的简化弧，硬约束校验）：候选构造 =
+    // 二次贝塞尔（medians 首 / 中 / 末三点沿各自外向法线推出）与三
+    // 次贝塞尔（1/3、2/3 点双控），外侧（逐点远离字心）与内侧各试
+    // 推距 22–38px。每个候选逐采样点 + 箭头翼尖用 _distPolys 校验：
+    // 进轮廓或距轮廓 <6.5px 即废；≥14px 为达标。选取顺序 = 方向对
+    // （弧末方向与笔末行笔方向偏差 ≤50°）的达标弧 → 方向对的可用
+    // 弧（≥6.5） → 缩短片段（在多推距曲线上取最长不侵入区段）→
+    // 终段小弧（笔末外侧沿行笔方向的 36px 短弧）。返回
+    // { pts 弧点列, n0 弧起点外向单位向量 }。
     const line = lines[idx];
     if (!line || line.length < 2) return null;
+    const self = this;
     const n = line.length;
-    const tans = [], nors = [];
-    for (let j = 0; j < n; j++) {
+    const P0 = line[0], P1 = line[n - 1];
+    const jm = Math.floor(n / 2), Pm = line[jm];
+    const j1 = Math.floor(n / 3), j2 = Math.floor(2 * n / 3);
+    const Pa = line[j1], Pb = line[j2];
+    const hyp = function (a, b) { return Math.sqrt(a * a + b * b); };
+    const sub = function (a, b) { return [a[0] - b[0], a[1] - b[1]]; };
+    const vnorm = function (v) { const l = hyp(v[0], v[1]); return l < 1e-6 ? null : [v[0] / l, v[1] / l]; };
+    const angDeg = function (u, v) { const d = Math.max(-1, Math.min(1, u[0] * v[0] + u[1] * v[1])); return Math.acos(d) * 180 / Math.PI; };
+    const bez2 = function (p0, p1, p2, t) { const u = 1 - t; return [u * u * p0[0] + 2 * u * t * p1[0] + t * t * p2[0], u * u * p0[1] + 2 * u * t * p1[1] + t * t * p2[1]]; };
+    const bez3 = function (p0, p1, p2, p3, t) { const u = 1 - t; return [u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0], u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1]]; };
+    // 笔末行笔方向：自末点回溯 ≥10px 取向（末段过短时单段方向不稳）
+    let eiEnd = n - 2;
+    while (eiEnd > 0 && hyp(line[n - 1][0] - line[eiEnd][0], line[n - 1][1] - line[eiEnd][1]) < 10) eiEnd--;
+    const endDir = vnorm(sub(line[n - 1], line[eiEnd])) || [1, 0];
+    const outNormal = function (j) {
       const a = line[Math.max(0, j - 1)], b = line[Math.min(n - 1, j + 1)];
-      let tx = b[0] - a[0], ty = b[1] - a[1];
-      const tl = Math.sqrt(tx * tx + ty * ty);
-      if (tl < 0.01) { tx = 1; ty = 0; } else { tx /= tl; ty /= tl; }
-      tans.push([tx, ty]);
-      nors.push([-ty, tx]); // 法线族 A（随切线连续）；族 B 为其反向
-    }
-    const jm = Math.floor(n / 2);
-    const awayA = (nors[jm][0] * (line[jm][0] - cx) + nors[jm][1] * (line[jm][1] - cy)) >= 0;
-    const build = function (useA, d) {
-      const pts = [];
-      for (let j = 0; j < n; j++) {
-        const s = useA ? 1 : -1;
-        pts.push([line[j][0] + nors[j][0] * s * d, line[j][1] + nors[j][1] * s * d]);
-      }
-      return pts;
+      const t = vnorm(sub(b, a)) || vnorm(sub(P1, P0)) || [1, 0];
+      let nv = [-t[1], t[0]];
+      if (nv[0] * (line[j][0] - cx) + nv[1] * (line[j][1] - cy) < 0) nv = [-nv[0], -nv[1]];
+      return nv;
     };
-    const nearInfo = function (px, py, selfSegSkip) {
-      // 最近中线段信息：{ d 距离, qx/qy 最近点 }。跳过本笔沿轨附近的
-      // 段（弧本就贴着它们走）；其他笔的段全算。
-      let bd = 1e9, bq = null;
-      for (let s2 = 0; s2 < lines.length; s2++) {
-        const ln = lines[s2];
-        for (let j = 0; j + 1 < ln.length; j++) {
-          if (s2 === idx && selfSegSkip && j >= selfSegSkip[0] && j <= selfSegSkip[1]) continue;
-          const ax = ln[j][0], ay = ln[j][1], abx = ln[j + 1][0] - ax, aby = ln[j + 1][1] - ay;
-          const t0 = abx * abx + aby * aby;
-          let t = t0 > 0 ? ((px - ax) * abx + (py - ay) * aby) / t0 : 0;
-          t = Math.max(0, Math.min(1, t));
-          const qx = ax + abx * t, qy = ay + aby * t;
-          const dd = Math.sqrt((px - qx) * (px - qx) + (py - qy) * (py - qy));
-          if (dd < bd) { bd = dd; bq = [qx, qy]; }
+    const o0 = outNormal(0), o1 = outNormal(jm), o2 = outNormal(n - 1), oa = outNormal(j1), ob = outNormal(j2);
+    const build = function (kind, side, dEnd) {
+      const dCtrl = Math.min(dEnd + 8, 46);
+      const A = [P0[0] + o0[0] * side * dEnd, P0[1] + o0[1] * side * dEnd];
+      const B = [P1[0] + o2[0] * side * dEnd, P1[1] + o2[1] * side * dEnd];
+      const pts = [];
+      if (kind === 'quad') {
+        const Q = [Pm[0] + o1[0] * side * dCtrl, Pm[1] + o1[1] * side * dCtrl];
+        for (let k = 0; k <= 24; k++) pts.push(bez2(A, Q, B, k / 24));
+        return { A: A, B: B, Q: Q, pts: pts, n0: [o0[0] * side, o0[1] * side] };
+      }
+      const C1 = [Pa[0] + oa[0] * side * dCtrl, Pa[1] + oa[1] * side * dCtrl];
+      const C2 = [Pb[0] + ob[0] * side * dCtrl, Pb[1] + ob[1] * side * dCtrl];
+      for (let k = 0; k <= 24; k++) pts.push(bez3(A, C1, C2, B, k / 24));
+      return { A: A, B: B, Q: C2, pts: pts, n0: [o0[0] * side, o0[1] * side] };
+    };
+    const wingTipsOf = function (pts) {
+      const B = pts[pts.length - 1], Qp = pts[Math.max(0, pts.length - 4)];
+      const dir = vnorm(sub(B, Qp));
+      if (!dir) return [];
+      const px = -dir[1], py = dir[0];
+      return [[B[0] - dir[0] * 13 + px * 7.5, B[1] - dir[1] * 13 + py * 7.5], [B[0] - dir[0] * 13 - px * 7.5, B[1] - dir[1] * 13 - py * 7.5]];
+    };
+    const evalPts = function (pts) {
+      let md = 1e9;
+      for (let k = 0; k < pts.length; k++) {
+        const p = pts[k];
+        if (p[0] < 3 || p[0] > W - 3 || p[1] < 3 || p[1] > H - 3) return -2;
+        const d = self._distPolys(p[0], p[1], polys);
+        if (d < md) md = d;
+      }
+      return md;
+    };
+    const evalCfg = function (kind, side, dEnd) {
+      const c = build(kind, side, dEnd);
+      const md = evalPts(c.pts.concat(wingTipsOf(c.pts)));
+      return { kind: kind, side: side, dEnd: dEnd, pts: c.pts, n0: c.n0, minDist: md };
+    };
+    const fragEndDir = function (pts) {
+      let ei = pts.length - 2;
+      while (ei > 0 && hyp(pts[pts.length - 1][0] - pts[ei][0], pts[pts.length - 1][1] - pts[ei][1]) < 8) ei--;
+      return vnorm(sub(pts[pts.length - 1], pts[ei])) || endDir;
+    };
+    const fragN0 = function (pts) {
+      const t = vnorm(sub(pts[Math.min(pts.length - 1, 2)], pts[0])) || [1, 0];
+      let nv = [-t[1], t[0]];
+      if (nv[0] * (pts[0][0] - cx) + nv[1] * (pts[0][1] - cy) < 0) nv = [-nv[0], -nv[1]];
+      return nv;
+    };
+    const terminalTick = function () {
+      const poly = polys[idx];
+      let bot = -1e9;
+      for (let k = 0; k < poly.length; k++) bot = Math.max(bot, poly[k][1]);
+      const cands = [];
+      const sg = [1, -1], noffs = [16, 22, 28, 34], aoffs = [0, 8, 16];
+      for (let a2 = 0; a2 < sg.length; a2++) for (let b2 = 0; b2 < noffs.length; b2++) for (let c2 = 0; c2 < aoffs.length; c2++) {
+        cands.push([P1[0] + endDir[0] * aoffs[c2] + o2[0] * sg[a2] * noffs[b2], P1[1] + endDir[1] * aoffs[c2] + o2[1] * sg[a2] * noffs[b2]]);
+      }
+      cands.push([P1[0] + endDir[0] * 10, bot + 13]);
+      cands.push([P1[0] + endDir[0] * 10, bot + 19]);
+      for (let k = 0; k < cands.length; k++) {
+        const A = cands[k];
+        const B = [A[0] + endDir[0] * 36, A[1] + endDir[1] * 36];
+        const Q = [A[0] + endDir[0] * 18 + (-endDir[1]) * 5, A[1] + endDir[1] * 18 + endDir[0] * 5];
+        const pts = [];
+        for (let j = 0; j <= 16; j++) pts.push(bez2(A, Q, B, j / 16));
+        const md = evalPts(pts.concat(wingTipsOf(pts)));
+        if (md >= 6.5) return { pts: pts, n0: fragN0(pts), minDist: md, endMismatch: angDeg(fragEndDir(pts), endDir), mode: 'terminal' };
+      }
+      return null;
+    };
+    const PUSHES = [22, 26, 30, 34, 38];
+    const order = [['quad', 1], ['cubic', 1], ['quad', -1], ['cubic', -1]];
+    let goodOk = null, goodAny = null, softOk = null, softAny = null;
+    for (let oi = 0; oi < order.length; oi++) {
+      const kind = order[oi][0], side = order[oi][1];
+      for (let pi = 0; pi < PUSHES.length; pi++) {
+        const c = evalCfg(kind, side, PUSHES[pi]);
+        const mm = angDeg(fragEndDir(c.pts), endDir);
+        c.endMismatch = mm;
+        if (c.minDist >= 14) {
+          if (!goodAny) goodAny = c;
+          if (mm <= 50 && !goodOk) goodOk = c;
+        } else if (c.minDist >= 6.5) {
+          if (!softAny || c.minDist > softAny.minDist) softAny = c;
+          if (mm <= 50 && (!softOk || c.minDist > softOk.minDist)) softOk = c;
         }
       }
-      return { d: bd, q: bq };
-    }.bind(this);
-    const relax = function (pts) {
-      // 逐点排斥松弛：弧点离任何中线（本笔沿轨附近段除外）< 16 就沿
-      // 远离该中线的方向推出去，4 轮 + 邻点平滑，弧保持贴笔平滑、
-      // 只在交叉 / 贴近处局部绕开。每点总位移钳制在原位 34px 内。
-      const orig = pts.map(function (p) { return [p[0], p[1]]; });
-      for (let round = 0; round < 4; round++) {
-        for (let j = 0; j < pts.length; j++) {
-          const info = nearInfo(pts[j][0], pts[j][1], [j - 2, j + 1]);
-          if (info.q && info.d < 16) {
-            let vx = pts[j][0] - info.q[0], vy = pts[j][1] - info.q[1];
-            const vl = Math.sqrt(vx * vx + vy * vy);
-            if (vl < 0.01) { vx = nors[j][0]; vy = nors[j][1]; } else { vx /= vl; vy /= vl; }
-            const push = (16 - info.d) * 0.9;
-            pts[j][0] += vx * push; pts[j][1] += vy * push;
+    }
+    if (goodOk) return goodOk;
+    if (softOk) return softOk;
+    // 缩短档：多推距曲线上找最长不侵入区段（含起点 / 末点者加权）
+    let bestRun = null;
+    const shortPushes = [16, 22, 30, 38];
+    for (let oi = 0; oi < order.length; oi++) {
+      const kind = order[oi][0], side = order[oi][1];
+      for (let pi = 0; pi < shortPushes.length; pi++) {
+        const dEnd = shortPushes[pi];
+        const c = build(kind, side, dEnd);
+        const dense = [];
+        if (kind === 'quad') {
+          for (let k = 0; k <= 48; k++) dense.push(bez2(c.A, c.Q, c.B, k / 48));
+        } else {
+          const dCtrl = Math.min(dEnd + 8, 46);
+          const C1 = [Pa[0] + oa[0] * side * dCtrl, Pa[1] + oa[1] * side * dCtrl];
+          const C2 = [Pb[0] + ob[0] * side * dCtrl, Pb[1] + ob[1] * side * dCtrl];
+          for (let k = 0; k <= 48; k++) dense.push(bez3(c.A, C1, C2, c.B, k / 48));
+        }
+        const runs = [];
+        let runStart = -1;
+        for (let k = 0; k <= dense.length; k++) {
+          const p = dense[k];
+          const ok = k < dense.length && p[0] >= 3 && p[0] <= W - 3 && p[1] >= 3 && p[1] <= H - 3 && self._distPolys(p[0], p[1], polys) >= 6.5;
+          if (ok && runStart < 0) runStart = k;
+          if (!ok && runStart >= 0) { runs.push([runStart, k - 1]); runStart = -1; }
+        }
+        for (let ri = 0; ri < runs.length; ri++) {
+          const r = runs[ri];
+          if (r[1] - r[0] < 4) continue;
+          const pts = dense.slice(r[0], r[1] + 1);
+          const wt = wingTipsOf(pts);
+          let wok = true;
+          for (let wi = 0; wi < wt.length; wi++) { if (self._distPolys(wt[wi][0], wt[wi][1], polys) < 6) { wok = false; break; } }
+          if (!wok) continue;
+          let len = 0;
+          for (let k = 1; k < pts.length; k++) len += hyp(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]);
+          if (len < 12) continue;
+          const score = len * (1 + (r[0] === 0 ? 0.3 : 0) + (r[1] === 48 ? 0.3 : 0));
+          if (!bestRun || score > bestRun.score) {
+            let md = 1e9;
+            for (let k = 0; k < pts.length; k++) md = Math.min(md, self._distPolys(pts[k][0], pts[k][1], polys));
+            bestRun = { pts: pts, n0: fragN0(pts), minDist: md, score: score, endMismatch: angDeg(fragEndDir(pts), endDir), mode: 'shortened' };
           }
         }
-        for (let j = 1; j + 1 < pts.length; j++) {
-          pts[j][0] = pts[j - 1][0] * 0.22 + pts[j][0] * 0.56 + pts[j + 1][0] * 0.22;
-          pts[j][1] = pts[j - 1][1] * 0.22 + pts[j][1] * 0.56 + pts[j + 1][1] * 0.22;
-        }
-        for (let j = 0; j < pts.length; j++) {
-          let mx = pts[j][0] - orig[j][0], my = pts[j][1] - orig[j][1];
-          const ml = Math.sqrt(mx * mx + my * my);
-          if (ml > 34) { pts[j][0] = orig[j][0] + mx / ml * 34; pts[j][1] = orig[j][1] + my / ml * 34; }
-          pts[j][0] = Math.max(4, Math.min(W - 4, pts[j][0]));
-          pts[j][1] = Math.max(4, Math.min(H - 4, pts[j][1]));
-        }
       }
-      return pts;
-    }.bind(this);
-    const intrOf = function (pts) {
-      // 侵入率：弧采样点落进任一笔画轮廓多边形内的比例（0 = 全程在
-      // 笔画身外）。交叉笔画的交点附近少量侵入几何上不可避免，取舍
-      // 以侵入率最小为准。
-      const samples = [];
-      for (let j = 0; j < pts.length; j++) {
-        samples.push(pts[j]);
-        if (j + 1 < pts.length) {
-          samples.push([pts[j][0] * 0.66 + pts[j + 1][0] * 0.34, pts[j][1] * 0.66 + pts[j + 1][1] * 0.34]);
-          samples.push([pts[j][0] * 0.34 + pts[j + 1][0] * 0.66, pts[j][1] * 0.34 + pts[j + 1][1] * 0.66]);
+    }
+    // 方向对的缩短片段优先于方向错的完整弧；再不行用终段小弧兜底
+    if (bestRun && bestRun.endMismatch <= 60) return bestRun;
+    if (!bestRun || bestRun.endMismatch > 60 || goodAny || softAny) {
+      const tick = terminalTick();
+      if (tick) return tick;
+    }
+    if (bestRun) return bestRun;
+    if (goodAny) return goodAny;
+    if (softAny) return softAny;
+    return null;
+  },
+  _badgePos(arc, polys, allPts, placed, cx, cy) {
+    // 笔顺数字圈：落在弧尾（弧起点）外侧。16 方位 × 外推距离搜索，
+    // 方位按与弧起点外向的夹角排序（最贴规格者先试）；硬校验 = 圈
+    // 心距全字轮廓 ≥ 半径+6.5、不压任何弧线、不与已放圈重叠、且不
+    // 比弧起点更靠近字心（防落进字内空腔）。落位半径一律按 11 算
+    // （当前笔圈的最大档），保证换档放大不侵界。
+    if (!arc || !arc.pts || !arc.pts.length) return null;
+    const r = 11;
+    const A = arc.pts[0], n0 = arc.n0;
+    const dirs = [];
+    for (let k = 0; k < 16; k++) {
+      const a = k * Math.PI / 8;
+      dirs.push([Math.cos(a), Math.sin(a)]);
+    }
+    const baseAng = Math.atan2(n0[1], n0[0]);
+    dirs.sort(function (u, v) {
+      const du = Math.abs(Math.atan2(u[1], u[0]) - baseAng), dv = Math.abs(Math.atan2(v[1], v[0]) - baseAng);
+      return du - dv;
+    });
+    const aDist = Math.sqrt((A[0] - cx) * (A[0] - cx) + (A[1] - cy) * (A[1] - cy));
+    for (let di = 0; di < dirs.length; di++) {
+      const dir = dirs[di];
+      for (let extra = 0; extra <= 44; extra += 3) {
+        const bx = A[0] + dir[0] * (r + 10 + extra), by = A[1] + dir[1] * (r + 10 + extra);
+        if (bx < r + 2 || bx > W - r - 2 || by < r + 2 || by > H - r - 2) continue;
+        const cDist = Math.sqrt((bx - cx) * (bx - cx) + (by - cy) * (by - cy));
+        if (cDist < aDist - 6) continue;
+        if (this._distPolys(bx, by, polys) < r + 6.5) continue;
+        let ok = true;
+        for (let k = 0; k < allPts.length; k++) {
+          const dd = Math.sqrt((bx - allPts[k][0]) * (bx - allPts[k][0]) + (by - allPts[k][1]) * (by - allPts[k][1]));
+          if (dd < r + 1.5) { ok = false; break; }
         }
-      }
-      let inside = 0;
-      for (let k = 0; k < samples.length; k++) {
-        for (let s2 = 0; s2 < polys.length; s2++) {
-          if (this._inPoly(samples[k][0], samples[k][1], polys[s2])) { inside++; break; }
+        if (!ok) continue;
+        for (let k = 0; k < placed.length; k++) {
+          const dd = Math.sqrt((bx - placed[k][0]) * (bx - placed[k][0]) + (by - placed[k][1]) * (by - placed[k][1]));
+          if (dd < 2 * r + 2) { ok = false; break; }
         }
+        if (!ok) continue;
+        return [bx, by];
       }
-      return samples.length ? inside / samples.length : 1;
-    }.bind(this);
-    // 候选 = （外侧 / 内侧）×（18 / 24px），各自先松弛再按侵入率评：
-    // 优先外侧——外侧侵入率不比内侧最优差过 0.12 就用外侧（弧应贴
-    // 字身外缘，如捺弧走右下侧）；否则用全局侵入最小者。
-    const candDefs = [[awayA, 18], [awayA, 24], [!awayA, 18], [!awayA, 24]];
-    const scored = [];
-    for (let k = 0; k < candDefs.length; k++) {
-      const pts = relax(build(candDefs[k][0], candDefs[k][1]));
-      scored.push({ pts: pts, away: candDefs[k][0] === awayA, intr: intrOf(pts) });
     }
-    let bestAway = null, bestOther = null;
-    for (let k = 0; k < scored.length; k++) {
-      const s = scored[k];
-      if (s.away) { if (!bestAway || s.intr < bestAway.intr) bestAway = s; }
-      else if (!bestOther || s.intr < bestOther.intr) bestOther = s;
+    return null;
+  },
+  _geom() {
+    // 本字几何（中线 / 轮廓 / 弧 / 序号位）只算一次并缓存：几何只与
+    // 字有关、与当前笔无关，避免每次重绘重复候选搜索。
+    const c = this._char;
+    if (this._geomCache && this._geomCache.char === c.char) return this._geomCache;
+    const lines = [];
+    let mnx = 1e9, mny = 1e9, mxx = -1e9, mxy = -1e9;
+    for (let i = 0; i < c.medians.length; i++) {
+      const ln = [];
+      for (let j = 0; j < c.medians[i].length; j++) {
+        const vx = this._X(c.medians[i][j][0]), vy = this._Y(c.medians[i][j][1]);
+        ln.push([vx, vy]);
+        if (vx < mnx) mnx = vx; if (vx > mxx) mxx = vx;
+        if (vy < mny) mny = vy; if (vy > mxy) mxy = vy;
+      }
+      lines.push(ln);
     }
-    let best = null;
-    if (bestAway && (!bestOther || bestAway.intr <= bestOther.intr + 0.12)) best = bestAway.pts;
-    else if (bestOther) best = bestOther.pts;
-    else if (bestAway) best = bestAway.pts;
-    if (!best) return null;
-    for (let j = 0; j < best.length; j++) {
-      best[j][0] = Math.max(3, Math.min(W - 3, best[j][0]));
-      best[j][1] = Math.max(3, Math.min(H - 3, best[j][1]));
+    const ccx = (mnx + mxx) / 2, ccy = (mny + mxy) / 2;
+    const polys = [];
+    for (let i = 0; i < c.strokes.length; i++) { try { polys.push(this._pathPoly(c.strokes[i])); } catch (e) { polys.push([]); } }
+    const arcs = [];
+    for (let i = 0; i < c.medians.length; i++) { try { arcs.push(this._arcFor(lines, polys, i, ccx, ccy)); } catch (e) { arcs.push(null); } }
+    const allPts = [];
+    for (let i = 0; i < arcs.length; i++) { if (arcs[i]) for (let j = 0; j < arcs[i].pts.length; j++) allPts.push(arcs[i].pts[j]); }
+    const placed = [], badges = [];
+    for (let i = 0; i < c.medians.length; i++) {
+      let bp = null;
+      try { bp = arcs[i] ? this._badgePos(arcs[i], polys, allPts, placed, ccx, ccy) : null; } catch (e) { bp = null; }
+      if (bp) placed.push(bp);
+      badges.push(bp || this._badgePosFallback(c.medians[i]));
     }
-    let nx = best[0][0] - line[0][0], ny = best[0][1] - line[0][1];
-    const nl = Math.sqrt(nx * nx + ny * ny);
-    if (nl > 0.01) { nx /= nl; ny /= nl; } else { nx = 0; ny = -1; }
-    return { pts: best, n0: [nx, ny] };
+    this._geomCache = { char: c.char, lines: lines, polys: polys, arcs: arcs, badges: badges };
+    return this._geomCache;
   },
   _arrow(ctx, arc, state, col) {
-    // 沿弧点列画平滑弧线（polyline），末端按弧末段方向加箭头头；
-    // 与所属笔同档明暗。
+    // 沿弧点列画平滑弧线，末端按弧末方向加箭头头（回溯 ≥8px 取向）：
+    // 翼长 15px（后掠 13、半宽 7.5，与落位校验同几何）；当前笔实心
+    // 三角、其余档描边双翼。与所属笔同档明暗。
     if (!arc || !arc.pts || arc.pts.length < 2) return;
     const pts = arc.pts, n = pts.length;
     ctx.strokeStyle = col; ctx.lineWidth = state === 1 ? 2.6 : (state === 0 ? 2 : 1.6);
@@ -258,27 +411,25 @@ export default {
       if (j === 0) ctx.moveTo(pts[j][0], pts[j][1]); else ctx.lineTo(pts[j][0], pts[j][1]);
     }
     ctx.stroke();
-    let dx = pts[n - 1][0] - pts[n - 2][0], dy = pts[n - 1][1] - pts[n - 2][1];
-    let dl = Math.sqrt(dx * dx + dy * dy);
-    if (dl < 0.5 && n > 2) { dx = pts[n - 1][0] - pts[n - 3][0]; dy = pts[n - 1][1] - pts[n - 3][1]; dl = Math.sqrt(dx * dx + dy * dy); }
+    let ei = n - 2;
+    while (ei > 0 && Math.sqrt((pts[n - 1][0] - pts[ei][0]) * (pts[n - 1][0] - pts[ei][0]) + (pts[n - 1][1] - pts[ei][1]) * (pts[n - 1][1] - pts[ei][1])) < 8) ei--;
+    let dx = pts[n - 1][0] - pts[ei][0], dy = pts[n - 1][1] - pts[ei][1];
+    const dl = Math.sqrt(dx * dx + dy * dy);
     if (dl < 0.5) return;
     dx /= dl; dy /= dl;
     const tx = pts[n - 1][0], ty = pts[n - 1][1];
-    const px = -dy, py = dx, hw = 8;
-    ctx.beginPath();
-    ctx.moveTo(tx, ty); ctx.lineTo(tx - dx * hw + px * hw * 0.62, ty - dy * hw + py * hw * 0.62);
-    ctx.moveTo(tx, ty); ctx.lineTo(tx - dx * hw - px * hw * 0.62, ty - dy * hw - py * hw * 0.62);
-    ctx.stroke();
-  },
-  _badgePos(arc, state) {
-    // 笔顺数字圈：落在弧起点外侧（沿弧起点外移方向再推一个半径多）
-    if (!arc || !arc.pts || !arc.pts.length) return null;
-    const r = state === 1 ? 11 : 9.5;
-    let bx = arc.pts[0][0] + arc.n0[0] * (r + 3);
-    let by = arc.pts[0][1] + arc.n0[1] * (r + 3);
-    bx = Math.max(r + 1, Math.min(W - r - 1, bx));
-    by = Math.max(r + 1, Math.min(H - r - 1, by));
-    return [bx, by];
+    const px = -dy, py = dx;
+    const w1 = [tx - dx * 13 + px * 7.5, ty - dy * 13 + py * 7.5];
+    const w2 = [tx - dx * 13 - px * 7.5, ty - dy * 13 - py * 7.5];
+    if (state === 1) {
+      ctx.beginPath();
+      ctx.moveTo(tx, ty); ctx.lineTo(w1[0], w1[1]); ctx.lineTo(w2[0], w2[1]); ctx.closePath();
+      ctx.fillStyle = col; ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(w1[0], w1[1]); ctx.lineTo(tx, ty); ctx.lineTo(w2[0], w2[1]);
+      ctx.stroke();
+    }
   },
   _badgePosFallback(med) {
     // 无弧时（如 medians 不足）的数字圈位置：起笔点旁、向字心反方向
@@ -314,25 +465,9 @@ export default {
       ctx.beginPath(); ctx.moveTo(W / 2, 3); ctx.lineTo(W / 2, H - 3); ctx.moveTo(3, H / 2); ctx.lineTo(W - 3, H / 2);
       ctx.moveTo(3, 3); ctx.lineTo(W - 3, H - 3); ctx.moveTo(W - 3, 3); ctx.lineTo(3, H - 3); ctx.stroke();
       ctx.strokeStyle = 'rgba(64,255,94,0.40)'; ctx.beginPath(); ctx.strokeRect(2, 2, W - 4, H - 4);
-      // 预计算（画布坐标）：全部笔画中线、字心（包围盒中心）、数字圈位
-      const lines = [];
-      let mnx = 1e9, mny = 1e9, mxx = -1e9, mxy = -1e9;
-      for (let i = 0; i < c.medians.length; i++) {
-        const ln = [];
-        for (let j = 0; j < c.medians[i].length; j++) {
-          const vx = this._X(c.medians[i][j][0]), vy = this._Y(c.medians[i][j][1]);
-          ln.push([vx, vy]);
-          if (vx < mnx) mnx = vx; if (vx > mxx) mxx = vx;
-          if (vy < mny) mny = vy; if (vy > mxy) mxy = vy;
-        }
-        lines.push(ln);
-      }
-      const ccx = (mnx + mxx) / 2, ccy = (mny + mxy) / 2;
-      // 逐笔弧形箭头（贴笔画外侧的平行弧），数字圈随弧起点定
-      const polys = [];
-      for (let i = 0; i < c.strokes.length; i++) { try { polys.push(this._pathPoly(c.strokes[i])); } catch (e) { polys.push([]); } }
-      const arcs = [];
-      for (let i = 0; i < c.medians.length; i++) arcs.push(this._arcFor(lines, polys, i, ccx, ccy));
+      // 几何（中线 / 轮廓 / 弧 / 序号位）按字缓存，见 _geom()
+      const g = this._geom();
+      const arcs = g.arcs;
       // 空心描边：路径只 stroke 不 fill（字帖式空心字，内部透黑）
       const cols = ['#40ff5e', '#7dff9e', 'rgba(64,255,94,0.20)'];
       const widths = [1.8, 2.4, 1.1];
@@ -356,7 +491,7 @@ export default {
           ctx.stroke();
         }
       }
-      // 弧线层（笔画外侧平行弧 + 弧末箭头头）+ 数字层（弧起点旁，最后画）
+      // 弧线层（与字身分离的笔顺弧 + 弧末箭头头）+ 数字层（弧尾外侧，最后画）
       for (let i = 0; i < c.strokes.length; i++) {
         const state = i < this._step ? 0 : (i === this._step ? 1 : 2);
         const acol = state === 1 ? '#7dff9e' : (state === 0 ? 'rgba(64,255,94,0.85)' : 'rgba(64,255,94,0.35)');
@@ -364,8 +499,7 @@ export default {
       }
       for (let i = 0; i < c.strokes.length; i++) {
         const state = i < this._step ? 0 : (i === this._step ? 1 : 2);
-        const pos = arcs[i] ? this._badgePos(arcs[i], state) : this._badgePosFallback(c.medians[i]);
-        this._badge(ctx, pos, i + 1, state);
+        this._badge(ctx, g.badges[i], i + 1, state);
       }
       ctx.flush();
       if (this._useMedians) this.setData({ evt: 'EVT: draw via medians fallback' });

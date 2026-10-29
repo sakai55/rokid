@@ -35,7 +35,7 @@ export function fail(code, raw, slug, version) {
   var entry = {
     code: code,
     slug: slug || 'trace-brush',
-    version: version || '1.2.0',
+    version: version || '1.3.0',
     raw: String((raw && raw.message) || raw || '').slice(0, 300),
     at: new Date().toISOString()
   };
