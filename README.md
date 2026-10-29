@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-room-sweep
 ```
 
+**AIX 直接下载**（最新版）：[room-sweep.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/room-sweep.aix)
+
 注意力外挂系列 CO02（COVER 覆盖型，本组第二位）。每晚睡前巡查孩子房间最典型的焦虑：窗、插座、小物件、床护栏、门、夜灯——明明绕了一圈，躺下还是不确定是不是都查过了。本 Agent 的做法：按进门顺序逐项检查，看向一项、点头或点按才算通过；发现问题就标记待处理，**绝不刷绿**；小结前漏查的项会按方位点名提醒补看；只有全部通过，小结才说「可以安心睡了」。
 
 ## 解决的问题
