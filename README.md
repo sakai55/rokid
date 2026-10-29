@@ -5,6 +5,8 @@
 https://github.com/sakai55/rokid/tree/agent-seoul-transfer
 ```
 
+**AIX 直接下载**（最新版）：[seoul-transfer.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/seoul-transfer.aix)
+
 一句话场景：第一次坐首尔地铁的人，在换乘站用头部方向确认站台方向并锁定，再用倒计时守住末班车。
 
 方向构成：韩国在地 × 指向性 × 注意力。指向性承担换乘站台方向确认一环（头部 yaw 左右确认＋点头锁定）；注意力承担末班车倒计时守候与换乘记录保持一环；在地性落在首尔地铁 8 处真实换乘站与线路。
