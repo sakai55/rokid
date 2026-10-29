@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-bath-watch
 ```
 
+**AIX 直接下载**（最新版）：[bath-watch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/bath-watch.aix)
+
 
 注意力外挂系列 **WA02**（守望型 WATCH）· Rokid 眼镜 AIUI Agent
 
