@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-repair-buddy
 ```
 
+**AIX 直接下载**（最新版）：[repair-buddy.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/repair-buddy.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI12 个。修水龙头、自行车、马桶
 时，双手都在活儿上——一只手扶着阀芯、一只手攥着扳手，根本腾不
