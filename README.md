@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-cry-watch
 ```
 
+**AIX 直接下载**（最新版）：[cry-watch.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/cry-watch.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI18 个。宝宝在隔壁房间
 睡着，你在厨房忙、戴着耳机，或者听力不太好 — 那边闹起来
