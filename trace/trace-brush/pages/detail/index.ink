@@ -20,7 +20,7 @@ export default {
     typesLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.3.5'
+    ver: 'v1.3.6'
   },
   onLoad() {
     this._focus = 0;
