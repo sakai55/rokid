@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-fall-guard
 ```
 
+**AIX 直接下载**（最新版）：[fall-guard.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/fall-guard.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI33 个。独居的人跌倒了没人知道——本 Agent 在打开期间盯着头部朝向流里的一个动作模式：猛烈翻转之后长时间一动不动。模式命中就出声问「你还好吗？」，有应答就取消；没人应答，就把预设的求助联系人大字显示、反复朗读，让本人或身边的人照着行动。
 
