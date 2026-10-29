@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-jitensha-guard
 ```
 
+**AIX 直接下载**（最新版）：[jitensha-guard.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/jitensha-guard.aix)
+
 JP10 · 日本本地化系列。交互哲学：**运动锁闭 Motion Lockout**。本 Agent 的交互哲学是反交互：停车时它是点检单（ブレーキ/タイヤ/ライト/鍵逐项确认），一旦判定骑行中（GEO 速度或陀螺仪活动），主界面立刻塌缩成一行大字「走行中 — 画面は見ないで」，所有按钮按下只回 LOCKED（功能全部失效），只在状态切换时用 TTS 说一句话。它不导航、不测速显摆、不记录轨迹（那是底座导航与运动 App 的事）；它存在的意义就是在你骑车时拒绝被使用，并把这份拒绝做得理直气壮。
 
 ## 预览截图
