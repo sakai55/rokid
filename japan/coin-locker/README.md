@@ -1,55 +1,55 @@
-# Coin Locker（车站储物柜寄存账）
+# Coin Locker（駅のコインロッカー預け帳）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄にコピー）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-coin-locker
 ```
 
-JP05 · 日本本地化系列。交互哲学：**寄存格账本 Locker Ledger**。本 Agent 只做一张寄存账：存入时登记柜号（滑动选号）、中身一件（ITEM 切换）、场所固定写明在状态里；保管中它只显示这三件事；取回时先亮出中身名让你核对，TAKE 才记取回完成。它不帮你找空柜（那要看车站的实时空位屏）、不导航回柜子（底座的事）、不替你保管密码——它只保证你寄存的那一格，被完整地记住并核对着取回。
+JP05・日本ローカライズシリーズ。インタラクション哲学：**預けロッカー帳 Locker Ledger**。この Agent がするのは 1 枚の預け帳だけ：預け入れのときにロッカー番号を登録し（スワイプで番号選択）、中身を 1 件（ITEM で切替）、場所は状態の中に固定で明記する；保管中はこの 3 つだけを表示する；取り出すときは先に中身の名前を提示して確認してもらい、TAKE で初めて取り出し完了と記録する。空きロッカーを探す手伝いはしない（それは駅のリアルタイム空き状況の表示を見ること）、ロッカーへの案内もしない（プラットフォームの仕事）、暗証番号の保管も代行しない——保証するのは、あなたが預けたその 1 つが、完全に記憶され、照合しながら取り出されることだけ。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/coin-locker/preview-coin-locker-index.png>)
-![预览-s2](<../../screenshots/coin-locker/preview-coin-locker-s2.png>)
-![预览-s3](<../../screenshots/coin-locker/preview-coin-locker-s3.png>)
-![预览-s4](<../../screenshots/coin-locker/preview-coin-locker-s4.png>)
+![プレビュー-index](<../../screenshots/coin-locker/preview-coin-locker-index.png>)
+![プレビュー-s2](<../../screenshots/coin-locker/preview-coin-locker-s2.png>)
+![プレビュー-s3](<../../screenshots/coin-locker/preview-coin-locker-s3.png>)
+![プレビュー-s4](<../../screenshots/coin-locker/preview-coin-locker-s4.png>)
 
-## 在地性
+## 地域性
 
-日本车站的コインロッカー是旅行与通勤的基础设施：大站按大中小分柜、Suica 或现金开锁、超时按日加算、三日无人取走移交遗失物。寄存时真正的风险从来不是柜子安不安全，而是人记不住——几号柜、在哪个口、哪一层、里面放了什么，回程时站在几百个柜门前发呆。
+日本の駅のコインロッカーは旅行と通勤のインフラ：大きな駅では大・中・小に分かれ、Suica や現金で開錠し、超過すると日ごとに加算され、3 日取りに来なければ遺失物へ移される。預け入れの本当のリスクはロッカーが安全かどうかではなく、人が覚えていられないこと——何番のロッカーか、どの出口か、何階か、中に何を入れたか。帰りに何百ものロッカーの扉の前に立って呆然とする。
 
-## 功能流程（闭环）
+## 機能フロー（閉ループ）
 
-- 选格：滑动在演示柜号间切换，STORE 登记存入（柜号+中身锁定）
-- 持有：保管中只显示柜号/中身/场所与加算目安，不催不扰
-- 取回：TAKE 前先亮中身名核对，确认后记取回完了，格子清空
+- セル選択：スワイプでデモのロッカー番号を切り替え、STORE で預け入れを登録（ロッカー番号＋中身をロック）
+- 保持：保管中はロッカー番号／中身／場所と加算の目安だけを表示し、急かさず邪魔しない
+- 取り出し：TAKE の前に中身の名前を提示して照合し、確認後に取り出し完了と記録してセルを空にする
 
-## 手势映射
+## ジェスチャ対応
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャ（テンプルのタッチパッド） | キーイベント | この Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 STORE 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| シングルタップ | Enter | 状況に応じた GO（README の機能フローと画面の guide 行を参照） |
+| 上スワイプ／下スワイプ | ArrowUp / ArrowDown | 画面の guide 行にある、この Agent 固有の定義を参照 |
+| うなずき（頭が静止したとき） | `onHeadGesture('nod')` | この Agent の主確認（STORE と等価。guide 行を参照） |
+| ダブルタップ | Backspace | システムの戻る（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面上のボタンはすべて上記ジェスチャのミラーで、ほかに SPEAK（いつでも現在の状態を聞ける）と DEMO（状態機械のデモ、終了後は実際の状態がそのまま復元される）がある。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| （无） | 本 Agent 不申请任何权限；TTS 与传感器不需要清单权限，相机零调用（如适用） |
+| （なし） | この Agent は権限を一切申請しない；TTS とセンサーにマニフェストの権限は不要で、カメラの呼び出しはゼロ（該当する場合） |
 
-## 诚实边界
+## 誠実な境界
 
-- 柜号与场所是本人登记的备忘，不是与车站系统的实时联动；空位、费率、保管期限以车站告示为准
-- 演示柜号与场所为新宿站西口的示例值，真机使用时按实际柜号登记
+- ロッカー番号と場所は本人が登録したメモであり、駅のシステムとのリアルタイム連動ではない；空き状況、料金、保管期限は駅の掲示が正
+- デモのロッカー番号と場所は新宿駅西口の例の値。実機で使うときは実際のロッカー番号で登録すること
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式に効果なしと明記）。
 
-## 打包与预览
+## パッケージ化とプレビュー
 
 ```bash
 cd ~/workspace/rokid/coin-locker
@@ -57,62 +57,62 @@ cd ~/workspace/rokid/coin-locker
 ~/tools/bin/aix list ../dist/coin-locker.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| 項目 | 値 |
 |---|---|
-| Studio 名称 | Coin Locker（待导入后回填） |
-| Version / Build | 1.0.1 / 待导入后回填 |
+| Studio 名 | Coin Locker（インポート後に記入） |
+| Version / Build | 1.0.1 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | At a Japanese station: remembers coin-locker number and stored item until verified pickup. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了、Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> Coin Locker: a station coin-locker ledger for Japan. Register the locker number and the one item you stored, and the agent holds exactly that - number, item, place - until pickup, when it shows the item name for you to verify before marking the locker emptied. No live locker availability, no navigation back, no PIN custody.
+> コインロッカー：日本向けの駅のコインロッカー帳。預けたロッカーの番号と、その 1 件の中身を登録すると、Agent はその番号・中身・場所だけを取り出しまで保持し、取り出しのときに中身の名前を示して確認してから、ロッカーが空になったと印を付けます。ロッカーの空き状況のライブ表示も、戻る案内も、暗証番号の保管もありません。
 
 ### Opening Message
 
 > ## Coin Locker
 > 
-> Hundreds of identical doors, and yours is the one you forgot. Store with me: the locker number, what you put in, and where the bank of lockers is. At pickup I show you the item name first - check it, then take it.
+> 何百もの同じ扉、その中であなたのものは忘れてしまったその 1 つ。私に預けてください：ロッカーの番号、何を入れたか、ロッカーの列がどこにあるか。取り出しのときは先に中身の名前を示します——確認してから、取り出してください。
 
 ### Preview Media
 
-- `preview-coin-locker-index.png` — 初始状态
-- `preview-coin-locker-s2.png` — 演示状态 2
-- `preview-coin-locker-s3.png` — 演示状态 3
-- `preview-coin-locker-s4.png` — 演示状态 4
+- `preview-coin-locker-index.png` — 初期状態
+- `preview-coin-locker-s2.png` — デモ状態 2
+- `preview-coin-locker-s3.png` — デモ状態 3
+- `preview-coin-locker-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出にはメディアファイル 3〜5 点（うち動画 ≥1 本、≤60 秒）が必要。動画は GO の実機テスト時に追加録画する。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：寄存格账本 Locker Ledger；储物柜段格：柜门号阵列 + 大字柜号 + 中身/场所行
+- 初版：預けロッカー帳 Locker Ledger；ロッカーのセル：扉番号の配列＋大きなロッカー番号＋中身／場所の行
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）
 
 ### Change Log（Build 1.0.1）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 无
+- なし
 
 **Fixes**
 
-- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+- 言語の純化：画面と音声の文言を現地言語に統一（日本＝日本語／韓国＝韓国語）し、混入していた日本語・中国語の文言（SCAN のプロンプトを含む）を 1 つずつ調べて除去

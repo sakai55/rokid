@@ -1,55 +1,55 @@
-# Kimjang Batch（泡菜季大批次计数）
+# Kimjang Batch (김장철 대량 배치 카운터)
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio 가져오기 주소**(Global AIUI Studio의 Import Project 입력란에 붙여 넣으세요):
 
 ```
 https://github.com/sakai55/rokid/tree/agent-kimjang-batch
 ```
 
-KR08 · 韩国本地化系列。交互哲学：**批次大数 Batch Counter**。本 Agent 为沾满料的手而设计：屏幕上只有一个 62px 的大数字——当前阶段的棵数。计数靠点头（+1）与语音口令（宿主识别听到「다음」即 +1，识别不可用自动降级并明示），手几乎不用碰任何东西；+10 应对整筐过数，下滑纠错 -1。三段流水线各自计数，段目标达成才放行下一段。它不辨识白菜品质、不提供配方（那是菜谱与慧眼的事），只在你双手最忙的时候，把「数到几了」这件事稳稳接住。
+KR08 · 한국 현지화 시리즈. 상호작용 철학: **배치 큰 숫자 Batch Counter**. 이 Agent는 양념 묻은 손을 위해 설계됐습니다. 화면에는 62px 큰 숫자 하나뿐입니다. 현재 단계의 배추 포기입니다. 세는 방법은 고개 끄덕임(+1)과 음성 명령(호스트 인식이 「다음」을 들으면 +1, 인식을 못 쓰면 자동으로 격하하고 명시함)이라 손은 거의 아무것도 만질 필요가 없습니다. +10은 한 바구니 통째로 셀 때, 아래로 스와이프하면 -1로 정정합니다. 세 단계 공정이 각자 세고, 단계 목표에 닿아야 다음 단계를 열어줍니다. 배추 품질을 알아보지도, 레시피를 제공하지도 않습니다(그건 요리책과 혜안의 일). 당신이 두 손이 가장 바쁠 때, "몇까지 셌지"를 단단히 붙잡아 줄 뿐입니다.
 
-## 预览截图
+## 미리보기 스크린샷
 
-![预览-index](<../../screenshots/kimjang-batch/preview-kimjang-batch-index.png>)
-![预览-s2](<../../screenshots/kimjang-batch/preview-kimjang-batch-s2.png>)
-![预览-s3](<../../screenshots/kimjang-batch/preview-kimjang-batch-s3.png>)
-![预览-s4](<../../screenshots/kimjang-batch/preview-kimjang-batch-s4.png>)
+![미리보기-index](<../../screenshots/kimjang-batch/preview-kimjang-batch-index.png>)
+![미리보기-s2](<../../screenshots/kimjang-batch/preview-kimjang-batch-s2.png>)
+![미리보기-s3](<../../screenshots/kimjang-batch/preview-kimjang-batch-s3.png>)
+![미리보기-s4](<../../screenshots/kimjang-batch/preview-kimjang-batch-s4.png>)
 
-## 在地性
+## 현지성
 
-김장（泡菜季腌制）是韩国冬初的家族级工程：几十上百棵白菜，절이기（盐渍）→헹구기（冲洗）→양념 바르기（抹料）三段流水线，手上沾满辣椒面，一数错，盐和料的配比全乱。
+김장은 한국 초겨울의 가족 단위 대작업입니다. 배추 수십에서 백 포기가 절이기→헹구기→양념 바르기 세 단계 공정을 거치고, 손에는 고춧가루가 묻어 있어, 한 번 잘못 세면 소금과 양념의 비율이 전부 어긋납니다.
 
-## 功能流程（闭环）
+## 기능 흐름 (폐쇄 루프)
 
-- 大数：一屏一个巨号计数，阶段带显示 절이기/헹구기/양념 当前段与段目标
-- 免手：点头 +1、语音「다음」+1（ASR 守护式，失败即明示降级）、+10 整筐、下滑 -1 纠错
-- 段进：STAGE 在段目标达成后放行下一段（未达成时拒绝并播报还差几棵）
+- 큰 숫자: 한 화면에 거대한 숫자 하나로 세고, 단계 띠에 절이기/헹구기/양념 바르기 중 현재 단계와 단계 목표를 표시합니다
+- 손 안 쓰기: 고개 끄덕임 +1, 음성 「다음」 +1(ASR 가드 방식, 실패하면 격하를 명시), +10은 바구니 단위, 아래로 스와이프 -1 정정
+- 단계 전진: STAGE는 단계 목표에 닿은 뒤에야 다음 단계를 열어줍니다(닿지 않았으면 거부하고 몇 포기 부족한지 알립니다)
 
-## 手势映射
+## 제스처 매핑
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| 제스처 (안경다리 터치패드) | 키 이벤트 | 이 Agent에서의 역할 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 +1 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| 한 번 탭 | Enter | 상황별 GO(README 기능 흐름과 화면 guide 줄 참조) |
+| 위로 / 아래로 스와이프 | ArrowUp / ArrowDown | 화면 guide 줄에 적힌 이 Agent 전용 정의 참조 |
+| 고개 끄덕임 (머리가 안정됐을 때) | `onHeadGesture('nod')` | 이 Agent의 주 확인(+1과 동등, guide 줄 참조) |
+| 두 번 탭 | Backspace | 시스템 뒤로 가기(가로채지 않음) |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+화면 버튼은 모두 위 제스처의 미러링이며, SPEAK(언제든 현재 상태 듣기)와 DEMO(데모 상태 머신, 종료하면 실제 상태가 그대로 복원됨)가 추가됩니다.
 
-## 权限
+## 권한
 
-| 权限 | 用途 |
+| 권한 | 용도 |
 |---|---|
-| `RECORD_AUDIO` | 麦克风/语音路径（强度分析或 ASR；不录存） |
+| `RECORD_AUDIO` | 마이크/음성 경로(강도 분석 또는 ASR. 저장하지 않음) |
 
-## 诚实边界
+## 정직한 경계
 
-- 语音计数依赖宿主 ASR（韩语口令 다음），环境嘈杂时可能漏计；计数以屏幕大数为准，漏计用 +10/下滑当场修正
-- 棵数目标为演示 60 棵；盐料配比不在本 Agent 范围，请按自家配方
+- 음성 세기는 호스트 ASR(한국어 명령 다음)에 의존합니다. 주변이 시끄러우면 빠뜨릴 수 있습니다. 세는 기준은 화면의 큰 숫자이며, 빠뜨린 것은 +10/아래 스와이프로 그 자리에서 고치세요
+- 포기 수 목표는 데모용 60포기입니다. 소금과 양념 비율은 이 Agent의 범위가 아니니 집안 레시피를 따르세요
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS는 호스트 고정 음색을 사용하며, utterance의 `lang`은 절대 설정하지 않습니다(공식 문서에 효과가 없다고 명시됨).
 
-## 打包与预览
+## 패키징과 미리보기
 
 ```bash
 cd ~/workspace/rokid/kimjang-batch
@@ -57,76 +57,76 @@ cd ~/workspace/rokid/kimjang-batch
 ~/tools/bin/aix list ../dist/kimjang-batch.aix
 ```
 
-## 真机测试信息
+## 실기기 테스트 정보
 
-| 字段 | 值 |
+| 필드 | 값 |
 |---|---|
-| Studio 名称 | Kimjang Batch（待导入后回填） |
-| Version / Build | 1.0.2 / 待导入后回填 |
+| Studio 이름 | Kimjang Batch (가져오기 후 기입 예정) |
+| Version / Build | 1.0.2 / 가져오기 후 기입 예정 |
 | App Category | Life |
 | Intent Description | During kimjang in Korea: counts cabbage batches per stage by nod and voice, hands-free. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | 가져오기 후 기입 예정 |
+| 상태 | 로컬 빌드 완료, Studio 가져오기 대기 중 |
 
-## 提审资料 (Review Submission)
+## 심사 자료 (Review Submission)
 
 ### Feature Description
 
-> Kimjang batch counter built for hands covered in chili flakes: one 62-pixel number per stage - salting, rinsing, seasoning. Nod to add one, say 'daeum' to add one (guarded speech recognition, honest fallback), +10 per basket, swipe down to correct. Stage goals gate the pipeline. It counts; recipes stay yours.
+> 고춧가루 묻은 손을 위한 김장 배치 카운터: 단계마다 62픽셀 숫자 하나. 절이기, 헹구기, 양념 바르기. 고개를 끄덕이면 하나, '다음'이라 말하면 하나(가드가 붙은 음성 인식, 정직한 폴백), 바구니마다 +10, 아래로 스와이프해 정정. 단계 목표가 공정의 문을 지킵니다. 세는 것은 제 일, 레시피는 당신의 것입니다.
 
 ### Opening Message
 
 > ## Kimjang Batch
 > 
-> Sixty cabbages, three stages, and hands you cannot touch anything with. So: one huge number, counted by nods and by voice. I keep the count steady through salting, rinsing and seasoning - you keep the family recipe.
+> 배추 예순 포기, 세 단계, 그리고 아무것도 만질 수 없는 두 손. 그래서 거대한 숫자 하나를, 고개 끄덕임과 목소리로 셉니다. 절이기, 헹구기, 양념 바르기를 지나며 개수를 단단히 지켜드립니다. 가족 레시피는 당신이 지켜주세요.
 
 ### Preview Media
 
-- `preview-kimjang-batch-index.png` — 初始状态
-- `preview-kimjang-batch-s2.png` — 演示状态 2
-- `preview-kimjang-batch-s3.png` — 演示状态 3
-- `preview-kimjang-batch-s4.png` — 演示状态 4
+- `preview-kimjang-batch-index.png` — 초기 상태
+- `preview-kimjang-batch-s2.png` — 데모 상태 2
+- `preview-kimjang-batch-s3.png` — 데모 상태 3
+- `preview-kimjang-batch-s4.png` — 데모 상태 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 정식 심사 제출에는 미디어 파일 3~5개가 필요하고 동영상(≤60초) 1개 이상이 포함되어야 합니다. 동영상은 GO가 실기기로 직접 테스트할 때 추가로 녹화합니다.
 
-### Change Log（Build 1.0.0）
-
-**Features added**
-
-- 首个版本：批次大数 Batch Counter；巨号计数面：一屏一个大数字 + 阶段带
-
-**Improvements**
-
-- 无（首个版本）
-
-**Fixes**
-
-- 无（首个版本）
-
-### Change Log（Build 1.0.1）
+### Change Log (Build 1.0.0)
 
 **Features added**
 
-- 无
+- 첫 버전: 배치 큰 숫자 Batch Counter. 거대한 숫자 세는 화면: 한 화면에 큰 숫자 하나 + 단계 띠
 
 **Improvements**
 
-- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+- 없음 (첫 버전)
 
 **Fixes**
 
-- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+- 없음 (첫 버전)
 
-### Change Log（Build 1.0.2）
+### Change Log (Build 1.0.1)
 
 **Features added**
 
-- 无
+- 없음
 
 **Improvements**
 
-- 无
+- 버튼을 이 Agent의 UI 형태에 맞게 개별 스타일링했습니다(형태는 설계 계약 참조). 더 이상 시리즈 전체가 같은 버튼 세트를 공유하지 않습니다
 
 **Fixes**
 
-- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+- 실제 기기의 단색 녹색 패널에 맞춘 색상 조정: 기존 순백 #ffffff를 녹색 계조로 바꿨고(가장 밝은 녹색 #7dff9e), 명암은 녹색만으로 표현합니다
+
+### Change Log (Build 1.0.2)
+
+**Features added**
+
+- 없음
+
+**Improvements**
+
+- 없음
+
+**Fixes**
+
+- 언어 순화: 화면과 음성 문구를 현지 언어(일본=일본어 / 한국=한국어)로 통일하고, 섞여 있던 일본어·중국어 문구(SCAN 프롬프트 포함)를 하나씩 점검해 제거했습니다

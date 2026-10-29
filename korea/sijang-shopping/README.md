@@ -1,64 +1,64 @@
-# Sijang Shopping（시장 장보기）
+# Sijang Shopping (시장 장보기)
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio 가져오기 주소**(Global AIUI Studio의 Import Project 입력란에 붙여 넣으세요):
 
 ```
 https://github.com/sakai55/rokid/tree/agent-sijang-shopping
 ```
 
-KR15 · 韩国在地 × 路缘坡 × 注意力。精品线合并重做：由 CC09 `high-shelf-ask`（超市高货架求助话）与 KR14 `sijang-basket`（시장 바구니 核销）按同一场景（韩国传统市场购物）合并而成；原两个 Agent 原样封存、不删不改。一句话场景：坐轮椅或坐姿逛韩国传统市场的人，高处摊位前生成一句准确的求助话（TTS 代说或大字出示），再按摊位逐件核销篮子，差一件不结账。
+KR15 · 한국 현지 × 커브 컷 × 주의. 부티크 라인 통합 재제작: CC09 `high-shelf-ask`(슈퍼마켓 높은 진열대 도움 요청 문구)와 KR14 `sijang-basket`(시장 바구니 확인)을 같은 장면(한국 전통시장 쇼핑)으로 합쳐 만들었고, 원래 두 Agent는 그대로 봉인해 삭제도 수정도 하지 않습니다. 한 줄 장면: 휠체어를 타거나 앉아서 한국 전통시장을 도는 사람이 높은 가판대 앞에서 정확한 도움 요청 문구를 만들고(TTS가 대신 말하거나 큰 글자로 보여줌), 가판대별로 장바구니를 항목마다 확인하며, 한 가지라도 빠지면 계산하지 않습니다.
 
-## 预览截图
+## 미리보기 스크린샷
 
-![预览-index](<../../screenshots/sijang-shopping/preview-sijang-shopping-index.png>)
-![预览-ask](<../../screenshots/sijang-shopping/preview-sijang-shopping-ask.png>)
-![预览-ask-s2](<../../screenshots/sijang-shopping/preview-sijang-shopping-ask-s2.png>)
-![预览-basket](<../../screenshots/sijang-shopping/preview-sijang-shopping-basket.png>)
+![미리보기-index](<../../screenshots/sijang-shopping/preview-sijang-shopping-index.png>)
+![미리보기-ask](<../../screenshots/sijang-shopping/preview-sijang-shopping-ask.png>)
+![미리보기-ask-s2](<../../screenshots/sijang-shopping/preview-sijang-shopping-ask-s2.png>)
+![미리보기-basket](<../../screenshots/sijang-shopping/preview-sijang-shopping-basket.png>)
 
-## 结构与功能（闭环）
+## 구조와 기능 (폐쇄 루프)
 
-三页结构（市场摊位招牌网格 / 大字求助卡 / 篮子核销清单），状态跨会话持久化（wx storage `sijangShoppingV1`）：
+세 페이지 구조(시장 가판대 간판 그리드 / 큰 글자 도움 카드 / 장바구니 확인 목록), 상태는 세션을 넘어 저장됩니다(wx storage `sijangShoppingV1`):
 
-- **总览（pages/index）**：6 个摊位（채소가게/생선가게/과일가게/반찬가게/잡화가게/떡집）× 每摊 2 件商品的进度网格，总进度（已装件数/求助完成数/完成趟数）一目了然。
-- **求助卡（pages/ask）**：高处商品内容集 4 件（사과/수세미/멸치볶음/송편）× 求助话模板 4 句。看向锁定商品后，大字卡出示整句韩语，SPEAK 由 TTS 代说；点头（头稳时）或 CONFIRM 把「요청 완료」写入持久化。求助话只生成与出示/代说，Agent 不代断是否得到帮助。
-- **篮子核销（pages/basket）**：12 件商品按摊位逐件打勾，缺件清单实时显示；未满 12 件时 CHECKOUT 锁定并语音说明，齐全后结算、记一次完成、清单清空待下次。
+- **전체 보기(pages/index)**: 가판대 6곳(채소가게/생선가게/과일가게/반찬가게/잡화가게/떡집) × 가판대마다 상품 2개의 진행 그리드. 전체 진행도(담은 개수/도움 완료 수/완료한 장보기 수)가 한눈에 들어옵니다.
+- **도움 카드(pages/ask)**: 높은 곳 상품 콘텐츠 집합 4개(사과/수세미/멸치볶음/송편) × 도움 요청 문구 템플릿 4문장. 보고 고정하면 큰 글자 카드가 한국어 문장 전체를 보여주고, SPEAK는 TTS가 대신 말합니다. 고개 끄덕임(머리가 안정됐을 때)이나 CONFIRM이 「요청 완료」를 저장소에 기록합니다. 도움 요청 문구는 만들고 보여주거나 대신 말할 뿐이며, 도움을 받았는지는 Agent가 대신 판단하지 않습니다.
+- **장바구니 확인(pages/basket)**: 상품 12개를 가판대별로 하나씩 체크하고, 빠진 항목 목록이 실시간으로 표시됩니다. 12개가 차지 않으면 CHECKOUT이 잠기고 음성으로 설명하며, 다 차면 계산하고 완료를 한 번 기록한 뒤 목록을 비워 다음을 준비합니다.
 
-方向分工：路缘坡（轮椅/坐姿者先行）是本体，不为一般购物便利稀释；注意力承担逐件核销与缺件守候；韩国在地承担 시장 摊位与礼貌求助话的真实场景。
+방향 분담: 커브 컷(휠체어/앉은 자세의 쇼핑객 우선)이 본체이며 일반 쇼핑 편의로 희석하지 않습니다. 주의는 항목마다의 확인과 빠진 항목 대기를 맡고, 한국 현지는 시장 가판대와 정중한 도움 요청 문구의 실제 장면을 맡습니다.
 
-## 手势映射
+## 제스처 매핑
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| 제스처 (안경다리 터치패드) | 키 이벤트 | 이 Agent에서의 역할 |
 |---|---|---|
-| 单击 | Enter | 篮子页勾选当前摊位第一件／求助页确认请求 |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 切换摊位或高处商品 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 求助页记「요청 완료」 |
-| 双击 | Backspace | 系统返回（子页 BACK 键亦可） |
+| 한 번 탭 | Enter | 장바구니 페이지에서 현재 가판대의 첫 항목 체크 / 도움 페이지에서 요청 확인 |
+| 위로 / 아래로 스와이프 | ArrowUp / ArrowDown | 가판대 또는 높은 곳 상품 전환 |
+| 고개 끄덕임 (머리가 안정됐을 때) | `onHeadGesture('nod')` | 도움 페이지에 「요청 완료」 기록 |
+| 두 번 탭 | Backspace | 시스템 뒤로 가기(하위 페이지 BACK 키도 가능) |
 
-## 权限
+## 권한
 
-无。TTS 用宿主固定音色，永不设置 utterance 的 `lang`。
+없음. TTS는 호스트 고정 음색을 사용하고, utterance의 `lang`은 절대 설정하지 않습니다.
 
-## 诚实边界
+## 정직한 경계
 
-- 摊位与商品为内置内容集，不联网，无实时价格/库存。
-- 语言纯度机检：全部 .ink 假名 = 0、CJK 汉字 = 0。
+- 가판대와 상품은 내장 콘텐츠 집합이며, 온라인 연결이 없고 실시간 가격/재고가 없습니다.
+- 언어 순도 기계 검사: 전체 .ink 일본어 가나 = 0, CJK 한자 = 0.
 
-## 设备测试信息
+## 기기 테스트 정보
 
-| 项 | 值 |
+| 항목 | 값 |
 |---|---|
-| Studio name | Sijang Shopping（待导入后回填） |
+| Studio name | Sijang Shopping (가져오기 후 기입 예정) |
 | Version / Build | 1.0.0 |
-| App Category | Life（待导入时确认） |
+| App Category | Life (가져올 때 확인) |
 | Intent Description | 시장에서 높은 선반 도움 요청과 장바구니 확인 |
-| Agent ID | 待导入后回填 |
-| 状态 | 已打包、已推送；未导入 Studio、未真机测试、未提审 |
+| Agent ID | 가져오기 후 기입 예정 |
+| 상태 | 패키징 완료, 푸시 완료. Studio로 가져오지 않았고, 실기기 테스트 전, 심사 제출 전 |
 
-## 提审资料 (Review Submission)
+## 심사 자료 (Review Submission)
 
 ### Feature Description (≤500 chars)
 
-A full traditional-market trip for wheelchair and seated shoppers: six stalls and twelve items on one checklist that refuses checkout while anything is missing, plus a big-text help-phrase card for high stalls - four polite Korean phrases, spoken by TTS or shown large, with each request recorded on a nod.
+휠체어와 앉은 자세의 쇼핑객을 위한 전통시장 장보기 전체 여정: 가판대 여섯 곳과 상품 열두 개가 하나의 체크리스트에 있고, 한 가지라도 빠지면 계산을 거부합니다. 여기에 높은 가판대를 위한 큰 글자 도움 문구 카드(정중한 한국어 문구 네 가지, TTS가 말하거나 크게 표시, 요청은 고개 끄덕임으로 기록)가 더해집니다.
 
 ### Opening Message (≤500, Markdown)
 
@@ -66,16 +66,16 @@ A full traditional-market trip for wheelchair and seated shoppers: six stalls an
 
 ### Preview Media
 
-图片 4 张（本页预览截图）；视频待真机阶段补（提审要求 3–5 个文件、≥1 图 ≥1 视频）。
+이미지 4장(이 페이지의 미리보기 스크린샷). 동영상은 실기기 단계에서 추가합니다(심사 요건: 파일 3~5개, 이미지 1개 이상, 동영상 1개 이상).
 
 ### Change Log
 
 #### Build 1.0.0
-- Features added: 三页新作（总览/求助卡/篮子核销）；CC09+KR14 合并重做，摊位 6 个、商品 12 件、高处求助 4 商品 × 4 句式、状态跨会话持久化。
-- Improvements: 无（首版）。
-- Fixes: 无（首版）。
+- Features added: 세 페이지 신작(전체 보기/도움 카드/장바구니 확인). CC09+KR14 통합 재제작, 가판대 6곳, 상품 12개, 높은 곳 도움 상품 4개 × 문형 4가지, 상태의 세션을 넘는 저장.
+- Improvements: 없음 (첫 버전).
+- Fixes: 없음 (첫 버전).
 
-## 打包与预览
+## 패키징과 미리보기
 
-- 打包：`~/tools/bin/aix pack . -o sijang-shopping.aix`（仓库副本在 `aix/sijang-shopping.aix`）
-- 预览：`~/tools/bin/aix preview . --html-out artifacts/preview.html` 后走本地截图管线（端口 8902）
+- 패키징: `~/tools/bin/aix pack . -o sijang-shopping.aix`(저장소 사본은 `aix/sijang-shopping.aix`에 있음)
+- 미리보기: `~/tools/bin/aix preview . --html-out artifacts/preview.html` 실행 후 로컬 스크린샷 파이프라인 이용(포트 8902)

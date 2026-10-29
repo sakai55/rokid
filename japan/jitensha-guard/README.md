@@ -1,55 +1,55 @@
-# Jitensha Guard（自行车骑行锁闭）
+# Jitensha Guard（自転車の走行ロックアウト）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄にコピー）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-jitensha-guard
 ```
 
-JP10 · 日本本地化系列。交互哲学：**运动锁闭 Motion Lockout**。本 Agent 的交互哲学是反交互：停车时它是点检单（ブレーキ/タイヤ/ライト/鍵逐项确认），一旦判定骑行中（GEO 速度或陀螺仪活动），主界面立刻塌缩成一行大字「走行中 — 画面は見ないで」，所有按钮按下只回 LOCKED（功能全部失效），只在状态切换时用 TTS 说一句话。它不导航、不测速显摆、不记录轨迹（那是底座导航与运动 App 的事）；它存在的意义就是在你骑车时拒绝被使用，并把这份拒绝做得理直气壮。
+JP10・日本ローカライズシリーズ。インタラクション哲学：**モーション・ロックアウト Motion Lockout**。この Agent のインタラクション哲学は反インタラクション：停車中は点検表（ブレーキ／タイヤ／ライト／鍵を 1 項目ずつ確認）、走行中と判定した途端（GEO の速度またはジャイロの活動）、メイン画面は大きな 1 行「走行中 — 画面は見ないで」に崩れ、どのボタンを押しても LOCKED と返すだけ（機能はすべて無効）、状態が切り替わるときだけ TTS で一言話す。ナビゲーションせず、速度を測って自慢せず、軌跡も記録しない（それはプラットフォームのナビゲーションや運動アプリの仕事）；存在する意味は、あなたが自転車に乗っているときに使われることを拒むこと、そしてその拒否を堂々とやること。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/jitensha-guard/preview-jitensha-guard-index.png>)
-![预览-s2](<../../screenshots/jitensha-guard/preview-jitensha-guard-s2.png>)
-![预览-s3](<../../screenshots/jitensha-guard/preview-jitensha-guard-s3.png>)
-![预览-s4](<../../screenshots/jitensha-guard/preview-jitensha-guard-s4.png>)
+![プレビュー-index](<../../screenshots/jitensha-guard/preview-jitensha-guard-index.png>)
+![プレビュー-s2](<../../screenshots/jitensha-guard/preview-jitensha-guard-s2.png>)
+![プレビュー-s3](<../../screenshots/jitensha-guard/preview-jitensha-guard-s3.png>)
+![プレビュー-s4](<../../screenshots/jitensha-guard/preview-jitensha-guard-s4.png>)
 
-## 在地性
+## 地域性
 
-日本是自行车大国，也是规矩大国：ながらスマホ（骑车看手机）已入罚则，傘さし、イヤホン、並進都被交规点名。骑行中任何「看一眼屏幕」的设计，都是在诱导违法。
+日本は自転車大国であり、ルールの大国でもある：ながらスマホ（走行中のスマホ操作）は既に罰則の対象で、傘さし、イヤホン、並進は交通ルールで名指しされている。走行中に「画面を一目見る」設計はすべて、違法行為を誘うもの。
 
-## 功能流程（闭环）
+## 機能フロー（閉ループ）
 
-- 点检：停车状态逐项 CHECK（4 项），全过才显示「出発できます」
-- 锁闭：速度 >2.2m/s 或陀螺活动超阈 → 骑行相：按钮全失效、屏幕单行化、仅 TTS 报状态切换
-- 解锁：停稳 3 秒自动回到点检相；传感器全缺失时用 MODE 手动切换骑行相（SIM 为练习）
+- 点検：停車状態で 1 項目ずつ CHECK（4 項目）、すべて通って初めて「出発できます」を表示
+- ロックアウト：速度 >2.2m/s またはジャイロの活動が閾値を超える → 走行フェーズ：ボタンはすべて無効、画面は 1 行化、状態の切替だけを TTS で報せる
+- 解除：3 秒止まっていれば自動で点検フェーズに戻る；センサーがすべてない場合は MODE で走行フェーズを手動で切り替える（SIM は練習用）
 
-## 手势映射
+## ジェスチャ対応
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャ（テンプルのタッチパッド） | キーイベント | この Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 CHECK 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| シングルタップ | Enter | 状況に応じた GO（README の機能フローと画面の guide 行を参照） |
+| 上スワイプ／下スワイプ | ArrowUp / ArrowDown | 画面の guide 行にある、この Agent 固有の定義を参照 |
+| うなずき（頭が静止したとき） | `onHeadGesture('nod')` | この Agent の主確認（CHECK と等価。guide 行を参照） |
+| ダブルタップ | Backspace | システムの戻る（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面上のボタンはすべて上記ジェスチャのミラーで、ほかに SPEAK（いつでも現在の状態を聞ける）と DEMO（状態機械のデモ、終了後は実際の状態がそのまま復元される）がある。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| `GEOLOCATION` | 粗定位/高度/速度旁证（失败即 SKIP） |
+| `GEOLOCATION` | 粗い位置／高度／速度の傍証（失敗したら SKIP） |
 
-## 诚实边界
+## 誠実な境界
 
-- 骑行判定依赖 GEO 速度/陀螺仪，地下与隧道可能失效；判定不了时如实显示「判定不可」，并默认按停车相处理但播报提醒
-- 本 Agent 不测距不测速存档；交规条文以日本现行道路交通法为准，罚则细节请查官方
+- 走行の判定は GEO の速度／ジャイロに依存し、地下やトンネルでは効かないことがある；判定できないときは「判定不可」と正直に表示し、既定では停車フェーズとして扱うが読み上げで注意する
+- この Agent は距離も速度も測って保存しない；交通ルールの条文は日本の現行の道路交通法が正で、罰則の詳細は公式を確認すること
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式に効果なしと明記）。
 
-## 打包与预览
+## パッケージ化とプレビュー
 
 ```bash
 cd ~/workspace/rokid/jitensha-guard
@@ -57,76 +57,76 @@ cd ~/workspace/rokid/jitensha-guard
 ~/tools/bin/aix list ../dist/jitensha-guard.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| 項目 | 値 |
 |---|---|
-| Studio 名称 | Jitensha Guard（待导入后回填） |
-| Version / Build | 1.0.2 / 待导入后回填 |
+| Studio 名 | Jitensha Guard（インポート後に記入） |
+| Version / Build | 1.0.2 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | Cycling in Japan: pre-ride checklist at standstill, full interaction lockout while riding. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了、Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> Bicycle guard with a lockout philosophy: at a standstill it is a 4-point pre-ride checklist; the moment riding is detected (GPS speed or gyro activity) the screen collapses to one line - RIDING, DO NOT LOOK - every button goes dead, and only TTS speaks state changes. It refuses to be used while you ride, on purpose.
+> ロックアウトの哲学を持つ自転車ガード：停車中は 4 点の乗車前点検表；走行が検知された途端（GPS の速度またはジャイロの活動）、画面は 1 行——「走行中、見ないで」——に崩れ、すべてのボタンが死に、TTS だけが状態の変化を話します。走行中に使われることを、意図的に拒みます。
 
 ### Opening Message
 
 > ## Jitensha Guard
 > 
-> A glasses agent that refuses you. Parked, I am your checklist: brakes, tires, light, lock. Moving, I am one line of text and dead buttons - because looking at me while riding is exactly what the law, and I, forbid.
+> あなたを拒むグラスの Agent。停車中、私はあなたの点検表：ブレーキ、タイヤ、ライト、鍵。動き出したら、私は 1 行の文字と死んだボタン——走行中に私を見ることは、法律と私が禁じるそのものだからです。
 
 ### Preview Media
 
-- `preview-jitensha-guard-index.png` — 初始状态
-- `preview-jitensha-guard-s2.png` — 演示状态 2
-- `preview-jitensha-guard-s3.png` — 演示状态 3
-- `preview-jitensha-guard-s4.png` — 演示状态 4
+- `preview-jitensha-guard-index.png` — 初期状態
+- `preview-jitensha-guard-s2.png` — デモ状態 2
+- `preview-jitensha-guard-s3.png` — デモ状態 3
+- `preview-jitensha-guard-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出にはメディアファイル 3〜5 点（うち動画 ≥1 本、≤60 秒）が必要。動画は GO の実機テスト時に追加録画する。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：运动锁闭 Motion Lockout；极小面：骑行中一屏只剩一行大字，其余全黑
+- 初版：モーション・ロックアウト Motion Lockout；最小の面：走行中は画面に大きな 1 行だけが残り、その他はすべて黒
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）
 
 ### Change Log（Build 1.0.1）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+- ボタンをこの Agent の UI 形状に合わせて個別に造形（形状は設計契約を参照）し、シリーズ全員で同じボタンのセットを共有しない
 
 **Fixes**
 
-- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+- 実機の単色グリーンパネルに色を合わせた：元の純白 #ffffff をグリーンの階調に変更（最も明るいグリーン #7dff9e）、濃淡はグリーンだけで表現
 
 ### Change Log（Build 1.0.2）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 无
+- なし
 
 **Fixes**
 
-- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+- 言語の純化：画面と音声の文言を現地言語に統一（日本＝日本語／韓国＝韓国語）し、混入していた日本語・中国語の文言（SCAN のプロンプトを含む）を 1 つずつ調べて除去

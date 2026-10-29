@@ -1,55 +1,55 @@
-# Shinkansen Quiet（新干线静音守卫）
+# Shinkansen Quiet（新幹線静音ガード）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄に貼り付け）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-shinkansen-quiet
 ```
 
-JP01 · 日本本地化系列。交互哲学：**沉默守卫 Silence Keeper**。在静音车厢里，最难自知的是「我自己的声音有多大」：戴着耳机说话会不自觉放大音量，电话响起时慌忙接听的前几秒最吵。本 Agent 把「自己有没有越线」外包给眼镜：它只监测佩戴者近场发声强度，平时一个字都不显示，只有越线才出现，并提醒你去连接处。它不转写、不录音、不评价别人——那是实时字幕和会议转写（底座能力）的事，与它无关。
+JP01 ・ 日本ローカライズシリーズ。対話哲学：**沈黙の番人 Silence Keeper**。静音車両で最も自覚しにくいのは「自分の声がどれほど大きいか」だ。ヘッドホンを着けて話すと無意識に声量が上がり、電話が鳴って慌てて出た最初の数秒が最もうるさい。本 Agent は「自分が一線を越えたかどうか」をグラスに任せる。装着者の近距離の発声強度だけを監視し、普段は何も表示せず、越えたときだけ現れて、デッキへ行くよう促す。書き起こしも録音もせず、他人を評価することもしない——それはリアルタイム字幕や会議の書き起こし（ベース機能）の役割であり、本 Agent とは関係がない。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/shinkansen-quiet/preview-shinkansen-quiet-index.png>)
-![预览-s2](<../../screenshots/shinkansen-quiet/preview-shinkansen-quiet-s2.png>)
-![预览-s3](<../../screenshots/shinkansen-quiet/preview-shinkansen-quiet-s3.png>)
-![预览-s4](<../../screenshots/shinkansen-quiet/preview-shinkansen-quiet-s4.png>)
+![プレビュー-index](<../../screenshots/shinkansen-quiet/preview-shinkansen-quiet-index.png>)
+![プレビュー-s2](<../../screenshots/shinkansen-quiet/preview-shinkansen-quiet-s2.png>)
+![プレビュー-s3](<../../screenshots/shinkansen-quiet/preview-shinkansen-quiet-s3.png>)
+![プレビュー-s4](<../../screenshots/shinkansen-quiet/preview-shinkansen-quiet-s4.png>)
 
-## 在地性
+## ローカル性
 
-日本新干线有明确的车厢礼仪：手机调静音、通话去车厢连接处（デッキ）、交谈压低音量。这不是泛泛的「安静」，而是全车厢共同遵守的成文规矩，一个人破例全车厢都听得见。
+日本の新幹線には明確な車両マナーがある。携帯電話はマナーモードにし、通話は車両の連結部（デッキ）でし、会話は声量を抑える。これは漠然とした「静かに」ではなく、車両全体で守る明文化されたルールであり、1人が例外になれば車両全体に聞こえる。
 
-## 功能流程（闭环）
+## 機能の流れ（閉ループ）
 
-- 守候： Web Audio 分析近场声压（只算强度，不录存、不转写），声压条实时起伏
-- 越线：超过你设的阈值才点亮提醒并 TTS 一句「デッキへどうぞ」，同时记一次越线
-- 复盘：峰值与越线次数留在本页内存，点头即确认消账，下车关页即忘
+- 見守り：Web Audio が近距離の音圧を分析する（強度だけを計算し、保存も書き起こしもしない）。音圧バーはリアルタイムに上下する
+- 越線：設定したしきい値を超えたときだけ注意を点灯し、TTS で「デッキへどうぞ」と1回読み上げ、同時に越線を1回記録する
+- 振り返り：ピークと越線回数は本ページのメモリに残り、うなずくと確認して消去する。降車してページを閉じれば忘れる
 
-## 手势映射
+## ジェスチャー対応表
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャー（テンプルタッチパッド） | キーイベント | 本 Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 ARM 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| 1回タップ | Enter | 状況に応じた GO（README の機能の流れと画面の guide 行を参照） |
+| 上スワイプ／下スワイプ | ArrowUp / ArrowDown | 画面の guide 行にある本 Agent 専用の定義を参照 |
+| うなずき（頭が安定したとき） | `onHeadGesture('nod')` | 本 Agent の主確認（ARM と同等。guide 行を参照） |
+| ダブルタップ | Backspace | システムの戻る（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面上のボタンは上記ジェスチャーのミラーであり、SPEAK（いつでも現在の状態を聞ける）と DEMO（状態遷移のデモ。終了後は実際の状態がそのまま復元される）を追加している。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| `RECORD_AUDIO` | 麦克风/语音路径（强度分析或 ASR；不录存） |
+| `RECORD_AUDIO` | マイク／音声経路（強度分析または ASR。保存しない） |
 
-## 诚实边界
+## 誠実な境界
 
-- 声压是相对强度，不是校准分贝值；真机麦克风模式（wearer 近场）可用性以设备为准，不可用时如实报 SKIP，核心提醒逻辑不受影响
-- 练习模式（PRACTICE）的声压是模拟值，只用于熟悉流程，界面与播报都会明说「练习」
+- 音圧は相対的な強度であり、校正されたデシベル値ではない。実機のマイクモード（wearer 近距離）の可用性はデバイスに依存し、使えない場合は正直に SKIP と報告する。中核の注意ロジックには影響しない
+- 練習モード（PRACTICE）の音圧はシミュレーション値であり、手順に慣れるためだけに使う。画面と読み上げの両方で「練習」と明示する
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式に効果がないと明記されている）。
 
-## 打包与预览
+## パッケージングとプレビュー
 
 ```bash
 cd ~/workspace/rokid/shinkansen-quiet
@@ -57,76 +57,76 @@ cd ~/workspace/rokid/shinkansen-quiet
 ~/tools/bin/aix list ../dist/shinkansen-quiet.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| 項目 | 値 |
 |---|---|
-| Studio 名称 | Shinkansen Quiet（待导入后回填） |
-| Version / Build | 1.0.2 / 待导入后回填 |
+| Studio 名 | Shinkansen Quiet（インポート後に記入） |
+| Version / Build | 1.0.2 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | Worn on a Shinkansen quiet car: monitors the wearer voice level and reminds them to move to the deck when they get loud. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了、Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> Shinkansen quiet-car self guard. It watches only YOUR voice level through the mic (level only, never recorded, never transcribed) and stays invisible until you cross your own threshold - then it reminds you once to step to the deck for calls. Peak and crossing count live in page memory and are gone when you close it.
+> 新幹線の静音車両向けセルフガード。マイクで自分の声のレベルだけを監視する（レベルのみ。録音も書き起こしもしない）。普段は表示されず、自分で決めたしきい値を超えたときだけ現れ、通話はデッキへ移動するよう1回促す。ピークと越線回数はページメモリにのみ残り、ページを閉じれば消える。
 
 ### Opening Message
 
 > ## Shinkansen Quiet
 > 
-> In a quiet car, the hardest sound to judge is your own. Arm me and I will watch only your voice level - no recording, no transcription. Stay under your line and I stay invisible. Cross it, and I will say one thing: please take the call to the deck.
+> 静音車両で最も判断しにくい音は、自分の声だ。起動すれば、自分の声のレベルだけを見守る——録音も書き起こしもしない。しきい値以下なら何も表示しない。超えたら、言うことは1つだけ。通話はデッキでお願いします。
 
 ### Preview Media
 
-- `preview-shinkansen-quiet-index.png` — 初始状态
-- `preview-shinkansen-quiet-s2.png` — 演示状态 2
-- `preview-shinkansen-quiet-s3.png` — 演示状态 3
-- `preview-shinkansen-quiet-s4.png` — 演示状态 4
+- `preview-shinkansen-quiet-index.png` — 初期状態
+- `preview-shinkansen-quiet-s2.png` — デモ状態 2
+- `preview-shinkansen-quiet-s3.png` — デモ状態 3
+- `preview-shinkansen-quiet-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出には 3–5 個のメディアファイルが必要で、動画（≤60 s）を ≥1 本含む。動画は GO が実機で自己テストする際に後から録画する。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：沉默守卫 Silence Keeper；仪表横条：中央大读数 + 声压横条 + 阈值刻度
+- 初版：沈黙の番人 Silence Keeper。計器の横バー：中央の大きな読み値 + 音圧の横バー + しきい値の目盛り
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）
 
 ### Change Log（Build 1.0.1）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+- ボタンは本 Agent の UI 形態に合わせて個別に定めた（形態は設計契約を参照）。シリーズ全体で同じボタンの組を共用しない
 
 **Fixes**
 
-- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+- 色を実機のモノクロ緑パネルに合わせた：元の純白 #ffffff を緑の階調に変更した（最も明るい緑 #7dff9e）。明暗は緑だけで表す
 
 ### Change Log（Build 1.0.2）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 无
+- なし
 
 **Fixes**
 
-- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+- 言語の純化：画面と音声の文案を現地の言語に統一した（日本＝日本語／韓国＝韓国語）。混入していた日本語と中国語の文案（SCAN のプロンプトを含む）を1つずつ確認して取り除いた

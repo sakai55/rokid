@@ -1,57 +1,57 @@
-# Onsen Gate（温泉入浴门禁）
+# Onsen Gate（温泉入浴ゲート）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄に貼り付け）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-onsen-gate
 ```
 
-> **退役保留（2026-10-25，GO 裁定）**：温泉里没人戴眼镜入浴，浴场也不允许携入电子设备，高温蒸汽本身就会毁掉眼镜——本 Agent 的场景在生活常识中不成立。即日起退出日韩系列现役阵容，JP05 由 `coin-locker`（车站储物柜寄存账）接替。工程与导入地址保留备查，不删除。
+> **引退して保持（2026-10-25、GO の判断）**：温泉では誰も眼鏡をかけて入浴せず、浴場も電子機器の持ち込みを許可しておらず、高温の蒸気自体が眼鏡を壊してしまう——この Agent の場面は生活の常識の中で成り立たない。本日付けで日韓シリーズの現役ラインナップから外れ、JP05 は `coin-locker`（駅のロッカーへの預け入れ帳簿）が引き継ぐ。プロジェクトとインポートアドレスは参照用に保持し、削除しない。
 
-JP05 · 日本本地化系列。交互哲学：**门禁阈限 Threshold Gates**。本 Agent 是入浴前的三道门：洗净身体、束发与毛巾出池、安静入池——上一道门没过，下一道门不开，界面就是三道门框本身。三道门全过，它才切换成入池计时（10 分钟目安，超时轻声收）。浴室场景它硬性不用相机：权限表里根本没有 CAMERA，代码里零相机调用，写进 README 作为设计承诺。它不辨识浴场、不翻译告示（底座的事），只守这三道门。
+JP05 · 日本ローカライズシリーズ。対話の哲学：**入浴ゲート Threshold Gates**。この Agent は入浴前の3つの関門である。体を洗う、髪を束ねタオルをお湯から出す、静かに入る——前の関門を通過しなければ次の関門は開かず、画面は3つの門の枠そのものである。3つの関門を全て通過して初めて、入浴タイマーに切り替わる（10分が目安で、過ぎたら静かに締める）。浴室の場面ではカメラを断固として使わない。権限表に CAMERA は全くなく、コードにもカメラの呼び出しはゼロであり、README に設計上の約束として記す。浴場を識別したり掲示を翻訳したりはしない（それは基盤の仕事である）。守るのはこの3つの関門だけである。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/onsen-gate/preview-onsen-gate-index.png>)
-![预览-s2](<../../screenshots/onsen-gate/preview-onsen-gate-s2.png>)
-![预览-s3](<../../screenshots/onsen-gate/preview-onsen-gate-s3.png>)
-![预览-s4](<../../screenshots/onsen-gate/preview-onsen-gate-s4.png>)
+![プレビュー-index](<../../screenshots/onsen-gate/preview-onsen-gate-index.png>)
+![プレビュー-s2](<../../screenshots/onsen-gate/preview-onsen-gate-s2.png>)
+![プレビュー-s3](<../../screenshots/onsen-gate/preview-onsen-gate-s3.png>)
+![プレビュー-s4](<../../screenshots/onsen-gate/preview-onsen-gate-s4.png>)
 
-## 在地性
+## ローカル性
 
-日本の温泉・銭湯有一套不写在墙上也人人懂的规矩：湯船の前に体を洗う、タオルは湯船に入れない、髪は束ねる。对初次去的人（和带外国朋友去的人），最紧张的不是泡，是「进门到下水之间别出洋相」。
+日本の温泉・銭湯には、壁に書かれていなくても誰もが知っている決まりがある。湯船の前に体を洗う、タオルは湯船に入れない、髪は束ねる。初めて行く人（そして外国の友人を連れて行く人）にとって、いちばん緊張するのは浸かることではなく、「入ってからお湯に入るまでの間に恥をかかないこと」である。
 
-## 功能流程（闭环）
+## 機能フロー（クローズドループ）
 
-- 门禁：三道门自左向右，当前门满框，通过后门框点亮并「开启」
-- 通过方式：PASS 键/单击/点头，本人确认即过（无传感器可证洗净与否，如实标注自己确认）
-- 入池：三门全过自动进入 10:00 计时段，结束播报「上がりましょう」，BACK 可回上一门修正
+- ゲート管理：3つの関門が左から右に並び、現在の関門は枠いっぱいに表示される。通過すると門の枠が点灯して「開く」
+- 通過の方法：PASS キー / シングルタップ / うなずき。本人が確認すれば通過する（体を洗ったかどうかを証明できるセンサーはないため、自分で確認したと正直に表示する）
+- 入浴：3つの関門を全て通過すると自動で 10:00 のタイマー区間に入り、終了時に「上がりましょう」と読み上げる。BACK で前の関門に戻って直すこともできる
 
-## 手势映射
+## ジェスチャー対応表
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャー（テンプルタッチパッド） | キーイベント | この Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 PASS 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| シングルタップ | Enter | 状況に応じた GO（README の機能フローと画面のガイド行を参照） |
+| 上スワイプ / 下スワイプ | ArrowUp / ArrowDown | 画面のガイド行にあるこの Agent 固有の定義を参照 |
+| うなずき（頭が安定しているとき） | `onHeadGesture('nod')` | この Agent の主な確認（PASS と同等。ガイド行を参照） |
+| ダブルタップ | Backspace | システムの戻る（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面のボタンはいずれも上記ジェスチャーのミラーであり、ほかに SPEAK（いつでも現在の状態を聞く）と DEMO（デモ用ステートマシン。終了後は実際の状態がそのまま復元される）がある。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| （无） | 本 Agent 不申请任何权限；TTS 与传感器不需要清单权限，相机零调用（如适用） |
+| （なし） | この Agent はどの権限も申請しない。TTS とセンサーにマニフェスト権限は不要であり、カメラは一切呼び出さない（該当する場合） |
 
-## 诚实边界
+## 誠実な境界
 
-- 所有门均为本人确认，Agent 无法也声称能验证你是否真的洗净——它守的是顺序与提醒，不是监督
-- 计时为节奏目安，不是医疗建议；身体不适请立即出浴，本 Agent 不做健康判断
+- 全ての関門は本人による確認であり、Agent が本当に体を洗ったかどうかを検証できるわけでも、できると主張するわけでもない。守るのは順序と注意喚起であり、監視ではない
+- タイマーはペースの目安であり、医療上の助言ではない。体調が悪ければ直ちにお湯から出ること。この Agent は健康状態の判断をしない
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式ドキュメントで効果がないと明記されている）。
 
-## 打包与预览
+## パッケージとプレビュー
 
 ```bash
 cd ~/workspace/rokid/onsen-gate
@@ -59,62 +59,62 @@ cd ~/workspace/rokid/onsen-gate
 ~/tools/bin/aix list ../dist/onsen-gate.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| フィールド | 値 |
 |---|---|
-| Studio 名称 | Onsen Gate（待导入后回填） |
-| Version / Build | 1.0.1 / 待导入后回填 |
+| Studio 名 | Onsen Gate（インポート後に記入） |
+| Version / Build | 1.0.1 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | At a Japanese onsen or sento changing room: sequences the pre-bath etiquette gates, then times the soak. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了。Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> Onsen entry gates: three thresholds before the bath - wash first, hair tied and towel out of the water, enter quietly. A gate opens only when you confirm the previous one; pass all three and it becomes a gentle 10-minute soak timer. No camera anywhere in this agent, by design - the permissions list is empty.
+> 温泉の入浴ゲートです。お湯の前に3つの関門——先に体を洗う、髪を束ねタオルをお湯に入れない、静かに入る。前の関門を自分で確認しないと次は開きません。3つ全てを通過すると、穏やかな10分の入浴タイマーに変わります。設計上、この Agent のどこにもカメラはありません。権限リストは空です。
 
 ### Opening Message
 
 > ## Onsen Gate
 > 
-> Three gates before the water: wash, tie your hair and keep the towel out, step in quietly. Pass them in order and I turn into your soak timer. I never use a camera here - this is a bathroom, and the gate is a promise, not a sensor.
+> お湯の前に3つの関門があります。洗うこと、髪を束ねタオルを入れないこと、静かに入ること。順番に通過すれば、入浴タイマーになります。ここは浴室ですから、カメラは決して使いません。関門はセンサーではなく約束です。
 
 ### Preview Media
 
-- `preview-onsen-gate-index.png` — 初始状态
-- `preview-onsen-gate-s2.png` — 演示状态 2
-- `preview-onsen-gate-s3.png` — 演示状态 3
-- `preview-onsen-gate-s4.png` — 演示状态 4
+- `preview-onsen-gate-index.png` — 初期状態
+- `preview-onsen-gate-s2.png` — デモ状態 2
+- `preview-onsen-gate-s3.png` — デモ状態 3
+- `preview-onsen-gate-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出には3–5点のメディアファイルが必要で、動画1点以上（60秒以内）を含むこと。動画は GO の実機セルフテスト時に追加で録画する。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：门禁阈限 Threshold Gates；门形横列：三道无底边门框逐道开启，入池后变计时
+- 初版：入浴ゲート Threshold Gates。門の形を横に並べる：底辺のない門の枠3つが一つずつ開き、入浴後はタイマーに変わる
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）
 
 ### Change Log（Build 1.0.1）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+- ボタンをこの Agent の UI 形態に合わせて個別に形作りした（形態は設計契約を参照）。シリーズ全体で同じボタンのセットを共用しない
 
 **Fixes**
 
-- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+- 実機のモノクロ緑パネルに合わせて色を調整した。元の純白 #ffffff を緑の階調に変え（最も明るい緑 #7dff9e）、明暗は緑だけで表現する

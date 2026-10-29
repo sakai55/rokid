@@ -1,14 +1,14 @@
 # 祭りゲーム集
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄に貼り付け）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-matsuri-game-shuu
 ```
 
-JP32 · 日本在地 × 游戏 × 注意力 × 指向性。夏祭りの待ち時間、家族が眼鏡一本で20の屋台ゲームを回す
+JP32 ・ 日本在地 × ゲーム × 注意力 × 指向性。夏祭りの待ち時間、家族が眼鏡一本で20の屋台ゲームを回す
 
-## 预览截图
+## プレビュー画像
 
 ![preview-matsuri-game-shuu-index.png](../../screenshots/matsuri-game-shuu/preview-matsuri-game-shuu-index.png)
 ![preview-matsuri-game-shuu-g01.png](../../screenshots/matsuri-game-shuu/preview-matsuri-game-shuu-g01.png)
@@ -33,60 +33,60 @@ JP32 · 日本在地 × 游戏 × 注意力 × 指向性。夏祭りの待ち時
 ![preview-matsuri-game-shuu-g20.png](../../screenshots/matsuri-game-shuu/preview-matsuri-game-shuu-g20.png)
 ![preview-matsuri-game-shuu-g01-s2.png](../../screenshots/matsuri-game-shuu/preview-matsuri-game-shuu-g01-s2.png)
 
-## 方向构成
+## 方向の構成
 
-- 本 Agent 的方向构成：日本在地 × 游戏 × 注意力 × 指向性。每个方向在场景里承担不可替代的一环，非功能拼盘。
-- 一句话场景：夏祭りの待ち時間、家族が眼鏡一本で20の屋台ゲームを回す。
+- 本 Agent の方向の構成：日本在地 × ゲーム × 注意力 × 指向性。各方向は場面の中で替えの利かない役割を担い、機能の寄せ集めではない。
+- 場面を一言で表すと：夏祭りの待ち時間、家族が眼鏡一本で20の屋台ゲームを回す。
 
-## 结构与功能
+## 構造と機能
 
-21 页：`pages/index/` 屋台一覧（20游戏名を5件ずつ窓表示・上下选・Enter开）；游戏页各一机制——计数8页（太鼓8回/金魚5匹/ヨーヨー6個/たこ焼き10個/うちわ20回/提灯12個/ボール7個/掛け声16回）、选择问答10页（各3問・3択・正誤TTS＋解説、完答记分记录）、方向选择2页（左右头向＋按键、AbsoluteOrientationSensor守卫、传感器缺失时按键可用）。每游戏页功能与内容集互异，状态变体不充页数。
+21 ページ：`pages/index/` 屋台一覧（20 ゲームの名称を 5 件ずつ窓表示し、上下で選び、Enter で開く）。ゲームページはそれぞれ 1 つの仕組みを持つ。数えるページ 8 件（太鼓 8 回 / 金魚 5 匹 / ヨーヨー 6 つ / たこ焼き 10 つ / うちわ 20 回 / 提灯 12 つ / ボール 7 つ / 掛け声 16 回）、選択式の問答 10 ページ（各 3 問・3 つの選択肢・正誤の TTS と解説、回答完了時にスコアを記録）、方向を選ぶページ 2 件（左右の頭の向きとキー、AbsoluteOrientationSensor のガード付き。センサーがない場合はキーで操作できる）。各ゲームページで機能と収録内容は異なり、状態の違いだけでページ数を数えることはしない。
 
-内容集计数：屋台ゲーム20个；计数目标8/5/6/10/20/12/7/16；问答10页×3問；方向2页×3的；游戏记录按实际条数计。跨会话持久化：存储键 `matsuriGameShuuV1`（选中项、打勾/答题/计数状态、完成记录数组、`lastError`）。
+収録内容の数：屋台ゲーム 20 件。数える目標 8 / 5 / 6 / 10 / 20 / 12 / 7 / 16。問答 10 ページ × 3 問。方向 2 ページ × 3 つの的。ゲームの記録は実際の件数で数える。セッションをまたぐ保存：保存キー `matsuriGameShuuV1`（選択中の項目、チェック / 回答 / カウントの状態、完了記録の配列、`lastError`）。
 
-## 手势映射
+## ジェスチャー対応表
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャー（テンプル側タッチパッド） | キーイベント | 本 Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 主确认（各页主按钮） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 切换选项 / 上下一项 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 等价于主确认 |
-| 双击 | Backspace | 返回上一页（子页） |
+| 1 回タップ | Enter | 主な承認操作（各ページの主ボタン） |
+| 上スワイプ / 下スワイプ | ArrowUp / ArrowDown | 選択肢の切り替え / 上下の項目への移動 |
+| うなずき（頭が安定しているとき） | `onHeadGesture('nod')` | 主な承認操作と同等 |
+| 2 回タップ | Backspace | 前のページに戻る（子ページ） |
 
-## 权限
+## 権限
 
-无。TTS 与传感器不需要清单权限，相机零调用。
+なし。TTS とセンサーにマニフェスト権限は不要で、カメラは一切呼び出さない。
 
-## 诚实边界
+## 正直な境界
 
 - 各ゲームの採点は本人の操作・選択による。Agent は遊びの上手さを自動判定しない。
 - 方向ゲームの頭センサーは、あるときだけ補助します。センサーがないときはキーで選べます。
 - 景品・料金は収録済みの定型内容です。実際の屋台の案内が正です。
 
-## 错误码
+## エラーコード
 
-失败时眼镜屏显裸码、TTS 只读码、最近一次错误写入持久数据的 `lastError`（含码、本台 slug、版本与原文）。本台可能出现的码：
+失敗した場合は眼鏡の画面に裸のコードを表示し、TTS はコードだけを読み上げ、直近のエラーを保存データの `lastError` に書き込む（含まれるのはコード、本 Agent の slug、バージョン、原文）。本 Agent で出る可能性があるコード：
 
-- `E5001` 记录保存失败（存储写入抛错）
-- `E5002` 记录读取失败（读取/解析抛错）
-- `E3005` 播报失败（TTS speak 抛错）
-- `E8001` 页面切换失败（navigateTo/navigateBack 抛错）
-- `E7001` 朝向传感器不可用（AbsoluteOrientationSensor 构造/启动失败）
+- `E5001` 記録の保存に失敗（保存の書き込みで例外）
+- `E5002` 記録の読み取りに失敗（読み取り / 解析で例外）
+- `E3005` 読み上げに失敗（TTS の speak で例外）
+- `E8001` ページ切り替えに失敗（navigateTo / navigateBack で例外）
+- `E7001` 方向センサーが使えない（AbsoluteOrientationSensor の生成 / 開始に失敗）
 
-## 设备测试信息
+## 実機テスト情報
 
-| 项目 | 内容 |
+| 項目 | 内容 |
 |---|---|
-| Studio 名 | 待回填 |
+| Studio 名 | 未記入 |
 | Version | 1.0.0 |
-| App Category | 待回填 |
-| Intent Description | 待回填 |
-| Agent ID | 待回填 |
-| 状态 | 未真机验证 |
+| App Category | 未記入 |
+| Intent Description | 未記入 |
+| Agent ID | 未記入 |
+| 状態 | 実機未検証 |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
-Feature Description: Matsuri game shuu: a festival waiting-time collection. Twenty stall games in one agent - counting, quizzes and head-direction choices - each with its own set and persisted play records.
+Feature Description: 祭りゲーム集：祭りの待ち時間向けコレクションです。数える遊び、クイズ、頭の方向で選ぶ遊びなど、屋台ゲーム 20 件を 1 つの Agent に収めます。各ゲームは独自の収録内容を持ち、プレイ記録は保存されます。
 
 Opening Message: 夏祭りの待ち時間ですね。屋台ゲームを20個、眼鏡一本で回しましょう。
 
@@ -114,10 +114,10 @@ Preview Media:
 - `preview-matsuri-game-shuu-g20.png`
 - `preview-matsuri-game-shuu-g01-s2.png`
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机录制后补。
+> 正式な審査提出には 3–5 件のメディアファイルが必要で、動画を 1 件以上（≤60 s）含めます。動画は GO の実機録画のあとで追加します。
 
 Change Log — Build 1.0.0:
 
-- Features added: 首个版本；夏祭りの待ち時間、家族が眼鏡一本で20の屋台ゲームを回す
-- Improvements: 无（首个版本）
-- Fixes: 无（首个版本）
+- Features added: 初版。夏祭りの待ち時間、家族が眼鏡一本で20の屋台ゲームを回す
+- Improvements: なし（初版）
+- Fixes: なし（初版）

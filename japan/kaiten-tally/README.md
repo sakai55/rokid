@@ -1,56 +1,56 @@
-# Kaiten Tally（回转寿司盘数账）
+# Kaiten Tally（回転寿司の皿数帳）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄にコピー）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-kaiten-tally
 ```
 
-JP12 · 日本本地化系列。交互哲学：**传送带盘数 Conveyor Tally**。本 Agent 是传送带边的盘数账：白盘 110 日元、红盘 220 日元、黑盘 330 日元，吃一盘按颜色加一盘，合计实时就是结账目安。它不识寿司、不判断好不好吃，只数盘子；结账时 GO 一次锁定合计，再 GO 一次为下一桌清零。最后点单（ラストオーダー）时间必须问店员，界面明写不替你报。
+JP12・日本ローカライズシリーズ。インタラクション哲学：**コンベヤーの皿数 Conveyor Tally**。この Agent はコンベヤーの脇の皿数帳：白皿 110 円、赤皿 220 円、黒皿 330 円、1 皿食べるごとに色で 1 皿加え、合計がそのままリアルタイムの会計の目安になる。寿司を判別せず、美味しいかどうかも判断せず、皿を数えるだけ；会計のときに GO を 1 回で合計をロックし、もう 1 回 GO で次の客のためにゼロに戻す。ラストオーダーの時刻は必ず店員に聞くこと。画面にも、代わりに報せないと明記する。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/kaiten-tally/preview-kaiten-tally-index.png>)
-![预览-s2](<../../screenshots/kaiten-tally/preview-kaiten-tally-s2.png>)
-![预览-s3](<../../screenshots/kaiten-tally/preview-kaiten-tally-s3.png>)
-![预览-s4](<../../screenshots/kaiten-tally/preview-kaiten-tally-s4.png>)
+![プレビュー-index](<../../screenshots/kaiten-tally/preview-kaiten-tally-index.png>)
+![プレビュー-s2](<../../screenshots/kaiten-tally/preview-kaiten-tally-s2.png>)
+![プレビュー-s3](<../../screenshots/kaiten-tally/preview-kaiten-tally-s3.png>)
+![プレビュー-s4](<../../screenshots/kaiten-tally/preview-kaiten-tally-s4.png>)
 
-## 在地性
+## 地域性
 
-回转寿司（回転寿司）的价格按盘子颜色定：不同颜色对应不同单价，吃完把盘子摞起来，店员数盘结账。最容易乱的是「到底吃了几盘、每种颜色几盘」，尤其一桌人一起吃、盘子混在一起时。
+回転寿司の価格は皿の色で決まる：色ごとに単価が違い、食べ終えたら皿を重ね、店員が皿を数えて会計する。最も乱れやすいのは「結局何皿食べたか、色ごとに何皿か」で、特に 1 テーブルの面々が一緒に食べ、皿が混ざっているとき。
 
-## 功能流程（闭环）
+## 機能フロー（閉ループ）
 
-- 按色计数：白/红/黑三色盘各一键，吃一盘加一盘，合计与总盘数实时更新
-- 传送带带：上方一条皿数带，皿数一目了然，空桌时明写「まだ皿はありません」
-- 结账锁定：GO 锁定合计并 TTS 报数，再 GO 为下一桌清零，锁定期间加盘无效
+- 色ごとに数える：白／赤／黒の 3 色の皿に各 1 キー、1 皿食べるごとに 1 皿加え、合計と総皿数がリアルタイムに更新される
+- コンベヤーの帯：上部に皿数の帯が 1 本、皿数が一目で分かり、空のテーブルのときは「まだ皿はありません」と明記する
+- 会計のロック：GO で合計をロックして TTS で読み上げ、もう一度 GO で次の客のためにゼロに戻す。ロック中は皿の追加は無効
 
-## 手势映射
+## ジェスチャ対応
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャ（テンプルのタッチパッド） | キーイベント | この Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 WHITE 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| シングルタップ | Enter | 状況に応じた GO（README の機能フローと画面の guide 行を参照） |
+| 上スワイプ／下スワイプ | ArrowUp / ArrowDown | 画面の guide 行にある、この Agent 固有の定義を参照 |
+| うなずき（頭が静止したとき） | `onHeadGesture('nod')` | この Agent の主確認（WHITE と等価。guide 行を参照） |
+| ダブルタップ | Backspace | システムの戻る（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面上のボタンはすべて上記ジェスチャのミラーで、ほかに SPEAK（いつでも現在の状態を聞ける）と DEMO（状態機械のデモ、終了後は実際の状態がそのまま復元される）がある。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| （无） | 本 Agent 不申请任何权限；TTS 与传感器不需要清单权限，相机零调用（如适用） |
+| （なし） | この Agent は権限を一切申請しない；TTS とセンサーにマニフェストの権限は不要で、カメラの呼び出しはゼロ（該当する場合） |
 
-## 诚实边界
+## 誠実な境界
 
-- 盘价（白 110/红 220/黑 330）是本账本的目安价目，各店价目不同，以店内标价为准，界面明示
-- 盘子由本人按颜色手动加，Agent 不用相机数盘，数错请在结账前复核
-- ラストオーダー与店内规则以店员与店内告示为准，Agent 不做实时查询
+- 皿の価格（白 110／赤 220／黒 330）はこの帳簿の目安の価格表で、店ごとに価格は違う。店内の表示価格が正で、画面にも明示する
+- 皿は本人が色ごとに手動で加える。Agent はカメラで皿を数えず、数え間違えたら会計の前に見直すこと
+- ラストオーダーと店内のルールは店員と店内の掲示が正で、Agent はリアルタイムの照会をしない
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式に効果なしと明記）。
 
-## 打包与预览
+## パッケージ化とプレビュー
 
 ```bash
 cd ~/workspace/rokid/kaiten-tally
@@ -58,48 +58,48 @@ cd ~/workspace/rokid/kaiten-tally
 ~/tools/bin/aix list ../dist/kaiten-tally.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| 項目 | 値 |
 |---|---|
-| Studio 名称 | Kaiten Tally（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Studio 名 | Kaiten Tally（インポート後に記入） |
+| Version / Build | 1.0.0 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | At a kaiten sushi counter: tallies plates by colour into a bill estimate and locks it at checkout. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了、Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> Kaiten sushi plate tally: white plates 110 yen, red 220, black 330 - one key per colour, one tap per plate eaten, and the running total is the bill estimate. GO locks the bill and reads it aloud, then GO again clears the table for the next party. It never identifies sushi and never checks last-order times; ask the staff for those.
+> 回転寿司の皿数帳：白皿 110 円、赤皿 220 円、黒皿 330 円——色ごとに 1 キー、食べた皿ごとに 1 タップ、走っている合計が会計の目安です。GO で会計をロックして読み上げ、もう一度 GO で次の客のためにテーブルを空にします。寿司を判別することは決してなく、ラストオーダーの時刻も調べません；それは店員に聞いてください。
 
 ### Opening Message
 
 > ## Kaiten Tally
 > 
-> At a kaiten sushi counter the bill is just plates by colour. I count them for you: white 110, red 220, black 330, one tap per plate, and the total on screen is always the bill so far. When you are done, GO locks the bill and reads it out. Last order times belong to the staff, not to me.
+> 回転寿司のカウンターでは、会計は色ごとの皿そのものです。私が数えます：白 110、赤 220、黒 330、皿ごとに 1 タップ、画面の合計が常にその時点の会計です。食べ終えたら、GO で会計をロックして読み上げます。ラストオーダーの時刻は店員のもので、私のものではありません。
 
 ### Preview Media
 
-- `preview-kaiten-tally-index.png` — 初始状态
-- `preview-kaiten-tally-s2.png` — 演示状态 2
-- `preview-kaiten-tally-s3.png` — 演示状态 3
-- `preview-kaiten-tally-s4.png` — 演示状态 4
+- `preview-kaiten-tally-index.png` — 初期状態
+- `preview-kaiten-tally-s2.png` — デモ状態 2
+- `preview-kaiten-tally-s3.png` — デモ状態 3
+- `preview-kaiten-tally-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出にはメディアファイル 3〜5 点（うち動画 ≥1 本、≤60 秒）が必要。動画は GO の実機テスト時に追加録画する。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：传送带盘数 Conveyor Tally；传送带横条：皿数带 + 大字合计 + 三色盘价行
+- 初版：コンベヤーの皿数 Conveyor Tally；コンベヤーの横帯：皿数の帯 ＋ 大きな合計 ＋ 3 色の皿価格の行
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）

@@ -1,56 +1,56 @@
-# Hanbok Rental（韩服租赁账）
+# Hanbok Rental (한복 대여 장부)
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio 가져오기 주소**(Global AIUI Studio의 Import Project 입력란에 붙여 넣으세요):
 
 ```
 https://github.com/sakai55/rokid/tree/agent-hanbok-rental
 ```
 
-KR11 · 韩国本地化系列。交互哲学：**衣物核对 Garment Check**。本 Agent 是一张韩服租赁核对单：四件租赁物品（上衣、裙子、饰品、包）逐件确认，焦点用标记指着当前件，剩余时间大字显示，延长按 30 分钟一档加。四件全确认后 GO 一次即为「可归还」，再由你去店里交还。它不计时拍照、不识衣服，只守「件数齐了没有、时间还剩多少」这两件事。
+KR11 · 한국 현지화 시리즈. 상호작용 철학: **의류 확인 Garment Check**. 이 Agent는 한복 대여 확인표 한 장입니다. 대여 물품 네 점(상의, 치마, 장신구, 가방)을 한 점씩 확인하고, 포커스 마커가 현재 항목을 가리키며, 남은 시간이 큰 글자로 표시되고, 연장은 30분 단위로 더해집니다. 네 점을 모두 확인하면 GO가 한 번에 "반납 가능"으로 표시하고, 그다음은 당신이 가게에 직접 반납합니다. 촬영으로 시간을 재지도, 옷을 알아보지도 않습니다. 지키는 것은 두 가지뿐입니다. 점수가 다 찼는지, 시간이 얼마나 남았는지.
 
-## 预览截图
+## 미리보기 스크린샷
 
-![预览-index](<../../screenshots/hanbok-rental/preview-hanbok-rental-index.png>)
-![预览-s2](<../../screenshots/hanbok-rental/preview-hanbok-rental-s2.png>)
-![预览-s3](<../../screenshots/hanbok-rental/preview-hanbok-rental-s3.png>)
-![预览-s4](<../../screenshots/hanbok-rental/preview-hanbok-rental-s4.png>)
+![미리보기-index](<../../screenshots/hanbok-rental/preview-hanbok-rental-index.png>)
+![미리보기-s2](<../../screenshots/hanbok-rental/preview-hanbok-rental-s2.png>)
+![미리보기-s3](<../../screenshots/hanbok-rental/preview-hanbok-rental-s3.png>)
+![미리보기-s4](<../../screenshots/hanbok-rental/preview-hanbok-rental-s4.png>)
 
-## 在地性
+## 현지성
 
 한국의 궁궐 일대에는 한복 대여점이 늘어서 있다. 한복을 입고 궁궐에 들어가고, 정해진 시간 안에 저고리, 치마, 장신구, 가방을 빠짐없이 반납해야 한다. 빠진 물품 하나가 보증금 문제로 이어지기 쉽다.
 
-## 功能流程（闭环）
+## 기능 흐름 (폐쇄 루프)
 
-- 逐件核对：四件物品各一行，焦点行带标记，CHECK 逐件打勾或取消，点头即 CHECK 当前件
-- 时间持有：剩余时间大字显示，EXTEND 按 30 分钟一档延长，时间只按用户登记的租期走
-- 归还确认：四件全确认后 GO 标记可归还并 TTS 播报，否则 GO 只播报还缺几件
+- 한 점씩 확인: 물품 네 점이 각 한 줄, 포커스 줄에 마커가 붙습니다. CHECK로 한 점씩 체크하거나 취소하고, 고개 끄덕임이 현재 항목의 CHECK와 같습니다
+- 시간 유지: 남은 시간이 큰 글자로 표시되고, EXTEND로 30분 단위 연장이 됩니다. 시간은 사용자가 등록한 대여 기간으로만 흐릅니다
+- 반납 확인: 네 점을 모두 확인하면 GO가 반납 가능으로 표시하고 TTS로 알립니다. 아니면 GO는 몇 점이 부족한지만 알립니다
 
-## 手势映射
+## 제스처 매핑
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| 제스처 (안경다리 터치패드) | 키 이벤트 | 이 Agent에서의 역할 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 NEXT 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| 한 번 탭 | Enter | 상황별 GO(README 기능 흐름과 화면 guide 줄 참조) |
+| 위로 / 아래로 스와이프 | ArrowUp / ArrowDown | 화면 guide 줄에 적힌 이 Agent 전용 정의 참조 |
+| 고개 끄덕임 (머리가 안정됐을 때) | `onHeadGesture('nod')` | 이 Agent의 주 확인(NEXT와 동등, guide 줄 참조) |
+| 두 번 탭 | Backspace | 시스템 뒤로 가기(가로채지 않음) |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+화면 버튼은 모두 위 제스처의 미러링이며, SPEAK(언제든 현재 상태 듣기)와 DEMO(데모 상태 머신, 종료하면 실제 상태가 그대로 복원됨)가 추가됩니다.
 
-## 权限
+## 권한
 
-| 权限 | 用途 |
+| 권한 | 용도 |
 |---|---|
-| （无） | 本 Agent 不申请任何权限；TTS 与传感器不需要清单权限，相机零调用（如适用） |
+| (없음) | 이 Agent는 어떤 권한도 신청하지 않습니다. TTS와 센서는 매니페스트 권한이 필요 없고, 카메라는 호출하지 않습니다(해당하는 경우) |
 
-## 诚实边界
+## 정직한 경계
 
-- 租期、租金与押金规则各店不同，本账本只按用户登记的时间与物品走，不做店家系统对接，界面明示
-- 物品是否真的在手、是否完好，由本人目视确认，Agent 不用相机核验
-- 宫殿入场规则以现场告示为准，Agent 不做实时查询
+- 대여 기간, 대여료, 보증금 규칙은 가게마다 다릅니다. 이 장부는 사용자가 등록한 시간과 물품으로만 움직이고 가게 시스템과 연동되지 않으며, 화면에 명시됩니다
+- 물품이 실제로 손에 있는지, 온전한지는 본인이 눈으로 확인합니다. Agent는 카메라로 확인하지 않습니다
+- 궁궐 입장 규칙은 현장 고지가 기준입니다. Agent는 실시간 조회를 하지 않습니다
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS는 호스트 고정 음색을 사용하며, utterance의 `lang`은 절대 설정하지 않습니다(공식 문서에 효과가 없다고 명시됨).
 
-## 打包与预览
+## 패키징과 미리보기
 
 ```bash
 cd ~/workspace/rokid/hanbok-rental
@@ -58,48 +58,48 @@ cd ~/workspace/rokid/hanbok-rental
 ~/tools/bin/aix list ../dist/hanbok-rental.aix
 ```
 
-## 真机测试信息
+## 실기기 테스트 정보
 
-| 字段 | 值 |
+| 필드 | 값 |
 |---|---|
-| Studio 名称 | Hanbok Rental（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Studio 이름 | Hanbok Rental (가져오기 후 기입 예정) |
+| Version / Build | 1.0.0 / 가져오기 후 기입 예정 |
 | App Category | Life |
 | Intent Description | At a hanbok rental shop near a palace: checks four rented pieces and holds the remaining rental time. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | 가져오기 후 기입 예정 |
+| 상태 | 로컬 빌드 완료, Studio 가져오기 대기 중 |
 
-## 提审资料 (Review Submission)
+## 심사 자료 (Review Submission)
 
 ### Feature Description
 
-> Hanbok rental checklist for palace-area rental shops: four rented pieces - top, skirt, accessory, bag - are checked one by one with a focus marker, remaining rental time is shown big, and extensions add 30 minutes at a time. When all four are checked, GO marks the set ready to return. It never photographs or identifies garments; it only counts what you confirmed.
+> 궁궐 일대 대여점을 위한 한복 대여 체크리스트: 대여 물품 네 점(상의, 치마, 장신구, 가방)을 포커스 마커와 함께 한 점씩 확인하고, 남은 대여 시간은 크게 표시되며, 연장은 한 번에 30분씩 더해집니다. 네 점이 모두 확인되면 GO가 반납 준비 완료로 표시합니다. 옷을 촬영하거나 알아보지 않고, 당신이 확인한 것만 셉니다.
 
 ### Opening Message
 
 > ## Hanbok Rental
 > 
-> A rented hanbok is four pieces, and one missing piece is a deposit problem. I keep the checklist: top, skirt, accessory, bag, one line each, with the focus on the piece you are holding. Time left stays big on screen, extensions add thirty minutes, and when all four are checked I tell you the set is ready to return.
+> 빌린 한복은 네 점이고, 한 점이 빠지면 보증금 문제가 됩니다. 제가 체크리스트를 지킵니다. 상의, 치마, 장신구, 가방, 각 한 줄씩, 포커스는 당신이 들고 있는 물품 위에. 남은 시간은 화면에 크게 남아 있고, 연장은 30분씩 더해지며, 네 점이 모두 확인되면 반납 준비가 됐다고 알려드립니다.
 
 ### Preview Media
 
-- `preview-hanbok-rental-index.png` — 初始状态
-- `preview-hanbok-rental-s2.png` — 演示状态 2
-- `preview-hanbok-rental-s3.png` — 演示状态 3
-- `preview-hanbok-rental-s4.png` — 演示状态 4
+- `preview-hanbok-rental-index.png` — 초기 상태
+- `preview-hanbok-rental-s2.png` — 데모 상태 2
+- `preview-hanbok-rental-s3.png` — 데모 상태 3
+- `preview-hanbok-rental-s4.png` — 데모 상태 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 정식 심사 제출에는 미디어 파일 3~5개가 필요하고 동영상(≤60초) 1개 이상이 포함되어야 합니다. 동영상은 GO가 실기기로 직접 테스트할 때 추가로 녹화합니다.
 
-### Change Log（Build 1.0.0）
+### Change Log (Build 1.0.0)
 
 **Features added**
 
-- 首个版本：衣物核对 Garment Check；衣物四行单：每件一行带焦点标记 + 大字剩余时间
+- 첫 버전: 의류 확인 Garment Check. 의류 네 줄 표: 각 물품 한 줄에 포커스 마커 + 큰 글자 남은 시간
 
 **Improvements**
 
-- 无（首个版本）
+- 없음 (첫 버전)
 
 **Fixes**
 
-- 无（首个版本）
+- 없음 (첫 버전)

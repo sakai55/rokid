@@ -1,55 +1,55 @@
-# Omiyage Cover（土产义务覆盖）
+# Omiyage Cover（お土産の義務カバー）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄に貼り付け）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-omiyage-cover
 ```
 
-JP09 · 日本本地化系列。交互哲学：**人情覆盖 Obligation Grid**。本 Agent 把送礼名单变成覆盖格：格子不是物，是人。出发前登记六位受赠人（演示名单），在店里每买一份就核销一人，在库不够时先记「後で」（待补）也不许假装买过；只有 6 格全部落 ✓，它才说「全員分そろいました」。SCAN 扫到礼盒条码只加一份在库（暂定识别），核销永远由你确认。它不辨识礼品好不好（慧眼的事），只守「人人有份」这条人情底线。
+JP09 · 日本ローカライズシリーズ。対話の哲学：**人情カバー Obligation Grid**。この Agent は贈り物リストをカバーグリッドに変える。マスは品物ではなく人である。出発前に受取人6人を登録し（デモ用リスト）、店で1点買うごとに1人を消し込む。在庫が足りないときは先に「後で」（後日対応）と記録し、買ったふりは決してさせない。6マス全てに ✓ が付いて初めて「全員分そろいました」と言う。SCAN でギフトボックスのバーコードを読み取っても在庫が1点増えるだけであり（暫定の識別）、消し込みは必ず自分で確認する。贈り物が良いかどうかを判別はしない（それは慧眼の仕事である）。守るのは「全員に行き渡る」という人情の最低ラインだけである。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/omiyage-cover/preview-omiyage-cover-index.png>)
-![预览-s2](<../../screenshots/omiyage-cover/preview-omiyage-cover-s2.png>)
-![预览-s3](<../../screenshots/omiyage-cover/preview-omiyage-cover-s3.png>)
-![预览-s4](<../../screenshots/omiyage-cover/preview-omiyage-cover-s4.png>)
+![プレビュー-index](<../../screenshots/omiyage-cover/preview-omiyage-cover-index.png>)
+![プレビュー-s2](<../../screenshots/omiyage-cover/preview-omiyage-cover-s2.png>)
+![プレビュー-s3](<../../screenshots/omiyage-cover/preview-omiyage-cover-s3.png>)
+![プレビュー-s4](<../../screenshots/omiyage-cover/preview-omiyage-cover-s4.png>)
 
-## 在地性
+## ローカル性
 
-日本出差与旅行归来，お土産不是随手礼，是义务：上司、同组同事一个不能漏，漏掉谁比买错什么更失礼。买的时候在店里最慌的就是「我到底买了几份、还差谁」。
+日本の出張や旅行の帰りに、お土産は気まぐれな贈り物ではなく義務である。上司や同じグループの同僚を一人も漏らしてはならず、誰かを漏らすことは品物を間違えることより失礼である。店で買っているときにいちばん焦るのは「自分はもう何点買ったのか、あと誰が残っているのか」である。
 
-## 功能流程（闭环）
+## 機能フロー（クローズドループ）
 
-- 名单：6 位受赠人一人一格（演示名单），滑动选人
-- 核销：BOUGHT 落 ✓ 并扣一份在库；在库为零时只能记 LATER（△ 待补），不许透支
-- 在库：STOCK 手工 +1，或 SCAN 扫礼盒条码暂定 +1；6/6 ✓ 才报全覆盖
+- リスト：受取人6人、一人1マス（デモ用リスト）。スライドして人を選ぶ
+- 消し込み：BOUGHT で ✓ を付け、在庫を1点引く。在庫がゼロのときは LATER（△ 後日対応）と記録することしかできず、透かしは許さない
+- 在庫：STOCK で手動で +1 するか、SCAN でギフトボックスのバーコードを読み取って暫定で +1 する。6 / 6 が ✓ になって初めて全員カバーを知らせる
 
-## 手势映射
+## ジェスチャー対応表
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャー（テンプルタッチパッド） | キーイベント | この Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 BOUGHT 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| シングルタップ | Enter | 状況に応じた GO（README の機能フローと画面のガイド行を参照） |
+| 上スワイプ / 下スワイプ | ArrowUp / ArrowDown | 画面のガイド行にあるこの Agent 固有の定義を参照 |
+| うなずき（頭が安定しているとき） | `onHeadGesture('nod')` | この Agent の主な確認（BOUGHT と同等。ガイド行を参照） |
+| ダブルタップ | Backspace | システムの戻る（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面のボタンはいずれも上記ジェスチャーのミラーであり、ほかに SPEAK（いつでも現在の状態を聞く）と DEMO（デモ用ステートマシン。終了後は実際の状態がそのまま復元される）がある。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| `CAMERA` | 拍照核对路径（见功能流程；失败即 SKIP） |
+| `CAMERA` | 写真で照合する経路（機能フローを参照。失敗した場合は SKIP する） |
 
-## 诚实边界
+## 誠実な境界
 
-- 名单与礼品均为演示集；单价与预算未做（那是购物账，不是人情账）
-- SCAN 对礼盒的识别是暂定的（wide 拍照+LLM 二值判断），误报时以 STOCK 手工修正为准
+- リストも贈り物もデモ用セットである。単価と予算は扱わない（それは買い物の帳簿であり、人情の帳簿ではない）
+- SCAN によるギフトボックスの識別は暫定である（wide 撮影と LLM による二値判定）。誤判定のときは STOCK の手動修正を正とする
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式ドキュメントで効果がないと明記されている）。
 
-## 打包与预览
+## パッケージとプレビュー
 
 ```bash
 cd ~/workspace/rokid/omiyage-cover
@@ -57,89 +57,89 @@ cd ~/workspace/rokid/omiyage-cover
 ~/tools/bin/aix list ../dist/omiyage-cover.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| フィールド | 値 |
 |---|---|
-| Studio 名称 | Omiyage Cover（待导入后回填） |
-| Version / Build | 1.0.3 / 待导入后回填 |
+| Studio 名 | Omiyage Cover（インポート後に記入） |
+| Version / Build | 1.0.3 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | Buying omiyage souvenirs in Japan: covers a 6-person recipient grid against gift-box stock. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了。Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> Omiyage obligation cover: the gift list as a grid of people, not products. Six recipients, one cell each - bought, or honestly marked later when stock runs out; it will not let you pretend. Scan a gift box to add stock (tentative), confirm each person yourself. Done only when every cell is covered.
+> お土産の義務カバーです。贈り物リストを品物ではなく人のグリッドとして扱います。受取人6人、各1マス。買えばチェックし、在庫が切れれば正直に後日に回します。ごまかしはさせません。ギフトボックスをスキャンして在庫を加えるのは暫定判定で、各人の確定は自分で行います。全部のマスが埋まって初めて完了です。
 
 ### Opening Message
 
 > ## Omiyage Cover
 > 
-> Forgetting a person is worse than choosing the wrong gift. Six names, six cells. Buy a box, cover a name; out of stock, the cell says 'later' in the open - never a quiet fake check. All six covered, and only then: everyone is remembered.
+> 贈る相手を忘れることは、品物を間違えることより失礼です。6人の名前、6つのマス。箱を買って1人をカバーし、在庫がなければマスには堂々と「後で」と出ます。静かな偽チェックはありません。6人全員をカバーして初めて、全員分そろいましたと言えます。
 
 ### Preview Media
 
-- `preview-omiyage-cover-index.png` — 初始状态
-- `preview-omiyage-cover-s2.png` — 演示状态 2
-- `preview-omiyage-cover-s3.png` — 演示状态 3
-- `preview-omiyage-cover-s4.png` — 演示状态 4
+- `preview-omiyage-cover-index.png` — 初期状態
+- `preview-omiyage-cover-s2.png` — デモ状態 2
+- `preview-omiyage-cover-s3.png` — デモ状態 3
+- `preview-omiyage-cover-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出には3–5点のメディアファイルが必要で、動画1点以上（60秒以内）を含むこと。動画は GO の実機セルフテスト時に追加で録画する。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：人情覆盖 Obligation Grid；礼盒格阵（虚线框变体）：格子是人，全覆盖才收口
+- 初版：人情カバー Obligation Grid。ギフトボックスのマス配列（破線枠のバリエーション）：マスは人であり、全員カバーで初めて締める
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）
 
 ### Change Log（Build 1.0.1）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+- ボタンをこの Agent の UI 形態に合わせて個別に形作りした（形態は設計契約を参照）。シリーズ全体で同じボタンのセットを共用しない
 
 **Fixes**
 
-- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+- 実機のモノクロ緑パネルに合わせて色を調整した。元の純白 #ffffff を緑の階調に変え（最も明るい緑 #7dff9e）、明暗は緑だけで表現する
 
 ### Change Log（Build 1.0.2）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 无
+- なし
 
 **Fixes**
 
-- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+- 言語の純化：画面と音声の文案を現地の言語に統一し（日本は日本語、韓国は韓国語）、混入していた日本語・中国語の文案を一つずつ調べて取り除いた（SCAN のプロンプトを含む）
 
 ### Change Log（Build 1.0.3）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 无
+- なし
 
 **Fixes**
 

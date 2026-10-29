@@ -1,65 +1,66 @@
 # Yutnori Game
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio 가져오기 주소**(Global AIUI Studio의 Import Project 입력란에 붙여 넣으세요):
+
 ```
 https://github.com/sakai55/rokid/tree/agent-yutnori-game
 ```
 
-一句话场景：家人在春节或中秋聚会时，不用手、只用头部动作玩 윷놀이，先到 20 格者胜。
+한 줄 장면: 가족이 설날이나 추석에 모였을 때, 손을 쓰지 않고 머리 움직임만으로 윷놀이를 하고, 20칸에 먼저 도착하는 사람이 이깁니다.
 
-方向构成：韩国在地 × 游戏 × 注意力。在地性落在 설날·추석 家族 윷놀이；游戏承担玩法闭环一环（开始／掷棒移子／输赢计分）；注意力承担棋子位置、比分与成绩记录的守候一环。
+방향 구성: 한국 현지 × 게임 × 주의. 현지는 설날·추석 가족 윷놀이에 뿌리내리고, 게임은 플레이의 폐쇄 루프 한 고리(시작/윷 던져 말 옮기기/승패 점수)를 맡고, 주의는 말 위치, 점수, 성적 기록을 지키는 고리를 맡습니다.
 
-## 预览截图
+## 미리보기 스크린샷
 
-![总览](<../../screenshots/yutnori-game/preview-yutnori-game-index.png>)
-![掷棒](<../../screenshots/yutnori-game/preview-yutnori-game-throw.png>)
-![掷棒二](<../../screenshots/yutnori-game/preview-yutnori-game-throw-s2.png>)
-![记录](<../../screenshots/yutnori-game/preview-yutnori-game-record.png>)
-![记录二](<../../screenshots/yutnori-game/preview-yutnori-game-record-s2.png>)
+![전체 보기](<../../screenshots/yutnori-game/preview-yutnori-game-index.png>)
+![윷 던지기](<../../screenshots/yutnori-game/preview-yutnori-game-throw.png>)
+![윷 던지기 2](<../../screenshots/yutnori-game/preview-yutnori-game-throw-s2.png>)
+![기록](<../../screenshots/yutnori-game/preview-yutnori-game-record.png>)
+![기록 2](<../../screenshots/yutnori-game/preview-yutnori-game-record-s2.png>)
 
-## 结构与功能
+## 구조와 기능
 
-- 页清单（3 页）：总览 index（20 格棋盘＋双方棋子位置＋比分）／掷棒 throw（点头/Enter 掷棒、按结果移子、到终点结算）／记录 record（胜负・掷棒次数・最佳记录）。
-- 内容集计数：윷棒结果 5 种（도・개・걸・윷・모，每种含步数与说明）＋棋盘 20 格；윷/모 另奖励再掷一次。
-- 闭环：进入总览 → 掷棒页点头掷棒（TTS 报结果与步数）→ 移子、到 20 格结算胜负 → 记录页查看并朗读成绩；胜负・掷棒次数・最佳记录跨会话持久化（存储键 `yutnoriV1`），可反复开局。
+- 페이지 목록(3개 페이지): 전체 보기 index(20칸 말판 + 양쪽 말 위치 + 점수) / 윷 던지기 throw(고개 끄덕임/Enter로 윷을 던지고, 결과대로 말을 옮기며, 결승점에 닿으면 정산) / 기록 record(승패·던진 횟수·최고 기록).
+- 콘텐츠 집합 수: 윷 결과 5가지(도·개·걸·윷·모, 각 결과에 칸 수와 설명 포함) + 말판 20칸. 윷/모는 한 번 더 던지는 보너스가 있습니다.
+- 폐쇄 루프: 전체 보기에 들어와 → 던지기 페이지에서 고개를 끄덕여 윷을 던지고(TTS가 결과와 칸 수를 알림) → 말을 옮기고, 20칸에 닿으면 승패를 정산 → 기록 페이지에서 성적을 보고 읽어줍니다. 승패·던진 횟수·최고 기록은 세션을 넘어 저장되며(저장 키 `yutnoriV1`), 반복해서 판을 열 수 있습니다.
 
-## 手势映射
+## 제스처 매핑
 
-| 操作 | 效果 |
+| 조작 | 효과 |
 |---|---|
-| 首页 ArrowUp/ArrowDown | 循环选子页（▶ 标记） |
-| 首页 Enter | 打开选中子页 |
-| 掷棒页 Enter／点头 | 掷棒（主动作） |
-| 掷棒页 ArrowUp/ArrowDown | 上／下一条结果说明 |
-| 记录页 ArrowUp/ArrowDown | 上／下一行记录 |
-| 记录页 Enter／点头 | 朗读记录 |
+| 첫 페이지 ArrowUp/ArrowDown | 하위 페이지를 순환 선택(▶ 표시) |
+| 첫 페이지 Enter | 선택한 하위 페이지 열기 |
+| 던지기 페이지 Enter/고개 끄덕임 | 윷 던지기(주 동작) |
+| 던지기 페이지 ArrowUp/ArrowDown | 이전/다음 결과 설명 |
+| 기록 페이지 ArrowUp/ArrowDown | 이전/다음 기록 줄 |
+| 기록 페이지 Enter/고개 끄덕임 | 기록 읽어주기 |
 
-## 权限
+## 권한
 
-无。TTS 用宿主固定音色，不设置 utterance 的 `lang`。
+없음. TTS는 호스트 고정 음색을 사용하고, utterance의 `lang`은 설정하지 않습니다.
 
-## 诚实边界
+## 정직한 경계
 
-- 掷棒是演示随机数（在 5 种结果中随机选一），不是物理 윷 识别；棒面显示是结果的可视化，不是传感器读数。
-- 头部动作宜缓慢、小幅；疼痛或眩晕时立即停止，不主张任何医疗效果。
+- 윷 던지기는 데모 난수입니다(5가지 결과 중 하나를 무작위로 선택). 실제 윷 인식이 아니고, 윷 면 표시는 결과의 시각화이며 센서 값이 아닙니다.
+- 머리 움직임은 천천히, 작게 하세요. 통증이나 어지러움이 있으면 즉시 멈추고, 어떤 의료 효과도 주장하지 않습니다.
 
-## 设备测试信息
+## 기기 테스트 정보
 
-| 项目 | 内容 |
+| 항목 | 내용 |
 |---|---|
-| Studio 名 | 待回填 |
+| Studio 이름 | 기입 예정 |
 | Version | 1.0.0 |
-| App Category | 待回填 |
-| Intent Description | 待回填 |
-| Agent ID | 待回填 |
-| 状态 | 未导入／未真机验证 |
+| App Category | 기입 예정 |
+| Intent Description | 기입 예정 |
+| Agent ID | 기입 예정 |
+| 상태 | 가져오지 않음 / 실기기 검증 전 |
 
-## 提审资料 (Review Submission)
+## 심사 자료 (Review Submission)
 
-- Feature Description：家族 윷놀이：只用头部动作掷棒、走 20 格棋盘，先到终点者胜，胜负与掷棒记录跨会话保存。
-- Opening Message：설날·추석 가족 윷놀이를 머리 움직임만으로 즐기세요. 고개를 끄덕이면 윷이 던져지고, 20칸에 먼저 도착하면 승리합니다.
-- Preview Media：预览截图见上（截图由开发流程后补，至少 1 图＋1 视频，视频 ≤60 秒）。
-- Change Log（Build 1.0.0）：
-  - Features added：20 格棋盘总览、5 种结果掷棒页、胜负结算、胜负与掷棒记录持久化。
-  - Improvements：无（首版）。
-  - Fixes：无（首版）。
+- Feature Description: 가족 윷놀이: 머리 움직임만으로 윷을 던지고 20칸 말판을 달려, 결승점에 먼저 닿는 사람이 이기며, 승패와 던진 기록은 세션을 넘어 저장됩니다.
+- Opening Message: 설날·추석 가족 윷놀이를 머리 움직임만으로 즐기세요. 고개를 끄덕이면 윷이 던져지고, 20칸에 먼저 도착하면 승리합니다.
+- Preview Media: 미리보기 스크린샷은 위에 있습니다(스크린샷은 개발 과정 뒤에 추가, 최소 이미지 1개 + 동영상 1개, 동영상 ≤60초).
+- Change Log (Build 1.0.0):
+  - Features added: 20칸 말판 전체 보기, 결과 5가지 던지기 페이지, 승패 정산, 승패와 던진 기록 저장.
+  - Improvements: 없음 (첫 버전).
+  - Fixes: 없음 (첫 버전).

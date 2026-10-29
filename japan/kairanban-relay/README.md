@@ -1,56 +1,56 @@
-# Kairanban Relay（町内回覧板接力）
+# Kairanban Relay（町内回覧板リレー）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄にコピー）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-kairanban-relay
 ```
 
-JP13 · 日本本地化系列。交互哲学：**町内リレー Neighborhood Relay**。本 Agent は回覧板の「今どこにあるか」だけを守る帳簿：4 軒の順番を一本の線にし、今持っている家を大きく表示する。受け取ったら STAMP で押印を記し、PASS で次の家へ回す。押印していないのに回そうとすると止めて声で知らせる。一周回って町内会へ戻れば周回数を数える。板の中身・お知らせの内容は一切読まず、期限は各町内会の決まりに従う（界面明示）。
+JP13・日本ローカライズシリーズ。インタラクション哲学：**町内リレー Neighborhood Relay**。本 Agent は回覧板の「今どこにあるか」だけを守る帳簿：4 軒の順番を一本の線にし、今持っている家を大きく表示する。受け取ったら STAMP で押印を記し、PASS で次の家へ回す。押印していないのに回そうとすると止めて声で知らせる。一周回って町内会へ戻れば周回数を数える。板の中身・お知らせの内容は一切読まず、期限は各町内会の決まりに従う（界面明示）。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/kairanban-relay/preview-kairanban-relay-index.png>)
-![预览-s2](<../../screenshots/kairanban-relay/preview-kairanban-relay-s2.png>)
-![预览-s3](<../../screenshots/kairanban-relay/preview-kairanban-relay-s3.png>)
-![预览-s4](<../../screenshots/kairanban-relay/preview-kairanban-relay-s4.png>)
+![プレビュー-index](<../../screenshots/kairanban-relay/preview-kairanban-relay-index.png>)
+![プレビュー-s2](<../../screenshots/kairanban-relay/preview-kairanban-relay-s2.png>)
+![プレビュー-s3](<../../screenshots/kairanban-relay/preview-kairanban-relay-s3.png>)
+![プレビュー-s4](<../../screenshots/kairanban-relay/preview-kairanban-relay-s4.png>)
 
-## 在地性
+## 地域性
 
 回覧板（かいらんばん）は日本の町内会・自治会の連絡制度：区役所や町内会のお知らせを一枚の板・冊子に挟み、家から家へ順番に回して全員が目を通し、最後に町内会へ戻す。回し忘れ・押印漏れが起きると「回ってこない家」が出て連絡が止まる。眼鏡は板の中身を読まない——「今どの家にあって、押印は済んだか、次はどの家か」だけを外から守る。
 
-## 功能流程（闭环）
+## 機能フロー（閉ループ）
 
 - 順番保持：佐藤家→鈴木家→高橋家→田中家の順を線で表示し、今の家だけを満亮ドットで示す
 - 押印確認：受け取った家の STAMP を本人が押して初めて PASS が進む。未押印のまま回そうとすると声で止める
 - 周回計数：一周して町内会へ戻るたびに周回数 +1。板の内容は読まず、期限は町内会の決まりに従う
 
-## 手势映射
+## ジェスチャ対応
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャ（テンプルのタッチパッド） | キーイベント | この Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 PASS 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| シングルタップ | Enter | 状況に応じた GO（README の機能フローと画面の guide 行を参照） |
+| 上スワイプ／下スワイプ | ArrowUp / ArrowDown | 画面の guide 行にある、この Agent 固有の定義を参照 |
+| うなずき（頭が静止したとき） | `onHeadGesture('nod')` | この Agent の主確認（PASS と等価。guide 行を参照） |
+| ダブルタップ | Backspace | システムの戻る（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面上のボタンはすべて上記ジェスチャのミラーで、ほかに SPEAK（いつでも現在の状態を聞ける）と DEMO（状態機械のデモ、終了後は実際の状態がそのまま復元される）がある。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| （无） | 本 Agent 不申请任何权限；TTS 与传感器不需要清单权限，相机零调用（如适用） |
+| （なし） | この Agent は権限を一切申請しない；TTS とセンサーにマニフェストの権限は不要で、カメラの呼び出しはゼロ（該当する場合） |
 
-## 诚实边界
+## 誠実な境界
 
 - 回覧板の中身・お知らせ文面は Agent は読まないし記録しない。押印の有無は本人の確認結果だけを記す
 - 順番・期限・回収先は各町内会の決まりに従う。本 Agent は決まりを作らないし、回収日を自動で知らせない
 - 家名は仮の表示順であり、実際の町内順番は本人が町内会の名簿で確認すること
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式に効果なしと明記）。
 
-## 打包与预览
+## パッケージ化とプレビュー
 
 ```bash
 cd ~/workspace/rokid/kairanban-relay
@@ -58,48 +58,48 @@ cd ~/workspace/rokid/kairanban-relay
 ~/tools/bin/aix list ../dist/kairanban-relay.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| 項目 | 値 |
 |---|---|
-| Studio 名称 | Kairanban Relay（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Studio 名 | Kairanban Relay（インポート後に記入） |
+| Version / Build | 1.0.0 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | At home in a Japanese neighbourhood: tracks which house currently holds the kairanban circular board and whether it has been stamped. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了、Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> Kairanban relay: the neighbourhood circular notice board, kept on track. Four houses in order on one line, the current holder shown large, a stamp recorded when a house receives it, and the board only moves on when the stamp is done. It never reads what is on the board, and the schedule belongs to the neighbourhood association, not to it.
+> 回覧板リレー：町内の回覧板を軌道に保ちます。4 軒が 1 本の線の上に順番に並び、現在の保持者を大きく表示し、受け取った家に押印を記録し、押印が済んで初めて板は次へ進みます。板に書いてある内容は決して読みません。日程は町内会のもので、この Agent のものではありません。
 
 ### Opening Message
 
 > ## Kairanban Relay
 > 
-> A kairanban only works when every house in turn actually sees it. I keep one thing: where the board is right now. Four houses on a line, the current house large, a stamp when it is received, and the board moves on only after the stamp. I never read what is on the board - that belongs to the neighbourhood, not to me.
+> 回覧板が機能するのは、順番のすべての家が実際にそれを見るときだけです。私が守るのは 1 つ：板が今どこにあるか。4 軒が線の上に並び、現在の家を大きく、受け取ったら押印、そして押印の後に初めて板は進みます。板の内容は決して読みません——それは町内のもので、私のものではありません。
 
 ### Preview Media
 
-- `preview-kairanban-relay-index.png` — 初始状态
-- `preview-kairanban-relay-s2.png` — 演示状态 2
-- `preview-kairanban-relay-s3.png` — 演示状态 3
-- `preview-kairanban-relay-s4.png` — 演示状态 4
+- `preview-kairanban-relay-index.png` — 初期状態
+- `preview-kairanban-relay-s2.png` — デモ状態 2
+- `preview-kairanban-relay-s3.png` — デモ状態 3
+- `preview-kairanban-relay-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出にはメディアファイル 3〜5 点（うち動画 ≥1 本、≤60 秒）が必要。動画は GO の実機テスト時に追加録画する。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：町内リレー Neighborhood Relay；町内ルート線：家並みドット + 現在の家大字 + 押印行
+- 初版：町内リレー Neighborhood Relay；町内のルート線：家並みのドット ＋ 現在の家を大きな文字で ＋ 押印の行
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）

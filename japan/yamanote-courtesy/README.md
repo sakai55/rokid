@@ -1,55 +1,55 @@
-# Yamanote Courtesy（通勤礼仪站序提示）
+# Yamanote Courtesy（通勤マナーの駅順提示）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄に貼り付け）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-yamanote-courtesy
 ```
 
-JP07 · 日本本地化系列。交互哲学：**站名线图 Station Line Cue**。本 Agent 不导航（底座 AR 导航的事），不管你在哪，只管「礼仪动作在正确的站触发」：你登记一条固定通勤站序（演示为山手线品川→东京段），每到一站由你单击确认（列车 API 不存在，如实说明；GEO 只作粗核对），终点前一站自动亮出三件套礼仪清单，逐件点头销项。它的本体是情境提示的时机，不是位置本身。
+JP07 · 日本ローカル化シリーズ。対話の哲学：**駅名ライン図 Station Line Cue**。本 Agent はナビゲーションをしない（基盤側の AR ナビゲーションの役目）。あなたがどこにいるかは扱わず、「マナーの動作が正しい駅で発動すること」だけを扱う：固定の通勤駅順を1つ登録し（デモは山手線の品川→東京区間）、駅に着くたびにあなたがシングルタップで確認する（列車 API は存在せず、その旨を正直に明記する；GEO は大まかな照合にのみ使う）。終点の1つ前の駅で3点セットのマナーリストが自動で表示され、1件ずつうなずいて完了にする。その本体は位置そのものではなく、状況に応じた知らせのタイミングである。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/yamanote-courtesy/preview-yamanote-courtesy-index.png>)
-![预览-s2](<../../screenshots/yamanote-courtesy/preview-yamanote-courtesy-s2.png>)
-![预览-s3](<../../screenshots/yamanote-courtesy/preview-yamanote-courtesy-s3.png>)
-![预览-s4](<../../screenshots/yamanote-courtesy/preview-yamanote-courtesy-s4.png>)
+![プレビュー-index](<../../screenshots/yamanote-courtesy/preview-yamanote-courtesy-index.png>)
+![プレビュー-s2](<../../screenshots/yamanote-courtesy/preview-yamanote-courtesy-s2.png>)
+![プレビュー-s3](<../../screenshots/yamanote-courtesy/preview-yamanote-courtesy-s3.png>)
+![プレビュー-s4](<../../screenshots/yamanote-courtesy/preview-yamanote-courtesy-s4.png>)
 
-## 在地性
+## 地域性
 
-東京的通勤礼仪是写在身体里的：リュックは前に抱える、スマホはマナーモード、降りる駅の一つ前から出口側へ寄る。做不到不是没素质，是专注看手机时真的会忘——尤其是要在終点駅下车、又怕坐过站的人。
+東京の通勤マナーは身体に染み付いている：リュックは前に抱える、スマホはマナーモード、降りる駅の一つ前から出口側へ寄る。できないのはマナーを知らないからではなく、スマホに集中していると本当に忘れてしまうからだ——特に終点駅で降りなければならず、乗り過ごしも怖い人にとっては。
 
-## 功能流程（闭环）
+## 機能フロー（閉じた流れ）
 
-- 登记：固定站序 6 站（演示段），目的地预设为终点站
-- 推进：ARRIVE 逐站确认推进，横线圆点随之迁移；GEO 键可试取粗定位作旁证（失败即 SKIP，不阻塞）
-- 触发：终点前一站自动进入礼仪模式——背包前抱/静音模式/靠门准备，CUE 或点头逐件完成
+- 登録：固定の駅順6駅（デモ区間）、目的地は終点駅にプリセット
+- 進行：ARRIVE で駅ごとに確認して進み、横線のドットがそれに合わせて移動する；GEO キーで大まかな位置情報を試しに取得して傍証にできる（失敗したら SKIP、ブロックしない）
+- 発動：終点の1つ前の駅で自動的にマナーモードに入る——リュックを前に抱える／マナーモード／ドア付近への準備を、CUE またはうなずきで1件ずつ完了する
 
-## 手势映射
+## ジェスチャ対応
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャ（テンプル＝つるのタッチパッド） | キーイベント | 本 Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 ARRIVE 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| シングルタップ | Enter | 状況 GO（README の機能フローと画面の guide 行を参照） |
+| 上スワイプ / 下スワイプ | ArrowUp / ArrowDown | 画面の guide 行にある本 Agent 固有の定義を参照 |
+| うなずき（頭が安定したとき） | `onHeadGesture('nod')` | 本 Agent の主な確認（ARRIVE と同等、guide 行を参照） |
+| ダブルタップ | Backspace | システムの戻る（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面のボタンはいずれも上記のジェスチャのミラーであり、ほかに SPEAK（いつでも現在の状態を聞ける）と DEMO（状態マシンのデモ、終了後は実際の状態がそのまま復元される）がある。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| `GEOLOCATION` | 粗定位/高度/速度旁证（失败即 SKIP） |
+| `GEOLOCATION` | 大まかな位置情報／高度／速度の傍証（失敗したら SKIP） |
 
-## 诚实边界
+## 誠実な境界
 
-- 没有任何列车实时 API：到站推进以本人确认为准，GEO 只是粗旁证（站间距离短时可能分不清相邻站），界面与 README 均明示
-- 站序为演示段；换乘与支线未做，换线请重开并登记新段（方法在 README）
+- 列車のリアルタイム API は一切ない：駅への到着の進行は本人の確認を基準とし、GEO は大まかな傍証にすぎない（駅間距離が短いと隣の駅と区別できないことがある）。画面と README の両方に明記している
+- 駅順はデモ区間である；乗り換えと支線は未対応。路線を変えるときは開き直して新しい区間を登録する（方法は README に記載）
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS はホストの固定音色を使い、utterance の `lang` は決して設定しない（公式ドキュメントに効果がないと明記されている）。
 
-## 打包与预览
+## パッケージングとプレビュー
 
 ```bash
 cd ~/workspace/rokid/yamanote-courtesy
@@ -57,76 +57,76 @@ cd ~/workspace/rokid/yamanote-courtesy
 ~/tools/bin/aix list ../dist/yamanote-courtesy.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| フィールド | 値 |
 |---|---|
-| Studio 名称 | Yamanote Courtesy（待导入后回填） |
-| Version / Build | 1.0.2 / 待导入后回填 |
+| Studio 名 | Yamanote Courtesy（インポート後に記入） |
+| Version / Build | 1.0.2 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | On a Tokyo commuter train: advances a registered station sequence and fires courtesy cues one stop before the destination. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了、Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> Commute courtesy cues on a station line: register your fixed 6-station run and I advance only on your tap - there is no train API, and I say so. One stop before your destination I light the courtesy set: backpack to the front, phone on manner mode, move toward the door. I never navigate; timing the manners is the whole job.
+> 駅順に沿った通勤マナーのキュー：固定の6駅の区間を登録すると、到着はあなたのタップでのみ進みます。列車 API はなく、そのことも明言します。目的地の1つ前の駅でマナーの3点セットを表示します：リュックを前に抱える、スマホをマナーモードにする、ドア側へ寄る。ナビゲーションはしません。マナーを出すタイミングこそが仕事のすべてです。
 
 ### Opening Message
 
 > ## Yamanote Courtesy
 > 
-> Not navigation - timing. Register your usual run, tap as each station passes, and one stop before yours I will remind you: backpack forward, phone silent, drift to the door. Arrive already polite.
+> ナビゲーションではなく、タイミングです。いつもの区間を登録し、駅を過ぎるたびにタップしてください。あなたの駅の1つ前でお知らせします：リュックは前へ、スマホはマナーモード、ドア側へ寄りましょう。降りるときには、すでにマナー万全です。
 
 ### Preview Media
 
-- `preview-yamanote-courtesy-index.png` — 初始状态
-- `preview-yamanote-courtesy-s2.png` — 演示状态 2
-- `preview-yamanote-courtesy-s3.png` — 演示状态 3
-- `preview-yamanote-courtesy-s4.png` — 演示状态 4
+- `preview-yamanote-courtesy-index.png` — 初期状態
+- `preview-yamanote-courtesy-s2.png` — デモ状態 2
+- `preview-yamanote-courtesy-s3.png` — デモ状態 3
+- `preview-yamanote-courtesy-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出には3–5点のメディアファイルが必要で、動画を≥1点（≤60 s）含めること。動画は GO の実機セルフテスト時に追加で録画する。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：站名线图 Station Line Cue；横线站序图：圆点串成的线路，当前站在横线上满亮
+- 初版：駅名ライン図 Station Line Cue；横線の駅順図：ドットを連ねた路線、現在の駅は横線上で明るく表示
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）
 
 ### Change Log（Build 1.0.1）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+- ボタンを本 Agent の UI 形態に合わせて個別にデザインした（形態は設計契約を参照）。シリーズ全体で同じボタンのセットを共用しない
 
 **Fixes**
 
-- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+- 色を実機の単色グリーンパネルに合わせた：元の純白 #ffffff を緑の階調に変更した（最も明るい緑 #7dff9e）。明暗は緑だけで表現する
 
 ### Change Log（Build 1.0.2）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 无
+- なし
 
 **Fixes**
 
-- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+- 言語の純化：画面と音声の文案を現地の言語に統一した（日本＝日本語 / 韓国＝韓国語）。混入していた日本語・中国語の文案（SCAN のプロンプトを含む）を1件ずつ確認して除去した

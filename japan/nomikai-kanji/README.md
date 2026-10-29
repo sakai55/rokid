@@ -1,55 +1,55 @@
-# Nomikai Kanji（饮会干事账簿）
+# Nomikai Kanji（飲み会幹事帳簿）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄に貼り付け）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-nomikai-kanji
 ```
 
-JP08 · 日本本地化系列。交互哲学：**干事账簿 Host Ledger**。本 Agent 就是干事的那本账：人数、品目合计、人均（自动按 100 円单位向上凑整，这是割り勘的在地规矩）、终电倒计时，全在一张传票上。它永远不录音、不转写、不总结你们聊了什么——会议转写是底座能力，也不是酒桌需要的东西；它只记钱、人头和时间这三样干事必须持有的数字，点头即结账确认。
+JP08 · 日本ローカライズシリーズ。対話の哲学：**幹事帳簿 Host Ledger**。この Agent は幹事のあの帳簿そのものである。人数、品目の合計、1人分（割り勘の地元の流儀として自動で100円単位に切り上げる）、終電までのカウントダウン、すべてが1枚の伝票に載る。録音も文字起こしも、会話内容の要約も決してしない——会議の文字起こしは基盤の能力であり、酒席に必要なものでもない。持つのはお金と人数と時間という、幹事が持ち続けなければならない3つの数字だけであり、うなずきが会計の確認になる。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/nomikai-kanji/preview-nomikai-kanji-index.png>)
-![预览-s2](<../../screenshots/nomikai-kanji/preview-nomikai-kanji-s2.png>)
-![预览-s3](<../../screenshots/nomikai-kanji/preview-nomikai-kanji-s3.png>)
-![预览-s4](<../../screenshots/nomikai-kanji/preview-nomikai-kanji-s4.png>)
+![プレビュー-index](<../../screenshots/nomikai-kanji/preview-nomikai-kanji-index.png>)
+![プレビュー-s2](<../../screenshots/nomikai-kanji/preview-nomikai-kanji-s2.png>)
+![プレビュー-s3](<../../screenshots/nomikai-kanji/preview-nomikai-kanji-s3.png>)
+![プレビュー-s4](<../../screenshots/nomikai-kanji/preview-nomikai-kanji-s4.png>)
 
-## 在地性
+## ローカル性
 
-日本の飲み会里，幹事（组织者）是最操心的角色：数人头、控节奏、算割り勘（还要照顾到100円単位的凑整礼仪）、盯終電。干事自己往往喝不好——注意力全在账本上。
+日本の飲み会では、幹事（主催者）がいちばん気を使う役回りである。人を数え、ペースを整え、割り勘を計算し（100円単位に切り上げる作法にも気を配る）、終電を見張る。幹事自身はなかなか楽しく飲めない——注意がずっと帳簿に向いているからである。
 
-## 功能流程（闭环）
+## 機能フロー（クローズドループ）
 
-- 记账：+ITEM 逐品累加（演示单价 ¥1,200/品）、+PERSON 调人数，人均自动 100 円凑整
-- 守时：TRAIN 轮换终电时刻预设，倒计时以分钟常驻传票底部大字
-- 结账：点头 = 结算确认，播报人均金额；全程零录音零转写，关页即忘
+- 記帳：+ITEM で品目ごとに加算する（デモ単価は1品 ¥1,200）、+PERSON で人数を調整し、1人分は自動で100円単位に切り上げる
+- 時間管理：TRAIN で終電時刻のプリセットを切り替え、カウントダウンは分単位で伝票の下部に大きな文字で常時表示する
+- 会計：うなずきが決済の確認となり、1人分を読み上げる。全過程で録音も文字起こしもせず、ページを閉じれば忘れる
 
-## 手势映射
+## ジェスチャー対応表
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャー（テンプルタッチパッド） | キーイベント | この Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 +ITEM 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| シングルタップ | Enter | 状況に応じた GO（README の機能フローと画面のガイド行を参照） |
+| 上スワイプ / 下スワイプ | ArrowUp / ArrowDown | 画面のガイド行にあるこの Agent 固有の定義を参照 |
+| うなずき（頭が安定しているとき） | `onHeadGesture('nod')` | この Agent の主な確認（+ITEM と同等。ガイド行を参照） |
+| ダブルタップ | Backspace | システムの戻る（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面のボタンはいずれも上記ジェスチャーのミラーであり、ほかに SPEAK（いつでも現在の状態を聞く）と DEMO（デモ用ステートマシン。終了後は実際の状態がそのまま復元される）がある。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| （无） | 本 Agent 不申请任何权限；TTS 与传感器不需要清单权限，相机零调用（如适用） |
+| （なし） | この Agent はどの権限も申請しない。TTS とセンサーにマニフェスト権限は不要であり、カメラは一切呼び出さない（該当する場合） |
 
-## 诚实边界
+## 誠実な境界
 
-- 单价与终电时刻为演示预设（单价 ¥1,200、终电三档），实际请按当店与当线修改登记（README 有方法）；合计是登记之和，不是收银小票
-- 倒计时按分钟粒度走字，不联网校时；跨零点的终电以预设分钟数计
+- 単価と終電時刻はデモ用プリセットである（単価 ¥1,200、終電は3段階）。実際には店と路線に合わせて登録を変更すること（方法は README に記載）。合計は登録内容の和であり、レシートではない
+- カウントダウンは分粒度で進み、ネットワークで時刻を合わせることはしない。日付をまたぐ終電はプリセットの分数で数える
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式ドキュメントで効果がないと明記されている）。
 
-## 打包与预览
+## パッケージとプレビュー
 
 ```bash
 cd ~/workspace/rokid/nomikai-kanji
@@ -57,76 +57,76 @@ cd ~/workspace/rokid/nomikai-kanji
 ~/tools/bin/aix list ../dist/nomikai-kanji.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| フィールド | 値 |
 |---|---|
-| Studio 名称 | Nomikai Kanji（待导入后回填） |
-| Version / Build | 1.0.2 / 待导入后回填 |
+| Studio 名 | Nomikai Kanji（インポート後に記入） |
+| Version / Build | 1.0.2 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | At a Japanese nomikai: the organizer ledger for headcount, bill split with 100-yen rounding, and last-train countdown. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了。Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> The nomikai organizer's ledger: headcount, running total, per-person share auto-rounded up to the nearest 100 yen the warikan way, and a big last-train countdown - all on one izakaya slip. It never records or transcribes the table talk; ledgers hold money, people and time, nothing else.
+> 飲み会幹事の帳簿です。人数、累計金額、割り勘の流儀で100円単位に切り上げた1人分、そして大きな終電カウントダウンを、居酒屋の伝票1枚にまとめます。テーブルでの会話を録音・文字起こしすることは決してありません。帳簿が持つのはお金と人数と時間だけです。
 
 ### Opening Message
 
 > ## Nomikai Kanji
 > 
-> Being kanji means holding three numbers all night: people, money, last train. I hold them on one slip - total, per-person share rounded the warikan way, and the countdown in big type. You drink; the ledger stays sober.
+> 幹事とは、一晩中3つの数字を持ち続けることです。人数とお金と終電です。その3つを1枚の伝票に載せます。合計と、割り勘で切り上げた1人分と、大きな文字のカウントダウンです。あなたは飲んでください。帳簿は酔いません。
 
 ### Preview Media
 
-- `preview-nomikai-kanji-index.png` — 初始状态
-- `preview-nomikai-kanji-s2.png` — 演示状态 2
-- `preview-nomikai-kanji-s3.png` — 演示状态 3
-- `preview-nomikai-kanji-s4.png` — 演示状态 4
+- `preview-nomikai-kanji-index.png` — 初期状態
+- `preview-nomikai-kanji-s2.png` — デモ状態 2
+- `preview-nomikai-kanji-s3.png` — デモ状態 3
+- `preview-nomikai-kanji-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出には3–5点のメディアファイルが必要で、動画1点以上（60秒以内）を含むこと。動画は GO の実機セルフテスト時に追加で録画する。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：干事账簿 Host Ledger；居酒屋传票：右对齐金额列 + 终电大字倒计时
+- 初版：幹事帳簿 Host Ledger。居酒屋の伝票：金額列を右寄せにし、終電カウントダウンを大きな文字で表示
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）
 
 ### Change Log（Build 1.0.1）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+- ボタンをこの Agent の UI 形態に合わせて個別に形作りした（形態は設計契約を参照）。シリーズ全体で同じボタンのセットを共用しない
 
 **Fixes**
 
-- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+- 実機のモノクロ緑パネルに合わせて色を調整した。元の純白 #ffffff を緑の階調に変え（最も明るい緑 #7dff9e）、明暗は緑だけで表現する
 
 ### Change Log（Build 1.0.2）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 无
+- なし
 
 **Fixes**
 
-- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+- 言語の純化：画面と音声の文案を現地の言語に統一し（日本は日本語、韓国は韓国語）、混入していた日本語・中国語の文案を一つずつ調べて取り除いた（SCAN のプロンプトを含む）

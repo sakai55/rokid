@@ -1,55 +1,55 @@
-# Bosai Kit（防灾包覆盖点检）
+# Bosai Kit（防災バッグカバー点検）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄にコピー）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-bosai-kit
 ```
 
-JP04 · 日本本地化系列。交互哲学：**榻榻米覆盖格 Coverage Grid**。本 Agent 把防灾包变成一张覆盖格：8 个品类一人一格，查过打 ●，过期或需更换打 △，没查是 ○。只有 8 格全部离开 ○，它才说「点检完了」。期限靠 telephoto 拍包装日期 + LLM 读年月（暂定，显示原文等你确认），或由你直接 FLAG。它不辨识灾害、不播报情报、不导航去避难所——那些是底座与自治体的事；它只证明一件事：这个包，今天真的被完整查过一遍。
+JP04・日本ローカライズシリーズ。インタラクション哲学：**畳のカバーグリッド Coverage Grid**。この Agent は防災バッグを 1 枚のカバーグリッドにする：8 品目が 1 品目 1 セル、確認したら ●、期限切れや交換が必要なら △、未確認は ○。8 セルすべてが ○ を離れて初めて「点検完了」と言う。期限は telephoto で包装の日付を撮って LLM に年月を読ませる（暫定。原文を表示して確認を待つ）か、自分で直接 FLAG する。災害を判別せず、情報を放送せず、避難所へ案内もしない——それはプラットフォームと自治体の仕事。これは 1 つだけを証明する：このバッグは今日、本当に一通り確認された、ということ。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/bosai-kit/preview-bosai-kit-index.png>)
-![预览-s2](<../../screenshots/bosai-kit/preview-bosai-kit-s2.png>)
-![预览-s3](<../../screenshots/bosai-kit/preview-bosai-kit-s3.png>)
-![预览-s4](<../../screenshots/bosai-kit/preview-bosai-kit-s4.png>)
+![プレビュー-index](<../../screenshots/bosai-kit/preview-bosai-kit-index.png>)
+![プレビュー-s2](<../../screenshots/bosai-kit/preview-bosai-kit-s2.png>)
+![プレビュー-s3](<../../screenshots/bosai-kit/preview-bosai-kit-s3.png>)
+![プレビュー-s4](<../../screenshots/bosai-kit/preview-bosai-kit-s4.png>)
 
-## 在地性
+## 地域性
 
-日本家庭的防灾（防災）不是可选项：各自治体都发防災手册，超市有专门的防灾货架，防灾包讲究「备齐 + 没过期」。水、非常食、药品都有有效期，点检的难点从来不是认不认识这些东西，而是八个品类到底哪格查过、哪格过期。
+日本の家庭にとって防災は選択肢ではない：自治体はどこも防災マニュアルを配り、スーパーには防災用品の棚があり、防災バッグは「そろっている＋期限切れでない」ことが求められる。水・非常食・薬には有効期限があり、点検の難しさは品目を知っているかどうかではなく、8 品目のうちどのセルを確認済みで、どれが期限切れか、にある。
 
-## 功能流程（闭环）
+## 機能フロー（閉ループ）
 
-- 覆盖：8 品类格阵（水/非常食/電灯/ラジオ/電源/常備薬/軍手/笛），滑动选格
-- 点检：OK 落 ●、FLAG 落 △（过期/待换），点头 = OK；SCAN 拍期限作暂定メモ
-- 收口：8/8 非 ○ 才报完了，并单独列出 △ 清单提醒更换
+- カバー：8 品目のグリッド（水／非常食／電灯／ラジオ／電源／常備薬／軍手／笛）、スワイプでセル選択
+- 点検：OK で ●、FLAG で △（期限切れ／要交換）、うなずき = OK；SCAN で期限を撮って暫定メモにする
+- 締め：8/8 が ○ でなくなって初めて完了を報せ、△ のリストを別途示して交換を促す
 
-## 手势映射
+## ジェスチャ対応
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャ（テンプルのタッチパッド） | キーイベント | この Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 OK 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| シングルタップ | Enter | 状況に応じた GO（README の機能フローと画面の guide 行を参照） |
+| 上スワイプ／下スワイプ | ArrowUp / ArrowDown | 画面の guide 行にある、この Agent 固有の定義を参照 |
+| うなずき（頭が静止したとき） | `onHeadGesture('nod')` | この Agent の主確認（OK と等価。guide 行を参照） |
+| ダブルタップ | Backspace | システムの戻る（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面上のボタンはすべて上記ジェスチャのミラーで、ほかに SPEAK（いつでも現在の状態を聞ける）と DEMO（状態機械のデモ、終了後は実際の状態がそのまま復元される）がある。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| `CAMERA` | 拍照核对路径（见功能流程；失败即 SKIP） |
+| `CAMERA` | 撮影による照合の経路（機能フローを参照。失敗したら SKIP） |
 
-## 诚实边界
+## 誠実な境界
 
-- 期限读数来自拍照+LLM，属暂定信息：必须与包装原文对照，读错以包装为准；SCAN 失败即 SKIP，不影响手工点检
-- 品目为东京常见防灾包构成，依各自治体手册增减是后续课题；本 Agent 不提供任何避难判断
+- 期限の読み取りは撮影＋LLM 由来の暫定情報：必ず包装の原文と照合し、読み違えたら包装が正。SCAN が失敗したら SKIP し、手作業の点検には影響しない
+- 品目は東京で一般的な防災バッグの構成。各自治体のマニュアルに合わせた増減は今後の課題。この Agent は避難判断を一切提供しない
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式に効果なしと明記）。
 
-## 打包与预览
+## パッケージ化とプレビュー
 
 ```bash
 cd ~/workspace/rokid/bosai-kit
@@ -57,89 +57,89 @@ cd ~/workspace/rokid/bosai-kit
 ~/tools/bin/aix list ../dist/bosai-kit.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| 項目 | 値 |
 |---|---|
-| Studio 名称 | Bosai Kit（待导入后回填） |
-| Version / Build | 1.0.3 / 待导入后回填 |
+| Studio 名 | Bosai Kit（インポート後に記入） |
+| Version / Build | 1.0.3 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | At home before disaster season: sweeps a Japanese emergency kit grid, flagging expired items. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了、Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> Bosai disaster-kit coverage check: 8 kit categories as a grid that must be fully swept - checked, or flagged expired/to-replace - before it will say done. Photograph a date with the telephoto camera for a tentative expiry note, or flag it yourself. It proves the kit was checked today; it gives no disaster advice and no evacuation directions.
+> 防災バッグのカバー点検：8 つの品目をグリッドにし、すべて確認済みか、期限切れ・要交換に印を付け終えるまで「点検完了」とは言いません。telephoto カメラで包装の日付を撮れば暫定の期限メモが付き、自分で印を付けることもできます。今日そのバッグを本当に点検したことだけを証明します。災害の助言も避難案内もしません。
 
 ### Opening Message
 
 > ## Bosai Kit
 > 
-> A disaster kit is only ready when every category was actually checked - including expiry dates. Sweep the 8 cells: water, food, light, radio, power, medicine, gloves, whistle. All cells filled, and only then do I say ready.
+> 防災バッグが使えるのは、期限まで含めて全品目を実際に確認したときだけです。8 つのセル——水・非常食・電灯・ラジオ・電源・薬・軍手・笛——をすべて埋めてください。全部埋まって初めて「準備完了」と言います。
 
 ### Preview Media
 
-- `preview-bosai-kit-index.png` — 初始状态
-- `preview-bosai-kit-s2.png` — 演示状态 2
-- `preview-bosai-kit-s3.png` — 演示状态 3
-- `preview-bosai-kit-s4.png` — 演示状态 4
+- `preview-bosai-kit-index.png` — 初期状態
+- `preview-bosai-kit-s2.png` — デモ状態 2
+- `preview-bosai-kit-s3.png` — デモ状態 3
+- `preview-bosai-kit-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出にはメディアファイル 3〜5 点（うち動画 ≥1 本、≤60 秒）が必要。動画は GO の実機テスト時に追加録画する。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：榻榻米覆盖格 Coverage Grid；格阵：8 格大标记阵 + 当前格说明行
+- 初版：畳のカバーグリッド Coverage Grid；グリッド：8 セルの大きな印の配列＋現在のセルの説明行
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）
 
 ### Change Log（Build 1.0.1）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+- ボタンをこの Agent の UI 形状に合わせて個別に造形（形状は設計契約を参照）し、シリーズ全員で同じボタンのセットを共有しない
 
 **Fixes**
 
-- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+- 実機の単色グリーンパネルに色を合わせた：元の純白 #ffffff をグリーンの階調に変更（最も明るいグリーン #7dff9e）、濃淡はグリーンだけで表現
 
 ### Change Log（Build 1.0.2）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 无
+- なし
 
 **Fixes**
 
-- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+- 言語の純化：画面と音声の文言を現地言語に統一（日本＝日本語／韓国＝韓国語）し、混入していた日本語・中国語の文言（SCAN のプロンプトを含む）を 1 つずつ調べて除去
 
 ### Change Log（Build 1.0.3）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 无
+- なし
 
 **Fixes**
 

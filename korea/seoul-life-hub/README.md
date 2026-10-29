@@ -1,14 +1,14 @@
 # 서울 생활 수첩
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio 가져오기 주소**(Global AIUI Studio의 Import Project 입력란에 붙여 넣으세요):
 
 ```
 https://github.com/sakai55/rokid/tree/agent-seoul-life-hub
 ```
 
-KR19 · 韩国在地 × 集合总控 × 注意力。在首尔生活一周的访客用一本手帳把20件日常工具回完
+KR19 · 한국 현지 × 집합 총괄 × 주의. 서울에서 일주일을 사는 방문객이 수첩 한 권으로 일상 도구 20가지를 끝까지 사용합니다
 
-## 预览截图
+## 미리보기 스크린샷
 
 ![preview-seoul-life-hub-index.png](../../screenshots/seoul-life-hub/preview-seoul-life-hub-index.png)
 ![preview-seoul-life-hub-t01.png](../../screenshots/seoul-life-hub/preview-seoul-life-hub-t01.png)
@@ -33,58 +33,58 @@ KR19 · 韩国在地 × 集合总控 × 注意力。在首尔生活一周的访�
 ![preview-seoul-life-hub-t20.png](../../screenshots/seoul-life-hub/preview-seoul-life-hub-t20.png)
 ![preview-seoul-life-hub-t01-s2.png](../../screenshots/seoul-life-hub/preview-seoul-life-hub-t01-s2.png)
 
-## 方向构成
+## 방향 구성
 
-- 本 Agent 的方向构成：韩国在地 × 集合总控 × 注意力。每个方向在场景里承担不可替代的一环，非功能拼盘。（立项时曾列指向性，建成复核：20 工具页均无方向机制承载，故修正为三方向，不虚标。）
-- 一句话场景：在首尔生活一周的访客用一本手帳把20件日常工具回完。
+- 이 Agent의 방향 구성: 한국 현지 × 집합 총괄 × 주의. 각 방향은 장면 안에서 대체할 수 없는 한 고리를 맡으며, 기능 짜깁기가 아닙니다. (기획 당시에는 지향성도 올렸으나, 완성 후 재검토에서 도구 페이지 20개 모두 방향 메커니즘을 담지 않아 세 방향으로 정정했고, 부풀려 표시하지 않습니다.)
+- 한 줄 장면: 서울에서 일주일을 사는 방문객이 수첩 한 권으로 일상 도구 20가지를 끝까지 사용합니다.
 
-## 结构与功能
+## 구조와 기능
 
-21 页：`pages/index/` 生活手帳一覧（20工具名を5件ずつ窓表示・上下选・Enter开）；工具页各一功能——核销清单13页（各4点、点头逐项打勾、齐全记完成记录）、选择问答3页（各3問・3択・正誤TTS＋解説）、代说短语3页（各4句固定短语、主确认即TTS代说并记记录）、计数1页（散步5处目标计数）。每工具页功能与内容集互异，状态变体不充页数。
+21개 페이지: `pages/index/` 생활 수첩 목록(도구 이름 20개를 다섯 개씩 창에 표시, 위아래로 고르고 Enter로 열기). 도구 페이지는 각 하나의 기능입니다. 확인 체크리스트 13개 페이지(각 4항목, 고개 끄덕임으로 항목마다 체크, 다 되면 완료 기록), 선택형 문답 3개 페이지(각 3문항, 3지선다, 정오 TTS + 해설), 대신 말하기 문구 3개 페이지(각 고정 문구 4개, 주 확인 즉시 TTS가 대신 말하고 기록), 세기 1개 페이지(산책 목표 5곳 세기). 각 도구 페이지의 기능과 콘텐츠 집합은 서로 다르고, 상태 변형을 페이지 수로 세지 않습니다.
 
-内容集计数：生活工具20个；清单13页×4点；问答3页×3問；短语3页×4句；计数1页目标5处；使用记录按实际条数计。跨会话持久化：存储键 `seoulLifeHubV1`（选中项、打勾/答题/计数状态、完成记录数组、`lastError`）。
+콘텐츠 집합 수: 생활 도구 20개, 체크리스트 13개 페이지 × 4항목, 문답 3개 페이지 × 3문항, 문구 3개 페이지 × 4문장, 세기 1개 페이지 목표 5곳, 사용 기록은 실제 건수대로 셉니다. 세션을 넘는 지속성: 저장 키 `seoulLifeHubV1`(선택 항목, 체크/답안/카운트 상태, 완료 기록 배열, `lastError`).
 
-## 手势映射
+## 제스처 매핑
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| 제스처 (안경다리 터치패드) | 키 이벤트 | 이 Agent에서의 역할 |
 |---|---|---|
-| 单击 | Enter | 主确认（各页主按钮） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 切换选项 / 上下一项 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 等价于主确认 |
-| 双击 | Backspace | 返回上一页（子页） |
+| 한 번 탭 | Enter | 주 확인(각 페이지의 주 버튼) |
+| 위로 / 아래로 스와이프 | ArrowUp / ArrowDown | 옵션 전환 / 위아래 항목 |
+| 고개 끄덕임 (머리가 안정됐을 때) | `onHeadGesture('nod')` | 주 확인과 동등 |
+| 두 번 탭 | Backspace | 이전 페이지로 돌아가기(하위 페이지) |
 
-## 权限
+## 권한
 
-无。TTS 与传感器不需要清单权限，相机零调用。
+없음. TTS와 센서는 매니페스트 권한이 필요 없고, 카메라는 호출하지 않습니다.
 
-## 诚实边界
+## 정직한 경계
 
 - 각 도구의 안내와 문장은 수록된 정형 내용입니다. 실제 가게와 기관의 안내가 기준입니다.
 - 대신 말하기는 본인이 고른 정형 문장만을 읽습니다. 현장에서 새로 만든 말이 아닙니다.
 
-## 错误码
+## 오류 코드
 
-失败时眼镜屏显裸码、TTS 只读码、最近一次错误写入持久数据的 `lastError`（含码、本台 slug、版本与原文）。本台可能出现的码：
+실패하면 안경 화면에 코드만 표시되고, TTS는 코드만 읽으며, 가장 최근 오류는 지속 데이터의 `lastError`에 기록됩니다(코드, 이 기기의 slug, 버전, 원문 포함). 이 기기에서 나타날 수 있는 코드:
 
-- `E5001` 记录保存失败（存储写入抛错）
-- `E5002` 记录读取失败（读取/解析抛错）
-- `E3005` 播报失败（TTS speak 抛错）
-- `E8001` 页面切换失败（navigateTo/navigateBack 抛错）
+- `E5001` 기록 저장 실패(스토리지 쓰기 중 예외 발생)
+- `E5002` 기록 읽기 실패(읽기/파싱 중 예외 발생)
+- `E3005` 음성 안내 실패(TTS speak 중 예외 발생)
+- `E8001` 페이지 전환 실패(navigateTo/navigateBack 중 예외 발생)
 
-## 设备测试信息
+## 기기 테스트 정보
 
-| 项目 | 内容 |
+| 항목 | 내용 |
 |---|---|
-| Studio 名 | 待回填 |
+| Studio 이름 | 기입 예정 |
 | Version | 1.0.0 |
-| App Category | 待回填 |
-| Intent Description | 待回填 |
-| Agent ID | 待回填 |
-| 状态 | 未真机验证 |
+| App Category | 기입 예정 |
+| Intent Description | 기입 예정 |
+| Agent ID | 기입 예정 |
+| 상태 | 실기기 검증 전 |
 
-## 提审资料 (Review Submission)
+## 심사 자료 (Review Submission)
 
-Feature Description: Seoul life hub: one notebook for a week in Seoul. Twenty daily tools - checklists, quizzes, spoken phrases and a count - each with its own set and persisted use records.
+Feature Description: 서울 생활 수첩: 서울에서의 일주일을 위한 수첩 한 권. 일상 도구 스무 가지(체크리스트, 퀴즈, 대신 말하기 문구, 세기)가 각자의 집합을 갖추고 사용 기록이 저장됩니다.
 
 Opening Message: 서울에서 일주일을 보내시나요. 생활 도구 스무 개를 한 권의 수첩으로 써 보세요.
 
@@ -112,10 +112,10 @@ Preview Media:
 - `preview-seoul-life-hub-t20.png`
 - `preview-seoul-life-hub-t01-s2.png`
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机录制后补。
+> 정식 심사 제출에는 미디어 파일 3~5개가 필요하고 동영상(≤60초) 1개 이상이 포함되어야 합니다. 동영상은 GO가 실기기로 녹화한 뒤 추가합니다.
 
 Change Log — Build 1.0.0:
 
-- Features added: 首个版本；在首尔生活一周的访客用一本手帳把20件日常工具回完
-- Improvements: 无（首个版本）
-- Fixes: 无（首个版本）
+- Features added: 첫 버전. 서울에서 일주일을 사는 방문객이 수첩 한 권으로 일상 도구 20가지를 끝까지 사용합니다
+- Improvements: 없음 (첫 버전)
+- Fixes: 없음 (첫 버전)

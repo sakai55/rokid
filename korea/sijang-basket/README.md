@@ -1,57 +1,57 @@
-# Sijang Basket（시장 장바구니 Market Basket）
+# Sijang Basket (시장 장바구니 Market Basket)
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio 가져오기 주소**(Global AIUI Studio의 Import Project 입력란에 붙여 넣으세요):
 
 ```
 https://github.com/sakai55/rokid/tree/agent-sijang-basket
 ```
 
-KR14 · 韩国在地 × 注意力（HOLD）。韩国传统市场（시장）购物者按摊位逐件核销菜篮子，差一件不结账。交互哲学：**시장 장바구니 Market Basket**。
+KR14 · 한국 현지 × 주의(HOLD). 한국 전통시장(시장) 쇼핑객이 가판대별로 장바구니를 항목마다 확인하고, 한 가지라도 빠지면 계산하지 않습니다. 상호작용 철학: **시장 장바구니 Market Basket**.
 
-## 预览截图
+## 미리보기 스크린샷
 
-![预览-index](<../../screenshots/sijang-basket/preview-sijang-basket-index.png>)
-![预览-s2](<../../screenshots/sijang-basket/preview-sijang-basket-s2.png>)
-![预览-s3](<../../screenshots/sijang-basket/preview-sijang-basket-s3.png>)
-![预览-s4](<../../screenshots/sijang-basket/preview-sijang-basket-s4.png>)
+![미리보기-index](<../../screenshots/sijang-basket/preview-sijang-basket-index.png>)
+![미리보기-s2](<../../screenshots/sijang-basket/preview-sijang-basket-s2.png>)
+![미리보기-s3](<../../screenshots/sijang-basket/preview-sijang-basket-s3.png>)
+![미리보기-s4](<../../screenshots/sijang-basket/preview-sijang-basket-s4.png>)
 
-## 方向构成
+## 방향 구성
 
-- 本 Agent 的方向构成：韩国在地 × 注意力（HOLD）。每个方向在场景里承担不可替代的一环，非功能拼盘（日本组概念按精品线组合通则判定；自由组概念按场景核心定主方向编号）。
-- 一句话场景：韩国传统市场（시장）购物者按摊位逐件核销菜篮子，差一件不结账。
+- 이 Agent의 방향 구성: 한국 현지 × 주의(HOLD). 각 방향은 장면 안에서 대체할 수 없는 한 고리를 맡으며, 기능 짜깁기가 아닙니다(일본 그룹 개념은 부티크 라인의 조합 통칙으로 판정하고, 자유 그룹 개념은 장면의 핵심에 따라 주 방향 번호를 정합니다).
+- 한 줄 장면: 한국 전통시장(시장) 쇼핑객이 가판대별로 장바구니를 항목마다 확인하고, 한 가지라도 빠지면 계산하지 않습니다.
 
-## 功能流程（闭环）
+## 기능 흐름 (폐쇄 루프)
 
-- 进入：打开即显示当前项与进度，当前项大字在视线中央。
-- 过程：NEXT 选下一项、CHECK 确认当前项、PREV 回上一项；点头（头稳时）等价于主确认；SPEAK 随时播报当前状态。
-- 结果：全部项确认后计一轮（周回/完成数 +1），可反复使用；DEMO 演示状态机，退出后真实状态原样恢复。
+- 진입: 열면 바로 현재 항목과 진행도가 표시되고, 현재 항목이 큰 글자로 시선 중앙에 옵니다.
+- 과정: NEXT로 다음 항목 선택, CHECK로 현재 항목 확인, PREV로 이전 항목으로 돌아갑니다. 고개 끄덕임(머리가 안정됐을 때)은 주 확인과 동등합니다. SPEAK는 언제든 현재 상태를 읽어줍니다.
+- 결과: 모든 항목을 확인하면 한 바퀴로 셉니다(순회/완료 수 +1). 반복해서 쓸 수 있습니다. DEMO는 데모 상태 머신이며, 종료하면 실제 상태가 그대로 복원됩니다.
 
-## 手势映射
+## 제스처 매핑
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| 제스처 (안경다리 터치패드) | 키 이벤트 | 이 Agent에서의 역할 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（确认当前项 / 播报） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 CHECK 等价） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| 한 번 탭 | Enter | 상황별 GO(현재 항목 확인 / 음성 안내) |
+| 위로 / 아래로 스와이프 | ArrowUp / ArrowDown | 화면 guide 줄에 적힌 이 Agent 전용 정의 참조 |
+| 고개 끄덕임 (머리가 안정됐을 때) | `onHeadGesture('nod')` | 이 Agent의 주 확인(CHECK와 동등) |
+| 두 번 탭 | Backspace | 시스템 뒤로 가기(가로채지 않음) |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+화면 버튼은 모두 위 제스처의 미러링이며, SPEAK(언제든 현재 상태 듣기)와 DEMO(데모 상태 머신, 종료하면 실제 상태가 그대로 복원됨)가 추가됩니다.
 
-## 权限
+## 권한
 
-| 权限 | 用途 |
+| 권한 | 용도 |
 |---|---|
-| （无） | 本 Agent 不申请任何权限；TTS 与传感器不需要清单权限，相机零调用 |
+| (없음) | 이 Agent는 어떤 권한도 신청하지 않습니다. TTS와 센서는 매니페스트 권한이 필요 없고, 카메라는 호출하지 않습니다 |
 
-## 诚实边界
+## 정직한 경계
 
 - 구매 여부는 본인의 확인만 기록한다. 가게 시스템과 연결되지 않는다.
 - 가격과 흥정은 가게 안내가 기준이다. Agent는 가격을 정하지 않는다.
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方文档注明不生效）。
-- 绿色色阶：CSS 只用绿色色阶，禁用纯白与白色 rgba；按钮样式随本 Agent 的 UI 形态定型，不共用默认按钮。
+- TTS는 호스트 고정 음색을 사용하며, utterance의 `lang`은 절대 설정하지 않습니다(공식 문서에 효과가 없다고 명시됨).
+- 녹색 계조: CSS는 녹색 계조만 사용하고 순백과 흰색 rgba는 금지합니다. 버튼 스타일은 이 Agent의 UI 형태에 맞춰 정하고 기본 버튼을 공유하지 않습니다.
 
-## 打包与预览
+## 패키징과 미리보기
 
 ```bash
 cd ~/workspace/rokid/git-rokid/korea/sijang-basket
@@ -59,48 +59,48 @@ cd ~/workspace/rokid/git-rokid/korea/sijang-basket
 ~/tools/bin/aix list ../../aix/sijang-basket.aix
 ```
 
-## 真机测试信息
+## 실기기 테스트 정보
 
-| 字段 | 值 |
+| 필드 | 값 |
 |---|---|
-| Studio 名称 | Sijang Basket（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Studio 이름 | Sijang Basket (가져오기 후 기입 예정) |
+| Version / Build | 1.0.0 / 가져오기 후 기입 예정 |
 | App Category | Life |
 | Intent Description | Sijang basket: a traditional-market basket ledger. Register stalls in order, check each purchase off as it is bought, and never settle with a missing item. It holds the basket, not the money, and it never scans anything. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | 가져오기 후 기입 예정 |
+| 상태 | 로컬 빌드 완료, Studio 가져오기 대기 중 |
 
-## 提审资料 (Review Submission)
+## 심사 자료 (Review Submission)
 
 ### Feature Description
 
-> Sijang basket: a traditional-market basket ledger. Register stalls in order, check each purchase off as it is bought, and never settle with a missing item. It holds the basket, not the money, and it never scans anything.
+> 시장 장바구니: 전통시장 장바구니 장부. 가판대를 순서대로 등록하고, 사는 대로 각 구매를 체크하며, 한 가지라도 빠지면 절대 계산하지 않습니다. 돈이 아닌 장바구니를 지키고, 아무것도 스캔하지 않습니다.
 
 ### Opening Message
 
 > ## Sijang Basket
 >
-> Sijang basket: a traditional-market basket ledger. Register stalls in order, check each purchase off as it is bought, and never settle with a missing item. It holds the basket, not the money, and it never scans anything.
+> 시장 장바구니: 전통시장 장바구니 장부. 가판대를 순서대로 등록하고, 사는 대로 각 구매를 체크하며, 한 가지라도 빠지면 절대 계산하지 않습니다. 돈이 아닌 장바구니를 지키고, 아무것도 스캔하지 않습니다.
 
 ### Preview Media
 
-- `preview-sijang-basket-index.png` — 初始状态
-- `preview-sijang-basket-s2.png` — 演示状态 2
-- `preview-sijang-basket-s3.png` — 演示状态 3
-- `preview-sijang-basket-s4.png` — 演示状态 4
+- `preview-sijang-basket-index.png` — 초기 상태
+- `preview-sijang-basket-s2.png` — 데모 상태 2
+- `preview-sijang-basket-s3.png` — 데모 상태 3
+- `preview-sijang-basket-s4.png` — 데모 상태 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 정식 심사 제출에는 미디어 파일 3~5개가 필요하고 동영상(≤60초) 1개 이상이 포함되어야 합니다. 동영상은 GO가 실기기로 직접 테스트할 때 추가로 녹화합니다.
 
-### Change Log（Build 1.0.0）
+### Change Log (Build 1.0.0)
 
 **Features added**
 
-- 首个版本：시장 장바구니 Market Basket；韩国传统市场（시장）购物者按摊位逐件核销菜篮子，差一件不结账
+- 첫 버전: 시장 장바구니 Market Basket. 한국 전통시장(시장) 쇼핑객이 가판대별로 장바구니를 항목마다 확인하고, 한 가지라도 빠지면 계산하지 않습니다
 
 **Improvements**
 
-- 无（首个版本）
+- 없음 (첫 버전)
 
 **Fixes**
 
-- 无（首个版本）
+- 없음 (첫 버전)

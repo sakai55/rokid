@@ -1,14 +1,14 @@
 # 定期まもり
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄に貼り付け）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-teiki-mamori
 ```
 
-JP28 · 日本在地 × 路缘坡 × 注意力。通勤者が改札前で定期券の期限と忘れ物を一度に確認する
+JP28 · 日本ローカル × カーブカット × アテンション。通勤者が改札前で定期券の期限と忘れ物を一度に確認する
 
-## 预览截图
+## プレビュー画像
 
 ![preview-teiki-mamori-index.png](../../screenshots/teiki-mamori/preview-teiki-mamori-index.png)
 ![preview-teiki-mamori-check.png](../../screenshots/teiki-mamori/preview-teiki-mamori-check.png)
@@ -16,58 +16,58 @@ JP28 · 日本在地 × 路缘坡 × 注意力。通勤者が改札前で定期�
 ![preview-teiki-mamori-check-s2.png](../../screenshots/teiki-mamori/preview-teiki-mamori-check-s2.png)
 ![preview-teiki-mamori-record-s2.png](../../screenshots/teiki-mamori/preview-teiki-mamori-record-s2.png)
 
-## 方向构成
+## 方向構成
 
-- 本 Agent 的方向构成：日本在地 × 路缘坡 × 注意力。每个方向在场景里承担不可替代的一环，非功能拼盘。
-- 一句话场景：通勤者が改札前で定期券の期限と忘れ物を一度に確認する。
+- 本 Agent の方向構成：日本ローカル × カーブカット × アテンション。各方向が場面の中で欠かせない一環を担い、機能の寄せ集めではない。
+- 一言で表す場面：通勤者が改札前で定期券の期限と忘れ物を一度に確認する。
 
-## 结构与功能
+## 構造と機能
 
-3 页：`pages/index/` 定期一覧（定期3枚・期限表示、選んだ定期を保持）；`pages/check/` 忘れ物チェック（持ち物6点、点头/Enter逐项打勾、齐全时TTS播报并记一条完成记录）；`pages/record/` 記録（最近6条完成记录＋总数）。
+3 ページ：`pages/index/` 定期一覧（定期3枚・期限表示、選んだ定期を保持）；`pages/check/` 忘れ物チェック（持ち物6点、うなずき/Enter で1点ずつチェックし、そろったら TTS で読み上げて完了記録を1件残す）；`pages/record/` 記録（最近6件の完了記録＋総数）。
 
-内容集计数：定期券3枚；持ち物6点；完成记录按实际条数计。跨会话持久化：存储键 `teikiMamoriV1`（选中项、打勾/答题/计数状态、完成记录数组、`lastError`）。
+内容セットの数：定期券3枚；持ち物6点；完了記録は実際の件数で数える。セッションをまたぐ永続化：保存キー `teikiMamoriV1`（選択項目、チェック／回答／カウントの状態、完了記録の配列、`lastError`）。
 
-## 手势映射
+## ジェスチャ対応
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャ（テンプル＝つるのタッチパッド） | キーイベント | 本 Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 主确认（各页主按钮） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 切换选项 / 上下一项 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 等价于主确认 |
-| 双击 | Backspace | 返回上一页（子页） |
+| シングルタップ | Enter | 主な確認（各ページの主ボタン） |
+| 上スワイプ / 下スワイプ | ArrowUp / ArrowDown | 選択肢の切り替え / 前後の項目へ |
+| うなずき（頭が安定したとき） | `onHeadGesture('nod')` | 主な確認と同等 |
+| ダブルタップ | Backspace | 前のページに戻る（子ページ） |
 
-## 权限
+## 権限
 
-无。TTS 与传感器不需要清单权限，相机零调用。
+なし。TTS とセンサーはマニフェスト権限を必要とせず、カメラは一切呼び出さない。
 
-## 诚实边界
+## 誠実な境界
 
-- 期限は本人の登録した日付だけを表示する。鉄道・バス会社の実績データとは連動しない。
+- 期限は本人が登録した日付だけを表示する。鉄道・バス会社の実績データとは連動しない。
 - 持ち物チェックは本人の確認だけを記す。忘れ物がないことの保証ではない。
 
-## 错误码
+## エラーコード
 
-失败时眼镜屏显裸码、TTS 只读码、最近一次错误写入持久数据的 `lastError`（含码、本台 slug、版本与原文）。本台可能出现的码：
+失敗時、眼鏡の画面には裸コードを表示し、TTS はコードだけを読み上げ、直近のエラーを永続データの `lastError` に書き込む（コード、本 Agent の slug、バージョン、原文を含む）。本 Agent で起こりうるコード：
 
-- `E5001` 记录保存失败（存储写入抛错）
-- `E5002` 记录读取失败（读取/解析抛错）
-- `E3005` 播报失败（TTS speak 抛错）
-- `E8001` 页面切换失败（navigateTo/navigateBack 抛错）
+- `E5001` 記録の保存に失敗（ストレージへの書き込みで例外発生）
+- `E5002` 記録の読み取りに失敗（読み取り／解析で例外発生）
+- `E3005` 読み上げに失敗（TTS speak で例外発生）
+- `E8001` ページ切り替えに失敗（navigateTo/navigateBack で例外発生）
 
-## 设备测试信息
+## 実機テスト情報
 
-| 项目 | 内容 |
+| 項目 | 内容 |
 |---|---|
-| Studio 名 | 待回填 |
+| Studio 名 | 未記入 |
 | Version | 1.0.0 |
-| App Category | 待回填 |
-| Intent Description | 待回填 |
-| Agent ID | 待回填 |
-| 状态 | 未真机验证 |
+| App Category | 未記入 |
+| Intent Description | 未記入 |
+| Agent ID | 未記入 |
+| 状態 | 実機未検証 |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
-Feature Description: Teiki mamori: a commuter companion before the ticket gate. Three registered passes with expiry dates, a six-item belongings check, and persisted departure records.
+Feature Description: 定期まもり：改札前で使う通勤のお供です。期限付きで登録した定期券3枚と、持ち物6点のチェック、端末に保存される出発完了の記録を、改札の前でまとめて確認できます。
 
 Opening Message: 改札の前に、定期券の期限と持ち物を確認しましょう。
 
@@ -78,10 +78,10 @@ Preview Media:
 - `preview-teiki-mamori-check-s2.png`
 - `preview-teiki-mamori-record-s2.png`
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机录制后补。
+> 正式な審査提出には3–5点のメディアファイルが必要で、動画を≥1点（≤60 s）含めること。動画は GO の実機録画後に追加する。
 
 Change Log — Build 1.0.0:
 
-- Features added: 首个版本；通勤者が改札前で定期券の期限と忘れ物を一度に確認する
-- Improvements: 无（首个版本）
-- Fixes: 无（首个版本）
+- Features added: 初版；通勤者が改札前で定期券の期限と忘れ物を一度に確認する
+- Improvements: なし（初版）
+- Fixes: なし（初版）

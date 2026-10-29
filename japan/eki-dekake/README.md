@@ -1,64 +1,64 @@
 # Eki Dekake（駅のお出かけ）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄にコピー）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-eki-dekake
 ```
 
-JP20 · 日本在地 × 路缘坡 × 指向性。精品线合并重做：由 JP14 `kasa-share`（駅前シェア傘帳簿）与 JP16 `eki-barrier`（駅の昇降機側確認）按同一场景合并而成；原两个 Agent 原样封存、不删不改。一句话场景：雨天或初到车站时，行动不便者在眼镜上完成一段车站出行——找到有电梯的一侧 → 借共享伞 → 守住归还期限 → 确认归还，并留下跨会话的出行记录。
+JP20・日本在地 × カーブカット × 指向性。精品ラインの統合リメイク：JP14 `kasa-share`（駅前シェア傘帳簿）と JP16 `eki-barrier`（駅の昇降機の側の確認）を同一の場面で統合したもの。元の 2 つの Agent はそのまま封印され、削除も変更もしない。一文の場面：雨の日や初めての駅で、移動に困難のある人がグラス上で 1 回分の駅のお出かけを完了する——昇降機のある側を見つけ → シェア傘を借り → 返却期限を守り → 返却を確認し、セッションをまたぐお出かけ記録を残す。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/eki-dekake/preview-eki-dekake-index.png>)
-![预览-kasa](<../../screenshots/eki-dekake/preview-eki-dekake-kasa.png>)
-![预览-kasa-s2](<../../screenshots/eki-dekake/preview-eki-dekake-kasa-s2.png>)
-![预览-record](<../../screenshots/eki-dekake/preview-eki-dekake-record.png>)
+![プレビュー-index](<../../screenshots/eki-dekake/preview-eki-dekake-index.png>)
+![プレビュー-kasa](<../../screenshots/eki-dekake/preview-eki-dekake-kasa.png>)
+![プレビュー-kasa-s2](<../../screenshots/eki-dekake/preview-eki-dekake-kasa-s2.png>)
+![プレビュー-record](<../../screenshots/eki-dekake/preview-eki-dekake-record.png>)
 
-## 结构与功能（闭环）
+## 構造と機能（閉ループ）
 
-三页结构，形态各异（车站出发板 / 傘フロー時計 / 記録ログ）：
+3 ページ構造で、形状はそれぞれ異なる（駅の出発ボード／傘フローの時計／記録ログ）：
 
-- **駅ボード（pages/index）**：6 个车站的设施内容集常驻成「出发板」——每站含电梯侧（左/右/中央）、电梯位置、伞点、归还期限（条目数：6 站 × 4 项）。上下滑选站；AbsoluteOrientationSensor 实时读头部朝向（左/右/正面），与所选站的电梯侧对照显示；点头/GO 定站并写为「前回駅」。
-- **傘フロー（pages/kasa）**：借りる登録（以定站的期限小时数生成截止时刻）→ 期限守候（30 秒刷新剩余分钟，大字时钟）→ 返却確認（本人按钮/点头确认，写入出行记录并清贷出状态）。
-- **記録（pages/record）**：出行记录最近 5 件 + 最常用车站统计，跨会话持久化（wx storage `ekiDekakeV1`），本人可清空。
+- **駅ボード（pages/index）**：6 駅の設備の内容集が「出発ボード」として常駐——各駅に昇降機の側（左／右／中央）、昇降機の位置、傘スポット、返却期限を含む（項目数：6 駅 × 4 項目）。上下スワイプで駅を選択；AbsoluteOrientationSensor が頭の向き（左／右／正面）をリアルタイムに読み、選択した駅の昇降機の側と照らして表示する；うなずき／GO で駅を確定し「前回駅」として書き込む。
+- **傘フロー（pages/kasa）**：借りる登録（確定した駅の期限の時間数から締切時刻を生成）→ 期限の見守り（30 秒ごとに残り分数を更新、大きな文字の時計）→ 返却確認（本人のボタン／うなずきで確認し、お出かけ記録に書き込んで貸出状態を消す）。
+- **記録（pages/record）**：お出かけ記録の直近 5 件 ＋ 最もよく使う駅の統計。セッションをまたいで永続化（wx storage `ekiDekakeV1`）し、本人が消去できる。
 
-方向分工：路缘坡承担「行动不便者的车站出行」本体；指向性承担电梯侧对照（头部朝向传感器实读）；日本在地承担车站设施与共享伞制度场景。非拼盘：三者缺一，出行链断一环。
+方向の分担：カーブカットが「移動に困難のある人の駅のお出かけ」本体を担い、指向性が昇降機の側との照合（頭の向きセンサーの実読み）を担い、日本在地が駅の設備とシェア傘の制度の場面を担う。寄せ集めではない：3 つのうち 1 つでも欠ければ、お出かけの連鎖が 1 環切れる。
 
-## 手势映射
+## ジェスチャ対応
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャ（テンプルのタッチパッド） | キーイベント | この Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 定站（駅ボード）／傘フローでは借りる・返却の主确认 |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 选站（次/前） |
-| 点头（头稳时） | `onHeadGesture('nod')` | 与主确认等价 |
-| 双击 | Backspace | 系统返回（子页 BACK 键亦可） |
+| シングルタップ | Enter | 駅を確定（駅ボード）／傘フローでは借りる・返却の主確認 |
+| 上スワイプ／下スワイプ | ArrowUp / ArrowDown | 駅の選択（次／前） |
+| うなずき（頭が静止したとき） | `onHeadGesture('nod')` | 主確認と等価 |
+| ダブルタップ | Backspace | システムの戻る（子ページの BACK キーでも可） |
 
-## 权限
+## 権限
 
-无。AbsoluteOrientationSensor 与 wx storage 不需要权限声明；TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方文档注明不生效）。
+なし。AbsoluteOrientationSensor と wx storage には権限の宣言は不要；TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式ドキュメントに効果なしと明記）。
 
-## 诚实边界
+## 誠実な境界
 
-- 设施集为内置 6 站数据，不联网、不保证实时变更；伞的在库/可借状态 Agent 不知道、不代断。
-- 传感器不可用时明示「センサーなし（手動で確認してください）」，不假装读数；返却済みは本人の確認だけが記す。
+- 設備集は内蔵の 6 駅データで、ネットワークには接続せず、リアルタイムの変更は保証しない；傘の在庫／貸出可否は Agent は知らず、代わりに判断しない。
+- センサーが使えないときは「センサーなし（手動で確認してください）」と明示し、読み取りを装わない；返却済みは本人の確認だけが記す。
 
-## 设备测试信息
+## デバイスのテスト情報
 
-| 项 | 值 |
+| 項目 | 値 |
 |---|---|
-| Studio name | Eki Dekake（待导入后回填） |
+| Studio name | Eki Dekake（インポート後に記入） |
 | Version / Build | 1.0.0 |
-| App Category | Life（待导入时确认） |
+| App Category | Life（インポート時に確認） |
 | Intent Description | 駅で昇降機の側を確認し、シェア傘を借りて期限内に返す |
-| Agent ID | 待导入后回填 |
-| 状态 | 已打包、已推送；未导入 Studio、未真机测试、未提审 |
+| Agent ID | インポート後に記入 |
+| 状態 | パッケージ化済み、プッシュ済み；Studio 未インポート、実機テスト未実施、未提出 |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description (≤500 chars)
 
-Station outing, end to end: a departure-board of six stations with elevator side, umbrella point and return deadline; a borrow-to-return umbrella flow with a watched countdown; and a persistent trip record with your most-used station. Built for travellers who need the elevator side and cannot afford a forgotten umbrella.
+駅のお出かけを最初から最後まで：昇降機の側・傘スポット・返却期限を載せた 6 駅の出発ボード；カウントダウンを見守る、傘の貸出から返却までのフロー；そして最もよく使う駅とともに残るお出かけ記録。昇降機の側が必要で、傘の返し忘れが許されない旅人のために作りました。
 
 ### Opening Message (≤500, Markdown)
 
@@ -66,16 +66,16 @@ Station outing, end to end: a departure-board of six stations with elevator side
 
 ### Preview Media
 
-图片 4 张（本页预览截图）；视频待真机阶段补（提审要求 3–5 个文件、≥1 图 ≥1 视频）。
+画像 4 枚（このページのプレビュー画像）；動画は実機の段階で追加（審査提出の要件はファイル 3〜5 点、画像 ≥1・動画 ≥1）。
 
 ### Change Log
 
 #### Build 1.0.0
-- Features added: 三页新作（駅ボード/傘フロー/記録）；JP14+JP16 合并重做，设施内容集 6 站、期限守候、跨会话出行记录。
-- Improvements: 无（首版）。
-- Fixes: 无（首版）。
+- Features added：3 ページの新作（駅ボード／傘フロー／記録）；JP14＋JP16 の統合リメイク、設備の内容集 6 駅、期限の見守り、セッションをまたぐお出かけ記録。
+- Improvements：なし（初版）。
+- Fixes：なし（初版）。
 
-## 打包与预览
+## パッケージ化とプレビュー
 
-- 打包：`~/tools/bin/aix pack . -o eki-dekake.aix`（仓库副本在 `aix/eki-dekake.aix`）
-- 预览：`~/tools/bin/aix preview . --html-out artifacts/preview.html` 后走本地截图管线（端口 8902）
+- パッケージ化：`~/tools/bin/aix pack . -o eki-dekake.aix`（リポジトリの複製は `aix/eki-dekake.aix`）
+- プレビュー：`~/tools/bin/aix preview . --html-out artifacts/preview.html` の後、ローカルの撮影パイプラインを通す（ポート 8902）

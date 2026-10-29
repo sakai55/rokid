@@ -1,55 +1,55 @@
-# Noise Diary（层间噪音夜间日记）
+# Noise Diary (층간소음 야간 일기)
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio 가져오기 주소**(Global AIUI Studio의 Import Project 입력란에 붙여 넣으세요):
 
 ```
 https://github.com/sakai55/rokid/tree/agent-noise-diary
 ```
 
-KR02 · 韩国本地化系列。交互哲学：**夜间日记 Night Diary**。本 Agent 只记自己家的账：夜间守候自家近场声响，超过阈值的时刻被钉在一条 22:00→06:00 的弧线上，晨起一次复盘播报——昨晚响了几次、最响在几点。它从不录音、不转写、不指向邻居（只测佩戴者近场，方向如实标注），更不会实时指责你：夜里它沉默记账，早上你才看日记。它与底座字幕/转写的区别是根本性的：它连声音内容是什么都不知道，只知道「几点、家里响了一声」。
+KR02 · 한국 현지화 시리즈. 상호작용 철학: **야간 일기 Night Diary**. 이 Agent는 자기 집의 장부만 기록합니다. 밤에 자기 집 가까운 곳의 소리를 지키고 서서, 임계값을 넘은 순간을 22:00→06:00 호 위에 핀으로 꽂고, 아침에 일어나 한 번 되짚어 읽어줍니다. 어젯밤 몇 번 울렸는지, 가장 컸던 건 몇 시였는지. 녹음하지 않고, 받아쓰지 않고, 이웃을 가리키지 않습니다(착용자 가까운 곳만 재고 방향은 그대로 밝힙니다). 밤중에 실시간으로 당신을 탓하지도 않습니다. 밤에는 조용히 기록하고, 아침에 당신이 일기를 봅니다. 베이스 자막/전사와 근본적으로 다른 점은 이것입니다. 소리의 내용이 무엇인지조차 모르고, "몇 시에, 집에서 한 번 울렸다"는 것만 압니다.
 
-## 预览截图
+## 미리보기 스크린샷
 
-![预览-index](<../../screenshots/noise-diary/preview-noise-diary-index.png>)
-![预览-s2](<../../screenshots/noise-diary/preview-noise-diary-s2.png>)
-![预览-s3](<../../screenshots/noise-diary/preview-noise-diary-s3.png>)
-![预览-s4](<../../screenshots/noise-diary/preview-noise-diary-s4.png>)
+![미리보기-index](<../../screenshots/noise-diary/preview-noise-diary-index.png>)
+![미리보기-s2](<../../screenshots/noise-diary/preview-noise-diary-s2.png>)
+![미리보기-s3](<../../screenshots/noise-diary/preview-noise-diary-s3.png>)
+![미리보기-s4](<../../screenshots/noise-diary/preview-noise-diary-s4.png>)
 
-## 在地性
+## 현지성
 
-층간소음（层间噪音）是韩国公寓生活的头号邻里矛盾，严重到有专门的调解机构与「이웃사이센터」。矛盾的另一面是：很多人并不知道自家孩子跑跳、洗衣机夜洗、椅子拖动在楼下听起来有多响。
+층간소음은 한국 아파트 생활의 가장 큰 이웃 갈등이며, 전문 조정 기관과 「이웃사이센터」까지 있을 정도입니다. 갈등의 다른 면도 있습니다. 자기 집 아이가 뛰어다니는 소리, 세탁기를 밤에 돌리는 소리, 의자 끄는 소리가 아래층에서 얼마나 크게 들리는지 모르는 사람이 많다는 것입니다.
 
-## 功能流程（闭环）
+## 기능 흐름 (폐쇄 루프)
 
-- 守候：夜间 ARM 后只算声压峰值事件（不录存），事件按时刻钉上夜间弧
-- 日记：峰值事件保留时刻与相对强度（前 3 件），其余计数
-- 复盘：REVIEW 播报昨夜汇总（次数/最响时刻/安静段），点头清空昨夜，关页即忘
+- 지키기: 밤에 ARM한 뒤에는 음압 피크 사건만 셉니다(녹음해 저장하지 않음). 사건은 시각대로 야간 호 위에 핀으로 꽂힙니다
+- 일기: 피크 사건은 시각과 상대 강도를 남기고(앞 3건), 나머지는 개수만 셉니다
+- 되짚기: REVIEW가 어젯밤 요약(횟수/가장 컸던 시각/조용했던 구간)을 읽어주고, 고개를 끄덕이면 어젯밤 기록을 비우며, 페이지를 닫으면 잊어버립니다
 
-## 手势映射
+## 제스처 매핑
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| 제스처 (안경다리 터치패드) | 키 이벤트 | 이 Agent에서의 역할 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 ARM 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| 한 번 탭 | Enter | 상황별 GO(README 기능 흐름과 화면 guide 줄 참조) |
+| 위로 / 아래로 스와이프 | ArrowUp / ArrowDown | 화면 guide 줄에 적힌 이 Agent 전용 정의 참조 |
+| 고개 끄덕임 (머리가 안정됐을 때) | `onHeadGesture('nod')` | 이 Agent의 주 확인(ARM과 동등, guide 줄 참조) |
+| 두 번 탭 | Backspace | 시스템 뒤로 가기(가로채지 않음) |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+화면 버튼은 모두 위 제스처의 미러링이며, SPEAK(언제든 현재 상태 듣기)와 DEMO(데모 상태 머신, 종료하면 실제 상태가 그대로 복원됨)가 추가됩니다.
 
-## 权限
+## 권한
 
-| 权限 | 用途 |
+| 권한 | 용도 |
 |---|---|
-| `RECORD_AUDIO` | 麦克风/语音路径（强度分析或 ASR；不录存） |
+| `RECORD_AUDIO` | 마이크/음성 경로(강도 분석 또는 ASR. 저장하지 않음) |
 
-## 诚实边界
+## 정직한 경계
 
-- 近场声压无法区分声源（自家/楼上/窗外），日记只证明「这一带响过」，归因必须由人结合时刻判断，界面明示
-- 声压为相对强度非校准分贝；麦克风不可用时报 SKIP，不伪造日记
+- 가까운 곳의 음압으로는 소리의 출처(우리 집/위층/창밖)를 구분할 수 없습니다. 일기가 증명하는 것은 "이 근처에서 울렸다"는 것뿐이고, 원인의 판단은 사람이 시각과 함께 내려야 하며, 화면에 명시됩니다
+- 음압은 상대 강도이며 보정된 데시벨이 아닙니다. 마이크를 쓸 수 없으면 SKIP이라 알리고 일기를 지어내지 않습니다
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS는 호스트 고정 음색을 사용하며, utterance의 `lang`은 절대 설정하지 않습니다(공식 문서에 효과가 없다고 명시됨).
 
-## 打包与预览
+## 패키징과 미리보기
 
 ```bash
 cd ~/workspace/rokid/noise-diary
@@ -57,76 +57,76 @@ cd ~/workspace/rokid/noise-diary
 ~/tools/bin/aix list ../dist/noise-diary.aix
 ```
 
-## 真机测试信息
+## 실기기 테스트 정보
 
-| 字段 | 值 |
+| 필드 | 값 |
 |---|---|
-| Studio 名称 | Noise Diary（待导入后回填） |
-| Version / Build | 1.0.2 / 待导入后回填 |
+| Studio 이름 | Noise Diary (가져오기 후 기입 예정) |
+| Version / Build | 1.0.2 / 가져오기 후 기입 예정 |
 | App Category | Life |
 | Intent Description | In a Korean apartment at night: logs the wearer home loud-moment times for a morning self-review. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | 가져오기 후 기입 예정 |
+| 상태 | 로컬 빌드 완료, Studio 가져오기 대기 중 |
 
-## 提审资料 (Review Submission)
+## 심사 자료 (Review Submission)
 
 ### Feature Description
 
-> Inter-floor noise night diary for Korean apartments: it keeps only YOUR home's account. Armed at night, it pins loud moments onto a 22:00-06:00 arc - time and relative level, never recordings, never content. In the morning it reads the diary back once: how many peaks, the loudest at what time. It never points at the neighbours.
+> 한국 아파트를 위한 층간소음 야간 일기: 지키는 것은 당신 집의 장부뿐입니다. 밤에 무장하면 큰 소리가 난 순간을 22:00~06:00 호 위에 핀으로 꽂습니다. 시각과 상대 강도만 남기고, 녹음도 내용도 없습니다. 아침에는 일기를 한 번 읽어줍니다. 피크가 몇 번이었는지, 가장 컸던 건 몇 시였는지. 이웃을 가리키는 일은 절대 없습니다.
 
 ### Opening Message
 
 > ## Noise Diary
 > 
-> You cannot fix noise you never noticed making. Arm me at night and I will keep a silent diary of this home's loud moments - no recording, no words, just pins on the night arc. In the morning, we read it together once.
+> 자기가 내는 줄도 몰랐던 소음은 고칠 수 없습니다. 밤에 저를 무장시키면, 저는 이 집의 큰 소리 순간들을 조용히 일기로 남깁니다. 녹음도, 말도 없이, 밤의 호 위에 핀만 꽂습니다. 아침에 함께 한 번 읽어봅시다.
 
 ### Preview Media
 
-- `preview-noise-diary-index.png` — 初始状态
-- `preview-noise-diary-s2.png` — 演示状态 2
-- `preview-noise-diary-s3.png` — 演示状态 3
-- `preview-noise-diary-s4.png` — 演示状态 4
+- `preview-noise-diary-index.png` — 초기 상태
+- `preview-noise-diary-s2.png` — 데모 상태 2
+- `preview-noise-diary-s3.png` — 데모 상태 3
+- `preview-noise-diary-s4.png` — 데모 상태 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 정식 심사 제출에는 미디어 파일 3~5개가 필요하고 동영상(≤60초) 1개 이상이 포함되어야 합니다. 동영상은 GO가 실기기로 직접 테스트할 때 추가로 녹화합니다.
 
-### Change Log（Build 1.0.0）
-
-**Features added**
-
-- 首个版本：夜间日记 Night Diary；时钟弧线：夜间 8 小时弧 + 峰值时刻点，晨起复盘
-
-**Improvements**
-
-- 无（首个版本）
-
-**Fixes**
-
-- 无（首个版本）
-
-### Change Log（Build 1.0.1）
+### Change Log (Build 1.0.0)
 
 **Features added**
 
-- 无
+- 첫 버전: 야간 일기 Night Diary. 시계 호: 밤 8시간 호 + 피크 시각 점, 아침 되짚기
 
 **Improvements**
 
-- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+- 없음 (첫 버전)
 
 **Fixes**
 
-- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+- 없음 (첫 버전)
 
-### Change Log（Build 1.0.2）
+### Change Log (Build 1.0.1)
 
 **Features added**
 
-- 无
+- 없음
 
 **Improvements**
 
-- 无
+- 버튼을 이 Agent의 UI 형태에 맞게 개별 스타일링했습니다(형태는 설계 계약 참조). 더 이상 시리즈 전체가 같은 버튼 세트를 공유하지 않습니다
 
 **Fixes**
 
-- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+- 실제 기기의 단색 녹색 패널에 맞춘 색상 조정: 기존 순백 #ffffff를 녹색 계조로 바꿨고(가장 밝은 녹색 #7dff9e), 명암은 녹색만으로 표현합니다
+
+### Change Log (Build 1.0.2)
+
+**Features added**
+
+- 없음
+
+**Improvements**
+
+- 없음
+
+**Fixes**
+
+- 언어 순화: 화면과 음성 문구를 현지 언어(일본=일본어 / 한국=한국어)로 통일하고, 섞여 있던 일본어·중국어 문구(SCAN 프롬프트 포함)를 하나씩 점검해 제거했습니다

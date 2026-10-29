@@ -1,57 +1,57 @@
 # Eki Barrier（駅バリア最後の10m Station Barrier Scan）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄にコピー）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-eki-barrier
 ```
 
-JP16 · 日本在地 × 路缘坡 × 指向性。初めての駅で車椅子利用者がエレベーターのある側を最後の10mで見つける。交互哲学：**駅バリア最後の10m Station Barrier Scan**。
+JP16・日本在地 × カーブカット × 指向性。初めての駅で車椅子利用者がエレベーターのある側を最後の10mで見つける。インタラクション哲学：**駅バリア最後の10m Station Barrier Scan**。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/eki-barrier/preview-eki-barrier-index.png>)
-![预览-s2](<../../screenshots/eki-barrier/preview-eki-barrier-s2.png>)
-![预览-s3](<../../screenshots/eki-barrier/preview-eki-barrier-s3.png>)
-![预览-s4](<../../screenshots/eki-barrier/preview-eki-barrier-s4.png>)
+![プレビュー-index](<../../screenshots/eki-barrier/preview-eki-barrier-index.png>)
+![プレビュー-s2](<../../screenshots/eki-barrier/preview-eki-barrier-s2.png>)
+![プレビュー-s3](<../../screenshots/eki-barrier/preview-eki-barrier-s3.png>)
+![プレビュー-s4](<../../screenshots/eki-barrier/preview-eki-barrier-s4.png>)
 
-## 方向构成
+## 方向構成
 
-- 本 Agent 的方向构成：日本在地 × 路缘坡 × 指向性。每个方向在场景里承担不可替代的一环，非功能拼盘（日本组概念按精品线组合通则判定；自由组概念按场景核心定主方向编号）。
-- 一句话场景：初めての駅で車椅子利用者がエレベーターのある側を最後の10mで見つける。
+- この Agent の方向構成：日本在地 × カーブカット × 指向性。各方向が場面の中で代替のきかない一環を担い、機能の寄せ集めではない（日本組のコンセプトは精品ラインの複合通則で判定し、自由組のコンセプトは場面の核で主方向の番号を決める）。
+- 一文の場面：初めての駅で車椅子利用者がエレベーターのある側を最後の10mで見つける。
 
-## 功能流程（闭环）
+## 機能フロー（閉ループ）
 
-- 进入：打开即显示当前项与进度，当前项大字在视线中央。
-- 过程：NEXT 选下一项、CHECK 确认当前项、PREV 回上一项；点头（头稳时）等价于主确认；SPEAK 随时播报当前状态。
-- 结果：全部项确认后计一轮（周回/完成数 +1），可反复使用；DEMO 演示状态机，退出后真实状态原样恢复。
+- 入る：開くと現在の項目と進捗が表示され、現在の項目が視線の中央に大きく出る。
+- 過程：NEXT で次の項目を選び、CHECK で現在の項目を確認し、PREV で前の項目に戻る；うなずき（頭が静止したとき）は主確認と等価；SPEAK でいつでも現在の状態を読み上げる。
+- 結果：すべての項目を確認すると 1 周（周回／完了数 +1）と数え、繰り返し使える；DEMO は状態機械のデモで、終了後は実際の状態がそのまま復元される。
 
-## 手势映射
+## ジェスチャ対応
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャ（テンプルのタッチパッド） | キーイベント | この Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（确认当前项 / 播报） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 CHECK 等价） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| シングルタップ | Enter | 状況に応じた GO（現在の項目の確認／読み上げ） |
+| 上スワイプ／下スワイプ | ArrowUp / ArrowDown | 画面の guide 行にある、この Agent 固有の定義を参照 |
+| うなずき（頭が静止したとき） | `onHeadGesture('nod')` | この Agent の主確認（CHECK と等価） |
+| ダブルタップ | Backspace | システムの戻る（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面上のボタンはすべて上記ジェスチャのミラーで、ほかに SPEAK（いつでも現在の状態を聞ける）と DEMO（状態機械のデモ、終了後は実際の状態がそのまま復元される）がある。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| （无） | 本 Agent 不申请任何权限；TTS 与传感器不需要清单权限，相机零调用 |
+| （なし） | この Agent は権限を一切申請しない；TTS とセンサーにマニフェストの権限は不要で、カメラの呼び出しはゼロ |
 
-## 诚实边界
+## 誠実な境界
 
 - 側の判定は本人の頭振り確認だけによる。地図・経路案内 API は使わない。
 - 設備の有無・稼働状況は Agent は知らない。現地の案内表示が正しい。
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方文档注明不生效）。
-- 绿色色阶：CSS 只用绿色色阶，禁用纯白与白色 rgba；按钮样式随本 Agent 的 UI 形态定型，不共用默认按钮。
+- TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式ドキュメントに効果なしと明記）。
+- グリーンの階調：CSS はグリーンの階調のみを使い、純白と白色の rgba は禁止；ボタンのスタイルはこの Agent の UI 形状に合わせて決め、デフォルトのボタンを共有しない。
 
-## 打包与预览
+## パッケージ化とプレビュー
 
 ```bash
 cd ~/workspace/rokid/git-rokid/japan/eki-barrier
@@ -59,48 +59,48 @@ cd ~/workspace/rokid/git-rokid/japan/eki-barrier
 ~/tools/bin/aix list ../../aix/eki-barrier.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| 項目 | 値 |
 |---|---|
-| Studio 名称 | Eki Barrier（待导入后回填） |
-| Version / Build | 1.0.0 / 待导入后回填 |
+| Studio 名 | Eki Barrier（インポート後に記入） |
+| Version / Build | 1.0.0 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | Eki barrier: the last ten metres in an unfamiliar station. A wheelchair user scans left and right with the head, records which side the lift or slope is on, and carries that record to the next station. It is not a map and it does not navigate. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了、Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> Eki barrier: the last ten metres in an unfamiliar station. A wheelchair user scans left and right with the head, records which side the lift or slope is on, and carries that record to the next station. It is not a map and it does not navigate.
+> 駅のバリア：初めての駅での最後の 10 メートル。車椅子の利用者が頭を左右に振って、エレベーターやスロープがどちらの側にあるかを記録し、その記録を次の駅まで持ち越します。地図ではなく、ナビゲーションもしません。
 
 ### Opening Message
 
 > ## Eki Barrier
 >
-> Eki barrier: the last ten metres in an unfamiliar station. A wheelchair user scans left and right with the head, records which side the lift or slope is on, and carries that record to the next station. It is not a map and it does not navigate.
+> 駅のバリア：初めての駅での最後の 10 メートル。車椅子の利用者が頭を左右に振り、エレベーターやスロープのある側を記録して、次の駅まで持ち越します。地図ではなく、案内もしません。
 
 ### Preview Media
 
-- `preview-eki-barrier-index.png` — 初始状态
-- `preview-eki-barrier-s2.png` — 演示状态 2
-- `preview-eki-barrier-s3.png` — 演示状态 3
-- `preview-eki-barrier-s4.png` — 演示状态 4
+- `preview-eki-barrier-index.png` — 初期状態
+- `preview-eki-barrier-s2.png` — デモ状態 2
+- `preview-eki-barrier-s3.png` — デモ状態 3
+- `preview-eki-barrier-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出にはメディアファイル 3〜5 点（うち動画 ≥1 本、≤60 秒）が必要。動画は GO の実機テスト時に追加録画する。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：駅バリア最後の10m Station Barrier Scan；初めての駅で車椅子利用者がエレベーターのある側を最後の10mで見つける
+- 初版：駅バリア最後の10m Station Barrier Scan；初めての駅で車椅子利用者がエレベーターのある側を最後の10mで見つける
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）

@@ -1,55 +1,55 @@
-# Konbini Basket（便利店篮子核对）
+# Konbini Basket（コンビニかごチェック）
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio インポートアドレス**（Global AIUI Studio の Import Project 入力欄に貼り付け）：
 
 ```
 https://github.com/sakai55/rokid/tree/agent-konbini-basket
 ```
 
-JP03 · 日本本地化系列。交互哲学：**小票账本 Receipt Ledger**。本 Agent 是一本会自己落账的小票：出门前登记要买的四样东西，进店后每拿到一样就核销一行，合计行永远告诉你还差几件。结账环节它不做翻译（那是底座翻译的事），只把四句最高频的柜台定型句做成大字句卡——你指着给店员看，或照着念。条码扫描是可选的核销加速：扫到与当前物品对得上才落账，对不上如实报，对不上账的账本不开绿灯。
+JP03 ・ 日本ローカライズシリーズ。操作の考え方：**レシート台帳 Receipt Ledger**。本 Agent は、自動で記帳するレシートである。出かける前に買うものを 4 つ登録し、店内で手に取るたびに 1 行ずつ消し込む。合計行は、残り何件かを常に知らせる。レジでは翻訳はしない（翻訳は基盤側の担当）。最も頻繁に使うレジの定型句 4 つを大きな文字のフレーズカードにし、店員に指して示すか、読み上げるかできるようにする。バーコード読み取りは任意の消し込み支援である。現在の品目と一致した場合だけ記帳し、一致しなければその旨を正直に伝え、合わない台帳には緑の合図を出さない。
 
-## 预览截图
+## プレビュー画像
 
-![预览-index](<../../screenshots/konbini-basket/preview-konbini-basket-index.png>)
-![预览-s2](<../../screenshots/konbini-basket/preview-konbini-basket-s2.png>)
-![预览-s3](<../../screenshots/konbini-basket/preview-konbini-basket-s3.png>)
-![预览-s4](<../../screenshots/konbini-basket/preview-konbini-basket-s4.png>)
+![プレビュー-index](<../../screenshots/konbini-basket/preview-konbini-basket-index.png>)
+![プレビュー-s2](<../../screenshots/konbini-basket/preview-konbini-basket-s2.png>)
+![プレビュー-s3](<../../screenshots/konbini-basket/preview-konbini-basket-s3.png>)
+![プレビュー-s4](<../../screenshots/konbini-basket/preview-konbini-basket-s4.png>)
 
-## 在地性
+## 地域性
 
-日本コンビニ的购物是高频小额：一手拿篮子一手拿手机，结账时还要应对一连串定型问句（割り箸は？袋は？温めますか？）。漏买一样东西要再跑一趟，听不懂问句要在柜台前卡住。
+日本のコンビニでの買い物は、頻度が高く金額は小さい。片手にかご、もう一方の手にスマートフォンを持ち、レジでは定型の問いかけ（割り箸は？袋は？温めますか？）が続く。1 つ買い忘れればもう一度足を運ぶことになり、問いかけが分からなければレジ前で止まってしまう。
 
-## 功能流程（闭环）
+## 機能の流れ（完結した流れ）
 
-- 登记：固定四件清单（おにぎり/お茶/サラダ/プリン为演示集，README 写明可换成自家清单）逐件排列
-- 核销：GOT 或 SCAN（wide 拍照→条码/LLM 读名，暂定匹配）落一行账，✓ 与金额同步累计
-- 结账：四句定型句卡（割り箸/袋/温め/そのまま）大字轮换，柜台前点 PHRASE 即可
+- 登録：固定の 4 件リスト（おにぎり / お茶 / サラダ / プリンはデモ用セット。README に、自分のリストに差し替えできると明記） を 1 件ずつ並べる
+- 消し込み：GOT または SCAN（wide 撮影 → バーコード / LLM で名称を読み取り、暫定照合）で 1 行記帳し、✓ と金額を同時に累計する
+- レジ：定型句カード 4 枚（割り箸 / 袋 / 温め / そのまま）を大きな文字で切り替え、レジ前で PHRASE を押すだけにする
 
-## 手势映射
+## ジェスチャー対応表
 
-| 手势（镜腿触控板） | 键事件 | 在本 Agent 中的作用 |
+| ジェスチャー（テンプル側タッチパッド） | キーイベント | 本 Agent での役割 |
 |---|---|---|
-| 单击 | Enter | 情境 GO（见 README 功能流程与界面 guide 行） |
-| 上滑 / 下滑 | ArrowUp / ArrowDown | 见界面 guide 行的本 Agent 专属定义 |
-| 点头（头稳时） | `onHeadGesture('nod')` | 本 Agent 的主确认（与 GOT 等价，见 guide 行） |
-| 双击 | Backspace | 系统返回（不拦截） |
+| 1 回タップ | Enter | 状況に応じた GO（README の機能の流れと画面の guide 行を参照） |
+| 上スワイプ / 下スワイプ | ArrowUp / ArrowDown | 画面の guide 行にある本 Agent 専用の定義を参照 |
+| うなずき（頭が安定しているとき） | `onHeadGesture('nod')` | 本 Agent の主な承認操作（GOT と同等。guide 行を参照） |
+| 2 回タップ | Backspace | システムの戻る操作（横取りしない） |
 
-屏幕按钮均为上述手势的镜像，另加 SPEAK（随时听当前状态）与 DEMO（演示状态机，退出后真实状态原样恢复）。
+画面のボタンは上記ジェスチャーの鏡像であり、ほかに SPEAK（現在の状態をいつでも聞ける）と DEMO（状態遷移のデモ。終了後は実際の状態がそのまま復元される）がある。
 
-## 权限
+## 権限
 
-| 权限 | 用途 |
+| 権限 | 用途 |
 |---|---|
-| `CAMERA` | 拍照核对路径（见功能流程；失败即 SKIP） |
+| `CAMERA` | 撮影による照合経路（機能の流れを参照。失敗した場合は SKIP） |
 
-## 诚实边界
+## 正直な境界
 
-- 清单为内置演示四件套，未做自由编辑（编辑走语音登记是后续课题）；合计是清单标价之和，不是收银台实付
-- SCAN 读名来自拍照+LLM，属暂定：显示原文并等你确认才核销，失败即 SKIP，不假装扫到
+- リストは内蔵のデモ用 4 件セットであり、自由な編集には対応していない（音声登録による編集は今後の課題）。合計はリスト表示価格の合計であり、レジでの実際の支払額ではない
+- SCAN の読み取り名称は撮影 + LLM によるもので暫定である。原文を表示し、利用者の承認を待ってから消し込む。失敗した場合は SKIP とし、読み取れたふりをしない
 
-- TTS 用宿主固定音色，永不设置 utterance 的 `lang`（官方注明不生效）。
+- TTS はホストの固定音声を使い、utterance の `lang` は決して設定しない（公式ドキュメントに効果がないと明記されている）。
 
-## 打包与预览
+## パッケージ化とプレビュー
 
 ```bash
 cd ~/workspace/rokid/konbini-basket
@@ -57,89 +57,89 @@ cd ~/workspace/rokid/konbini-basket
 ~/tools/bin/aix list ../dist/konbini-basket.aix
 ```
 
-## 真机测试信息
+## 実機テスト情報
 
-| 字段 | 值 |
+| 項目 | 値 |
 |---|---|
-| Studio 名称 | Konbini Basket（待导入后回填） |
-| Version / Build | 1.0.3 / 待导入后回填 |
+| Studio 名 | Konbini Basket（インポート後に記入） |
+| Version / Build | 1.0.3 / インポート後に記入 |
 | App Category | Life |
 | Intent Description | In a Japanese convenience store: checks off a 4-item basket list and shows counter phrase cards. |
-| Agent ID | 待导入后回填 |
-| 状态 | 本地构建完成，待导入 Studio |
+| Agent ID | インポート後に記入 |
+| 状態 | ローカルビルド完了、Studio へのインポート待ち |
 
-## 提审资料 (Review Submission)
+## 審査提出資料 (Review Submission)
 
 ### Feature Description
 
-> Konbini basket ledger: your 4-item list as a receipt that fills itself in. Each item you grab gets checked off with its price; the total line always shows what is still missing. At the counter, four big phrase cards (chopsticks / bag / warm it up / as-is) replace live translation. Optional barcode scan is tentative until you confirm.
+> コンビニかご台帳：買うもの 4 件を、自分で埋まっていくレシートとして表示します。品物を手に取るたびに価格付きで消し込み、合計行が残りを知らせます。レジでは、割り箸・袋・温め・そのままの大きなフレーズカード 4 枚がライブ翻訳の代わりになります。任意のバーコード読み取りは、承認するまで暫定扱いです。
 
 ### Opening Message
 
 > ## Konbini Basket
 > 
-> Four items, one receipt. Grab an item, tap GOT, and watch the line fill in - the total always tells you what is left. At the register, tap PHRASE for the big cards: chopsticks, a bag, warm it up, or just as it is.
+> 品物は 4 つ、レシートは 1 枚。品物を手に取り、GOT を押すと行が埋まります。合計が残りを常に知らせます。レジでは PHRASE を押して大きなカードを示してください。割り箸、袋、温める、そのまま、の 4 つです。
 
 ### Preview Media
 
-- `preview-konbini-basket-index.png` — 初始状态
-- `preview-konbini-basket-s2.png` — 演示状态 2
-- `preview-konbini-basket-s3.png` — 演示状态 3
-- `preview-konbini-basket-s4.png` — 演示状态 4
+- `preview-konbini-basket-index.png` — 初期状態
+- `preview-konbini-basket-s2.png` — デモ状態 2
+- `preview-konbini-basket-s3.png` — デモ状態 3
+- `preview-konbini-basket-s4.png` — デモ状態 4
 
-> 正式提审需 3–5 个媒体文件且含 ≥1 段视频（≤60 s），视频待 GO 真机自测时补录。
+> 正式な審査提出には 3–5 件のメディアファイルが必要で、動画を 1 件以上（≤60 s）含めます。動画は GO の実機セルフテスト時に追加録画します。
 
 ### Change Log（Build 1.0.0）
 
 **Features added**
 
-- 首个版本：小票账本 Receipt Ledger；小票竖账：虚线框内等宽流水，合计行收口
+- 初版：レシート台帳 Receipt Ledger。レシート型の縦台帳：破線枠内に等幅フォントの明細を並べ、合計行で締める
 
 **Improvements**
 
-- 无（首个版本）
+- なし（初版）
 
 **Fixes**
 
-- 无（首个版本）
+- なし（初版）
 
 ### Change Log（Build 1.0.1）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 按钮按本 Agent 的 UI 形态单独定型（形态见设计契约），不再与全系列共用同一套按钮
+- ボタンを本 Agent の UI 形態に合わせて個別に造形した（形態は設計契約を参照）。全シリーズ共通のボタンは使わない
 
 **Fixes**
 
-- 颜色对齐真机单色绿面板：原纯白 #ffffff 改为绿色色阶（最亮绿 #7dff9e），深浅只用绿色表现
+- 色を実機の単色緑パネルに合わせた：元の純白 #ffffff を緑の階調に変更した（最も明るい緑 #7dff9e）。明暗は緑だけで表す
 
 ### Change Log（Build 1.0.2）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 无
+- なし
 
 **Fixes**
 
-- 语言纯化：界面与语音文案统一为本地语言（日本=日语 / 韩国=韩语），逐个排查清除了混入的日文、中文文案（含 SCAN 提示词）
+- 言語の純化：画面と音声の文案を現地の言語に統一した（日本 = 日本語 / 韓国 = 韓国語）。混入していた日本語・中国語の文案（SCAN のプロンプトを含む）を 1 件ずつ調べて取り除いた
 
 ### Change Log（Build 1.0.3）
 
 **Features added**
 
-- 无
+- なし
 
 **Improvements**
 
-- 无
+- なし
 
 **Fixes**
 

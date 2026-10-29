@@ -1,65 +1,66 @@
 # Seoul Transfer
 
-**Studio 导入地址**（复制到 Global AIUI Studio 的 Import Project 输入框）：
+**Studio 가져오기 주소**(Global AIUI Studio의 Import Project 입력란에 붙여 넣으세요):
+
 ```
 https://github.com/sakai55/rokid/tree/agent-seoul-transfer
 ```
 
-一句话场景：第一次坐首尔地铁的人，在换乘站用头部方向确认站台方向并锁定，再用倒计时守住末班车。
+한 줄 장면: 서울 지하철을 처음 타는 사람이 환승역에서 머리 방향으로 승강장 방향을 확인해 고정하고, 카운트다운으로 막차를 지킵니다.
 
-方向构成：韩国在地 × 指向性 × 注意力。指向性承担换乘站台方向确认一环（头部 yaw 左右确认＋点头锁定）；注意力承担末班车倒计时守候与换乘记录保持一环；在地性落在首尔地铁 8 处真实换乘站与线路。
+방향 구성: 한국 현지 × 지향성 × 주의. 지향성은 환승 승강장 방향 확인 고리를 맡고(머리 yaw 좌우 확인 + 고개 끄덕임 고정), 주의는 막차 카운트다운 대기와 환승 기록 유지 고리를 맡으며, 현지는 서울 지하철의 실제 환승역 8곳과 노선에 뿌리내립니다.
 
-## 预览截图
+## 미리보기 스크린샷
 
-![总览](<../../screenshots/seoul-transfer/preview-seoul-transfer-index.png>)
-![换乘确认](<../../screenshots/seoul-transfer/preview-seoul-transfer-transfer.png>)
-![换乘确认二](<../../screenshots/seoul-transfer/preview-seoul-transfer-transfer-s2.png>)
-![末班车守候](<../../screenshots/seoul-transfer/preview-seoul-transfer-lasttrain.png>)
-![末班车守候二](<../../screenshots/seoul-transfer/preview-seoul-transfer-lasttrain-s2.png>)
+![전체 보기](<../../screenshots/seoul-transfer/preview-seoul-transfer-index.png>)
+![환승 확인](<../../screenshots/seoul-transfer/preview-seoul-transfer-transfer.png>)
+![환승 확인 2](<../../screenshots/seoul-transfer/preview-seoul-transfer-transfer-s2.png>)
+![막차 대기](<../../screenshots/seoul-transfer/preview-seoul-transfer-lasttrain.png>)
+![막차 대기 2](<../../screenshots/seoul-transfer/preview-seoul-transfer-lasttrain-s2.png>)
 
-## 结构与功能
+## 구조와 기능
 
-- 页清单（3 页）：总览 index（8 换乘站线路带＋今日状态）／换乘确认 transfer（逐站方向确认与锁定）／末班车守候 lasttrain（手动倒计时＋记录回显）。
-- 内容集计数：换乘站 8 处（서울역・시청・종로3가・동대문역사문화공원・강남・잠실・홍대입구・고속터미널），每处含换乘线路与站台方向一句话；倒计时档位 5 档（5/10/15/20/30 分钟）。
-- 闭环：进入总览 → 换乘页选站、看方向句、头部确认、点头锁定（TTS 报结论并存记录）→ 末班车页选分钟、开始倒计时、到点播报并记一次；记录跨会话持久化（存储键 `seoulTransferV1`），可反复用。
+- 페이지 목록(3개 페이지): 전체 보기 index(환승역 8곳 노선 띠 + 오늘 상태) / 환승 확인 transfer(역마다 방향 확인과 고정) / 막차 대기 lasttrain(수동 카운트다운 + 기록 표시).
+- 콘텐츠 집합 수: 환승역 8곳(서울역·시청·종로3가·동대문역사문화공원·강남·잠실·홍대입구·고속터미널), 각 역에 환승 노선과 승강장 방향 한 문장 포함. 카운트다운 단계 5단계(5/10/15/20/30분).
+- 폐쇄 루프: 전체 보기에 들어와 → 환승 페이지에서 역을 고르고, 방향 문장을 보고, 머리로 확인하고, 고개를 끄덕여 고정(TTS가 결론을 알리고 기록을 저장) → 막차 페이지에서 분을 고르고, 카운트다운을 시작하고, 시간이 되면 알리고 한 번 기록합니다. 기록은 세션을 넘어 저장되며(저장 키 `seoulTransferV1`), 반복해서 쓸 수 있습니다.
 
-## 手势映射
+## 제스처 매핑
 
-| 操作 | 效果 |
+| 조작 | 효과 |
 |---|---|
-| 首页 ArrowUp/ArrowDown | 循环选子页（▶ 标记） |
-| 首页 Enter | 打开选中子页 |
-| 子页 ArrowUp/ArrowDown | 上一／下一项（换乘页换站、末班车页换分钟） |
-| 子页 Enter | 主动作（锁定方向／开始倒计时） |
-| 点头 | 主动作（与 Enter 同效） |
-| 头部左右转 | 换乘页确认站台方向 |
+| 첫 페이지 ArrowUp/ArrowDown | 하위 페이지를 순환 선택(▶ 표시) |
+| 첫 페이지 Enter | 선택한 하위 페이지 열기 |
+| 하위 페이지 ArrowUp/ArrowDown | 이전/다음 항목(환승 페이지는 역 바꾸기, 막차 페이지는 분 바꾸기) |
+| 하위 페이지 Enter | 주 동작(방향 고정 / 카운트다운 시작) |
+| 고개 끄덕임 | 주 동작(Enter와 동일) |
+| 머리 좌우 돌리기 | 환승 페이지에서 승강장 방향 확인 |
 
-## 权限
+## 권한
 
-无。TTS 用宿主固定音色，不设置 utterance 的 `lang`。
+없음. TTS는 호스트 고정 음색을 사용하고, utterance의 `lang`은 설정하지 않습니다.
 
-## 诚实边界
+## 정직한 경계
 
-- 站台方向句是内置内容集，不联网、不含实时列车时刻与站台变更信息；末班车倒计时是用户手动设定的提醒，不是官方时刻表。
-- 传感器不可用时页面如实显示，方向锁定仍可用 Enter/点头完成，不冒充传感读数。
+- 승강장 방향 문장은 내장 콘텐츠 집합이며, 온라인 연결이 없고 실시간 열차 시각과 승강장 변경 정보를 담지 않습니다. 막차 카운트다운은 사용자가 직접 설정한 알림이지 공식 시간표가 아닙니다.
+- 센서를 쓸 수 없으면 페이지에 그대로 표시하고, 방향 고정은 Enter/고개 끄덕임으로도 완료할 수 있으며, 센서 값을 읽은 척하지 않습니다.
 
-## 设备测试信息
+## 기기 테스트 정보
 
-| 项目 | 内容 |
+| 항목 | 내용 |
 |---|---|
-| Studio 名 | 待回填 |
+| Studio 이름 | 기입 예정 |
 | Version | 1.0.0 |
-| App Category | 待回填 |
-| Intent Description | 待回填 |
-| Agent ID | 待回填 |
-| 状态 | 未导入／未真机验证 |
+| App Category | 기입 예정 |
+| Intent Description | 기입 예정 |
+| Agent ID | 기입 예정 |
+| 상태 | 가져오지 않음 / 실기기 검증 전 |
 
-## 提审资料 (Review Submission)
+## 심사 자료 (Review Submission)
 
-- Feature Description：首尔地铁换乘助手：8 处换乘站的线路与站台方向指引，头部方向确认并锁定，末班车倒计时守候，换乘记录跨会话保存。
-- Opening Message：首尔地铁换乘站에서 방향을 확인하고 막차를 지키세요. 환승역 8곳의 방향 안내와 막차 카운트다운이 함께합니다.
-- Preview Media：预览截图见上（截图由开发流程后补，至少 1 图＋1 视频，视频 ≤60 秒）。
-- Change Log（Build 1.0.0）：
-  - Features added：8 换乘站方向确认页、头部 yaw 方向确认与点头锁定、末班车倒计时守候、换乘记录持久化。
-  - Improvements：无（首版）。
-  - Fixes：无（首版）。
+- Feature Description: 서울 지하철 환승 도우미: 환승역 8곳의 노선과 승강장 방향 안내, 머리 방향으로 확인하고 고정, 막차 카운트다운 대기, 환승 기록을 세션을 넘어 저장합니다.
+- Opening Message: 서울 지하철 환승역에서 방향을 확인하고 막차를 지키세요. 환승역 8곳의 방향 안내와 막차 카운트다운이 함께합니다.
+- Preview Media: 미리보기 스크린샷은 위에 있습니다(스크린샷은 개발 과정 뒤에 추가, 최소 이미지 1개 + 동영상 1개, 동영상 ≤60초).
+- Change Log (Build 1.0.0):
+  - Features added: 환승역 8곳 방향 확인 페이지, 머리 yaw 방향 확인과 고개 끄덕임 고정, 막차 카운트다운 대기, 환승 기록 저장.
+  - Improvements: 없음 (첫 버전).
+  - Fixes: 없음 (첫 버전).
