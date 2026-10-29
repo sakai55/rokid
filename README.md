@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-last-sentence
 ```
 
+**AIX 直接下载**（最新版）：[last-sentence.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/last-sentence.aix)
+
 路缘坡效应系列 CC07（REVIEW 回放型）。听障 / 听觉处理障碍的人在群聊里最怕的一刻：语速一快，一句没跟上，后面整段都脱节——而通用字幕一闪而过，回不去。本 Agent 只做一件事：把最近的句子留住，让「上一句」可以定格回放。听着，攒着；没跟上，点上一句，那一句就钉在视线里不动；看完点头或点继续，回到直播。
 
 ## 预览截图
