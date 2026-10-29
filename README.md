@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-queue-sense
 ```
 
+**AIX 直接下载**（最新版）：[queue-sense.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/queue-sense.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI45 个。排队最熬人的不是等，
 是**不知道还要等多久、不知道隔壁队是不是更快**。原计划是「看向
