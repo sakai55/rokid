@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-noise-diary
 ```
 
+**AIX 直接下载**（最新版）：[noise-diary.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/noise-diary.aix)
+
 KR02 · 韩国本地化系列。交互哲学：**夜间日记 Night Diary**。本 Agent 只记自己家的账：夜间守候自家近场声响，超过阈值的时刻被钉在一条 22:00→06:00 的弧线上，晨起一次复盘播报——昨晚响了几次、最响在几点。它从不录音、不转写、不指向邻居（只测佩戴者近场，方向如实标注），更不会实时指责你：夜里它沉默记账，早上你才看日记。它与底座字幕/转写的区别是根本性的：它连声音内容是什么都不知道，只知道「几点、家里响了一声」。
 
 ## 预览截图
