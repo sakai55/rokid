@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-market-radar
 ```
 
+**AIX 直接下载**（最新版）：[market-radar.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/market-radar.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI21 个。菜市场里几十个摊位
 绕成迷宫：你一路走一路问价，转头就忘了哪家报的什么价；等
