@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-cue-door
 ```
 
+**AIX 直接下载**（最新版）：[cue-door.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/cue-door.aix)
+
 注意力外挂系列 CU01（CUE 提示型，本组第一个，系列第 31 个）。出门忘带东西是日常，清单贴门上都懒得看。本 Agent 把出门确认外包出去：看向大门停稳才触发清单——按你预设的出门清单（钥匙 / 手机 / 钱包 / 工牌 / 雨伞）逐项凝视确认，全过才放行「可以出门」；没全过就点结束，当场点名缺项并喊停，绝不报「可以出门」。
 
 ## 解决的问题
