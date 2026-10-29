@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-barcode-bingo
 ```
 
+**AIX 直接下载**（最新版）：[barcode-bingo.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/barcode-bingo.aix)
+
 拍照现实交互游戏系列 GA44。3×3 宾果盘固定 9 个码制格：二维码、商品码13、条码128、商品码8、条码39、UPC-A、数据矩阵、库德巴、PDF417。在身边实物（包装、书、票据、设备标签）上找条码，对准单击扫码。
 
 与指向性系列 parcel-sort（扫码分拣包裹的登记工具）的区别：parcel-sort 是把包裹码登记归类的活儿；本作不登记任何内容，只认码制填格凑线，是宾果游戏。检测到的码内容只在判定行里短暂显示前 18 字，不保存。
