@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-tomorrow-stage
 ```
 
+**AIX 直接下载**（最新版）：[tomorrow-stage.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/tomorrow-stage.aix)
+
 注意力外挂系列 AM05（AMBIENT 环境型，本组第五个，系列第 50 个——系列收官）。明早要用的东西，今晚想不起来备，明早出门抓瞎。本 Agent 把「明早备齐」外包出去：睡前把明早第一件事要用的物品逐个看向停稳点 REG 登记成位，明早出门点 CUE 逐项确认带齐，有缺失时门不说可以出门并点名缺失项，全部确认后才显示可以出门。
 
 ## 解决的问题
