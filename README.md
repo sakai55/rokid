@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-route-replay
 ```
 
+**AIX 直接下载**（最新版）：[route-replay.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/route-replay.aix)
+
 注意力外挂系列 RE04（REVIEW 回顾型，本组第四位）。通勤路上发现的施工/危险点，第二天出门全忘，又踩一遍——路上有施工围挡、路面大坑、积水路段，看的时候都记得，第二天出门就全忘在脑子里。本 Agent 把路线预告外包出去：路上看向危险点停稳，登记一处——描述 + 方位 + 当时拍一张画面；次日出门前按登记顺序逐个预告，GOT 确认知道了才走下一处；结束小结钉住登记几处、预告确认几处。
 
 ## 解决的问题
