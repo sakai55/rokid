@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-soju-turn
 ```
 
+**AIX 直接下载**（最新版）：[soju-turn.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/soju-turn.aix)
+
 KR03 · 韩国本地化系列。交互哲学：**尊重编排 Respect Choreography**。本 Agent 编排的正是身体：四段固定舞台（两手接杯→两手斟酒→侧头饮→空杯确认），其中「侧头」一段由头部偏航传感器判定——相对基线转过 35° 再回正才算完成，转头的方向与幅度就是交互本身。长辈不在席时（ELDER 切换）该段自动改为正对饮用，规矩随席面而变。它不录酒桌、不转写祝酒词（底座的事），只守年轻人身体的朝向。
 
 ## 预览截图
