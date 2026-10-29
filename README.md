@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-gakkou-oshirase
 ```
 
+**AIX 直接下载**（最新版）：[gakkou-oshirase.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/gakkou-oshirase.aix)
+
 JP29 · 日本在地 × 路缘坡 × 注意力。保護者が学校のお知らせの提出期限を眼鏡で守る
 
 ## 预览截图
