@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-hanok-stay
 ```
 
+**AIX 直接下载**（最新版）：[hanok-stay.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/hanok-stay.aix)
+
 KR18 · 韩国在地 × 路缘坡 × 注意力。第一次住韩屋的游客按房间逐项确认设施与礼仪、不失礼
 
 ## 预览截图
