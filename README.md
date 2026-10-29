@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-baedal-code
 ```
 
+**AIX 直接下载**（最新版）：[baedal-code.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/baedal-code.aix)
+
 KR10 · 韩国本地化系列。交互哲学：**逐字保险箱 Digit Vault**。本 Agent 是只开一条缝的保险箱：四位暗号住在四个数位框里，REVEAL 一次只翻开一位，8 秒后自动合上；GO 永远不播报数字本身（防喊出来），只播报操作指引。订单号在另一格（ORDER 切换显示）。WIPE 一键销毁，全部状态只活在页面内存——零存储调用，关页即忘，这既是隐私设计也是诚实边界：它丢了就是丢了，请同时记住自己的密码。它不管外卖流程（平台 App 的事），只在骑手来电的那十秒里，把暗号安全地递到你眼前。
 
 ## 预览截图
