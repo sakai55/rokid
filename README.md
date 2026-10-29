@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-chunk-rec-studio
 ```
 
+**AIX 直接下载**（最新版）：[chunk-rec-studio.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/chunk-rec-studio.aix)
+
 AV03 · 录一段眼镜视频前，先探明宿主到底支持哪种录制格式，再按 1 秒分片实录、当场结算码率与可录上限。顶边界 B3：MediaRecorder 视频分片（isTypeSupported 探针 + start(1000) 分片 + pause/resume）。
 
 ## 预览截图
