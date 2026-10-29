@@ -6,6 +6,8 @@
 https://github.com/sakai55/rokid/tree/agent-badge-reader
 ```
 
+**AIX 直接下载**（最新版）：[badge-reader.aix](https://raw.githubusercontent.com/sakai55/rokid/main/aix/badge-reader.aix)
+
 
 50 个「指向性生活问题」Agent 的第 DI47 个。
 社交场合最尴尬的一瞬：对方胸前挂着名牌，字小、挂得低，你
