@@ -2,9 +2,9 @@
 
 [中文](CAPABILITIES.md) | English | [日本語](CAPABILITIES.ja.md)
 
-English edition of the Chinese version v2.0.0, dated 2026-10-29. The Chinese text is authoritative; where the two differ, the Chinese governs.
+English edition of the Chinese version v2.1.0, dated 2026-10-30. The Chinese text is authoritative; where the two differ, the Chinese governs.
 
-> Compiled 2026-10-24. Current version: v2.0.0, 2026-10-29.
+> Compiled 2026-10-24. Current version: v2.1.0, 2026-10-30.
 > Sources: **official Rokid material only** — the product pages, the documentation site, and the `yodaos-project/AIUI` GitHub repository, including the `aiui-dev` skill references bundled with it — supplemented by the maintainer's own device and build testing. Anything that rests on testing rather than documentation is flagged as such in the entry itself. The API contract comes primarily from `skills/aiui-dev` in the official repository; citations below take the form `skill: references/…`.
 
 ## About this registry
@@ -61,7 +61,7 @@ Source: the official global product page, https://global.rokid.com/products/b-h-
 | C1008 | Camera hardware | 12 MP, stills at 3024 × 4032, f/2.25. Rokid has not published the sensor model or the camera's field of view | Docs only |
 | C1009 | Microphone hardware | Four-microphone array | Docs only |
 | C1010 | Speakers | Dual linear directional high-fidelity speakers | Docs only |
-| C1011 | Battery and charging | 210 mAh. Rokid quotes battery life several different ways — see open question 4. Magnetic charging, 80% in 20 minutes; the charging case holds roughly ten full recharges | Docs only |
+| C1011 | Battery and charging | 210 mAh. Rokid quotes battery life several different ways — see open question 3. Magnetic charging, 80% in 20 minutes; the charging case holds roughly ten full recharges | Docs only |
 | C1012 | Wireless | Wi-Fi 6, Bluetooth 5.3 | Docs only |
 | C1013 | Physical specifications | 49 g, IPX4. Temple length 155.5 mm, hinge spacing 146.3 mm, TR90 frame with titanium-alloy hinges | Docs only |
 | C1014 | Prescription lenses | Diopters from +15 to −15, via Rokid's prescription service or magnetic insert frames | Docs only |
@@ -125,7 +125,7 @@ Sources: `skill: references/apis/device.md`, `skill: references/apis/geo/geoloca
 | C4003 | Absolute orientation — `AbsoluteOrientationSensor` | Absolute-orientation quaternion `[x, y, z, w]` plus a `timestamp`. Availability depends on the device's hardware | Docs only |
 | C4004 | Sampling rates | No maximum frequency and no accuracy figures are published. Examples in the official guide use 60 Hz and suggest starting between 30 and 60 Hz | Docs only |
 | C4005 | Other sensors | Magnetometer, ambient light, and proximity have no dedicated APIs. None of them appears in the official list | Docs only |
-| C4006 | Head gestures — `onHeadGesture` | Requires `enableWorldAwareness` to be switched on in the Page. The only gesture value shown anywhere in the official examples is `nod`; the full enumeration is unpublished — see open question 8 | Docs only |
+| C4006 | Head gestures — `onHeadGesture` | Requires `enableWorldAwareness` to be switched on in the Page. The only gesture value shown anywhere in the official examples is `nod`; the full enumeration is unpublished — see open question 7 | Docs only |
 | C4007 | Head stability — `onOrientationStabilityChange` | Also requires world awareness. `event.stable` reports changes in how steady the wearer's head is | Docs only |
 | C4008 | Eye tracking | None. What passes for gaze is head orientation (C4003), combined with head stability (C4007) and nod (C4006) | Docs only |
 | C4009 | Geolocation | `getCurrentPosition` and `watchPosition`, with `clearWatch` to release a watch. `coords` carries `latitude`, `longitude`, and `accuracy` in meters, plus nullable `altitude`, `altitudeAccuracy`, `heading`, and `speed`. Options: `enableHighAccuracy`, default `false`; `timeout`; `maximumAge`. Error codes: 1 permission denied, 2 position unavailable, 3 timeout | Docs only |
@@ -156,7 +156,7 @@ Sources: `skill: references/framework.md`, `skill: references/apis/window.md`, `
 | C5015 | WXML templates | `template` is not supported | Docs only |
 | C5016 | Conversation-stream cards | Display-only by default. Interactive UI needs a full-screen Page or a widget | Docs only |
 | C5017 | Device identity — `navigator` | `id` is an opaque identifier bound to the agent and the device; do not treat it as a credential. `userAgent`, `versions.ink`, and `versions.skia` give version strings. `language`, `languages`, and `region` may be empty. `onLine` and `connection` report connectivity and a connection estimate. `renderingEnabled` says whether the current instance can render | Docs only |
-| C5018 | Battery — `getBattery` | Returns a Promise for a `BatteryManager`. On a host without battery capability the Promise rejects. The documentation is thin — see open question 9 | Docs only |
+| C5018 | Battery — `getBattery` | Returns a Promise for a `BatteryManager`. On a host without battery capability the Promise rejects. The documentation is thin — see open question 8 | Docs only |
 | C5019 | Serial number and device token | `getDeviceSerialNumber` and `requestDeviceToken` serve system-level agents only. Ordinary agents get an empty string back, or must not rely on them at all | Docs only |
 | C5020 | Global encoding helpers | `window.atob`, `btoa`, and a global `createImageBlob` are available. `createImageBlob` encodes PNG and JPEG | Docs only |
 
@@ -168,7 +168,7 @@ Sources: `skill: references/apis/web.md`, `skill: references/apis/wx.md`, and th
 |---|---|---|---|
 | C6001 | Local storage — `localStorage` | String key–value storage, isolated per agent: `getItem`, `setItem`, `removeItem`, `clear` | Docs only |
 | C6002 | wx storage | `setStorage`, `getStorage`, `removeStorage`, `clearStorage`, plus synchronous `Sync` variants. Values pass through JSON serialization | Docs only |
-| C6003 | `StorageManager` — `navigator.storage` | The documentation gives a single line — an entry point for persistent file storage — and no method details. See open question 10 | Docs only |
+| C6003 | OPFS — `navigator.storage` | Per-agent private file storage, independent of `localStorage` and the wx store. `estimate()` reports current usage and quota; the quota is a runtime value and Rokid publishes no figure for it. `persisted()` reports the persistence state, `persist()` requests persistence, and `getDirectory()` returns the root directory. Files are written through `createWritable()` and committed on `close()`. On a host with no OPFS backend, calls fail with `NotSupportedError`. What ships is a practical subset, not the full File System Access API. Source: the OPFS page in the official documentation | Docs only |
 | C6004 | General-purpose file system | None. Resources resolve from paths inside the project only; there is no API to read, write, or list arbitrary paths | Docs only |
 | C6005 | `FileReader` | Does not exist. On hardware it always throws `FileReader is not defined`. To turn a `Blob` into a data URL, use `blob.arrayBuffer` and base64-encode it in chunks with `btoa`. Related error code: E2005 | Verified on device |
 | C6006 | Browser APIs confirmed absent | None of the following exist in the Ink runtime, and using any of them in code is a defect: `sessionStorage`, `XMLHttpRequest`, `URL.createObjectURL`, `DOMParser`, `structuredClone`, `queueMicrotask`, `Notification`, the clipboard API, `IntersectionObserver`, `MutationObserver`, `ServiceWorker`, `new Worker`, `OffscreenCanvas`, `getDisplayMedia`, `applyConstraints`, `getVoices`, `navigator.permissions` | Docs only |
@@ -256,10 +256,9 @@ None of the following are entries. Each is a place where Rokid's own sources dis
 6. The IMU's axis count, chip model, sampling-rate ceiling, and accuracy are unpublished (C4001 through C4004).
 7. The full enumeration of head gestures is unpublished (C4006).
 8. The `getBattery` documentation is incomplete: the `navigator` reference defers to a device reference for the battery methods, and that reference has no such section (C5018).
-9. `StorageManager` method details have never been published (C6003).
-10. Hardware generations differ: for Rokid Glasses 2 and the first-generation full-color glasses, the official events reference marks the key mappings unverified. Do not assume the mappings in section 3.8 carry over.
-11. The official documentation runs on two tracks: open.rokid.com/aiui is current and js.rokid.com is older, and the two have never been diffed page by page. This registry follows the official repository's documentation and the `aiui-dev` skill.
-12. The package size limit, the exact place to file domains for the allowlist, and review turnaround times are all unspecified in official material (C9002, C6011).
+9. Hardware generations differ: for Rokid Glasses 2 and the first-generation full-color glasses, the official events reference marks the key mappings unverified. Do not assume the mappings in section 3.8 carry over.
+10. The official documentation runs on two tracks: open.rokid.com/aiui is current and js.rokid.com is older, and the two have never been diffed page by page. This registry follows the official repository's documentation and the `aiui-dev` skill.
+11. The package size limit, the exact place to file domains for the allowlist, and review turnaround times are all unspecified in official material (C9002, C6011).
 
 ## 6. Official sources
 
@@ -286,6 +285,10 @@ None of the following are entries. Each is a place where Rokid's own sources dis
 - Documentation index, including the unsupported markings for topics such as LAN access, prefetch, and source maps: https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
 
 ## 7. Changelog
+
+### v2.1.0 — 2026-10-30
+
+C6003 corrected. The OPFS page in the official documentation documents the full `navigator.storage` surface; the entry previously followed the one-line summary in the aiui-dev references and said no method details were published, which is not accurate. The entry now follows the OPFS page, and records that the quota exists only as a runtime value, with no published figure. Open question 9 (StorageManager method details) is resolved and removed, the remaining questions are renumbered, and the in-entry question references — which had drifted one position off — are realigned (C1011, C4006, C5018).
 
 ### v2.0.0 — 2026-10-29
 

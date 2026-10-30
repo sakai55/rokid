@@ -2,7 +2,7 @@
 
 中文 | [English](CAPABILITIES.en.md) | [日本語](CAPABILITIES.ja.md)
 
-> 编制日期：2026-10-24；当前版本 v2.0.0，2026-10-29
+> 编制日期：2026-10-24；当前版本 v2.1.0，2026-10-30
 > 资料原则：**只采用 Rokid 官方来源**（官方产品页、官方文档站、官方 GitHub 仓库 `yodaos-project/AIUI` 及其内置的 `aiui-dev` skill 参考），外加本注册表维护者自己的真机与构建实测，实测结论在条目里单独标明。官方仓库 `skills/aiui-dev` 是 API 契约的主来源，下文依据写作 `skill: references/…`。
 
 ## 写在前面
@@ -59,7 +59,7 @@
 | C1008 | 摄像头硬件 | 12 MP，照片 3024 × 4032，F2.25；传感器型号与摄像头视场角官方未公布 | 文档 |
 | C1009 | 麦克风硬件 | 4 麦克风阵列 | 文档 |
 | C1010 | 扬声器 | 双线性定向高保真扬声器 | 文档 |
-| C1011 | 电池与充电 | 210 mAh；续航官方口径多套，见未明第 4 条；磁吸充电，20 分钟充至 80%，充电盒可充满约 10 次 | 文档 |
+| C1011 | 电池与充电 | 210 mAh；续航官方口径多套，见未明第 3 条；磁吸充电，20 分钟充至 80%，充电盒可充满约 10 次 | 文档 |
 | C1012 | 无线连接 | Wi-Fi 6、蓝牙 5.3 | 文档 |
 | C1013 | 整机参数 | 49 g，IPX4；镜腿长 155.5 mm，铰链间距 146.3 mm，镜框 TR90 加钛合金铰链 | 文档 |
 | C1014 | 配镜 | 支持屈光度 +15 至 −15，官方配镜服务与磁吸配镜框 | 文档 |
@@ -123,7 +123,7 @@
 | C4003 | 绝对朝向 AbsoluteOrientationSensor | 绝对朝向四元数 quaternion [x, y, z, w] 加 timestamp；可用性取决于设备硬件支持 | 文档 |
 | C4004 | 采样率保证 | 无官方公布的最高频率与精度数值；官方指南示例用 60，建议 30 至 60 Hz 起步 | 文档 |
 | C4005 | 其他传感器接口 | 地磁、光感、接近传感器没有单独 API，未出现在官方清单 | 文档 |
-| C4006 | 头部手势 onHeadGesture | 需在 Page 内 enableWorldAwareness 开启；官方示例手势值只有 nod 点头，完整枚举未公布，见未明第 8 条 | 文档 |
+| C4006 | 头部手势 onHeadGesture | 需在 Page 内 enableWorldAwareness 开启；官方示例手势值只有 nod 点头，完整枚举未公布，见未明第 7 条 | 文档 |
 | C4007 | 头稳事件 onOrientationStabilityChange | 同需开启世界感知；event.stable 表示头部稳定性变化 | 文档 |
 | C4008 | 眼动追踪 | 不存在。所谓凝视由头部朝向 C4003 加头稳 C4007 加点头 C4006 实现 | 文档 |
 | C4009 | 定位 geolocation | getCurrentPosition 与 watchPosition，clearWatch 释放；coords 含 latitude、longitude、accuracy（米）及可空的 altitude、altitudeAccuracy、heading、speed；选项 enableHighAccuracy 默认 false、timeout、maximumAge；错误码 1 拒绝、2 不可用、3 超时 | 文档 |
@@ -154,7 +154,7 @@
 | C5015 | WXML 模板 | template 不支持 | 文档 |
 | C5016 | 对话流卡片 | 默认仅展示；交互式界面需全屏 Page 或 Widget | 文档 |
 | C5017 | 设备信息 navigator | id 为与智能体加设备绑定的不透明 ID，不得当作凭据；userAgent 与 versions.ink、versions.skia 给版本字符串；language、languages、region 可能为空；onLine 与 connection 给在线状态与连接估计值；renderingEnabled 表示当前实例能否渲染 | 文档 |
-| C5018 | 电池 getBattery | 返回 Promise 的 BatteryManager；主机无电池能力时 Promise 被拒；细节文档不全，见未明第 9 条 | 文档 |
+| C5018 | 电池 getBattery | 返回 Promise 的 BatteryManager；主机无电池能力时 Promise 被拒；细节文档不全，见未明第 8 条 | 文档 |
 | C5019 | 序列号与令牌 | getDeviceSerialNumber 与 requestDeviceToken 仅系统级智能体可用，普通智能体返回空字符串或不得依赖 | 文档 |
 | C5020 | 全局编码工具 | window.atob、btoa 与全局 createImageBlob 可用，createImageBlob 做 PNG、JPEG 编码 | 文档 |
 
@@ -166,7 +166,7 @@
 |---|---|---|---|
 | C6001 | 本地存储 localStorage | 当前智能体隔离的字符串 KV：getItem、setItem、removeItem、clear | 文档 |
 | C6002 | wx 存储 | setStorage、getStorage、removeStorage、clearStorage 及 Sync 同步版，数据经 JSON 序列化 | 文档 |
-| C6003 | StorageManager navigator.storage | 文档只给一句「持久文件存储入口」，方法细节未给出，见未明第 10 条 | 文档 |
+| C6003 | OPFS navigator.storage | 每个 Agent 私有的文件存储，与 localStorage、wx 存储相互独立：estimate 查当前用量与配额，配额是运行时值、官方未公布数字；persisted 查持久化状态，persist 申请持久化，getDirectory 取根目录；文件经 createWritable 写入、close 后提交；宿主未提供 OPFS 后端时以 NotSupportedError 失败；当前是实用子集，不是完整 File System Access API。依据为官方 documentation 的 OPFS 专页 | 文档 |
 | C6004 | 通用文件系统 | 不存在：资源一律从工程内路径解析，没有任意路径的读、写、列目录接口 | 文档 |
 | C6005 | FileReader | 不存在，真机必抛 FileReader is not defined；Blob 转 dataURL 走 blob.arrayBuffer 加分块 btoa；关联错误码 E2005 | 真机已证 |
 | C6006 | 查无的浏览器 API | 以下在 Ink 运行时均不存在，写进代码即错：sessionStorage、XMLHttpRequest、URL.createObjectURL、DOMParser、structuredClone、queueMicrotask、Notification、剪贴板 API、IntersectionObserver、MutationObserver、ServiceWorker、new Worker、OffscreenCanvas、getDisplayMedia、applyConstraints、getVoices、navigator.permissions | 文档 |
@@ -254,10 +254,9 @@
 6. IMU 轴数、型号、采样率上限与精度官方未公布（C4001 至 C4004）。
 7. 头部手势完整枚举官方未公布（C4006）。
 8. getBattery 的细节文档不全：navigator 参考称电量方法见 device 参考，但 device 参考无此章节（C5018）。
-9. StorageManager 方法细节官方未给出（C6003）。
-10. 设备代际差异：Rokid Glasses 2 与第一代全彩眼镜的按键映射在官方 events 参考中标注未验证，不得套用本表 3.8 节的映射。
-11. 官方文档双轨：open.rokid.com/aiui 为当前版，js.rokid.com 为较早版本，两站差异未逐页比对；本表以官方仓库 documentation 与 aiui-dev skill 为准。
-12. 包大小上限与域名白名单报备入口、审核时效，官方未细化（C9002、C6011）。
+9. 设备代际差异：Rokid Glasses 2 与第一代全彩眼镜的按键映射在官方 events 参考中标注未验证，不得套用本表 3.8 节的映射。
+10. 官方文档双轨：open.rokid.com/aiui 为当前版，js.rokid.com 为较早版本，两站差异未逐页比对；本表以官方仓库 documentation 与 aiui-dev skill 为准。
+11. 包大小上限与域名白名单报备入口、审核时效，官方未细化（C9002、C6011）。
 
 ## 6. 官方来源清单
 
@@ -284,6 +283,10 @@
 - 文档目录（含 lan、prefetch、sourcemap 等 unsupported 标注）：https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
 
 ## 7. 变更日志
+
+### v2.1.0 2026-10-30
+
+C6003 结论订正：官方 documentation 的 OPFS 专页（3-api/storage/opfs.md）给出了 navigator.storage 的完整方法面，此前按 aiui-dev references 的一句口径记为「方法细节未给出」并不准确，现按专页改写，并注明配额只有运行时查询口、官方未公布数字。第 5 节原第 9 条（StorageManager 方法细节未给出）已经澄清，撤下，后续条目顺延一号；条目内引用未明条号的历史错位一并对齐（C1011、C4006、C5018）。
 
 ### v2.0.0 2026-10-29
 

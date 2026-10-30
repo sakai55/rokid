@@ -2,9 +2,9 @@
 
 [中文](CAPABILITIES.md) | [English](CAPABILITIES.en.md) | 日本語
 
-本書は中文版 v2.0.0（2026-10-29）に対応する日本語版である。内容に食い違いがある場合は中文版を正とする。
+本書は中文版 v2.1.0（2026-10-30）に対応する日本語版である。内容に食い違いがある場合は中文版を正とする。
 
-> 作成：2026-10-24／現行バージョン v2.0.0（2026-10-29）
+> 作成：2026-10-24／現行バージョン v2.1.0（2026-10-30）
 > 資料の方針：**出典は Rokid 公式に限る**（公式製品ページ、公式ドキュメントサイト、公式 GitHub リポジトリ `yodaos-project/AIUI` および同梱の `aiui-dev` スキルリファレンス）。これに加えて、メンテナ自身による実機・ビルドでの確認結果があり、確認の裏付けがある結論はエントリ内に明記する。API 契約の一次資料は公式リポジトリの `skills/aiui-dev` で、根拠は以下 `skill: references/…` と記す。
 
 ## はじめに
@@ -61,7 +61,7 @@ ID は `C2003` の形式で、文字 C に4桁の数字が続き、千の位が�
 | C1008 | カメラ | 12 MP、静止画 3024 × 4032、F2.25。センサの型番とカメラの視野角は公式に公表されていない | 文書のみ |
 | C1009 | マイク | 4マイクアレイ | 文書のみ |
 | C1010 | スピーカー | デュアルリニア指向性 Hi-Fi スピーカー | 文書のみ |
-| C1011 | バッテリーと充電 | 210 mAh。公称の駆動時間は公式でも口径が複数あり、未確認事項の第4項を参照。マグネット吸着充電で、20分で80%まで充電でき、充電ケースで約10回フル充電できる | 文書のみ |
+| C1011 | バッテリーと充電 | 210 mAh。公称の駆動時間は公式でも口径が複数あり、未確認事項の第3項を参照。マグネット吸着充電で、20分で80%まで充電でき、充電ケースで約10回フル充電できる | 文書のみ |
 | C1012 | 無線接続 | Wi-Fi 6、Bluetooth 5.3 | 文書のみ |
 | C1013 | 本体仕様 | 49 g、IPX4。テンプル長 155.5 mm、ヒンジ間隔 146.3 mm。フレームは TR90、ヒンジはチタン合金 | 文書のみ |
 | C1014 | 度付き対応 | 度数 +15 から −15 まで対応。公式の度付きレンズサービスとマグネット式の度付きフレームがある | 文書のみ |
@@ -125,7 +125,7 @@ ID は `C2003` の形式で、文字 C に4桁の数字が続き、千の位が�
 | C4003 | 絶対方位センサ AbsoluteOrientationSensor | 絶対方位のクォータニオン quaternion [x, y, z, w] と timestamp を返す。利用できるかはデバイスのハードウェア対応に依存する | 文書のみ |
 | C4004 | サンプリングレート | 最大周波数と精度について、公式に公表された数値はない。公式ガイドのサンプルは 60 を使い、30 から 60 Hz で始めることを勧めている | 文書のみ |
 | C4005 | その他のセンサ | 地磁気、照度、近接の各センサには単独の API がなく、公式一覧に載っていない | 文書のみ |
-| C4006 | 頭部ジェスチャ onHeadGesture | Page 内で enableWorldAwareness を有効にする必要がある。公式サンプルに現れるジェスチャ値は nod（うなずき）のみで、全列挙は公表されていない。未確認事項の第8項を参照 | 文書のみ |
+| C4006 | 頭部ジェスチャ onHeadGesture | Page 内で enableWorldAwareness を有効にする必要がある。公式サンプルに現れるジェスチャ値は nod（うなずき）のみで、全列挙は公表されていない。未確認事項の第7項を参照 | 文書のみ |
 | C4007 | 頭部の安定検知 onOrientationStabilityChange | 同じくワールドアウェアネスの有効化が必要。event.stable が頭部の安定状態の変化を表す | 文書のみ |
 | C4008 | アイトラッキング | 存在しない。いわゆる視線は、頭の向き C4003 と安定検知 C4007、うなずき C4006 の組み合わせで代替する | 文書のみ |
 | C4009 | 測位 geolocation | getCurrentPosition と watchPosition があり、解放は clearWatch。coords には latitude、longitude、accuracy（メートル）と、null になりうる altitude、altitudeAccuracy、heading、speed が含まれる。オプションは enableHighAccuracy（デフォルト false）、timeout、maximumAge。エラーコードは 1 が拒否、2 が取得不可、3 がタイムアウト | 文書のみ |
@@ -156,7 +156,7 @@ ID は `C2003` の形式で、文字 C に4桁の数字が続き、千の位が�
 | C5015 | WXML テンプレート | template は未対応 | 文書のみ |
 | C5016 | 会話フローカード | デフォルトでは表示のみ。対話的な画面にはフルスクリーン Page または Widget が必要 | 文書のみ |
 | C5017 | デバイス情報 navigator | id は Agent とデバイスに結びついた不透明な ID で、認証情報として扱ってはならない。userAgent と versions.ink、versions.skia がバージョン文字列を与える。language、languages、region は空の場合がある。onLine と connection がオンライン状態と接続の推定値を与える。renderingEnabled は現在のインスタンスが描画できるかどうかを表す | 文書のみ |
-| C5018 | バッテリー getBattery | Promise を返す BatteryManager。ホストにバッテリー能力がない場合は Promise が拒否される。ドキュメントは不完全で、未確認事項の第9項を参照 | 文書のみ |
+| C5018 | バッテリー getBattery | Promise を返す BatteryManager。ホストにバッテリー能力がない場合は Promise が拒否される。ドキュメントは不完全で、未確認事項の第8項を参照 | 文書のみ |
 | C5019 | シリアル番号とトークン | getDeviceSerialNumber と requestDeviceToken はシステムレベルの Agent のみが使える。通常の Agent では空文字列が返るか、そもそも依存してはならない | 文書のみ |
 | C5020 | グローバルなエンコード機能 | window.atob、btoa とグローバルの createImageBlob が使え、createImageBlob は PNG、JPEG へのエンコードを行う | 文書のみ |
 
@@ -168,7 +168,7 @@ ID は `C2003` の形式で、文字 C に4桁の数字が続き、千の位が�
 |---|---|---|---|
 | C6001 | ローカルストレージ localStorage | 現在の Agent に隔離された文字列 KV：getItem、setItem、removeItem、clear | 文書のみ |
 | C6002 | wx ストレージ | setStorage、getStorage、removeStorage、clearStorage と、その Sync 版。データは JSON でシリアライズされる | 文書のみ |
-| C6003 | StorageManager navigator.storage | ドキュメントの記述は「永続ファイルストレージへの入口」の1文のみで、メソッドの詳細は示されていない。未確認事項の第10項を参照 | 文書のみ |
+| C6003 | OPFS navigator.storage | Agent ごとに独立したファイルストレージで、localStorage や wx ストレージとは別系統。estimate() で現在の使用量とクォータを取得できるが、クォータはランタイムが返す値で、公式の数値は公表されていない。persisted() で永続化の状態を確認し、persist() で永続化を要求、getDirectory() でルートディレクトリを取得する。ファイルは createWritable() で書き込み、close() で確定する。ホストに OPFS のバックエンドがない場合は NotSupportedError で失敗する。現行は実用的なサブセットで、File System Access API の完全な実装ではない。出典は公式ドキュメントの OPFS 専用ページ | 文書のみ |
 | C6004 | 汎用ファイルシステム | 存在しない。リソースはすべてプロジェクト内パスから解決され、任意パスの読み取り、書き込み、ディレクトリ列挙の API はない | 文書のみ |
 | C6005 | FileReader | 存在せず、実機では必ず FileReader is not defined になる。Blob から data URL への変換は blob.arrayBuffer と分割した btoa で行う。関連エラーコード E2005 | 実機確認済み |
 | C6006 | 存在しないブラウザ API | 以下はいずれも Ink ランタイムに存在せず、コードに書けば誤りになる：sessionStorage、XMLHttpRequest、URL.createObjectURL、DOMParser、structuredClone、queueMicrotask、Notification、クリップボード API、IntersectionObserver、MutationObserver、ServiceWorker、new Worker、OffscreenCanvas、getDisplayMedia、applyConstraints、getVoices、navigator.permissions | 文書のみ |
@@ -256,10 +256,9 @@ ID は `C2003` の形式で、文字 C に4桁の数字が続き、千の位が�
 6. IMU の軸数、型番、サンプリングレートの上限と精度は公式に公表されていない（C4001 から C4004）。
 7. 頭部ジェスチャの全列挙は公式に公表されていない（C4006）。
 8. getBattery のドキュメントが不完全である：navigator リファレンスはバッテリーのメソッドを device リファレンスで見るよう案内するが、device リファレンスに該当する章がない（C5018）。
-9. StorageManager のメソッドの詳細は公式に示されていない（C6003）。
-10. デバイス世代の差異：Rokid Glasses 2 と第1世代のフルカラーグラスのキーマッピングは、公式 events リファレンスの中で未検証と注記されており、本表 3.8 節のマッピングを流用してはならない。
-11. 公式ドキュメントの二系統：open.rokid.com/aiui が現行版、js.rokid.com が旧版であり、両サイトの差異はページ単位では照合していない。本表は公式リポジトリの documentation と aiui-dev スキルを正とする。
-12. パッケージサイズの上限、ドメイン許可リストの登録入口、審査にかかる時間については、公式に詳しい説明がない（C9002、C6011）。
+9. デバイス世代の差異：Rokid Glasses 2 と第1世代のフルカラーグラスのキーマッピングは、公式 events リファレンスの中で未検証と注記されており、本表 3.8 節のマッピングを流用してはならない。
+10. 公式ドキュメントの二系統：open.rokid.com/aiui が現行版、js.rokid.com が旧版であり、両サイトの差異はページ単位では照合していない。本表は公式リポジトリの documentation と aiui-dev スキルを正とする。
+11. パッケージサイズの上限、ドメイン許可リストの登録入口、審査にかかる時間については、公式に詳しい説明がない（C9002、C6011）。
 
 ## 6. 公式ソース一覧
 
@@ -286,6 +285,10 @@ ID は `C2003` の形式で、文字 C に4桁の数字が続き、千の位が�
 - ドキュメント目次（lan、prefetch、sourcemap などの unsupported 表記を含む）：https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
 
 ## 7. 変更履歴
+
+### v2.1.0 2026-10-30
+
+C6003 を訂正した。公式ドキュメントの OPFS 専用ページには navigator.storage のメソッド一式が記載されており、aiui-dev リファレンスの 1 文をもとに「メソッドの詳細は示されていない」としていた従来の記述は正確ではなかったため、同ページに沿って書き換えた。クォータはランタイムが返す値のみで、公式の数値は公表されていないことも明記した。第 5 節の第 9 項（StorageManager のメソッド詳細）は解消したため削除し、以降の項番号を繰り上げた。あわせて、エントリ側の参照項番号に生じていた 1 つずれを揃えた（C1011、C4006、C5018）。
 
 ### v2.0.0 2026-10-29
 
