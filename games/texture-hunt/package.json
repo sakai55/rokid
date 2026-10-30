@@ -1,7 +1,0 @@
-{
-  "dependencies": {},
-  "description": "Texture hunt game GA49 for Rokid glasses: five target textures (wood grain, metal, fabric, glass, paper). Get close to a real surface so it fills the frame and snap; the host LLM judges the surface texture itself - not the object name - and answers VERDICT YES/NO with a reason. Swipe switches unattempted rounds, nod logs a non-scoring appeal. Camera only.",
-  "main": "app.js",
-  "name": "texture-hunt",
-  "version": "1.0.1"
-}
