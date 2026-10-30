@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI probe - QR code capacity boundary per EC level: encode, file roundtrip decode, camera decode","main":"app.js","name":"qr-capacity-probe","version":"1.0.0"}
