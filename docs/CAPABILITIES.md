@@ -2,7 +2,7 @@
 
 中文 | [English](CAPABILITIES.en.md) | [日本語](CAPABILITIES.ja.md)
 
-> 编制日期：2026-10-24；当前版本 v2.2.0，2026-10-30
+> 编制日期：2026-10-24；当前版本 v2.3.0，2026-10-31
 > 资料原则：**只采用 Rokid 官方来源**（官方产品页、官方文档站、官方 GitHub 仓库 `yodaos-project/AIUI` 及其内置的 `aiui-dev` skill 参考），外加本注册表维护者自己的真机与构建实测，实测结论在条目里单独标明。官方仓库 `skills/aiui-dev` 是 API 契约的主来源，下文依据写作 `skill: references/…`。
 
 ## 写在前面
@@ -166,7 +166,7 @@
 |---|---|---|---|
 | C6001 | 本地存储 localStorage | 当前智能体隔离的字符串 KV：getItem、setItem、removeItem、clear | 文档 |
 | C6002 | wx 存储 | setStorage、getStorage、removeStorage、clearStorage 及 Sync 同步版，数据经 JSON 序列化 | 文档 |
-| C6003 | OPFS navigator.storage | 每个 Agent 私有的文件存储，与 localStorage、wx 存储相互独立：estimate 查当前用量与配额，配额是运行时值、官方未公布数字；persisted 查持久化状态，persist 申请持久化，getDirectory 取根目录；文件经 createWritable 写入、close 后提交；宿主未提供 OPFS 后端时以 NotSupportedError 失败；当前是实用子集，不是完整 File System Access API。依据为官方 documentation 的 OPFS 专页 | 文档 |
+| C6003 | OPFS navigator.storage | 每个 Agent 私有的文件存储，与 localStorage、wx 存储相互独立：estimate 查当前用量与配额，配额是运行时值、官方未公布数字；persisted 查持久化状态，persist 申请持久化，getDirectory 取根目录；目录与文件句柄方法须带 options 参数调用——二维码容量探针实测，单参数调用被 Ink 桥拒绝，报错称应为 2 个参数；文件经 createWritable 写入、close 后提交；宿主未提供 OPFS 后端时以 NotSupportedError 失败；当前是实用子集，不是完整 File System Access API。依据为官方 documentation 的 OPFS 专页 | 文档 |
 | C6004 | 通用文件系统 | 不存在：资源一律从工程内路径解析，没有任意路径的读、写、列目录接口 | 文档 |
 | C6005 | FileReader | 不存在，真机必抛 FileReader is not defined；Blob 转 dataURL 走 blob.arrayBuffer 加分块 btoa；关联错误码 E2005 | 真机已证 |
 | C6006 | 查无的浏览器 API | 以下在 Ink 运行时均不存在，写进代码即错：sessionStorage、XMLHttpRequest、URL.createObjectURL、DOMParser、structuredClone、queueMicrotask、Notification、剪贴板 API、IntersectionObserver、MutationObserver、ServiceWorker、new Worker、OffscreenCanvas、getDisplayMedia、applyConstraints、getVoices、navigator.permissions | 文档 |
@@ -242,6 +242,7 @@
 | 连续视频流探针 | C2009 | 已立项，未跑 |
 | 识别错误类别采集 | C3013 | 待真机触发各类错误后比对原文 |
 | 存储探针：三套存储逐套往返自检与容量爬坡，OPFS 站读 estimate() 配额与持久化状态，跨会话标记验证存档跨启动留存 | C6001 至 C6003 | 已建，真机轮待跑 |
+| 二维码容量探针：四档纠错下文本编码、存文件读回解码与相机解码的容量边界 | C2007，兼及 C6003、C2002 | 已建；编码侧已验（L 档达 2953 字节规格上限），读回与相机两腿待真机 |
 
 ## 5. 未明与矛盾
 
@@ -285,6 +286,10 @@
 - 文档目录（含 lan、prefetch、sourcemap 等 unsupported 标注）：https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
 
 ## 7. 变更日志
+
+### v2.3.0 2026-10-31
+
+§4 开口探针新增二维码容量探针一行：qr-capacity-probe 已建成（仓库 base/qr-capacity-probe），量四档纠错下二维码文本的编码、存文件读回解码与相机解码三段边界，验证 C2007 并兼及 C6003、C2002；编码侧已由探针实测（L 档达到字节模式规格上限 2953 字节），读回与相机两腿待真机回数。C6003 条目补一句实测约束：目录与文件句柄方法须带 options 参数调用，单参数调用被 Ink 桥拒绝（二维码容量探针实测）。
 
 ### v2.2.0 2026-10-30
 
