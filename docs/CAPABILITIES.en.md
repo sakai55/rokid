@@ -2,7 +2,7 @@
 
 [中文](CAPABILITIES.md) | English | [日本語](CAPABILITIES.ja.md)
 
-English edition of the Chinese version v2.1.0, dated 2026-10-30. The Chinese text is authoritative; where the two differ, the Chinese governs.
+English edition of the Chinese version v2.2.0, dated 2026-10-30. The Chinese text is authoritative; where the two differ, the Chinese governs.
 
 > Compiled 2026-10-24. Current version: v2.1.0, 2026-10-30.
 > Sources: **official Rokid material only** — the product pages, the documentation site, and the `yodaos-project/AIUI` GitHub repository, including the `aiui-dev` skill references bundled with it — supplemented by the maintainer's own device and build testing. Anything that rests on testing rather than documentation is flagged as such in the entry itself. The API contract comes primarily from `skills/aiui-dev` in the official repository; citations below take the form `skill: references/…`.
@@ -243,6 +243,7 @@ A probe is a test build put together to settle one or more entries. This section
 | Tracing probes — one for hand seals, one for sign language | Whether C3016 image input is usable for still-frame judging, and how often it is right | Built; device data will decide what the full versions include |
 | Continuous video stream probe | C2009 | Approved, not yet run |
 | Recognition error-value collection | C3013 | Compare the raw error output once each error type has been triggered on a device |
+| Storage probe: roundtrip self-checks and capacity ramps for all three stores; the OPFS station reads the estimate() quota and persistence state; a cross-session marker verifies that saves survive restarts | C6001 through C6003 | Built; device run pending |
 
 ## 5. Open questions and contradictions
 
@@ -259,6 +260,7 @@ None of the following are entries. Each is a place where Rokid's own sources dis
 9. Hardware generations differ: for Rokid Glasses 2 and the first-generation full-color glasses, the official events reference marks the key mappings unverified. Do not assume the mappings in section 3.8 carry over.
 10. The official documentation runs on two tracks: open.rokid.com/aiui is current and js.rokid.com is older, and the two have never been diffed page by page. This registry follows the official repository's documentation and the `aiui-dev` skill.
 11. The package size limit, the exact place to file domains for the allowlist, and review turnaround times are all unspecified in official material (C9002, C6011).
+12. The media-library operation surface is undocumented: the four media permissions are defined in the app.json permission table (C7004 through C7007), but no official document names the API for listing, reading or saving media-library assets — the table says only that the relevant operations check the permission. Establish the operation surface before building album features, and never assume a same-named API from another platform.
 
 ## 6. Official sources
 
@@ -285,6 +287,10 @@ None of the following are entries. Each is a place where Rokid's own sources dis
 - Documentation index, including the unsupported markings for topics such as LAN access, prefetch, and source maps: https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
 
 ## 7. Changelog
+
+### v2.2.0 — 2026-10-30
+
+Section 4 gains the storage probe: storage-probe is built (base/storage-probe in the repository) and verifies C6001 through C6003 — roundtrip correctness and practical capacity for all three stores, the OPFS runtime quota, and save survival across restarts via a cross-session marker. Once device numbers return, the entry conclusions and verification states will be updated and this row retired. Section 5 gains item 12: the four media permissions are defined in the app.json permission table (C7004 through C7007), but no official document names the API for listing, reading or saving media-library assets.
 
 ### v2.1.0 — 2026-10-30
 
