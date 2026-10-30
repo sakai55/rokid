@@ -1,0 +1,10 @@
+{
+  "name": "jeju-trip-hub",
+  "version": "1.0.0",
+  "description": "Jeju trip hub: one notebook for a Jeju trip. Twenty travel tools - checklists, quizzes, spoken phrases, counts and a record page - each with its own set and persisted use records.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

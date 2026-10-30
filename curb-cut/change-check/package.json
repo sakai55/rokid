@@ -1,0 +1,10 @@
+{
+  "author": "",
+  "dependencies": {},
+  "description": "Change check: a person who cannot easily work out change sees only one conclusion after paying, correct or short by X yuan.",
+  "keywords": [],
+  "license": "ISC",
+  "main": "app.js",
+  "name": "change-check",
+  "version": "1.0.0"
+}

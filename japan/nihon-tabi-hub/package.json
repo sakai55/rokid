@@ -1,0 +1,10 @@
+{
+  "name": "nihon-tabi-hub",
+  "version": "1.0.0",
+  "description": "Japan travel notebook: twenty travel tools in one notebook - checklists, quizzes, spoken phrases, counts and a record page, with progress persisted across sessions.",
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

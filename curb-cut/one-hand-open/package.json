@@ -1,0 +1,10 @@
+{
+  "author": "",
+  "dependencies": {},
+  "description": "One-hand open: a person with only one usable hand follows steps rebuilt for one hand to open bottles, packs and parcels.",
+  "keywords": [],
+  "license": "ISC",
+  "main": "app.js",
+  "name": "one-hand-open",
+  "version": "1.0.0"
+}
