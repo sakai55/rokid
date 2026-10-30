@@ -2,9 +2,9 @@
 
 [中文](CAPABILITIES.md) | [English](CAPABILITIES.en.md) | 日本語
 
-本書は中文版 v2.2.0（2026-10-30）に対応する日本語版である。内容に食い違いがある場合は中文版を正とする。
+本書は中文版 v2.3.0（2026-10-31）に対応する日本語版である。内容に食い違いがある場合は中文版を正とする。
 
-> 作成：2026-10-24／現行バージョン v2.1.0（2026-10-30）
+> 作成：2026-10-24／現行バージョン v2.3.0（2026-10-31）
 > 資料の方針：**出典は Rokid 公式に限る**（公式製品ページ、公式ドキュメントサイト、公式 GitHub リポジトリ `yodaos-project/AIUI` および同梱の `aiui-dev` スキルリファレンス）。これに加えて、メンテナ自身による実機・ビルドでの確認結果があり、確認の裏付けがある結論はエントリ内に明記する。API 契約の一次資料は公式リポジトリの `skills/aiui-dev` で、根拠は以下 `skill: references/…` と記す。
 
 ## はじめに
@@ -168,7 +168,7 @@ ID は `C2003` の形式で、文字 C に4桁の数字が続き、千の位が�
 |---|---|---|---|
 | C6001 | ローカルストレージ localStorage | 現在の Agent に隔離された文字列 KV：getItem、setItem、removeItem、clear | 文書のみ |
 | C6002 | wx ストレージ | setStorage、getStorage、removeStorage、clearStorage と、その Sync 版。データは JSON でシリアライズされる | 文書のみ |
-| C6003 | OPFS navigator.storage | Agent ごとに独立したファイルストレージで、localStorage や wx ストレージとは別系統。estimate() で現在の使用量とクォータを取得できるが、クォータはランタイムが返す値で、公式の数値は公表されていない。persisted() で永続化の状態を確認し、persist() で永続化を要求、getDirectory() でルートディレクトリを取得する。ファイルは createWritable() で書き込み、close() で確定する。ホストに OPFS のバックエンドがない場合は NotSupportedError で失敗する。現行は実用的なサブセットで、File System Access API の完全な実装ではない。出典は公式ドキュメントの OPFS 専用ページ | 文書のみ |
+| C6003 | OPFS navigator.storage | Agent ごとに独立したファイルストレージで、localStorage や wx ストレージとは別系統。estimate() で現在の使用量とクォータを取得できるが、クォータはランタイムが返す値で、公式の数値は公表されていない。persisted() で永続化の状態を確認し、persist() で永続化を要求、getDirectory() でルートディレクトリを取得する。ディレクトリおよびファイルのハンドルのメソッドは options 引数を伴って呼ぶ必要がある。引数 1 個の呼び出しは Ink ブリッジに拒否されることを QR 容量プローブで実測した（引数は 2 個必要というエラーになる）。ファイルは createWritable() で書き込み、close() で確定する。ホストに OPFS のバックエンドがない場合は NotSupportedError で失敗する。現行は実用的なサブセットで、File System Access API の完全な実装ではない。出典は公式ドキュメントの OPFS 専用ページ | 文書のみ |
 | C6004 | 汎用ファイルシステム | 存在しない。リソースはすべてプロジェクト内パスから解決され、任意パスの読み取り、書き込み、ディレクトリ列挙の API はない | 文書のみ |
 | C6005 | FileReader | 存在せず、実機では必ず FileReader is not defined になる。Blob から data URL への変換は blob.arrayBuffer と分割した btoa で行う。関連エラーコード E2005 | 実機確認済み |
 | C6006 | 存在しないブラウザ API | 以下はいずれも Ink ランタイムに存在せず、コードに書けば誤りになる：sessionStorage、XMLHttpRequest、URL.createObjectURL、DOMParser、structuredClone、queueMicrotask、Notification、クリップボード API、IntersectionObserver、MutationObserver、ServiceWorker、new Worker、OffscreenCanvas、getDisplayMedia、applyConstraints、getVoices、navigator.permissions | 文書のみ |
@@ -244,6 +244,7 @@ ID は `C2003` の形式で、文字 C に4桁の数字が続き、千の位が�
 | 連続映像ストリームプローブ | C2009 | 企画済み。未実行 |
 | 認識エラー種別の収集 | C3013 | 実機で各種類のエラーを発生させた後、原文と照合する |
 | ストレージプローブ：3 系統のストレージごとに往復セルフチェックと容量ランプを実行し、OPFS ステーションでは estimate() のクォータと永続化状態を読み取る。セッションをまたぐマーカーで保存データが再起動後も残ることを確かめる | C6001 から C6003 | 作成済み、実機ラウンド待ち |
+| QR 容量プローブ：誤り訂正の 4 段階ごとに、テキストの符号化、ファイル保存と読み戻し復号、カメラ復号の容量境界を測る | C2007、併せて C6003 と C2002 | 作成済み。符号化側は確認済み（L 段階で仕様上限の 2,953 バイトに到達）。読み戻しとカメラの 2 件は実機待ち |
 
 ## 5. 未確認事項と矛盾点
 
@@ -287,6 +288,10 @@ ID は `C2003` の形式で、文字 C に4桁の数字が続き、千の位が�
 - ドキュメント目次（lan、prefetch、sourcemap などの unsupported 表記を含む）：https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
 
 ## 7. 変更履歴
+
+### v2.3.0 2026-10-31
+
+第 4 節の開口プローブに QR 容量プローブを追加した。qr-capacity-probe は作成済み（リポジトリの base/qr-capacity-probe）で、誤り訂正の 4 段階ごとに、QR が運ぶテキストの符号化、ファイルへの保存と読み戻し復号、カメラ復号という 3 段の境界を測り、C2007 を検証して C6003 と C2002 にも触れる。符号化側は実測済みであり、L 段階でバイトモードの仕様上限 2,953 バイトに到達した。読み戻しとカメラの 2 件は実機の数値を待つ。C6003 の条目には実測で得た制約を 1 文加えた。ディレクトリおよびファイルのハンドルのメソッドは options 引数を伴って呼ぶ必要があり、引数 1 個の呼び出しは Ink ブリッジに拒否される（QR 容量プローブで実測）。
 
 ### v2.2.0 2026-10-30
 

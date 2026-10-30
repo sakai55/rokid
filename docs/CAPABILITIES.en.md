@@ -2,9 +2,9 @@
 
 [中文](CAPABILITIES.md) | English | [日本語](CAPABILITIES.ja.md)
 
-English edition of the Chinese version v2.2.0, dated 2026-10-30. The Chinese text is authoritative; where the two differ, the Chinese governs.
+English edition of the Chinese version v2.3.0, dated 2026-10-31. The Chinese text is authoritative; where the two differ, the Chinese governs.
 
-> Compiled 2026-10-24. Current version: v2.1.0, 2026-10-30.
+> Compiled 2026-10-24. Current version: v2.3.0, 2026-10-31.
 > Sources: **official Rokid material only** — the product pages, the documentation site, and the `yodaos-project/AIUI` GitHub repository, including the `aiui-dev` skill references bundled with it — supplemented by the maintainer's own device and build testing. Anything that rests on testing rather than documentation is flagged as such in the entry itself. The API contract comes primarily from `skills/aiui-dev` in the official repository; citations below take the form `skill: references/…`.
 
 ## About this registry
@@ -168,7 +168,7 @@ Sources: `skill: references/apis/web.md`, `skill: references/apis/wx.md`, and th
 |---|---|---|---|
 | C6001 | Local storage — `localStorage` | String key–value storage, isolated per agent: `getItem`, `setItem`, `removeItem`, `clear` | Docs only |
 | C6002 | wx storage | `setStorage`, `getStorage`, `removeStorage`, `clearStorage`, plus synchronous `Sync` variants. Values pass through JSON serialization | Docs only |
-| C6003 | OPFS — `navigator.storage` | Per-agent private file storage, independent of `localStorage` and the wx store. `estimate()` reports current usage and quota; the quota is a runtime value and Rokid publishes no figure for it. `persisted()` reports the persistence state, `persist()` requests persistence, and `getDirectory()` returns the root directory. Files are written through `createWritable()` and committed on `close()`. On a host with no OPFS backend, calls fail with `NotSupportedError`. What ships is a practical subset, not the full File System Access API. Source: the OPFS page in the official documentation | Docs only |
+| C6003 | OPFS — `navigator.storage` | Per-agent private file storage, independent of `localStorage` and the wx store. `estimate()` reports current usage and quota; the quota is a runtime value and Rokid publishes no figure for it. `persisted()` reports the persistence state, `persist()` requests persistence, and `getDirectory()` returns the root directory. Directory and file handle methods must be called with an options argument — the QR capacity probe measured the Ink bridge rejecting one-argument calls with an error stating that 2 arguments are expected. Files are written through `createWritable()` and committed on `close()`. On a host with no OPFS backend, calls fail with `NotSupportedError`. What ships is a practical subset, not the full File System Access API. Source: the OPFS page in the official documentation | Docs only |
 | C6004 | General-purpose file system | None. Resources resolve from paths inside the project only; there is no API to read, write, or list arbitrary paths | Docs only |
 | C6005 | `FileReader` | Does not exist. On hardware it always throws `FileReader is not defined`. To turn a `Blob` into a data URL, use `blob.arrayBuffer` and base64-encode it in chunks with `btoa`. Related error code: E2005 | Verified on device |
 | C6006 | Browser APIs confirmed absent | None of the following exist in the Ink runtime, and using any of them in code is a defect: `sessionStorage`, `XMLHttpRequest`, `URL.createObjectURL`, `DOMParser`, `structuredClone`, `queueMicrotask`, `Notification`, the clipboard API, `IntersectionObserver`, `MutationObserver`, `ServiceWorker`, `new Worker`, `OffscreenCanvas`, `getDisplayMedia`, `applyConstraints`, `getVoices`, `navigator.permissions` | Docs only |
@@ -244,6 +244,7 @@ A probe is a test build put together to settle one or more entries. This section
 | Continuous video stream probe | C2009 | Approved, not yet run |
 | Recognition error-value collection | C3013 | Compare the raw error output once each error type has been triggered on a device |
 | Storage probe: roundtrip self-checks and capacity ramps for all three stores; the OPFS station reads the estimate() quota and persistence state; a cross-session marker verifies that saves survive restarts | C6001 through C6003 | Built; device run pending |
+| QR capacity probe: text-capacity boundaries per error-correction level across encoding, file-roundtrip decoding and camera decoding | C2007; also C6003, C2002 | Built; encoding verified (level L reaches the 2,953-byte spec ceiling), roundtrip and camera legs await a device run |
 
 ## 5. Open questions and contradictions
 
@@ -287,6 +288,10 @@ None of the following are entries. Each is a place where Rokid's own sources dis
 - Documentation index, including the unsupported markings for topics such as LAN access, prefetch, and source maps: https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
 
 ## 7. Changelog
+
+### v2.3.0 — 2026-10-31
+
+Section 4 gains the QR capacity probe: qr-capacity-probe is built (base/qr-capacity-probe in the repository) and measures the three boundaries of QR-carried text — encoding, file-roundtrip decoding and camera decoding — across all four error-correction levels, verifying C2007 and touching C6003 and C2002. The encoding leg is already measured (level L reaches the byte-mode spec ceiling of 2,953 bytes); the roundtrip and camera legs await device numbers. Entry C6003 gains one measured constraint: directory and file handle methods must be called with an options argument, and the Ink bridge rejects one-argument calls (measured by the QR capacity probe).
 
 ### v2.2.0 — 2026-10-30
 
