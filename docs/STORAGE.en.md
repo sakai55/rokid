@@ -2,18 +2,18 @@
 
 [中文](STORAGE.md) | English | [日本語](STORAGE.ja.md)
 
-English edition of the Chinese version v1.0.0, dated 2026-10-30. The Chinese text is authoritative; where the two differ, the Chinese governs.
+English edition of the Chinese version v1.1.0, dated 2026-10-31. The Chinese text is authoritative; where the two differ, the Chinese governs.
 
-> Compiled 2026-10-30. Current version: v1.0.0, 2026-10-30.
+> Compiled 2026-10-30. Current version: v1.1.0, 2026-10-31.
 > Sources: official Rokid material only — the documentation site and the `yodaos-project/AIUI` GitHub repository, including the `aiui-dev` skill references bundled with it. Where Rokid has published no figure, this guide says so outright; it never borrows numbers from other platforms.
 
 ## About this guide
 
 This guide is maintained by an individual Rokid AIUI developer. It is not a Rokid publication. Its job is to set out the local storage an agent can actually use: what the options are, what each one is suited to, how the code flows, and where the walls are.
 
-The headline: an agent gets three local storage systems — `localStorage`, the wx store, and OPFS file storage. All three live on the glasses, are isolated per agent, and do not talk to each other. The platform offers agents no cloud storage at all: saves never sync to the phone or to a server, and clearing the app's data or uninstalling takes the local saves with it. If a save has to follow the user across devices or live online, you build your own backend.
+The headline: an agent has four places to put data — three private storage systems (`localStorage`, the wx store, and OPFS file storage) plus the system media library, the gallery the wearer can browse. The three private stores live on the glasses, are isolated per agent, and do not talk to each other; the media library is shared system-wide, and permissions are the gate. The platform offers agents no cloud storage at all: saves never sync to the phone or to a server, and clearing the app's data or uninstalling takes the local saves with it. If a save has to follow the user across devices or live online, you build your own backend.
 
-## 1. The three storage systems
+## 1. Overview
 
 Why three? Because they descend from three different lineages — they are not three copies of one feature:
 
@@ -23,15 +23,16 @@ Why three? Because they descend from three different lineages — they are not t
 
 Rokid has never published a comparison of the three, nor declared any of them superseded. They overlap only at the small key-value end, where both localStorage and the wx store work; the dividing line is the shape of the data — key-value goes to the first two, files go to OPFS.
 
-Images make the line concrete: a photo is binary, and neither localStorage nor the wx store can hold it directly — the only route is to base64-encode it into a string first (roughly a third larger, and in localStorage's case a synchronous write that stalls the page on large strings). The proper home is OPFS, writing the Blob as-is. Note that saving a photo into the system media library — the one the wearer browses in the gallery — is a separate path under the `CREATE_MEDIA_IMAGES` permission, not part of these three private stores.
+Images make the line concrete: a photo is binary, and neither localStorage nor the wx store can hold it directly — the only route is to base64-encode it into a string first (roughly a third larger, and in localStorage's case a synchronous write that stalls the page on large strings). The proper home is OPFS, writing the Blob as-is. Handing a photo to the wearer by saving it into the system media library is a different path again, under the `CREATE_MEDIA_IMAGES` permission — see section 5.
 
 | System | API | Good for | Data shape |
 |---|---|---|---|
 | localStorage | `localStorage.getItem / setItem / removeItem / clear` | Small settings, flags, cross-session progress pointers | Strings only |
 | wx storage | `wx.setStorage / getStorage / removeStorage / clearStorage`, plus Sync variants | User preferences, page state, business caches, the save file itself | JSON-serializable data |
 | OPFS | File API starting from `navigator.storage.getDirectory()` | Large files, binaries, anything bigger than key-value volume | Files |
+| System media library | Permission-gated media operations (the concrete API is unpublished — see section 5) | Images and audio meant for the wearer's hands; the on-paper channel for sharing data between agents | The shared system gallery, visible to the wearer |
 
-None of the three needs a permission — storage is not among the seven permission names. The `clear`-style calls only ever clear the calling agent's own storage; they cannot touch another agent's.
+None of the three private stores needs a permission — storage is not among the seven permission names. The media library does need its media permissions declared; see section 5. The `clear`-style calls only ever clear the calling agent's own storage; they cannot touch another agent's.
 
 ## 2. localStorage
 
@@ -74,7 +75,7 @@ function loadProgress() {
 
 - Keys and values are both coerced to strings. Store an object directly and you get `'[object Object]'` — serializing with `JSON.stringify` is on you.
 - The calls are synchronous and execute on the spot. A large write blocks the page, so don't keep bulky data here.
-- Rokid publishes no capacity limit (see section 5). A write the quota rejects throws — error code E5003; a missing or disabled API is E5005.
+- Rokid publishes no capacity limit (see section 6). A write the quota rejects throws — error code E5003; a missing or disabled API is E5005.
 
 ## 3. wx storage
 
@@ -109,7 +110,7 @@ const theme = wx.getStorageSync('myagent.theme');
 
 - Only JSON-serializable data goes in: functions, `undefined` and circular references cannot be stored.
 - The async calls require storage support in the current context; without it, the call throws outright. The sync getter, by contrast, returns `undefined` for a key that was never written — it does not throw.
-- Rokid publishes neither a per-key size limit nor a total limit (see section 5).
+- Rokid publishes neither a per-key size limit nor a total limit (see section 6).
 
 ## 4. OPFS file storage
 
@@ -149,22 +150,71 @@ async function writeBigFile(bytes) {
 - What ships today is a practical subset, not the full browser File System Access API; neither `StorageManager` nor the handles can be created directly with a constructor.
 - Writes land in a buffer first and only commit on `close()`. If something fails halfway, cleaning up the partial file is your job.
 
-## 5. The known limits, in one place
+## 5. The system media library
+
+The first three stores are private to each agent. The system media library — the gallery, as the wearer calls it — is a fourth place to put things, and a different kind of place: a media space shared by the whole system, which the wearer can browse directly on the glasses and in the phone app. It is not partitioned by agent; permissions are the gate.
+
+### The permission boundary
+
+- **Read:** `READ_MEDIA_IMAGES` lists and reads the images in the library; `READ_MEDIA_AUDIO` covers audio.
+- **Write:** `CREATE_MEDIA_IMAGES` and `CREATE_MEDIA_AUDIO` only ever add assets. The official wording says so plainly: they do not include modifying or replacing existing assets.
+- **No delete, no edit:** none of the seven permission names covers deleting, renaming or editing metadata. An agent cannot remove or alter anything in the library — not even an asset it added itself. A mistaken save stays there until the wearer deals with it in the phone app.
+- **A declaration is not a grant:** writing a permission into app.json declares intent; the system can still refuse at call time, so refusal handling belongs in the code — and at review time, every permission needs its purpose stated.
+
+### Where things stand: the operation surface is undocumented
+
+This section has no walkthrough, because there is none to give. The official documentation defines these four permissions in the app.json permission table and notes that media-library read and save operations check them — but it nowhere names the APIs for listing, reading or saving library assets. The gap is registered in the capability registry (`docs/CAPABILITIES.md`), section 5, under entries C7004 through C7007. Establish the operation surface before building album features; never assume a same-named API from another platform.
+
+### Limits
+
+- Images and audio only; no other format gets in.
+- Anything written there is handed to the wearer: content is visible to the user and the system. Working data, caches and private material do not belong in the media library.
+- No capacity or reclamation rules are published.
+
+## 6. The known limits, in one place
 
 - **No capacity figures are published — for any of the three.** There is no official per-item limit and no official total. The numbers from elsewhere do not transfer: WeChat Mini Programs' 1 MB per key and 10 MB total, and the localStorage allowances common in browsers, do not apply to this platform and must not be substituted for real ones.
 - **There is no expiry mechanism.** Nothing in the official material describes a TTL, an expiry time or an automatic cleanup rule. What you store stays stored until you delete it yourself or the user clears the app's data. The converse is also true: Rokid never promises storage will never be reclaimed — OPFS carries dedicated `persisted()` and `persist()` methods precisely because persistence is a state you apply for, not a given.
 - **Everything is local; nothing syncs.** None of the three goes over the network or syncs with the phone app. A different device means a brand-new save.
 - **Isolation runs in both directions.** An agent cannot read another agent's storage, and it cannot read the host app's data either.
-- **Measured numbers are on the way.** Real capacity and the OPFS quota are being measured on actual hardware by the storage probe (`base/storage-probe`), and the results feed back into entries C6001 through C6003 of the capability registry (`docs/CAPABILITIES.md`). Where figures are concerned, the registry is the authority.
+- **The media library's terms are equally unpublished:** no capacity limit, no reclamation rule, no refined statement of visibility (see section 5).
+- **Measured numbers are on the way.** Real capacity and the OPFS quota are being measured on actual hardware by the storage probe (`base/storage-probe`); the results are filled into section 8 of this guide and then fed back into entries C6001 through C6003 of the capability registry (`docs/CAPABILITIES.md`). Where figures are concerned, the registry is the authority.
 
-## 6. Which one to pick
+## 7. Which one to pick
 
 - Settings, toggles, where you left off: the wx store or localStorage — whichever is closer at hand.
 - A structured save — progress, collections, history: the wx store, and give the save object a `v` version field from day one.
 - Images, audio, large binaries you generate yourself: OPFS, and call `estimate()` before you write.
+- Images or audio that belong in the wearer's hands, or data passed between agents via the gallery: the system media library — but establish the operation surface first (section 5), and remember that whatever you write there is visible to the wearer; keep working data out.
 - Picking up last session's save and carrying on: any of the three will do — mechanically, there is no expiry gate to clear. What you have to defend against is the save format evolving: keep the version field, write the migrations, and never let an old save crash a new build (error code E5004).
 
-## 7. Changelog
+## 8. Measured on device
+
+This section is reserved for figures from real hardware, to be filled in by whoever runs the tests. The measuring tool is the storage probe (`base/storage-probe`): each store gets a roundtrip self-check and a capacity ramp (written in 32 KiB steps, stopping at the first failure; the accepted figure is the cumulative bytes before that failure); the OPFS station also reads the `estimate()` quota and usage and the results of `persisted()` and `persist()`; cross-session survival is checked against the launch marker on the probe's home page (the previous launch time and the cumulative launch count shown on the second launch). Once filled in, the figures also go into registry entries C6001 through C6003.
+
+- Test date: (to be filled in)
+- Glasses model and firmware: (to be filled in)
+- Ink runtime version: (to be filled in)
+
+| Measurement | Result on device | Notes |
+|---|---|---|
+| localStorage roundtrip self-check | (to be filled in) | |
+| localStorage capacity ramp, accepted | (to be filled in) | Error name and raw text at the ceiling: (to be filled in) |
+| wx storage, synchronous roundtrip | (to be filled in) | |
+| wx storage, asynchronous ramp, accepted | (to be filled in) | Raw errMsg from fail: (to be filled in) |
+| OPFS estimate() quota | (to be filled in) | Record both bytes and MiB |
+| OPFS estimate() usage, before testing | (to be filled in) | |
+| OPFS persisted() and persist() results | (to be filled in) | |
+| OPFS write, read back and verify, file size | (to be filled in) | |
+| OPFS ramp, accepted | (to be filled in) | |
+| Cross-session survival, second launch shows | (to be filled in) | Previous launch time and launch count |
+| Media-library operation API established | (to be filled in) | If yes, feed back into section 5 and the registry |
+
+## 9. Changelog
+
+### v1.1.0 — 2026-10-31
+
+The system media library joins the guide: the new section 5 establishes the gallery as the fourth place to put data, sets out its permission boundary (read-only plus add-only; nothing can be modified or deleted) and the current state of its undocumented operation API. The new section 8 reserves the device-measurement table, its rows matching the storage probe's measurements one for one, ready to be filled in from real hardware. The former sections 5, 6 and 7 move to 6, 7 and 9, and the overview table in section 1 gains the media-library row.
 
 ### v1.0.0 — 2026-10-30
 
