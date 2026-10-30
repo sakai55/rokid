@@ -1,1 +1,0 @@
-{"dependencies":{},"description":"Rokid Glasses AIUI Agent - hands-free cooking companion: the recipe stays in your line of sight, nod or say next step to advance, timed steps count down in view; LISTEN runs a wearer-mode mic availability check, then the host speech recognizer (its own mic) hears your next-step command","main":"app.js","name":"cook-along","version":"1.0.1"}
