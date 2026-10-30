@@ -1,0 +1,1 @@
+{"dependencies":{},"description":"Rokid Glasses AIUI probe - localStorage / wx storage / OPFS roundtrip, capacity and quota measurement","main":"app.js","name":"storage-probe","version":"1.0.0"}
