@@ -1,9 +1,9 @@
 # 日本ローカライズ（japan/）
 
 [中文](README.md) | [English](README.en.md) | 日本語
-中国語版（2026-10-29 時点）の翻訳。
+中国語版（2026-10-31 時点）の翻訳。
 
-日韓ローカライズシリーズ。JP01–JP32、全33件。日本の生活シーンに合わせたローカライズ Agent。
+日韓ローカライズシリーズ。JP01–JP42、全43件。日本の生活シーンに合わせたローカライズ Agent。
 
 - JP01 [shinkansen-quiet](shinkansen-quiet/) — 新幹線の静音見守り、自分の発声だけを監視
 - JP02 [jinja-bow](jinja-bow/) — 神社参拝を頭を下げたまま完走、二拝二拍手一拝
@@ -38,5 +38,15 @@
 - JP30 [hanabi-kaeri](hanabi-kaeri/) — 花火の帰り道：GPSの方位と距離で集合場所へ戻る
 - JP31 [ekiben-erabi](ekiben-erabi/) — 駅弁選び：アレルギー確認と駅弁選びの問答
 - JP32 [matsuri-game-shuu](matsuri-game-shuu/) — 夏祭りの待ち時間：屋台ゲーム20本を1冊に
+- JP33 [touhyou-guide](touhyou-guide/) — 初めての投票：手続きと持ち物を一度に整える
+- JP34 [takkyubin-uketori](takkyubin-uketori/) — 不在票：再配達と受け取り方法を一度に決める
+- JP35 [kenkou-shindan](kenkou-shindan/) — 健康診断：前日の準備と当日の流れをどちらも見守る
+- JP36 [toshokan-kaeshi](toshokan-kaeshi/) — 図書館への返却：期限を見守り、返却も延長も漏らさない
+- JP37 [hikkoshi-hub](hikkoshi-hub/) — 引っ越し：手続きツール20本を1冊の手帳に
+- JP38 [gomi-calendar](gomi-calendar/) — ごみ分別：収集日を忘れず、出し忘れなし
+- JP39 [narai-okuri](narai-okuri/) — 習い事の送り迎え：時間と場所を一度に見守る
+- JP40 [bosai-hinan](bosai-hinan/) — 災害後の避難：GPSの方位と距離で避難所を探す
+- JP41 [ouen-rhythm](ouen-rhythm/) — 球場の応援：頭の向きで声援の方向を決める
+- JP42 [nihon-tabi-hub](nihon-tabi-hub/) — 日本旅行：ツール20本を1冊の手帳に
 
 全リストはルートの [README](../README.md) 末尾にある Agent リストを参照。

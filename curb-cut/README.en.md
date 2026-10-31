@@ -1,9 +1,9 @@
 # Curb Cut (curb-cut/)
 
 [中文](README.md) | English | [日本語](README.ja.md)
-Translated from the Chinese version (as of 2026-10-29).
+Translated from the Chinese version (as of 2026-10-31).
 
-Curb-cut series · IDs CC01–CC20 (17 in this directory). Each one first solves a specific problem for a specific group with a disability — and then turns out to help anyone in the same situational bind.
+Curb-cut series · IDs CC01–CC20 (20 in this directory). Each one first solves a specific problem for a specific group with a disability — and then turns out to help anyone in the same situational bind.
 
 - CC01 [drop-search](drop-search/) — A small dropped item: feel through the six zones around your feet one by one; it reports not found only after checking them all
 - CC02 [my-bus-watch](my-bus-watch/) — Watches only your one registered bus route; photographs the front to check the route number and reports whether you boarded
@@ -22,5 +22,8 @@ Curb-cut series · IDs CC01–CC20 (17 in this directory). Each one first solves
 - CC15 [line-by-line](line-by-line/) — Reading support: one large line at a time, nod to move to the next line
 - CC16 [say-by-looking](say-by-looking/) — Speaks for people with aphasia: nod to pick one of four phrases, TTS says it
 - CC17 [first-sentence](first-sentence/) — Speaking with a stutter: the first sentence shown word by word at a set pace
+- CC18 [speak-up-cue](speak-up-cue/) — For very quiet voices: prompts to speak up, read-along and listening records
+- CC19 [change-check](change-check/) — Checking your change: it reports the verdict, so you never quietly lose out
+- CC20 [one-hand-open](one-hand-open/) — Opening things one-handed: steps rebuilt for boxes and bottles with one hand
 
 For the full list, see the Agent index at the end of the [root README](../README.md).

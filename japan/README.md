@@ -2,7 +2,7 @@
 
 中文 | [English](README.en.md) | [日本語](README.ja.md)
 
-日韩本地化系列 · 编号 JP01–JP32，共 33 个。日本在地场景的本地化 Agent。
+日韩本地化系列 · 编号 JP01–JP42，共 43 个。日本在地场景的本地化 Agent。
 
 - JP01 [shinkansen-quiet](shinkansen-quiet/) — 新干线静音守候，只监测自己的发声
 - JP02 [jinja-bow](jinja-bow/) — 神社参拜全程低头完成，二拝二拍手一拝
@@ -37,5 +37,15 @@
 - JP30 [hanabi-kaeri](hanabi-kaeri/) — 花火散场：GPS方位距离回集合点
 - JP31 [ekiben-erabi](ekiben-erabi/) — 车站便当：过敏核对加选弁问答
 - JP32 [matsuri-game-shuu](matsuri-game-shuu/) — 夏祭等待：二十屋台游戏一本集
+- JP33 [touhyou-guide](touhyou-guide/) — 首次投票者：手续持ち物一次守齐
+- JP34 [takkyubin-uketori](takkyubin-uketori/) — 不在票：再配达与受取方法一次定
+- JP35 [kenkou-shindan](kenkou-shindan/) — 健康诊断：前日准备与当日流程守齐
+- JP36 [toshokan-kaeshi](toshokan-kaeshi/) — 图书馆还书：期限不漏返却延长
+- JP37 [hikkoshi-hub](hikkoshi-hub/) — 搬家：二十手续工具一本手账
+- JP38 [gomi-calendar](gomi-calendar/) — 垃圾分类：收集日不忘倒垃圾
+- JP39 [narai-okuri](narai-okuri/) — 兴趣班接送：时间地点一次守齐
+- JP40 [bosai-hinan](bosai-hinan/) — 灾后避难：GPS方位距离找避难所
+- JP41 [ouen-rhythm](ouen-rhythm/) — 球场应援：头部方向定声援方向
+- JP42 [nihon-tabi-hub](nihon-tabi-hub/) — 日本旅行：二十工具一本手账
 
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。

@@ -1,9 +1,9 @@
 # Japan Localization (japan/)
 
 [中文](README.md) | English | [日本語](README.ja.md)
-Translated from the Chinese version (as of 2026-10-29).
+Translated from the Chinese version (as of 2026-10-31).
 
-Japan–Korea localization series · IDs JP01–JP32 · 33 agents. Agents localized for everyday scenes in Japan.
+Japan–Korea localization series · IDs JP01–JP42 · 43 agents. Agents localized for everyday scenes in Japan.
 
 - JP01 [shinkansen-quiet](shinkansen-quiet/) — Shinkansen quiet watch: monitors only your own voice
 - JP02 [jinja-bow](jinja-bow/) — A shrine visit completed head-down: two bows, two claps, one bow
@@ -38,5 +38,15 @@ Japan–Korea localization series · IDs JP01–JP32 · 33 agents. Agents locali
 - JP30 [hanabi-kaeri](hanabi-kaeri/) — After the fireworks: GPS bearing and distance back to the meeting point
 - JP31 [ekiben-erabi](ekiben-erabi/) — Station bento: an allergy check plus a bento-picking Q&A
 - JP32 [matsuri-game-shuu](matsuri-game-shuu/) — Waiting at the summer festival: twenty stall games in one collection
+- JP33 [touhyou-guide](touhyou-guide/) — First-time voters: procedures and belongings all settled in one pass
+- JP34 [takkyubin-uketori](takkyubin-uketori/) — Missed-delivery slips: redelivery and pickup options settled in one pass
+- JP35 [kenkou-shindan](kenkou-shindan/) — Health checkup: day-before prep and day-of flow both watched
+- JP36 [toshokan-kaeshi](toshokan-kaeshi/) — Library returns: due dates watched, returns and renewals never missed
+- JP37 [hikkoshi-hub](hikkoshi-hub/) — Moving house: twenty procedure tools in one notebook
+- JP38 [gomi-calendar](gomi-calendar/) — Garbage days: sorting by the calendar, never missing a collection
+- JP39 [narai-okuri](narai-okuri/) — Lesson pickups: time and place both watched in one pass
+- JP40 [bosai-hinan](bosai-hinan/) — Evacuation after a disaster: GPS bearing and distance to the shelter
+- JP41 [ouen-rhythm](ouen-rhythm/) — Cheering at the ball game: head direction sets the cheering direction
+- JP42 [nihon-tabi-hub](nihon-tabi-hub/) — Travelling Japan: twenty tools in one travel notebook
 
 For the full list, see the Agent index at the end of the [root README](../README.md).

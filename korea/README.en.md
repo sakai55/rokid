@@ -1,9 +1,9 @@
 # Korea Localization (korea/)
 
 [中文](README.md) | English | [日本語](README.ja.md)
-Translated from the Chinese version (as of 2026-10-29).
+Translated from the Chinese version (as of 2026-10-31).
 
-Japan–Korea localization series · IDs KR01–KR19 · 20 agents. Agents localized for everyday scenes in Korea.
+Japan–Korea localization series · IDs KR01–KR22 · 23 agents. Agents localized for everyday scenes in Korea.
 
 - KR01 [samgyeop-flip](samgyeop-flip/) — A rhythm for flipping grilled pork belly; it calls out when to flip
 - KR02 [noise-diary](noise-diary/) — Logs only your own home's night sounds; replay in the morning to check
@@ -25,5 +25,8 @@ Japan–Korea localization series · IDs KR01–KR19 · 20 agents. Agents locali
 - KR17 [yutnori-game](yutnori-game/) — Korean family yutnori: throw the sticks, move pieces, keep score
 - KR18 [hanok-stay](hanok-stay/) — First hanok stay: check facilities and etiquette room by room
 - KR19 [seoul-life-hub](seoul-life-hub/) — A week in Seoul: twenty everyday tools in one notebook
+- KR20 [busan-trip-hub](busan-trip-hub/) — Busan trip: twenty tools plus a GPS meeting point
+- KR21 [tuho-game](tuho-game/) — Family gathering: head-aimed tuho, ten throws decide the winner
+- KR22 [jeju-trip-hub](jeju-trip-hub/) — Jeju trip: twenty tools in one travel notebook
 
 For the full list, see the Agent index at the end of the [root README](../README.md).

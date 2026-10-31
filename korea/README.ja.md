@@ -1,9 +1,9 @@
 # 韓国ローカライズ（korea/）
 
 [中文](README.md) | [English](README.en.md) | 日本語
-中国語版（2026-10-29 時点）の翻訳。
+中国語版（2026-10-31 時点）の翻訳。
 
-日韓ローカライズシリーズ。KR01–KR19、全20件。韓国の生活シーンに合わせたローカライズ Agent。
+日韓ローカライズシリーズ。KR01–KR22、全23件。韓国の生活シーンに合わせたローカライズ Agent。
 
 - KR01 [samgyeop-flip](samgyeop-flip/) — サムギョプサルの返し時リズム、時間になったら声で知らせる
 - KR02 [noise-diary](noise-diary/) — 自宅の夜の音だけを記録し、朝に再生して確認
@@ -25,5 +25,8 @@
 - KR17 [yutnori-game](yutnori-game/) — 韓国の家庭ゲーム「ユンノリ」：棒を投げてコマを進め得点
 - KR18 [hanok-stay](hanok-stay/) — 韓屋の初宿泊：6部屋の設備とマナーを項目ごとに確認
 - KR19 [seoul-life-hub](seoul-life-hub/) — ソウルの一週間：日常ツール20本を1冊の手帳に
+- KR20 [busan-trip-hub](busan-trip-hub/) — 釜山旅行：ツール20本にGPS集合地点つき
+- KR21 [tuho-game](tuho-game/) — 家族の集まり：頭の向きで投壺、10投で勝負
+- KR22 [jeju-trip-hub](jeju-trip-hub/) — 済州旅行：ツール20本を1冊の手帳に
 
 全リストはルートの [README](../README.md) 末尾にある Agent リストを参照。
