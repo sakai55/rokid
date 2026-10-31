@@ -1,1 +1,0 @@
-{"author": "", "dependencies": {}, "description": "Fukuwarai: a head-movement face-placement game. Turn the head to pick left/centre/right, nod to place each of six parts, and settle after six placements. No circling the neck; segments only.", "keywords": [], "license": "ISC", "main": "app.js", "name": "fukuwarai", "version": "1.0.0"}

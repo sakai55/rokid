@@ -1,1 +1,0 @@
-{"description":"描紅シリーズの認識プローブ：九字印9印（臨・兵・闘・者・皆・陳・烈・在・前）を1印ずつ結び、定格写真でLLMが読めるか測る。真値は装着者が確定し、記録は端末内に残る。","name":"Trace Probe Kuji","pages":["pages/index/index","pages/test/index","pages/result/index"],"permissions":["CAMERA"],"window":{"navigationBarTitleText":"印を結ぶプローブ"}}
