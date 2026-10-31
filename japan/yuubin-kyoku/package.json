@@ -1,1 +1,0 @@
-{"author": "", "dependencies": {}, "description": "Post office procedures: six procedures with a five-point before-hand check and persisted records. The agent never knows the post office system; it only keeps the visitor's own checklist.", "keywords": [], "license": "ISC", "main": "app.js", "name": "yuubin-kyoku", "version": "1.0.0"}
