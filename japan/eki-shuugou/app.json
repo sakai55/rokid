@@ -1,0 +1,1 @@
+{"pages": ["pages/index/index", "pages/guide/index", "pages/record/index"], "permissions": ["GEOLOCATION"], "window": {"navigationBarTitleText": "駅待ち合わせ"}}

@@ -1,0 +1,1 @@
+{"author": "", "dependencies": {}, "description": "Ddakji: a Korean head-movement flip game. Turn the head to pick left/centre/right, nod to flip each of six ddakji, and settle after six flips. The flip is a demo judgement, not a physical recognition.", "keywords": [], "license": "ISC", "main": "app.js", "name": "ddakji-game", "version": "1.0.0"}

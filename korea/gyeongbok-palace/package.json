@@ -1,0 +1,1 @@
+{"author": "", "dependencies": {}, "description": "Gyeongbokgung visit: six palace places with a five-point visit check and persisted records. The agent never knows opening hours or ticket status; the visitor's own check is the record.", "keywords": [], "license": "ISC", "main": "app.js", "name": "gyeongbok-palace", "version": "1.0.0"}
