@@ -2,7 +2,7 @@
 
 中文 | [English](README.en.md) | [日本語](README.ja.md)
 
-日韩本地化系列 · 编号 KR01–KR22，共 23 个。韩国在地场景的本地化 Agent。
+日韩本地化系列 · 编号 KR01–KR25，共 26 个。韩国在地场景的本地化 Agent。
 
 - KR01 [samgyeop-flip](samgyeop-flip/) — 烤五花肉翻面节律，到点喊翻面
 - KR02 [noise-diary](noise-diary/) — 只记自家夜间声响，晨起回放自查
@@ -27,5 +27,8 @@
 - KR20 [busan-trip-hub](busan-trip-hub/) — 釜山旅行：二十工具加GPS集合点
 - KR21 [tuho-game](tuho-game/) — 家族聚会：头部方向投壶十投胜负
 - KR22 [jeju-trip-hub](jeju-trip-hub/) — 济州旅行：二十工具一本手账
+- KR23 [gyeongju-trip-hub](gyeongju-trip-hub/) — 庆州旅行：二十工具一本手账
+- KR24 [ddakji-game](ddakji-game/) — 家族聚会：头部方向掷拍六张
+- KR25 [gyeongbok-palace](gyeongbok-palace/) — 景福宫参观：六处逐项确认
 
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。

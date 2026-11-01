@@ -2,7 +2,7 @@
 
 中文 | [English](README.en.md) | [日本語](README.ja.md)
 
-日韩本地化系列 · 编号 JP01–JP42，共 43 个。日本在地场景的本地化 Agent。
+日韩本地化系列 · 编号 JP01–JP47，共 48 个。日本在地场景的本地化 Agent。
 
 - JP01 [shinkansen-quiet](shinkansen-quiet/) — 新干线静音守候，只监测自己的发声
 - JP02 [jinja-bow](jinja-bow/) — 神社参拜全程低头完成，二拝二拍手一拝
@@ -47,5 +47,10 @@
 - JP40 [bosai-hinan](bosai-hinan/) — 灾后避难：GPS方位距离找避难所
 - JP41 [ouen-rhythm](ouen-rhythm/) — 球场应援：头部方向定声援方向
 - JP42 [nihon-tabi-hub](nihon-tabi-hub/) — 日本旅行：二十工具一本手账
+- JP43 [yuubin-kyoku](yuubin-kyoku/) — 邮局手续：书类步骤不遗漏
+- JP44 [byouin-uketsuke](byouin-uketsuke/) — 医院受付：受付问诊会計不漏
+- JP45 [eki-shuugou](eki-shuugou/) — 车站集合：GPS方位距离找人
+- JP46 [fukuwarai](fukuwarai/) — 福笑：头部方向置脸部六件
+- JP47 [senior-kurashi-hub](senior-kurashi-hub/) — 高龄暮らし：二十工具一本手账
 
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。

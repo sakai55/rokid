@@ -1,9 +1,9 @@
 # Japan Localization (japan/)
 
 [中文](README.md) | English | [日本語](README.ja.md)
-Translated from the Chinese version (as of 2026-10-31).
+Translated from the Chinese version (as of 2026-11-01).
 
-Japan–Korea localization series · IDs JP01–JP42 · 43 agents. Agents localized for everyday scenes in Japan.
+Japan–Korea localization series · IDs JP01–JP47 · 48 agents. Agents localized for everyday scenes in Japan.
 
 - JP01 [shinkansen-quiet](shinkansen-quiet/) — Shinkansen quiet watch: monitors only your own voice
 - JP02 [jinja-bow](jinja-bow/) — A shrine visit completed head-down: two bows, two claps, one bow
@@ -48,5 +48,10 @@ Japan–Korea localization series · IDs JP01–JP42 · 43 agents. Agents locali
 - JP40 [bosai-hinan](bosai-hinan/) — Evacuation after a disaster: GPS bearing and distance to the shelter
 - JP41 [ouen-rhythm](ouen-rhythm/) — Cheering at the ball game: head direction sets the cheering direction
 - JP42 [nihon-tabi-hub](nihon-tabi-hub/) — Travelling Japan: twenty tools in one travel notebook
+- JP43 [yuubin-kyoku](yuubin-kyoku/) — Post office procedures: paperwork steps, none missed
+- JP44 [byouin-uketsuke](byouin-uketsuke/) — First hospital visit: reception, form, and payment, nothing missed
+- JP45 [eki-shuugou](eki-shuugou/) — Station meetup: GPS direction and distance to the meeting spot
+- JP46 [fukuwarai](fukuwarai/) — New Year fukuwarai: head direction places the face pieces
+- JP47 [senior-kurashi-hub](senior-kurashi-hub/) — Senior daily life: twenty tools in one notebook
 
 For the full list, see the Agent index at the end of the [root README](../README.md).

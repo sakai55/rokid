@@ -1,9 +1,9 @@
 # 韓国ローカライズ（korea/）
 
 [中文](README.md) | [English](README.en.md) | 日本語
-中国語版（2026-10-31 時点）の翻訳。
+中国語版（2026-11-01 時点）の翻訳。
 
-日韓ローカライズシリーズ。KR01–KR22、全23件。韓国の生活シーンに合わせたローカライズ Agent。
+日韓ローカライズシリーズ。KR01–KR25、全26件。韓国の生活シーンに合わせたローカライズ Agent。
 
 - KR01 [samgyeop-flip](samgyeop-flip/) — サムギョプサルの返し時リズム、時間になったら声で知らせる
 - KR02 [noise-diary](noise-diary/) — 自宅の夜の音だけを記録し、朝に再生して確認
@@ -28,5 +28,8 @@
 - KR20 [busan-trip-hub](busan-trip-hub/) — 釜山旅行：ツール20本にGPS集合地点つき
 - KR21 [tuho-game](tuho-game/) — 家族の集まり：頭の向きで投壺、10投で勝負
 - KR22 [jeju-trip-hub](jeju-trip-hub/) — 済州旅行：ツール20本を1冊の手帳に
+- KR23 [gyeongju-trip-hub](gyeongju-trip-hub/) — 慶州旅行：ツール20本を1冊の手帳に
+- KR24 [ddakji-game](ddakji-game/) — 家族の集まり：頭の向きでタッジ遊び、6枚を投げる
+- KR25 [gyeongbok-palace](gyeongbok-palace/) — 景福宮の見学：6か所を順に確認
 
 全リストはルートの [README](../README.md) 末尾にある Agent リストを参照。

@@ -1,9 +1,9 @@
 # 日本ローカライズ（japan/）
 
 [中文](README.md) | [English](README.en.md) | 日本語
-中国語版（2026-10-31 時点）の翻訳。
+中国語版（2026-11-01 時点）の翻訳。
 
-日韓ローカライズシリーズ。JP01–JP42、全43件。日本の生活シーンに合わせたローカライズ Agent。
+日韓ローカライズシリーズ。JP01–JP47、全48件。日本の生活シーンに合わせたローカライズ Agent。
 
 - JP01 [shinkansen-quiet](shinkansen-quiet/) — 新幹線の静音見守り、自分の発声だけを監視
 - JP02 [jinja-bow](jinja-bow/) — 神社参拝を頭を下げたまま完走、二拝二拍手一拝
@@ -48,5 +48,10 @@
 - JP40 [bosai-hinan](bosai-hinan/) — 災害後の避難：GPSの方位と距離で避難所を探す
 - JP41 [ouen-rhythm](ouen-rhythm/) — 球場の応援：頭の向きで声援の方向を決める
 - JP42 [nihon-tabi-hub](nihon-tabi-hub/) — 日本旅行：ツール20本を1冊の手帳に
+- JP43 [yuubin-kyoku](yuubin-kyoku/) — 郵便局の手続き：書類の手順を漏らさない
+- JP44 [byouin-uketsuke](byouin-uketsuke/) — 病院の受付：受付・問診・会計を漏らさない
+- JP45 [eki-shuugou](eki-shuugou/) — 駅での集合：GPSの方位と距離で相手を探す
+- JP46 [fukuwarai](fukuwarai/) — 福笑い：頭の向きで顔のパーツ6点を置く
+- JP47 [senior-kurashi-hub](senior-kurashi-hub/) — 高齢者の暮らし：ツール20本を1冊の手帳に
 
 全リストはルートの [README](../README.md) 末尾にある Agent リストを参照。
