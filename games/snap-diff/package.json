@@ -1,7 +1,0 @@
-{
-  "dependencies": {},
-  "description": "Two-photo spot-the-difference game GA50 for Rokid glasses, closing the photo-game wave: photograph a scene, change exactly one thing, first declare the change type (removed / added / moved - locked before the second photo), then photograph the same scene again. Both photos go to the host LLM in one prompt, which returns the change TYPE and a one-line DIFF; a local compare scores the declaration. Camera only, both photos in memory only.",
-  "main": "app.js",
-  "name": "snap-diff",
-  "version": "1.0.1"
-}
