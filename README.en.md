@@ -24,6 +24,7 @@ Agents only, never apps. Every agent lives in this one repo, and each is importe
 ## Contents
 
 - [Repository Structure](#仓库结构)
+- [Read first: the capability boundary](#read-first-the-capability-boundary)
 - [Quick Start](#快速开始)
 - [Standard Workflow](#标准工作流)
 - [Studio Import (Field-Tested)](#studio-导入实测结论)
@@ -47,10 +48,19 @@ rokid/
 ├── screenshots/<slug>/        # Preview screenshots stored centrally; agent READMEs embed them directly
 ├── skills/                    # Project skill library (official aiui-dev + in-house SOP / screenshot pipeline)
 ├── mcp/                       # MCP registry (servers in use, how they are accessed, where credentials are kept)
-├── docs/                      # Docs: atomic capability registry CAPABILITIES.md (platform primitives and boundaries)
+├── docs/                      # Docs: atomic capability registry CAPABILITIES.md, local storage guide STORAGE.md
 ├── assets/                    # README assets (such as the workflow diagram workflow.svg)
 └── branch agent-<slug>        # One branch per agent; the branch root is that agent's project root
 ```
+
+## Read first: the capability boundary
+
+Before writing any code, read two documents and check what you want to build against the platform, item by item:
+
+- [Capability Atom Registry](docs/CAPABILITIES.en.md): what the platform can and cannot do, one primitive per numbered entry (C####). The capability surface is a closed list — an API or capability that is not in the registry does not exist, and guessing from browser or WeChat Mini Program habits usually means finding that out on real hardware.
+- [Local Storage Guide](docs/STORAGE.en.md): where data can live, and the boundaries and capacity terms of the four places it can go.
+
+Work in this order: break the scenario down into registry primitives and check each one for feasibility — a step no primitive supports gets redesigned or cut. Once everything checks out, build the smallest version that closes the loop and verify it on a device. Building a pile of features first and discovering at the device stage that a key capability does not exist is the most common source of rework in this repository.
 
 ## Quick Start
 

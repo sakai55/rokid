@@ -2,9 +2,9 @@
 
 [中文](STORAGE.md) | English | [日本語](STORAGE.ja.md)
 
-English edition of the Chinese version v1.1.0, dated 2026-10-31. The Chinese text is authoritative; where the two differ, the Chinese governs.
+English edition of the Chinese version v1.2.0, dated 2026-11-01. The Chinese text is authoritative; where the two differ, the Chinese governs.
 
-> Compiled 2026-10-30. Current version: v1.1.0, 2026-10-31.
+> Compiled 2026-10-30. Current version: v1.2.0, 2026-11-01.
 > Sources: official Rokid material only — the documentation site and the `yodaos-project/AIUI` GitHub repository, including the `aiui-dev` skill references bundled with it. Where Rokid has published no figure, this guide says so outright; it never borrows numbers from other platforms.
 
 ## About this guide
@@ -171,16 +171,25 @@ This section has no walkthrough, because there is none to give. The official doc
 - Anything written there is handed to the wearer: content is visible to the user and the system. Working data, caches and private material do not belong in the media library.
 - No capacity or reclamation rules are published.
 
-## 6. The known limits, in one place
+## 6. Getting data out: screenshots, QR codes and plain text
+
+Stored data still has to leave the device somehow. This section covers the fully local route: the wearer screenshots the glasses display, the image reaches the phone through the media library, and the receiving side picks the content out of the picture. There are two ways to put content into that picture, and their capacity and reliability are far apart.
+
+- **A screenshot is not an agent capability.** Rokid documents no screenshot API for agents; an agent can only lay the content out full-screen. The wearer takes the screenshot by hand, and the image lands in the system media library.
+- **QR codes carry data.** How much text a QR code holds inside one 480×352 frame is measured by the QR capacity probe (`base/qr-capacity-probe`): on the encoding side, level L reaches 2,953 bytes. A screenshot is a lossless image — the friendliest possible input for a decoder — and the read-back ceiling is whatever the device measurement says. QR carries error correction and a checksum: a successful decode is the original text, byte for byte; a failure is a clean failure, never an approximation.
+- **Plain text is for OCR.** Filling the screen with text for the receiving side's OCR or vision model means sizing the type to what recognition can hold: at glyph sizes in the teens of pixels, one frame carries roughly 500 to 700 Chinese characters, and smaller than that OCR starts misreading in bulk. There is no checksum, so misread characters slip in silently — and identifiers, quoted error text and numbers are the easiest content to get wrong. The platform itself has no OCR API (registry entry C2008); recognition happens on the phone or computer side.
+- **Choosing:** data and logs go by QR code; short content meant for a human goes as text. The two stack in one frame — QR for the payload, one large line of summary beneath it — so the wearer reads the summary first and decodes only when the detail is needed.
+
+## 7. The known limits, in one place
 
 - **No capacity figures are published — for any of the three.** There is no official per-item limit and no official total. The numbers from elsewhere do not transfer: WeChat Mini Programs' 1 MB per key and 10 MB total, and the localStorage allowances common in browsers, do not apply to this platform and must not be substituted for real ones.
 - **There is no expiry mechanism.** Nothing in the official material describes a TTL, an expiry time or an automatic cleanup rule. What you store stays stored until you delete it yourself or the user clears the app's data. The converse is also true: Rokid never promises storage will never be reclaimed — OPFS carries dedicated `persisted()` and `persist()` methods precisely because persistence is a state you apply for, not a given.
 - **Everything is local; nothing syncs.** None of the three goes over the network or syncs with the phone app. A different device means a brand-new save.
 - **Isolation runs in both directions.** An agent cannot read another agent's storage, and it cannot read the host app's data either.
 - **The media library's terms are equally unpublished:** no capacity limit, no reclamation rule, no refined statement of visibility (see section 5).
-- **Measured numbers are on the way.** Real capacity and the OPFS quota are being measured on actual hardware by the storage probe (`base/storage-probe`); the results are filled into section 8 of this guide and then fed back into entries C6001 through C6003 of the capability registry (`docs/CAPABILITIES.md`). Where figures are concerned, the registry is the authority.
+- **Measured numbers are on the way.** Real capacity and the OPFS quota are being measured on actual hardware by the storage probe (`base/storage-probe`); the results are filled into section 9 of this guide and then fed back into entries C6001 through C6003 of the capability registry (`docs/CAPABILITIES.md`). Where figures are concerned, the registry is the authority.
 
-## 7. Which one to pick
+## 8. Which one to pick
 
 - Settings, toggles, where you left off: the wx store or localStorage — whichever is closer at hand.
 - A structured save — progress, collections, history: the wx store, and give the save object a `v` version field from day one.
@@ -188,7 +197,7 @@ This section has no walkthrough, because there is none to give. The official doc
 - Images or audio that belong in the wearer's hands, or data passed between agents via the gallery: the system media library — but establish the operation surface first (section 5), and remember that whatever you write there is visible to the wearer; keep working data out.
 - Picking up last session's save and carrying on: any of the three will do — mechanically, there is no expiry gate to clear. What you have to defend against is the save format evolving: keep the version field, write the migrations, and never let an old save crash a new build (error code E5004).
 
-## 8. Measured on device
+## 9. Measured on device
 
 This section is reserved for figures from real hardware, to be filled in by whoever runs the tests. The measuring tool is the storage probe (`base/storage-probe`): each store gets a roundtrip self-check and a capacity ramp (written in 32 KiB steps, stopping at the first failure; the accepted figure is the cumulative bytes before that failure); the OPFS station also reads the `estimate()` quota and usage and the results of `persisted()` and `persist()`; cross-session survival is checked against the launch marker on the probe's home page (the previous launch time and the cumulative launch count shown on the second launch). Once filled in, the figures also go into registry entries C6001 through C6003.
 
@@ -210,7 +219,11 @@ This section is reserved for figures from real hardware, to be filled in by whoe
 | Cross-session survival, second launch shows | (to be filled in) | Previous launch time and launch count |
 | Media-library operation API established | (to be filled in) | If yes, feed back into section 5 and the registry |
 
-## 9. Changelog
+## 10. Changelog
+
+### v1.2.0 — 2026-11-01
+
+New section 6, 'Getting data out: screenshots, QR codes and plain text': a screenshot is the wearer's manual action, not an agent capability; within one 480×352 frame, the capacity and reliability terms of QR codes (error correction and a checksum — a decode is the original text) versus plain text for OCR (no checksum, misreadings slip in silently), and stacking the two in a single frame. The former sections 6 through 9 move to 7 through 10.
 
 ### v1.1.0 — 2026-10-31
 
