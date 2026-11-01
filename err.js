@@ -35,7 +35,7 @@ export function fail(code, raw, slug, version) {
   var entry = {
     code: code,
     slug: slug || 'trace-kana',
-    version: version || '1.0.0',
+    version: version || '1.0.1',
     raw: String((raw && raw.message) || raw || '').slice(0, 300),
     at: new Date().toISOString()
   };

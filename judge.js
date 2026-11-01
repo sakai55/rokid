@@ -6,7 +6,7 @@ import wx from 'wx';
 import { ERR, codedError, fail } from './err.js';
 
 var SLUG = 'trace-kana';
-var VERSION = '1.0.0';
+var VERSION = '1.0.1';
 
 export function loadKey(key, fallback) {
   try {
