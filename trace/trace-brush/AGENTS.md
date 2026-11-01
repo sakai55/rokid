@@ -28,3 +28,10 @@
 
 - Static: JSON parse；全部脚本 `node --check`；禁用 API grep 0 命中；绿色色阶无纯白；字库 20 字笔画数断言（生成时逐字 assert 与人工核定表一致）。
 - Device stage (pending): 真机核逐笔渲染方向、TTS 念要点、低头拍照粗查与改判落盘；提审等 GO 说「真机测试完成了」。
+
+## 学字页标注 QC 门（2026-11-01 立）
+
+- 改学字页几何（`pages/learn/index.ink` 的 `_geom/_parallelArc/_arcFor/_shortenArc/_badgePos/_detangle`）之前先读 `qc/check-geometry.js` 文件头的定性记录——v1 的 55 项 FAIL 里大部分是度量误判（起笔顿帽、内嵌序号、转弯内侧压缩），教训都在里面，不许重蹈。
+- 改完必须跑 `node qc/check-geometry.js`：**FAIL 不许打包、不许交付**；WARN 清单与基线（v1.3.6 冻结版输出）有增减的，必须抽拍变化项对应字的学字页、放大回读后才算完成。
+- 度量自检（阳性对照）：把脚本复制进 v1.3.5 代码树（main `9659d13`）的 `qc/` 下运行，必须 FAIL（基线 31 项，含大·第1笔所在的大回退类）；对照不 FAIL 说明度量被改坏，先修度量。
+- 已知存疑一项（v1.3.6 冻结版，QC v2 以 WARN 标出）：永·第2笔兜底弧箭头方向（急转区 180° 读数，疑似量法与钩形末端相撞）——GO 已冻结本版，此项只登记不动，待 GO 裁决是否解冻处理。
