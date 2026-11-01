@@ -1,1 +1,0 @@
-{"dependencies":{},"description":"Rokid Glasses AIUI Agent - a loud-sound watch for the next room: it samples room loudness, looks for loud fluctuating burst patterns, alerts in view and by voice, and stores alert times only - it does not recognise crying and is not a baby monitor","main":"app.js","name":"cry-watch","version":"1.0.0"}
