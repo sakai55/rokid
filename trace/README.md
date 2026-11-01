@@ -13,6 +13,8 @@
 - ✅ TR07 trace-plating — 摆盘描红（8 套构图 41 步 + 拍照对位三粗项，自评描红；已建成：6 页、.aix 29,408 B、截图 6 张、分支 agent-trace-plating，待真机测试）
 - TR08 trace-cube — 魔方描红（探针先行）
 
+- ✅ 现实合影 trace-reality — 描红的现实合成变体（不占编号）：6 种预置叠加（气泡/双人对话/心声/名牌/横幅/相框）对准真人，纯净页等系统截图把眼镜画面与现实合成；已建成：7 页、.aix 20.31 KB、截图 9 张、分支 agent-trace-reality，待真机测试合成效果
+
 探针（不占编号、不上清单）：trace-probe-seals、trace-probe-sign。
 
 完整清单见 [根 README](../README.md)。
