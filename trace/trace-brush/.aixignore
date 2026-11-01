@@ -4,3 +4,4 @@ artifacts/
 *.aix
 skills-lock.json
 node_modules/
+qc/
