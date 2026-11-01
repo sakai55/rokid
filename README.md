@@ -167,6 +167,7 @@ aix preview .                               # 本地预览（起服务 / --html-
 
 
 <table>
+<tr><td><a href="trace/trace-kanji/">trace-kanji</a></td><td>日本語の常用漢字30字を一画ずつなぞる：真輪郭の範字と日本式筆順、書いた字を写真で粗チェック</td><td><img src="assets/badges/badge-trace.svg" width="110"></td><td><img src="assets/badges/badge-pending.svg" width="110"></td></tr>
 <tr><td><a href="trace/trace-kana/">trace-kana</a></td><td>日语平假名描红：46字教科书体笔形范字逐笔学，写完拍照粗查</td><td><img src="https://img.shields.io/badge/%E6%8F%8F%E7%BA%A2-00897B?style=flat-square" alt="描红"> <img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试"></td></tr>
 <tr><td><a href="trace/trace-reality/">trace-reality</a></td><td>现实合影：给真人叠气泡台词，系统截图合成照片</td><td><img src="https://img.shields.io/badge/%E6%8F%8F%E7%BA%A2-00897B?style=flat-square" alt="描红"> <img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试"></td></tr>
 <tr><td><a href="korea/gyeongbok-palace/">gyeongbok-palace</a></td><td>景福宫参观：六处逐项确认</td><td><img src="https://img.shields.io/badge/KR25-24292F?style=flat-square" alt="KR25"> <img src="https://img.shields.io/badge/%E6%B3%A8%E6%84%8F%E5%8A%9B-9C27B0?style=flat-square" alt="注意力"> <img src="https://img.shields.io/badge/%E5%BE%85%E6%B5%8B%E8%AF%95-607D8B?style=flat-square" alt="待测试"></td></tr>

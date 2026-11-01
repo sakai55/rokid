@@ -19,3 +19,4 @@
 探针（不占编号、不上清单）：trace-probe-seals、trace-probe-sign。
 
 完整清单见 [根 README](../README.md)。
+- 番号なし [trace-kanji](trace-kanji/) — 日本語の常用漢字 30 字（105 画）。TR01 と同じ分筆真輪郭（hanzi-writer-data）を空心で描き、筆順は KanjiVG 照合済みの日本式（右・田・生は画の順を入れ替え）。「金」は注釈の被覆が成立せず見送り、生を収録。QC ゲート PASS。仮名版の筆形方式が中止となり、漢字版が日本語版の本線。
