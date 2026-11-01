@@ -1,0 +1,1 @@
+{"author": "", "dependencies": {}, "description": "Australian market shopping check: look at a stall, nod to take a photo, tick what you bought, checkout only after photo and all ticks.", "keywords": [], "license": "ISC", "main": "app.js", "name": "aussie-market-photo", "version": "1.0.0"}

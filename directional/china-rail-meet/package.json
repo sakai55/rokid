@@ -1,0 +1,1 @@
+{"author": "", "dependencies": {}, "description": "China rail station meetup: register a meeting point by GPS and follow cardinal direction and distance back to it.", "keywords": [], "license": "ISC", "main": "app.js", "name": "china-rail-meet", "version": "1.0.0"}

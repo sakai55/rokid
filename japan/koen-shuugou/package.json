@@ -1,0 +1,1 @@
+{"author": "", "dependencies": {}, "description": "Park meetup: register a park bench meeting point by GPS and follow its cardinal direction and distance. It never invents a place.", "keywords": [], "license": "ISC", "main": "app.js", "name": "koen-shuugou", "version": "1.0.0"}

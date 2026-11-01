@@ -1,0 +1,1 @@
+{"author": "", "dependencies": {}, "description": "Daruma drop game: pick a knock direction by head orientation, nod to knock six stacked blocks, settle and record. Segmented moves only, no neck circling.", "keywords": [], "license": "ISC", "main": "app.js", "name": "daruma-otoshi", "version": "1.0.0"}

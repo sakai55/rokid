@@ -1,0 +1,1 @@
+{"author": "", "dependencies": {}, "description": "China home kitchen watch: look at a pot, nod to start its timer, switch pots by head direction, get a spoken reminder and log switch-off.", "keywords": [], "license": "ISC", "main": "app.js", "name": "china-kitchen-watch", "version": "1.0.0"}
