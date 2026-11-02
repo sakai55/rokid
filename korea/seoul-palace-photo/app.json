@@ -1,0 +1,1 @@
+{"pages": ["pages/index/index", "pages/check/index", "pages/record/index"], "permissions": ["CAMERA"], "window": {"navigationBarTitleText": "경복궁 사진 확인"}}

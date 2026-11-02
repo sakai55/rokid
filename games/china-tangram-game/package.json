@@ -1,0 +1,1 @@
+{"author": "", "dependencies": {}, "description": "China family tangram game: head direction picks a slot, nod drops the piece, 12 pictures", "keywords": [], "license": "ISC", "main": "app.js", "name": "china-tangram-game", "version": "1.0.0"}
