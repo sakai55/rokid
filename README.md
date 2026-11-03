@@ -85,7 +85,7 @@ Pick a Banff trailhead, register it as your meeting point, and follow the direct
 
 ### Preview Media
 
-1 video (preview-canada-trail-meet-video.mp4) + 3 images: preview-canada-trail-meet-index.png, preview-canada-trail-meet-guide.png, preview-canada-trail-meet-record-s2.png.
+1 video ([preview-canada-trail-meet-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/canada-trail-meet/preview-canada-trail-meet-video.mp4)) + 3 images: preview-canada-trail-meet-index.png, preview-canada-trail-meet-guide.png, preview-canada-trail-meet-record-s2.png.
 
 ### Change Log
 
