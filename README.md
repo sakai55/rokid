@@ -89,7 +89,7 @@ AIX 크기: 13339 B(배치 마감 단계에서 채웁니다).
 
 ### 미리보기 미디어
 
-1개 동영상(preview-seoul-palace-photo-video.mp4) + 3개 이미지: preview-seoul-palace-photo-index.png, preview-seoul-palace-photo-check-s2.png, preview-seoul-palace-photo-record.png.
+1개 동영상([preview-seoul-palace-photo-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/seoul-palace-photo/preview-seoul-palace-photo-video.mp4)) + 3개 이미지: preview-seoul-palace-photo-index.png, preview-seoul-palace-photo-check-s2.png, preview-seoul-palace-photo-record.png.
 
 ### 변경 기록
 
