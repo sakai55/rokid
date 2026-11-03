@@ -83,7 +83,7 @@ Pick a step with your head, nod to dance it, and see how many of the 10 rounds y
 
 ### Preview Media
 
-1 video (preview-ireland-dance-step-video.mp4) + 3 images: preview-ireland-dance-step-index.png, preview-ireland-dance-step-play-s2.png, preview-ireland-dance-step-record.png.
+1 video ([preview-ireland-dance-step-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/ireland-dance-step/preview-ireland-dance-step-video.mp4)) + 3 images: preview-ireland-dance-step-index.png, preview-ireland-dance-step-play-s2.png, preview-ireland-dance-step-record.png.
 
 ### Change Log
 
