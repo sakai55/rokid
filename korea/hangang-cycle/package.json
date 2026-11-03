@@ -1,1 +1,0 @@
-{"author": "", "dependencies": {}, "description": "Han River cycling: pick a fork or rest point, follow head direction and GPS cardinal guidance, record arrival.", "keywords": [], "license": "ISC", "main": "app.js", "name": "hangang-cycle", "version": "1.0.0"}
