@@ -36,7 +36,7 @@ export default {
     barLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.1.0'
+    ver: 'v1.2.0'
   },
   onLoad() {
     this._focus = 1; this._step = 0; this._useMedians = false;
