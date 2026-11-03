@@ -74,7 +74,7 @@ Opening Message: 不用动手点。转头选位置，点一下头就落板，12 
 
 Preview Media:
 
-- `preview-china-tangram-game-video.mp4`
+- [preview-china-tangram-game-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/china-tangram-game/preview-china-tangram-game-video.mp4)
 - `preview-china-tangram-game-index.png`
 - `preview-china-tangram-game-play.png`
 - `preview-china-tangram-game-record-s2.png`
