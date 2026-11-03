@@ -77,7 +77,7 @@ Opening Message: 走散了别慌。先登记集合点，再看方角与距离走
 
 Preview Media:
 
-- `preview-china-school-meet-video.mp4`
+- [preview-china-school-meet-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/china-school-meet/preview-china-school-meet-video.mp4)
 - `preview-china-school-meet-index.png`
 - `preview-china-school-meet-guide.png`
 - `preview-china-school-meet-record-s2.png`
