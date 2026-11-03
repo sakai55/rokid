@@ -78,7 +78,7 @@ Feature Description: 運動会で子どもとはぐれた保護者が、両手�
 Opening Message: 運動会集合を開きましょう。集合場所を選んで登録し、方角と距離をたよりに戻りましょう。
 
 Preview Media:
-- `preview-undoukai-shuugou-video.mp4`
+- [preview-undoukai-shuugou-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/undoukai-shuugou/preview-undoukai-shuugou-video.mp4)
 - `preview-undoukai-shuugou-index.png`
 - `preview-undoukai-shuugou-guide.png`
 - `preview-undoukai-shuugou-record.png`
