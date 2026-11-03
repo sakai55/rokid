@@ -1,7 +1,0 @@
-{
-  "dependencies": {},
-  "description": "Photo color game GA42 for Rokid glasses: six rounds call a color (red, yellow, blue, green, orange, purple); the player photographs a real object whose main color matches, and a host LLM image judge answers VERDICT YES/NO with a reason. Swipe switches unattempted rounds, nod logs a non-scoring appeal. Camera only, photos judged in memory, never saved.",
-  "main": "app.js",
-  "name": "color-catch",
-  "version": "1.0.1"
-}
