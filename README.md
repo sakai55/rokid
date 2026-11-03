@@ -12,7 +12,7 @@ https://github.com/sakai55/rokid/tree/agent-trace-kanji
 
 | ページ | 内容 |
 |---|---|
-| 選字（入口） | 練習の列そのもの：入ってすぐスワイプで列を送って字を選ぶ（大きな字・読み・画数・列の位置・練習回数・この先 3 字を表示）。末尾に読み方／講評／一覧／進捗の 4 項目 |
+| 選字（入口） | 漢字 30 字を列の順に平鋪（タイル状に全字表示、説明文なし）：スワイプで選択が移り、選ばれた字だけが大きくなる。タップで学ぶへ。上の 1 行に選んだ字の読み・画数・練習回数・列の位置。末尾に読み方／講評／一覧／進捗の小タイル |
 | 一覧 | 30 字の総表（字／読み／画数／練習回数、並びは書道入門の進み順）、フォーカスで選択 |
 | 学ぶ | **範字全面**：キャンバスがページを占め、分筆の輪郭を空心で一画ずつ描く（TR01 と同一方式。本体は全画・全状態で統一の低輝度、高輝度は筆順注釈だけ）；範字の本体は約 205px（机上描紅の距離の目安：目から机まで約 40cm、練習帳の一字約 9cm）；各画に**書き始めの位置の筆順の弧**（中心線の開始区間に平行、字身との間に黒い隙間、標本点ごとに輪郭への侵入を硬く検証、置けなければ離れた短い弧で受ける）と実心の矢印（最明るい緑、向きは運筆方向）、**筆順の番号**は弧の尾（＝書き始め）に固定して常に外側（同じ側に二つ寄らない）；下の細い欄に「何画目／全何画（画の種類）＋その画の要点」を出し、TTS が要点を読み上げる；画の位置はそのつど保存し、再入で復元（下記「プラットフォームの境界」参照）。注釈幾何の QC ゲート（`qc/check-geometry.js`、TR01 v2 の継承）は **PASS**（弧 105＝平行 94／受け 11、最小隙間 6.51px、v1.1.0 でも再検証済み） |
 | 読み方と書き方 | 読み（音・訓）、意味、構成、重心の目安、画の流れ、データ出典、要点の全画読み上げ |
@@ -53,7 +53,7 @@ https://github.com/sakai55/rokid/tree/agent-trace-kanji
 | 項目 | 値 |
 |---|---|
 | Studio 名 | Trace Kanji |
-| Version / Build | 1.1.0 |
+| Version / Build | 1.2.0 |
 | App Category | （インポート後に記入） |
 | Intent Description | （インポート後に記入） |
 | Agent ID | （インポート後に記入） |
@@ -68,8 +68,8 @@ https://github.com/sakai55/rokid/tree/agent-trace-kanji
 
 （Web プレビューの描画：チェックページはカメラがない環境では撮影待ちの状態をそのまま表示。範字は実データから描画。）
 
-![選字ページ（入口・列の先頭）](../../screenshots/trace-kanji/preview-trace-kanji-index.png)
-![選字ページ（スワイプで送った状態）](../../screenshots/trace-kanji/preview-trace-kanji-select.png)
+![選字ページ（入口・平鋪）](../../screenshots/trace-kanji/preview-trace-kanji-index.png)
+![選字ページ（選んだ字が拡大）](../../screenshots/trace-kanji/preview-trace-kanji-select.png)
 ![一覧ページ](../../screenshots/trace-kanji/preview-trace-kanji-library.png)
 ![学ぶページ](../../screenshots/trace-kanji/preview-trace-kanji-learn.png)
 ![学ぶページ・2画目](../../screenshots/trace-kanji/preview-trace-kanji-learn2.png)
@@ -82,6 +82,7 @@ https://github.com/sakai55/rokid/tree/agent-trace-kanji
 
 - **Feature Description**（≤500 字）：常用漢字30字のなぞり練習。入口でスワイプして練習の列から字を選び、範字が目の前に一画ずつ現れる（分筆の真輪郭を空心で描画、机上の紙の字に近い大きさ、本体は低輝度、各画に書き始めの番号と運筆方向の弧の矢印。筆順は日本式に照合済み）。見ながら本物の紙に筆で書き、うなずくと練習が終わって字は列の後ろへ（回数が多い字ほど遠く、記憶曲線の間隔）。下を向いて写真チェックもでき、見るのは画の過不足・重心・最も目立つ違いだけ。判定は本人が優先され、進捗は保存されて次回に続き、途中で画面が消えても現在画に戻る。
 - **Opening Message**：列の先頭から一字ずつ：一画ずつよく見て、紙に書いて、うなずいて終えよう。
-- **Preview Media**：「プレビュー画像」9 枚（画像、選字ページの 2 状態と学ぶページの 2 画目の状態を含む）＋デモ動画 1 本（15 秒、[preview-trace-kanji-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/trace-kanji/preview-trace-kanji-video.mp4) クリックで直接ダウンロード：選字→スワイプで送る→学ぶページ「十」1〜2 画→写真チェック、Web プレビューの実録）。合計 10 ファイル、提出時はこの中から 3〜5 件（動画 ≥1 本・60 秒以内）を選ぶ。
+- **Preview Media**：「プレビュー画像」9 枚（画像、選字ページの 2 状態と学ぶページの 2 画目の状態を含む）＋デモ動画 1 本（15 秒、[preview-trace-kanji-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/trace-kanji/preview-trace-kanji-video.mp4) クリックで直接ダウンロード：選字グリッド→スワイプで送る→学ぶページ「十」1〜2 画→写真チェック、Web プレビューの実録）。合計 10 ファイル、提出時はこの中から 3〜5 件（動画 ≥1 本・60 秒以内）を選ぶ。
+- **Change Log**（Build 1.2.0）：Improvements — 選字ページを全面組み替え：漢字 30 字を列の順に平鋪し、選ばれた字だけが大きくなるグリッドにした。説明文は置かず、情報は上の 1 行（読み・画数・練習回数・列の位置）だけ。Features added — なし（流れと仕組みは 1.1.0 のまま）；Fixes — なし。
 - **Change Log**（Build 1.1.0）：Features added — 練習の列（キュー）と記憶曲線の並び替え（入口＝選字ページ、スワイプで列を送って選択、学ぶページのうなずきで練習を終えると字が後ろへ：回数 1→3 字後ろ・2→5・3→9・4→16・5→24・6 回以上は最後尾）、収録順を日本の書道入門の進み順に再編（画数の少ない字から）、進捗ページに列の順番を表示；Improvements — 読み上げに言語 ja-JP を明示（ホストのロケールで日本語文が読まれる中日混交を解消）、読み方ページの大字をホストフォントから分筆輪郭の Canvas 描画に変更、写真チェックの指示に日本語のみでの回答を明示；Fixes — 学ぶページのタイトル誤記（Trace Kana → Trace Kanji）を修正。
 - **Change Log**（Build 1.0.0）：Features added — 7 ページの閉ループ（今日／一覧／学ぶ／読み方と書き方／写真チェック／講評／進捗）、常用漢字 30 字（105 画）の分筆真輪郭範字、KanjiVG 照合による日本式筆順（右・田・生は画の順を入れ替え）、画ごとの TTS 要点、写真の粗チェック三点、本人判定の優先、セッションをまたぐ進捗と復習テスト；Improvements — なし；Fixes — なし。
