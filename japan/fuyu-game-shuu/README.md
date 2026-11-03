@@ -119,7 +119,7 @@ Feature Description: 冬の家族の待ち時間に遊ぶゲーム集です。�
 Opening Message: 冬ゲーム集を開きましょう。20本のゲームから選んで、頭の向きとうなずきで遊びます。
 
 Preview Media:
-- `preview-fuyu-game-shuu-video.mp4`
+- [preview-fuyu-game-shuu-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/fuyu-game-shuu/preview-fuyu-game-shuu-video.mp4)
 - `preview-fuyu-game-shuu-index.png`
 - `preview-fuyu-game-shuu-t01.png`
 - `preview-fuyu-game-shuu-t20.png`

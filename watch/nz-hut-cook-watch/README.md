@@ -83,7 +83,7 @@ Pick a hut cooker, look at a slot, nod to start its timer, and let it tell you w
 
 ### Preview Media
 
-1 video (preview-nz-hut-cook-watch-video.mp4) + 3 images: preview-nz-hut-cook-watch-index.png, preview-nz-hut-cook-watch-watch-s2.png, preview-nz-hut-cook-watch-record.png.
+1 video ([preview-nz-hut-cook-watch-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/nz-hut-cook-watch/preview-nz-hut-cook-watch-video.mp4)) + 3 images: preview-nz-hut-cook-watch-index.png, preview-nz-hut-cook-watch-watch-s2.png, preview-nz-hut-cook-watch-record.png.
 
 ### Change Log
 

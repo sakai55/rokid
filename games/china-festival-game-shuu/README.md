@@ -92,7 +92,7 @@ Opening Message: 过年等人时别干坐着。打开游戏集，点点头就能
 
 Preview Media:
 
-- `preview-china-festival-game-shuu-video.mp4`
+- [preview-china-festival-game-shuu-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/china-festival-game-shuu/preview-china-festival-game-shuu-video.mp4)
 - `preview-china-festival-game-shuu-index.png`
 - `preview-china-festival-game-shuu-g01.png`
 - `preview-china-festival-game-shuu-g20.png`

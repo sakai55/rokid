@@ -77,7 +77,7 @@ Feature Description: 頭の向きとうなずきだけで遊ぶけんだまで�
 Opening Message: けんだま遊びを開きましょう。頭の向きで方向を選び、うなずきで投げます。
 
 Preview Media:
-- `preview-kendama-game-video.mp4`
+- [preview-kendama-game-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/kendama-game/preview-kendama-game-video.mp4)
 - `preview-kendama-game-index.png`
 - `preview-kendama-game-play.png`
 - `preview-kendama-game-record.png`
