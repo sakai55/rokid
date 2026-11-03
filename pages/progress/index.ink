@@ -4,7 +4,7 @@
 
 <script setup>
 import wx from 'wx';
-import { loadKey, saveKey, speak } from '../../judge.js';
+import { loadKey, saveKey, speak, ensureQueue } from '../../judge.js';
 import { CHARS } from '../../chars.js';
 
 // 進捗ページ：セッションをまたぐ進捗の総覧（練習済みの字／字ごとの回数／練習日数）＋
@@ -18,15 +18,17 @@ export default {
   data: {
     status: '進捗：次に開いたとき続きから',
     sumLine: '',
+    queueLine: '',
     rows: [],
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.1.0'
   },
   onLoad() { this._focus = 0; this._armClear = false; this._off = 0; this._render(); },
   onShow() { this._render(); },
   _render() {
     const p = loadKey(PROG, { chars: {}, days: {} });
+    ensureQueue(p, CHARS.map(function (c) { return c.char; }));
     const practiced = CHARS.filter(function (c) { const r = (p.chars || {})[c.char]; return r && r.count > 0; });
     let total = 0;
     practiced.forEach(function (c) { total += p.chars[c.char].count; });
@@ -36,15 +38,16 @@ export default {
       return { idx: c.char, label: c.char + ' ' + c.reading + ' · 練習 ' + r.count + ' 回' + (r.passed ? ' · できた' : '') };
     });
     this.setData({
+      queueLine: '列の順番：' + (p.queue || []).join(' '),
       sumLine: '練習済み ' + practiced.length + ' / ' + CHARS.length + ' 字 · 累計 ' + total + ' 回 · 練習日数 ' + dayCount + ' 日',
-      rows: rows.length ? rows : [{ idx: 'none', label: 'まだ何も練習していません——今日の漢字から始めよう' }],
+      rows: rows.length ? rows : [{ idx: 'none', label: 'まだ何も練習していません——列の先頭から始めよう' }],
       focusLine: 'フォーカス：' + ACTS[this._focus] + '（上下で切替、Enter で実行）'
     });
   },
   reviewTap() {
     const c = CHARS[Math.floor(Math.random() * CHARS.length)];
     saveKey(TMP, { char: c.char, review: true });
-    this.setData({ status: 'テストの字を引きました（チェックページではローマ字だけ表示）：' + c.reading, evt: 'EVT: review pick ' + c.char });
+    this.setData({ status: 'テストの字を引きました（チェックページでは読みだけ表示）：' + c.reading, evt: 'EVT: review pick ' + c.char });
     speak('テストです。書いてください：' + c.char);
     try { wx.navigateTo({ url: '/pages/verify/index' }); } catch (e) { this.setData({ evt: 'EVT: nav FAIL E8001' }); }
   },
@@ -84,6 +87,7 @@ export default {
     <text class="title">漢字 なぞり · 進捗</text>
     <text class="status">{{status}}</text>
     <text class="sum">{{sumLine}}</text>
+    <text class="sum">{{queueLine}}</text>
     <view class="rows">
       <view ink:for="{{rows}}" class="row"><text class="rtxt">{{item.label}}</text></view>
     </view>
@@ -92,7 +96,7 @@ export default {
       <button class="act" bindtap="actTap" data-idx="1">進捗を消す（二回で確定）</button>
       <button class="act" bindtap="actTap" data-idx="2">BACK</button>
     </view>
-    <text class="note">復習テスト：字をランダムに引き、チェックページではローマ字だけ・範字は出しません——まず紙に記憶で書いてから写真チェック。進捗はこの端末に保存され、次回も続きから。</text>
+    <text class="note">復習テスト：字をランダムに引き、チェックページでは読みだけ・範字は出しません——まず紙に記憶で書いてから写真チェック。進捗はこの端末に保存され、次回も続きから。</text>
     <text class="line dim">{{focusLine}}</text>
     <text class="foot">{{evt}} · {{ver}} · trace-kanji · 保存キー trace.trace-kanji.v1</text>
   </view>

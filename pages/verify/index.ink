@@ -12,7 +12,7 @@ import { CHARS } from '../../chars.js';
 const PROG = 'trace.trace-kanji.v1';
 const TMP = 'trace.kanji.tmp';
 const ACTS = ['写真チェック（または うなずき）', '字を変える（一覧）', '戻る BACK'];
-const SYS = 'あなたは書道初学者の粗チェック担当です。指定された三つの粗い点だけを見ます。専門的な書道の採点はせず、点数も付けず、専門用語を並べません。見えなければ正直に見えないと言い、決して作り話をしません。';
+const SYS = 'あなたは書道初学者の粗チェック担当です。指定された三つの粗い点だけを見ます。専門的な書道の採点はせず、点数も付けず、専門用語を並べません。見えなければ正直に見えないと言い、決して作り話をしません。回答は日本語だけにし、中国語や英語を混ぜません。';
 
 export default {
   data: {
@@ -20,7 +20,7 @@ export default {
     targetLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.1.0'
   },
   onLoad() {
     this._focus = 0; this._busy = false;

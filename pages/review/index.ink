@@ -4,14 +4,14 @@
 
 <script setup>
 import wx from 'wx';
-import { loadKey, saveKey, speak } from '../../judge.js';
+import { loadKey, saveKey, speak, ensureQueue, finishChar } from '../../judge.js';
 import { CHARS } from '../../chars.js';
 
 // 講評ページ：lastVerdict の三つの粗チェック＋一言講評を出す。
 // 本人の「できた」判定が本ページの核——本人の判断を優先し、記録に残す。
 const PROG = 'trace.trace-kanji.v1';
 const TMP = 'trace.kanji.tmp';
-const ACTS = ['この字はできた（本人判定）', 'もう一枚書く（チェックへ）', '次の字へ', '今日ページへ戻る'];
+const ACTS = ['この字はできた（本人判定）', 'もう一枚書く（チェックへ）', '次の字へ', '選字へ戻る'];
 
 export default {
   data: {
@@ -24,7 +24,7 @@ export default {
     countLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.1.0'
   },
   onLoad() {
     this._focus = 0;
@@ -58,15 +58,18 @@ export default {
     const v = p.lastVerdict;
     if (!v || v.char !== this._char.char) { this.setData({ status: 'まずこの字をチェックしてから判定してください（チェックなしに「できた」にはできません）', evt: 'EVT: pass refused - no verdict' }); return; }
     const ch = this._char.char;
-    const rec = (p.chars[ch] || { count: 0 });
-    rec.count = (rec.count || 0) + 1;
+    ensureQueue(p, CHARS.map(function (c) { return c.char; }));
+    const t = loadKey(TMP, {});
+    if (t.counted !== ch) {
+      // 練習 1 回分として数え、列の後ろへ（学ぶ画面のうなずき終了と
+      // 同じ finishChar。二重に数えないよう TMP.counted で印を付ける）
+      finishChar(p, ch);
+      t.counted = ch; saveKey(TMP, t);
+    }
+    const rec = p.chars[ch];
     rec.passed = true;
-    rec.lastAt = new Date().toISOString();
     rec.overrides = (rec.overrides || 0) + 1;
     p.chars[ch] = rec;
-    const today = new Date().toISOString().slice(0, 10);
-    p.days = p.days || {}; p.days[today] = true;
-    p.lastChar = ch;
     if (!saveKey(PROG, p)) { this.setData({ status: '保存に失敗：E5001（進捗が記録されませんでした）', evt: 'EVT: pass save FAIL E5001' }); return; }
     this.setData({ status: '記録しました：「' + ch + '」はできた（本人判定が機械判定より優先）', evt: 'EVT: pass recorded ' + ch });
     speak(ch + '、できたと記録しました');
@@ -74,9 +77,12 @@ export default {
   },
   againTap() { try { wx.navigateTo({ url: '/pages/verify/index' }); } catch (e) { this.setData({ evt: 'EVT: nav FAIL E8001' }); } },
   nextCharTap() {
-    const i = CHARS.indexOf(this._char);
-    const n = CHARS[(i + 1) % CHARS.length];
-    saveKey(TMP, { char: n.char, review: false });
+    const p = loadKey(PROG, { chars: {}, days: {}, lastChar: '' });
+    ensureQueue(p, CHARS.map(function (c) { return c.char; }));
+    const q = p.queue;
+    const nch = q[0] !== this._char.char ? q[0] : (q[1] || q[0]);
+    const n = CHARS.filter(function (c) { return c.char === nch; })[0] || CHARS[0];
+    saveKey(TMP, { char: n.char, review: false, counted: '' });
     this._char = n;
     this.setData({ status: '次の字：' + n.char + '。学ぶページで筆順を見てください', evt: 'EVT: next char ' + n.char });
     try { wx.navigateTo({ url: '/pages/learn/index' }); } catch (e) { this.setData({ evt: 'EVT: nav FAIL E8001' }); }
@@ -113,7 +119,7 @@ export default {
       <button class="act hot" bindtap="actTap" data-idx="0">この字はできた</button>
       <button class="act" bindtap="actTap" data-idx="1">もう一枚</button>
       <button class="act" bindtap="actTap" data-idx="2">次の字</button>
-      <button class="act" bindtap="actTap" data-idx="3">今日へ</button>
+      <button class="act" bindtap="actTap" data-idx="3">選字へ</button>
     </view>
     <text class="note">ルール：機械の判定は参考まで。「できた」は本人の判断を記録します。チェックしていない字を「できた」にはできません。</text>
     <text class="line dim">{{focusLine}}</text>
