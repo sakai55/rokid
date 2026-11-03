@@ -4,7 +4,7 @@
 
 <script setup>
 import wx from 'wx';
-import { loadKey, speak } from '../../judge.js';
+import { loadKey, speak, drawGlyph } from '../../judge.js';
 import { CHARS } from '../../chars.js';
 
 // 読み方と書き方ページ：読み・意味・構成・重心の目安・画の流れ・データ出典。
@@ -20,7 +20,7 @@ export default {
     typesLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.1.0'
   },
   onLoad() {
     this._focus = 0;
@@ -38,6 +38,24 @@ export default {
       typesLine: '画の流れ：' + c.types.join(' → '),
       focusLine: 'フォーカス：' + ACTS[this._focus] + '（上下で切替、Enter で実行）'
     });
+    this._drawBig();
+  },
+  _drawBig() {
+    // 大字はホストのフォントで描かず、学ぶ画面と同じ分筆輪郭を塗る
+    // （中国語フォントの字形で表示されるのを避ける）。Canvas は
+    // レイアウト直後にしか描けないため、学ぶ画面と同じく遅延再描画する。
+    const c = this._char; const self = this;
+    const once = function () {
+      try {
+        const ctx = wx.createCanvasContext('bigCanvas');
+        if (!ctx) return;
+        ctx.fillStyle = '#04140a'; ctx.fillRect(0, 0, 150, 150);
+        drawGlyph(ctx, c, 130, 10, 12);
+      } catch (e) {}
+    };
+    once();
+    setTimeout(once, 80);
+    setTimeout(once, 450);
   },
   learnTap() { try { wx.navigateTo({ url: '/pages/learn/index' }); } catch (e) { this.setData({ evt: 'EVT: nav FAIL E8001' }); } },
   verifyTap() { try { wx.navigateTo({ url: '/pages/verify/index' }); } catch (e) { this.setData({ evt: 'EVT: nav FAIL E8001' }); } },
@@ -62,7 +80,7 @@ export default {
     <text class="title">漢字 なぞり · 読み方と書き方</text>
     <text class="status">{{status}}</text>
     <view class="stage">
-      <text class="big">{{bigChar}}</text>
+      <canvas id="bigCanvas" width="150" height="150" class="bigc"></canvas>
       <view class="rail">
         <text class="rline strong">{{metaLine}}</text>
         <text class="rline">{{centerLine}}</text>
@@ -88,6 +106,7 @@ export default {
 .page { display: flex; flex-direction: column; height: 100vh; padding: 4px 12px; background-color: #000000; }
 .title { color: #7dff9e; font-size: 17px; font-weight: 500; line-height: 20px; }
 .status { color: #40ff5e; font-size: 12px; line-height: 16px; margin-top: 2px; }
+.bigc { width: 150px; height: 150px; border: 1px solid rgba(64,255,94,0.4); background-color: #04140a; }
 .stage { display: flex; flex-direction: row; gap: 10px; margin-top: 4px; align-items: flex-start; }
 .big { color: #7dff9e; font-size: 74px; font-weight: 500; line-height: 84px; border: 1px solid rgba(64,255,94,0.4); background-color: #04140a; padding: 2px 12px; }
 .rail { display: flex; flex-direction: column; flex-grow: 1; }

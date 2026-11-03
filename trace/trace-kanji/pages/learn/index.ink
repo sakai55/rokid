@@ -1,10 +1,10 @@
 <script def>
-{"title": "Trace Kana"}
+{"title": "Trace Kanji"}
 </script>
 
 <script setup>
 import wx from 'wx';
-import { loadKey, saveKey, speak } from '../../judge.js';
+import { loadKey, saveKey, speak, ensureQueue, finishChar } from '../../judge.js';
 import { CHARS } from '../../chars.js';
 
 // 学ぶページ（描紅の主画面）：範字は全面——キャンバスがページを占
@@ -12,7 +12,7 @@ import { CHARS } from '../../chars.js';
 // の要点」と最小限の操作だけを置く。
 // 漢字版の範字は TR01 と同じ空心描き：hanzi-writer-data の分筆輪
 // 郭パスを stroke で描く（塗らない）。筆順は KanjiVG と全字照合し、
-// 「右」（1・2画）と「田」（3・4画）は日本式の順に入れ替えてある。
+// 「右」（1・2画）・「田」（3・4画）・「生」（3・4画）は日本式の順に入れ替えてある。
 // 大きさは机上描紅の距離の目安に合わせる——目から机まで約 40cm、
 // 練習帳の一字約 9cm（視角約 12.8°）。弧と番号の注釈系と描画は
 // TR01 v1.3.6 の凍結仕様をそのまま継承する：弧は書き始めの位置に
@@ -25,21 +25,23 @@ import { CHARS } from '../../chars.js';
 // Agent 側では防げないので、同じ字に再入したときに現在画へ戻るこ
 // とで緩和する。
 const TMP = 'trace.kanji.tmp';
+const PROG = 'trace.trace-kanji.v1';
 const LEARN = 'trace.kanji.learn'; // 画の位置の保存（画面消灯／再入時の復元用。進捗ではない）
 const ACTS = ['前の画', '次の画', '要点を聞く', '書き終えたらチェック', '戻る BACK'];
 const W = 464, H = 252, S = 236, OX = 110, OY = 11;
 
 export default {
   data: {
-    status: '学ぶ：一画ずつよく見て、紙にまねて書く',
+    status: '学ぶ：一画ずつよく見て、紙にまねて書く（うなずき＝この字を終える）',
     barLine: '',
     focusLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.1.0'
   },
   onLoad() {
     this._focus = 1; this._step = 0; this._useMedians = false;
     const t = loadKey(TMP, { char: CHARS[0].char });
+    this._counted = (t && t.counted) || '';
     this._char = CHARS.filter(function (c) { return c.char === t.char; })[0] || CHARS[0];
     // 画の位置の復元：常時点灯の API はない（README の境界参照）。
     // 画面消灯／終了のあとで同じ字に再入したら、保存した画の位置へ
@@ -56,7 +58,7 @@ export default {
     saveKey(LEARN, { char: c.char, step: this._step });
     this.setData({
       barLine: c.char + '（' + c.reading + '）' + (this._step + 1) + '画目 / 全 ' + c.strokes.length + '画（' + c.types[this._step] + '）：' + c.tips[this._step],
-      focusLine: 'フォーカス：' + ACTS[this._focus] + '（上下で切替、Enter で実行、うなずき＝実行）'
+      focusLine: 'フォーカス：' + ACTS[this._focus] + '（上下で切替、Enter で実行、うなずき＝この字を終える）'
     });
     if (speakTip) speak(c.tips[this._step]);
     const self = this;
@@ -772,6 +774,22 @@ export default {
   speakTap() { speak(this._char.tips[this._step]); this.setData({ evt: 'EVT: speak tip' }); },
   verifyTap() { try { wx.navigateTo({ url: '/pages/verify/index' }); } catch (e) { this.setData({ evt: 'EVT: nav FAIL E8001' }); } },
   backTap() { try { wx.navigateBack({}); } catch (e) {} },
+  finishTap() {
+    // うなずき＝この字を終える：練習 1 回分を記録し、字を列の後ろへ
+    // （回数が多い字ほど遠く。judge.js の finishChar）。記録済み
+    // （チェック側で数えた）なら数え直さず、戻るだけ。
+    if (this._counted !== this._char.char) {
+      const p = loadKey(PROG, { chars: {}, days: {}, lastChar: '' });
+      ensureQueue(p, CHARS.map(function (c) { return c.char; }));
+      finishChar(p, this._char.char);
+      if (saveKey(PROG, p)) {
+        this._counted = this._char.char;
+        const t = loadKey(TMP, {}); t.counted = this._char.char; saveKey(TMP, t);
+        speak(this._char.char + '、練習しました');
+      }
+    }
+    try { wx.navigateBack({}); } catch (e) {}
+  },
   actTap(e) { const idx = e && e.currentTarget && e.currentTarget.dataset ? Number(e.currentTarget.dataset.idx) : NaN; if (!isNaN(idx)) this._focus = idx; this.doAct(); },
   doAct() {
     if (this._focus === 0) this.prevTap();
@@ -781,7 +799,7 @@ export default {
     else this.backTap();
   },
   moveTap(d) { this._focus = (this._focus + d + ACTS.length) % ACTS.length; this.setData({ evt: 'EVT: focus ' + ACTS[this._focus] }); this._render(false); },
-  onHeadGesture(event) { const d = (event && event.detail) || event || {}; const g = d.gesture || d.type || ''; if (g === 'nod') this.doAct(); },
+  onHeadGesture(event) { const d = (event && event.detail) || event || {}; const g = d.gesture || d.type || ''; if (g === 'nod') this.finishTap(); },
   onKeyDown(event) {
     var k = event.key || event.code;
     if (k === 'Enter') this.doAct();

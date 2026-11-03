@@ -18,7 +18,7 @@ export default {
     rows: [],
     selLine: '',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.1.0'
   },
   onLoad() { this._focus = 0; this._render(); },
   onShow() { this._render(); },
@@ -68,7 +68,7 @@ export default {
       <view ink:for="{{rows}}" class="{{item.cls}}" bindtap="rowTap" data-idx="{{item.idx}}"><text class="rtxt">{{item.label}}</text></view>
     </view>
     <text class="line dim">{{selLine}}</text>
-    <text class="note">収録基準：全字に完全な分筆データ（輪郭・中心線は hanzi-writer-data）があり、筆順を KanjiVG と照合できた字だけを収録。「右」と「田」は日本式の筆順に入れ替え済みです。</text>
+    <text class="note">収録基準：全字に完全な分筆データ（輪郭・中心線は hanzi-writer-data）があり、筆順を KanjiVG と照合できた字だけを収録。「右」「田」「生」は日本式の筆順に入れ替え済みです。並びは書道入門の進み順（画数の少ない字から）で、練習の列の初期順でもあります。</text>
     <text class="foot">{{evt}} · {{ver}} · trace-kanji</text>
   </view>
 </page>
