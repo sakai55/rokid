@@ -74,7 +74,7 @@ Opening Message: 手上沾着面也别慌。看向那口锅，点一下头就开
 
 Preview Media:
 
-- `preview-china-dumpling-watch-video.mp4`
+- [preview-china-dumpling-watch-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/china-dumpling-watch/preview-china-dumpling-watch-video.mp4)
 - `preview-china-dumpling-watch-index.png`
 - `preview-china-dumpling-watch-watch.png`
 - `preview-china-dumpling-watch-record-s2.png`
