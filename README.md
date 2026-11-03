@@ -484,13 +484,18 @@ aix preview .                               # 本地预览（起服务 / --html-
    Preview Media、Change Log。**四项成稿在各 Agent 自己 README 的「提审资料
    (Review Submission)」章节里，分段写好，整段复制**：Feature Description ≤500 字，
    Opening Message ≤500 字、支持 Markdown，Preview Media 3–5 个文件、≥1 图 ≥1 视频。
-2. 权限声明与代码一致；可用权限只有 `GEOLOCATION`、`CAMERA`、`RECORD_AUDIO` 三种。
-3. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
+   **视频是硬性必备**：每台在生产时就备好 1 个 15 秒视频，在提审资料里写成可点按的
+   直接下载链接，不许等到真机阶段再回填。
+2. **Agent Icon 必须用自定义图标**（在 **Basic Information** 里上传，1:1，建议
+   512×512 的 PNG），用默认图标不许提交。图标样式是 DNA 线条：Agent 属于几个
+   系列就几条线互相缠绕，某个系列成分多、那条线就长；图标文件存 `icons/<slug>.png`。
+3. 权限声明与代码一致；可用权限只有 `GEOLOCATION`、`CAMERA`、`RECORD_AUDIO` 三种。
+4. **Submit for Review** 提交；被拒按原因修改后重新打包保存、重新提交。
 
 ## 维护约定
 
 - **一个 Agent 一个目录**：main 上按编号放进英文分类目录；**一个 Agent 一个分支**：`agent-<slug>`，分支根 = 工程根。
 - 每个 Agent 的 README 必须写全：功能、权限、打包/预览命令、真机信息表、提审资料、预览截图，截图嵌入路径 `../../screenshots/<slug>/…`。
-- 截图只放 `screenshots/<slug>/`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
+- 截图只放 `screenshots/<slug>/`；图标只放 `icons/<slug>.png`；打包好的 `.aix` 只放仓库 `aix/` 目录，并与代码同步更新。
 - GitHub 操作走终端 `gh` / `git`，含二进制与分支维护。
 

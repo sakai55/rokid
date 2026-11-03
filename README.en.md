@@ -482,12 +482,19 @@ Once all real-device testing passes and the maintainer confirms "real-device tes
    Preview Media, Change Log. **All four are already drafted in the "提审资料
    (Review Submission)" section of each agent's own README — written section by section, ready to copy wholesale**: Feature Description ≤500 characters,
    Opening Message ≤500 characters, Markdown supported; Preview Media 3–5 files, with ≥1 image and ≥1 video.
-2. The declared permissions must match the code; only three permissions exist: `GEOLOCATION`, `CAMERA`, `RECORD_AUDIO`.
-3. Hit **Submit for Review**. If it comes back rejected, fix what the rejection names, then repackage, save, and resubmit.
+   **The video is a hard requirement**: one 15-second video per agent, produced when the agent
+   is built and written into its review materials as a clickable direct-download link — never
+   backfilled at the device-testing stage.
+2. **The Agent Icon must be a custom icon** (uploaded under **Basic Information**, 1:1,
+   512×512 PNG recommended); submitting with the default icon is not allowed. The icon style
+   is DNA strands: one intertwining strand per series the agent belongs to, and the bigger a
+   series' share of the agent, the longer its strand. Icon files live at `icons/<slug>.png`.
+3. The declared permissions must match the code; only three permissions exist: `GEOLOCATION`, `CAMERA`, `RECORD_AUDIO`.
+4. Hit **Submit for Review**. If it comes back rejected, fix what the rejection names, then repackage, save, and resubmit.
 
 ## Maintenance Conventions
 
 - **One agent, one directory**: on `main`, agents sit in English-named category directories, filed by ID; **one agent, one branch**: `agent-<slug>`, with the branch root as the project root.
 - Every agent's README has to be complete: features, permissions, pack/preview commands, the real-device info table, the review materials, and preview screenshots — screenshots embedded via `../../screenshots/<slug>/…`.
-- Screenshots live only in `screenshots/<slug>/`; built `.aix` packages live only in the repo's `aix/` directory and stay in sync with the code.
+- Screenshots live only in `screenshots/<slug>/`; icons live only at `icons/<slug>.png`; built `.aix` packages live only in the repo's `aix/` directory and stay in sync with the code.
 - Do GitHub work from the terminal with `gh` / `git` — binaries and branch maintenance included.
