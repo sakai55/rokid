@@ -1,7 +1,0 @@
-{
-  "dependencies": {},
-  "description": "Odd-one-out photo game GA47 for Rokid glasses: four set-ups (3 fruits + 1 stationery item, 3 tableware + 1 toy, 3 stationery + 1 kitchen tool, 3 shoes + 1 hat). Arrange four real items, call the odd position first (fixed before the photo), then snap: the host LLM lists the items left to right and reports the odd position (ODD), scored locally against the call. Camera only.",
-  "main": "app.js",
-  "name": "odd-one-out",
-  "version": "1.0.1"
-}
