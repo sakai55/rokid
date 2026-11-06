@@ -1,1 +1,0 @@
-{"dependencies":{},"description":"Rokid Glasses AIUI Agent - guest watch: register each guest seat by steady gaze, get timed reminders to look back at tea levels, SCAN reports the preset door direction; no water-level detection, no motion detection, session memory only.","main":"app.js","name":"guest-watch","version":"1.0.0"}
