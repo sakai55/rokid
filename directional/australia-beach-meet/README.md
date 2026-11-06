@@ -18,7 +18,7 @@ An Australian beach walker, separated from friends with both hands full of bags,
 
 ## Direction composition
 
-Australia local scene x directional (GPS-anchored) x attention.
+Australia local scene x directional (GPS-anchored) x curb-cut (hands-full walker separated from friends).
 
 ## Glasses-only capability
 
