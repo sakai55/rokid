@@ -18,7 +18,7 @@ An Australian beach walker, separated from friends with both hands full of bags,
 
 ## Direction composition
 
-Australia local scene x directional (GPS-anchored) x attention.
+Australia local scene x directional (GPS-anchored) x curb-cut (hands-full walker separated from friends).
 
 ## Glasses-only capability
 
@@ -65,9 +65,9 @@ GEOLOCATION declared. No camera or media permission is used.
 
 ## Preview screenshots
 
-![preview-australia-beach-meet-index.png](../screenshots/australia-beach-meet/preview-australia-beach-meet-index.png)
-![preview-australia-beach-meet-guide.png](../screenshots/australia-beach-meet/preview-australia-beach-meet-guide.png)
-![preview-australia-beach-meet-record.png](../screenshots/australia-beach-meet/preview-australia-beach-meet-record.png)
+![preview-australia-beach-meet-index.png](../../screenshots/australia-beach-meet/preview-australia-beach-meet-index.png)
+![preview-australia-beach-meet-guide.png](../../screenshots/australia-beach-meet/preview-australia-beach-meet-guide.png)
+![preview-australia-beach-meet-record.png](../../screenshots/australia-beach-meet/preview-australia-beach-meet-record.png)
 
 ## Review Submission
 
@@ -82,9 +82,9 @@ An Australian beach walker separated from friends registers a meeting point by G
 ### Preview Media
 
 [preview-australia-beach-meet-video.mp4](https://raw.githubusercontent.com/sakai55/rokid/main/screenshots/australia-beach-meet/preview-australia-beach-meet-video.mp4)
-![preview-australia-beach-meet-index.png](../screenshots/australia-beach-meet/preview-australia-beach-meet-index.png)
-![preview-australia-beach-meet-guide.png](../screenshots/australia-beach-meet/preview-australia-beach-meet-guide.png)
-![preview-australia-beach-meet-record.png](../screenshots/australia-beach-meet/preview-australia-beach-meet-record.png)
+![preview-australia-beach-meet-index.png](../../screenshots/australia-beach-meet/preview-australia-beach-meet-index.png)
+![preview-australia-beach-meet-guide.png](../../screenshots/australia-beach-meet/preview-australia-beach-meet-guide.png)
+![preview-australia-beach-meet-record.png](../../screenshots/australia-beach-meet/preview-australia-beach-meet-record.png)
 
 ### Change Log
 

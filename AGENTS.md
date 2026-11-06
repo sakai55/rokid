@@ -1,6 +1,6 @@
 # Australia Beach Meet - Agent Notes
 
-DI66. Australia local scene x directional (GPS-anchored) x attention.
+DI66. Australia local scene x directional (GPS-anchored) x curb-cut (hands-full walker separated from friends).
 
 ## Design contract
 
