@@ -1,1 +1,0 @@
-{"description":"Rokid Glasses AIUI probe - measures localStorage, wx storage and OPFS roundtrip correctness, practical capacity and OPFS quota on device","name":"Storage Probe","pages":["pages/home/index","pages/ls/index","pages/wx/index","pages/opfs/index","pages/results/index","pages/about/index"],"permissions":[],"window":{"navigationBarTitleText":"Storage Probe"}}

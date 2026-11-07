@@ -1,1 +1,0 @@
-{"author":"","dependencies":{},"description":"Speak-up cue: a person whose voice is habitually too quiet gets a cue card before speaking, practices one model sentence, and logs after each conversation whether they were heard.","keywords":[],"license":"ISC","main":"app.js","name":"speak-up-cue","version":"1.0.0"}
