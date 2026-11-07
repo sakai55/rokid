@@ -1,1 +1,0 @@
-{"author": "", "dependencies": {}, "description": "Clinic reception: six reception steps with a five-point check and persisted records. A life aid only; it never diagnoses or replaces medical advice.", "keywords": [], "license": "ISC", "main": "app.js", "name": "byouin-uketsuke", "version": "1.0.0"}
