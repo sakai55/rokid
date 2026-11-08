@@ -1,1 +1,0 @@
-{"dependencies":{},"description":"Rokid Glasses AIUI Agent - water watch: register the cup direction, gentle silent banner when long since last drink, steady-gaze drink confirm; drinking itself is not measured, looking at the cup is only a proxy, not health advice, session memory only.","main":"app.js","name":"water-watch","version":"1.0.0"}
