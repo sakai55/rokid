@@ -7,7 +7,7 @@
 import wx from 'wx';
 
 export var SLUG = 'real-mud-probe';
-export var VERSION = '1.0.1';
+export var VERSION = '1.0.2';
 
 export var ERR = {
   CAM_OPEN: 'E1001',        // 相机打开失败

@@ -64,7 +64,7 @@ https://github.com/sakai55/rokid/tree/agent-real-mud-probe
 ~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-AIX：[MUD/aix/real-mud-probe.aix](https://github.com/sakai55/rokid/blob/main/MUD/aix/real-mud-probe.aix)，43,900 B（v1.0.1）。
+AIX：[MUD/aix/real-mud-probe.aix](https://github.com/sakai55/rokid/blob/main/MUD/aix/real-mud-probe.aix)，45,460 B（v1.0.2）。
 
 ## 错误码
 
@@ -92,7 +92,7 @@ Web 预览无真相机/LLM/传感器：手势、耗时两站与朝向的传感�
 | 项 | 值 |
 |---|---|
 | Studio 名 | 真境探针（Real MUD Probe） |
-| Version / Build | 1.0.1 / —（未导入） |
+| Version / Build | 1.0.2 / —（未导入） |
 | App Category | —（探针不提审，导入时按 Studio 要求选工具类） |
 | Intent Description | 四站真机探针：存储/手势判定/朝向/判定耗时 |
 | Agent ID | —（未导入） |
@@ -108,6 +108,11 @@ Web 预览无真相机/LLM/传感器：手势、耗时两站与朝向的传感�
 - Change Log：见下。
 
 ## Change Log
+
+### 1.0.2（诊断版）
+- 目的：v1.0.0（先读 `event.key`）与 v1.0.1（`event.code` 优先）两版在真机上都没解决「选择还是有问题」，说明真机按键事件的真实形状与文档/预览的假设仍有出入。这一版不再猜修法，只在首页加一个原始事件探头，把真机信号抓回来；除此之外与 v1.0.1 完全一致（选择/导航逻辑零改动）。
+- 抓什么：首页进度行下两行诊断显示——`KEY` 行：收到的每一个 keydown / keyup 事件，把 `event.code` / `event.key` / `event.keyCode`（或 `which`）原样拼成一行（如 `KEY down code=ArrowDown key=ArrowDown kc=40`，缺失字段印 `-`），初始为 `KEY: (还没收到按键)`；`GES` 行：`onHeadGesture` 收到任何事件时把 gesture / type 字段原样印出，初始为 `GES: (无)`。两行同时经 logq 以 `key` / `ges` 步名上报同一字符串（没配钥匙时静默、屏显照常）。探头只记录：不做任何匹配判断、不拦截、不 preventDefault，与原有选择处理并存。
+- 怎么读：导入打包后打开探针、停在首页，滑动 / 单击 / 双击 / 点头各做几次，看首页 KEY / GES 两行最后显示什么（或把这两行经日志回传/拍屏带回）——拿到真机事件的真实字段值之后，下一版才对症修选择逻辑。
 
 ### 1.0.1
 - Fixes：真机上滑动/单击选不了任何功能。根因——7 页 `onKeyDown`/`onKeyUp` 都先读 `event.key`（`event.key || event.code`），真机运行时 `event.key` 的值不可靠且会遮蔽 `event.code`，ArrowUp/Down/Enter 全部匹配不上；Web 预览里 Chromium 的 `event.key` 恰好是标准值，所以预览测不出。改法（照大表哥、glasses-benchmark 修复版的真机成例）：按键一律以 `event.code` 为准、缺失才回退 `event.key`；Enter 与 GlobalHook 执行焦点、ArrowDown/ArrowUp 切焦点、Backspace 返回；`onKeyUp` 同样按 code 判断并 preventDefault 挡宿主默认动作。另修首页焦点表与按钮不一致：MENU 去掉没有按钮的「BACK 退出」项（7 项 → 6 项，与 6 个按钮对齐），退出靠双击 Backspace（与手势映射一致）；其余 6 页动作表与按钮数逐页核对一致。

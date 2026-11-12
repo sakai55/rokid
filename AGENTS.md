@@ -1,10 +1,10 @@
 # 真境探针 Real MUD Probe — Design Contract
 
-v1.0.1（首版 v1.0.0）：真境漫游（RealMUD）阶段 1 的前置合并探针。目的只有一个：把正式版开工前说不准的四组数测出来——存储配额、开掌手势 LLM 定格判定认对率、头部朝向误差与头稳耗时、拍照建房判定分段耗时。探针不占正式游戏本体、不进根 README 清单、**不提审**（内部真机验证用）。
+v1.0.2 诊断版（首版 v1.0.0）：真境漫游（RealMUD）阶段 1 的前置合并探针。目的只有一个：把正式版开工前说不准的四组数测出来——存储配额、开掌手势 LLM 定格判定认对率、头部朝向误差与头稳耗时、拍照建房判定分段耗时。探针不占正式游戏本体、不进根 README 清单、**不提审**（内部真机验证用）。
 
 ## Design contract
 
-- 7 页：首页（四站入口 + 进度摘要）、存储、手势、朝向、判定耗时、结果单、设置/自检。app.json 页数 = 7，实数对齐。
+- 7 页：首页（四站入口 + 进度摘要；v1.0.2 诊断版另在首页进度行下有 KEY / GES 两行原始事件显示——每个 keydown/keyup 的 code/key/keyCode 与头部手势的 gesture/type 原样印出并经 logq 以 key/ges 步名上报，探头只记录、不判断、不拦截，与选择处理并存）、存储、手势、朝向、判定耗时、结果单、设置/自检。app.json 页数 = 7，实数对齐。
 - 结果统一落 `mud.probe.results.v1`（wx 存储），键结构：`storage` / `gesture.trials[]` / `heading{trials[], nods, calibrated}` / `timing.runs[]`。每站完成即落盘，关掉重开不丢；设置页可整体清除重测。
 - **存储站**：localStorage 与 wx 存储各测——单值 1/10/50/100KB 写+读回校验（长度 + checksum）、累计 10KB 一块堆到失败或 500KB 上限、样本房间块 JSON（约 2.4KB）往返逐字比对、时间戳标记（进页先读旧标记再被本轮覆盖，结果单显示上轮标记在/不在）。测完清测试键。
 - **手势站**：开掌静态判定 10 次，管线 = 拍照（default）→ 缩图宽 480（失败回退原图并标注）→ `arrayBuffer` + 分块 `btoa` 转 data URL → `LanguageModel` 图片输入，只收结构化 JSON `{gesture: open_palm|other|none, confidence, recognized[]}`，枚举外/把握非数按 E6011 失败处理、不占次数。对错由测试者标真值（对/错），LLM 的答案永远不自任真值。认对 <5/10 时阶段 1 手势开门按探针门降级自评——判定在本探针之外由数据说话。
@@ -29,6 +29,7 @@ v1.0.1（首版 v1.0.0）：真境漫游（RealMUD）阶段 1 的前置合并探
 
 ## Validation
 
+- v1.0.2 静态检查（2026-11-12 已跑）：JSON 解析通过；全部 .js 与 7 页 setup 脚本 `node --check` 通过；禁用 API grep 0 命中；diff 核对除首页诊断件与全页 ver 串外零逻辑改动。预览管线重截 11 张（480×352、无 pageerror、右下角 v1.0.2）：首页 KEY/GES 初始文案在位，实测按 ArrowDown 后焦点高亮移到第 2 项且 KEY 行如实印出 `KEY up code=ArrowDown key=- kc=-`（预览运行时事件只有 code 有值，正说明各运行时事件形状不同、必须以真机探头为准）。AIX 字节数见 README。真机一轮待 GO：在首页做滑动/单击/双击/点头，把 KEY/GES 两行带回。
 - v1.0.1 静态检查（2026-11-12 已跑）：app.json/package.json JSON 解析通过；全部 .js 与 7 页 .ink setup 脚本 `node --check` 通过；grep 确认代码文件无 `event.key ||` 残留（onKeyDown/onKeyUp 均 code 优先、GlobalHook 每页接线 2 处）；禁用 API grep 0 命中（FileReader 等，v1.0.0 口径）；7 页均有 foot-row + 右下角 .ver。预览管线重截 11 张（7 页 + 结果单四段明细屏），无 pageerror：首页 ArrowDown 后焦点高亮实测移到第 2 项、结果单 5 屏逐屏切屏实测通（屏序与段名正确）、设置页 lastError 显示 v1.0.1。AIX 43,900 B。真机复测待 GO 一轮（滑动选择是否恢复以真机为准，预览不替代）。
 - Static（2026-10-29 已跑）：app.json/package.json JSON 解析通过；全部 .js 与 7 页 .ink setup 脚本 `node --check` 通过；禁用 API grep（代码文件）0 命中（含 FileReader 字面 0）；过时模式（App(/Page(/require/workers 字段等）0 命中；纯白 0 命中；错误码逐个对根表 v1.14.0 核义。
 - 预览：本地管线 7 页截图全产出、互异、无 pageerror；存储站在预览里实跑一轮全过（见上 honesty 注）。
