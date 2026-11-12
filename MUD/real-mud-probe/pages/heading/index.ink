@@ -45,7 +45,7 @@ export default {
     focusLine: '',
     cls0: 'act hot', cls1: 'act', cls2: 'act',
     evt: 'EVT: ready',
-    ver: 'v1.0.2'
+    ver: 'v1.0.3'
   },
   onLoad() {
     this._focus = 0;
