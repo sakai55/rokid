@@ -26,7 +26,7 @@ export default {
     focusLine: '',
     cls0: 'act hot', cls1: 'act', cls2: 'act', cls3: 'act',
     evt: 'EVT: ready',
-    ver: 'v1.0.2'
+    ver: 'v1.0.3'
   },
   onLoad() { this._focus = 0; this._busy = false; this._cur = null; this._render(); },
   onShow() { if (!this._busy) this._render(); },

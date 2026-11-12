@@ -23,7 +23,7 @@ export default {
     focusLine: '',
     cls0: 'banner', cls1: 'banner ghost', cls2: 'banner ghost',
     evt: 'EVT: ready',
-    ver: 'v1.0.2'
+    ver: 'v1.0.3'
   },
   onLoad() { this._focus = 0; this._render(); },
   onShow() { this._render(); },
