@@ -17,7 +17,7 @@
 // 端上限：单次 ≤50 条。
 import { BASE_URL, CHANNEL_KEY } from './config.js';
 
-export var APP_VERSION = '1.0.1';
+export var APP_VERSION = '1.0.2';
 
 var SLUG = 'real-mud-probe';
 var QUEUE_KEY = 'mudprobe_logq';
