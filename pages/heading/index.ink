@@ -43,8 +43,9 @@ export default {
     testLine: '测向：未开始（0/4）',
     nodLine: '点头计数：0（随时点头都计数）',
     focusLine: '',
+    cls0: 'act hot', cls1: 'act', cls2: 'act',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.0.1'
   },
   onLoad() {
     this._focus = 0;
@@ -166,12 +167,14 @@ export default {
   _render() {
     const r = loadResults();
     const trials = (r.heading && r.heading.trials) || [];
-    this.setData({
+    const upd = {
       calLine: this._center === null ? '校准：还没定中心（先面朝已知方向再点校准）' : '校准：已定中心（当前朝向 = 北 0°）',
       testLine: '测向：已记 ' + trials.length + '/4' + (trials.length ? '（' + trials.map(function (t) { return t.target + ' 误差' + t.errDeg + '°'; }).join(' · ') + '）' : ''),
       nodLine: '点头计数：' + this._nods + '（随时点头都计数，测点头通道）',
       focusLine: '焦点：' + ACTS[this._focus] + '（上下切换，单击执行；点头只计数不执行）'
-    });
+    };
+    for (var i = 0; i < ACTS.length; i++) upd['cls' + i] = (i === this._focus) ? 'act hot' : 'act';
+    this.setData(upd);
   },
   backTap() { try { wx.navigateBack({}); } catch (e) {} },
   actTap(e) { const idx = e && e.currentTarget && e.currentTarget.dataset ? Number(e.currentTarget.dataset.idx) : NaN; if (!isNaN(idx)) this._focus = idx; this.doAct(); },
@@ -192,13 +195,19 @@ export default {
     this._render();
   },
   onKeyDown(event) {
-    var k = event.key || event.code;
-    if (k === 'Enter') this.doAct();
-    else if (k === 'ArrowUp') this.moveTap(-1);
-    else if (k === 'ArrowDown') this.moveTap(1);
-    else if (k === 'Backspace') this.backTap();
+    // 按键一律以 event.code 为准：真机 event.key 不可靠且会遮蔽 code（v1.0.1 修复）。
+    var code = (event && event.code) || '';
+    if (!code && event && event.key) code = event.key;
+    if (code === 'Enter' || code === 'GlobalHook') this.doAct();
+    else if (code === 'ArrowUp') this.moveTap(-1);
+    else if (code === 'ArrowDown') this.moveTap(1);
+    else if (code === 'Backspace') this.backTap();
   },
-  onKeyUp(event) { const k = event && event.key; if ((k === 'Enter' || k === 'ArrowUp' || k === 'ArrowDown') && event.preventDefault) event.preventDefault(); }
+  onKeyUp(event) {
+    var code = (event && event.code) || '';
+    if (!code && event && event.key) code = event.key;
+    if ((code === 'Enter' || code === 'GlobalHook' || code === 'ArrowUp' || code === 'ArrowDown') && event.preventDefault) event.preventDefault();
+  }
 };
 </script>
 
@@ -212,16 +221,19 @@ export default {
       <text class="line">点头：这一页点头只计数不执行任何操作，用来单测点头通道。</text>
     </view>
     <view class="acts">
-      <button class="act hot" bindtap="actTap" data-idx="0">校准中心</button>
-      <button class="act" bindtap="actTap" data-idx="1">开始测向</button>
-      <button class="act" bindtap="actTap" data-idx="2">BACK</button>
+      <button class="{{cls0}}" bindtap="actTap" data-idx="0">校准中心</button>
+      <button class="{{cls1}}" bindtap="actTap" data-idx="1">开始测向</button>
+      <button class="{{cls2}}" bindtap="actTap" data-idx="2">BACK</button>
     </view>
     <text class="line big">{{yawLine}}</text>
     <text class="line">{{calLine}}</text>
     <text class="line">{{testLine}}</text>
     <text class="line">{{nodLine}}</text>
     <text class="line dim">{{focusLine}}</text>
-    <text class="foot">{{evt}} · {{ver}}</text>
+    <view class="foot-row">
+      <text class="foot">{{evt}}</text>
+      <text class="ver">{{ver}}</text>
+    </view>
   </view>
 </page>
 
@@ -236,5 +248,7 @@ export default {
 .acts { display: flex; flex-direction: row; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
 .act { color: #7dff9e; background-color: #04140a; border: 1px solid rgba(125,255,158,0.6); padding: 5px 9px; font-size: 12px; text-align: center; }
 .act.hot { color: #04140a; background-color: #40ff5e; font-weight: 500; }
-.foot { color: rgba(64,255,94,0.55); font-family: monospace; font-size: 10px; line-height: 12px; margin-top: 3px; }
+.foot-row { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-top: auto; padding-top: 3px; }
+.foot { flex-grow: 1; color: rgba(64,255,94,0.55); font-family: monospace; font-size: 10px; line-height: 12px; }
+.ver { color: rgba(125,255,158,0.75); font-family: monospace; font-size: 10px; line-height: 12px; text-align: right; }
 </style>

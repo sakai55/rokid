@@ -17,7 +17,7 @@ https://github.com/sakai55/rokid/tree/agent-real-mud-probe
 | 朝向探针 | 校准后依次朝东南西北转头，进 ±10° 停稳 0.8 秒记到达；点头单独计数 | 4 次到达误差（度）、头稳耗时、点头计数 → 定转头选出口的可行性与阈值 |
 | 判定耗时 | default 拍照建房判定全程分段计时 3 次，附带非阻塞定位 | 拍照/编码/LLM/总 ms、把握度、认出物数、定位精度 → 定玩家体感等待与管线优化点 |
 
-结果单页汇总四站大字数字，持久保存、可翻回看，就是主反馈面。
+结果单共 5 屏（第 1 屏四站大字汇总 + 存储逐项 / 手势逐次 / 朝向逐向 / 判定逐次四段明细），持久保存、可翻回看，就是主反馈面。
 
 ## 打包前必做（日志回传配置）
 
@@ -31,7 +31,7 @@ https://github.com/sakai55/rokid/tree/agent-real-mud-probe
 ## 反馈三路（真机测完怎么把数传回来）
 
 1. **日志回传**：按上节配好 config，四站结果与结果单汇总自动上报，在项目聊里由 Muse 拉取呈现。
-2. **拍结果单**：不配钥匙就打开结果单页，拍一张发回来，四站关键数都在上面。
+2. **拍结果单（本地图片路）**：不依赖网络与钥匙——结果单共 5 屏（汇总 + 四段明细：存储逐项 / 手势逐次 / 朝向逐向 / 判定逐次），在结果单页用「明细下一屏」逐屏翻，逐屏截屏或拍照发回，即带回四站全部原始数（每档 ✓/✗ 与累计、逐次判定与把握、逐向误差与头稳、逐次四段耗时与定位）。
 3. **报裸码**：哪一站出问题，把眼镜上显示的错误码（如 E7008）报回来即可对表定位；最近一次错误也存在设置页的 lastError 里。
 
 ## 手势映射
@@ -64,7 +64,7 @@ https://github.com/sakai55/rokid/tree/agent-real-mud-probe
 ~/tools/bin/aix preview . --html-out artifacts/preview.html
 ```
 
-AIX：[MUD/aix/real-mud-probe.aix](https://github.com/sakai55/rokid/blob/main/MUD/aix/real-mud-probe.aix)，31,785 B（v1.0.0）。
+AIX：[MUD/aix/real-mud-probe.aix](https://github.com/sakai55/rokid/blob/main/MUD/aix/real-mud-probe.aix)，43,900 B（v1.0.1）。
 
 ## 错误码
 
@@ -81,6 +81,10 @@ Web 预览无真相机/LLM/传感器：手势、耗时两站与朝向的传感�
 ![朝向探针](https://raw.githubusercontent.com/sakai55/rokid/main/MUD/screenshots/real-mud-probe/preview-real-mud-probe-heading.png)
 ![判定耗时](https://raw.githubusercontent.com/sakai55/rokid/main/MUD/screenshots/real-mud-probe/preview-real-mud-probe-timing.png)
 ![结果单](https://raw.githubusercontent.com/sakai55/rokid/main/MUD/screenshots/real-mud-probe/preview-real-mud-probe-result.png)
+![结果单 · 存储逐项](https://raw.githubusercontent.com/sakai55/rokid/main/MUD/screenshots/real-mud-probe/preview-real-mud-probe-result-storage.png)
+![结果单 · 手势逐次](https://raw.githubusercontent.com/sakai55/rokid/main/MUD/screenshots/real-mud-probe/preview-real-mud-probe-result-gesture.png)
+![结果单 · 朝向逐向](https://raw.githubusercontent.com/sakai55/rokid/main/MUD/screenshots/real-mud-probe/preview-real-mud-probe-result-heading.png)
+![结果单 · 判定逐次](https://raw.githubusercontent.com/sakai55/rokid/main/MUD/screenshots/real-mud-probe/preview-real-mud-probe-result-timing.png)
 ![设置自检](https://raw.githubusercontent.com/sakai55/rokid/main/MUD/screenshots/real-mud-probe/preview-real-mud-probe-settings.png)
 
 ## 设备测试信息
@@ -88,7 +92,7 @@ Web 预览无真相机/LLM/传感器：手势、耗时两站与朝向的传感�
 | 项 | 值 |
 |---|---|
 | Studio 名 | 真境探针（Real MUD Probe） |
-| Version / Build | 1.0.0 / —（未导入） |
+| Version / Build | 1.0.1 / —（未导入） |
 | App Category | —（探针不提审，导入时按 Studio 要求选工具类） |
 | Intent Description | 四站真机探针：存储/手势判定/朝向/判定耗时 |
 | Agent ID | —（未导入） |
@@ -104,6 +108,10 @@ Web 预览无真相机/LLM/传感器：手势、耗时两站与朝向的传感�
 - Change Log：见下。
 
 ## Change Log
+
+### 1.0.1
+- Fixes：真机上滑动/单击选不了任何功能。根因——7 页 `onKeyDown`/`onKeyUp` 都先读 `event.key`（`event.key || event.code`），真机运行时 `event.key` 的值不可靠且会遮蔽 `event.code`，ArrowUp/Down/Enter 全部匹配不上；Web 预览里 Chromium 的 `event.key` 恰好是标准值，所以预览测不出。改法（照大表哥、glasses-benchmark 修复版的真机成例）：按键一律以 `event.code` 为准、缺失才回退 `event.key`；Enter 与 GlobalHook 执行焦点、ArrowDown/ArrowUp 切焦点、Backspace 返回；`onKeyUp` 同样按 code 判断并 preventDefault 挡宿主默认动作。另修首页焦点表与按钮不一致：MENU 去掉没有按钮的「BACK 退出」项（7 项 → 6 项，与 6 个按钮对齐），退出靠双击 Backspace（与手势映射一致）；其余 6 页动作表与按钮数逐页核对一致。
+- Improvements：焦点高亮改为 data 的 cls 驱动——当前焦点项按钮实心、其余描边，与底部 focusLine 文字双保险（v1.0.0 时焦点只写在文字里、按钮高亮固定在第一项，看不出选了谁）。每页页脚改 flex row：左侧 EVT 等原文，右下角固定单独显示版本号（照大表哥 foot-row + .ver 成例）。结果单由一屏扩为 5 屏（汇总 + 存储逐项 / 手势逐次 / 朝向逐向 / 判定逐次四段明细，新增焦点动作「明细下一屏」逐屏翻），每段逐项列全落盘原始数——网络日志回传不可用时，逐屏截屏/拍照即可独立带回全部结果。
 
 ### 1.0.0
 - Features added：四站探针（存储双后端四项、手势开掌判定 10 次真值标注、朝向校准 + 四向误差与头稳、判定分段计时 3 次 + 非阻塞定位）、结果单大字汇总、设置/自检（lastError 显示、清除结果）、可选日志回传（config.js 双配置，照 AV11 logq 形态）。
