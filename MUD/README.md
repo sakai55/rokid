@@ -23,7 +23,7 @@ MUD/
   GAME-DESIGN.md       游戏规划 v0.1
   concepts/            概念图 10 张 + 合辑（png/jpg）
   real-mud-probe/      探针工程本体（真境探针）
-  screenshots/real-mud-probe/   探针全页预览截图（7 张）
+  screenshots/real-mud-probe/   探针全页预览截图（11 张：7 页 + 结果单四段明细屏）
   aix/real-mud-probe.aix        探针打包产物
 ```
 
@@ -32,7 +32,7 @@ MUD/
 | 阶段 | 内容 | 状态 | 日期 |
 |---|---|---|---|
 | 阶段 0 | 架构与规划（ARCHITECTURE v0.1 + GAME-DESIGN v0.1 + 概念图） | 已交付，待 GO 点头 | 2026-10-29 |
-| 探针 | real-mud-probe：存储 / 手势认对率 / 朝向误差与头稳 / 判定分段耗时 四站 + 结果单 | 已建成（main `b547077`；AIX 31,785 B；截图 7 张）；真机状态：待 GO 真机一轮 | 2026-10-29 |
+| 探针 | real-mud-probe：存储 / 手势认对率 / 朝向误差与头稳 / 判定分段耗时 四站 + 结果单 | 已建成 v1.0.0（main `b547077`；AIX 31,785 B；截图 7 张）；v1.0.1 修复真机滑动选择（按键改 event.code 优先 + 焦点高亮 + 右下角版本号 + 结果单扩为 5 屏带回全部原始数）（AIX 43,900 B；截图 11 张）；真机状态：待 GO 以 v1.0.1 复测一轮 | 2026-11-12 |
 | 阶段 1 | 单机测试版：最小闭环上真机，GO 玩一轮只盯操作，收尾冻结《操作定义 v1》 | 未开工（等架构点头；探针数据是开工输入） | — |
 | 阶段 2 | 单机完整版 | 未开工 | — |
 | 阶段 3 | 联机版（自建后端，复用 rokidpost 的 Cloudflare 模式） | 未开工 | — |
@@ -42,7 +42,7 @@ MUD/
 
 | 成员 | slug | 分支 | Studio 导入地址 | 状态 |
 |---|---|---|---|---|
-| 真境探针（探针，不占正式游戏本体） | `real-mud-probe` | `agent-real-mud-probe` | `https://github.com/sakai55/rokid/tree/agent-real-mud-probe` | 已建成（main `b547077`），待 GO 真机一轮；不提审 |
+| 真境探针（探针，不占正式游戏本体） | `real-mud-probe` | `agent-real-mud-probe` | `https://github.com/sakai55/rokid/tree/agent-real-mud-probe` | 已建成 v1.0.1（v1.0.0 main `b547077`；v1.0.1 修复滑动选择与结果单 5 屏），待 GO 真机复测；不提审 |
 
 正式游戏本体建成后在同表登记（同放本文件夹，分支与导入地址照此例）。
 

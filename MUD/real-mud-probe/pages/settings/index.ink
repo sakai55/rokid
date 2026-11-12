@@ -21,8 +21,9 @@ export default {
     cfgLine: '日志回传：未配置（静默）',
     chkLine: '自检：—',
     focusLine: '',
+    cls0: 'banner', cls1: 'banner ghost', cls2: 'banner ghost',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.0.1'
   },
   onLoad() { this._focus = 0; this._render(); },
   onShow() { this._render(); },
@@ -35,12 +36,14 @@ export default {
     checks.push('LLM ' + ((typeof LanguageModel !== 'undefined') ? '有' : '无'));
     checks.push('朝向传感器 ' + ((typeof AbsoluteOrientationSensor !== 'undefined') ? '有' : '无'));
     checks.push('定位 ' + ((typeof navigator !== 'undefined' && navigator.geolocation) ? '有' : '无'));
-    this.setData({
+    const upd = {
       errLine: le ? ('lastError：' + le.code + ' · ' + le.slug + ' v' + le.version + ' · ' + String(le.at || '').slice(0, 16) + '\n原文：' + String(le.raw || '').slice(0, 80)) : 'lastError：无（还没出过错）',
       cfgLine: '日志回传：' + (cfgOn ? ('已启用 → ' + BASE_URL + '/log（钥匙不显示）') : '未配置两件齐（config.js 的 BASE_URL / CHANNEL_KEY）→ 完全静默，不影响探针'),
       chkLine: '自检：' + checks.join(' · ') + '（「无」在 Web 预览里常见，真机为准）',
       focusLine: '焦点：' + ACTS[this._focus] + '（上下切换，单击或点头执行）'
-    });
+    };
+    for (var i = 0; i < ACTS.length; i++) upd['cls' + i] = (i === this._focus) ? 'banner' : 'banner ghost';
+    this.setData(upd);
   },
   clearResultsTap() {
     try { wx.removeStorageSync(RESULTS_KEY); } catch (e) {}
@@ -60,13 +63,19 @@ export default {
   moveTap(d) { this._focus = (this._focus + d + ACTS.length) % ACTS.length; this.setData({ evt: 'EVT: focus ' + ACTS[this._focus] }); this._render(); },
   onHeadGesture(event) { const d = (event && event.detail) || event || {}; const g = d.gesture || d.type || ''; if (g === 'nod') this.doAct(); },
   onKeyDown(event) {
-    var k = event.key || event.code;
-    if (k === 'Enter') this.doAct();
-    else if (k === 'ArrowUp') this.moveTap(-1);
-    else if (k === 'ArrowDown') this.moveTap(1);
-    else if (k === 'Backspace') this.backTap();
+    // 按键一律以 event.code 为准：真机 event.key 不可靠且会遮蔽 code（v1.0.1 修复）。
+    var code = (event && event.code) || '';
+    if (!code && event && event.key) code = event.key;
+    if (code === 'Enter' || code === 'GlobalHook') this.doAct();
+    else if (code === 'ArrowUp') this.moveTap(-1);
+    else if (code === 'ArrowDown') this.moveTap(1);
+    else if (code === 'Backspace') this.backTap();
   },
-  onKeyUp(event) { const k = event && event.key; if ((k === 'Enter' || k === 'ArrowUp' || k === 'ArrowDown') && event.preventDefault) event.preventDefault(); }
+  onKeyUp(event) {
+    var code = (event && event.code) || '';
+    if (!code && event && event.key) code = event.key;
+    if ((code === 'Enter' || code === 'GlobalHook' || code === 'ArrowUp' || code === 'ArrowDown') && event.preventDefault) event.preventDefault();
+  }
 };
 </script>
 
@@ -79,11 +88,14 @@ export default {
       <text class="line">{{cfgLine}}</text>
       <text class="line">{{chkLine}}</text>
     </view>
-    <button class="banner" bindtap="actTap" data-idx="0">清除全部结果</button>
-    <button class="banner ghost" bindtap="actTap" data-idx="1">清除 lastError</button>
-    <button class="banner ghost" bindtap="actTap" data-idx="2">BACK 返回</button>
+    <button class="{{cls0}}" bindtap="actTap" data-idx="0">清除全部结果</button>
+    <button class="{{cls1}}" bindtap="actTap" data-idx="1">清除 lastError</button>
+    <button class="{{cls2}}" bindtap="actTap" data-idx="2">BACK 返回</button>
     <text class="line dim">{{focusLine}}</text>
-    <text class="foot">{{evt}} · {{ver}}</text>
+    <view class="foot-row">
+      <text class="foot">{{evt}}</text>
+      <text class="ver">{{ver}}</text>
+    </view>
   </view>
 </page>
 
@@ -96,5 +108,7 @@ export default {
 .dim { color: rgba(64,255,94,0.55); }
 .banner { color: #04140a; background-color: #40ff5e; padding: 6px; font-size: 13px; font-weight: 500; text-align: center; margin-top: 6px; }
 .banner.ghost { color: #7dff9e; background-color: #04140a; border: 1px solid rgba(125,255,158,0.6); }
-.foot { color: rgba(64,255,94,0.55); font-family: monospace; font-size: 10px; line-height: 12px; margin-top: 3px; }
+.foot-row { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-top: auto; padding-top: 3px; }
+.foot { flex-grow: 1; color: rgba(64,255,94,0.55); font-family: monospace; font-size: 10px; line-height: 12px; }
+.ver { color: rgba(125,255,158,0.75); font-family: monospace; font-size: 10px; line-height: 12px; text-align: right; }
 </style>

@@ -23,18 +23,21 @@ export default {
     runLine: '还没有记录（0/3）',
     geoLine: '定位：未读',
     focusLine: '',
+    cls0: 'banner', cls1: 'banner ghost',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.0.1'
   },
   onLoad() { this._focus = 0; this._busy = false; this._render(); },
   onShow() { if (!this._busy) this._render(); },
   _render() {
     const r = loadResults();
     const runs = (r.timing && r.timing.runs) || [];
-    this.setData({
+    const upd = {
       runLine: runs.length ? runs.map(function (x, i) { return '第' + (i + 1) + '次：总 ' + x.totalMs + ' ms（拍 ' + x.photoMs + ' / 编 ' + x.encodeMs + ' / LLM ' + x.llmMs + '）· 把握 ' + x.confidence + ' · 认出 ' + x.recognizedCount + ' 物'; }).join('\n') : '还没有记录（0/3）',
       focusLine: '焦点：' + ACTS[this._focus] + '（上下切换，单击或点头执行）'
-    });
+    };
+    for (var i = 0; i < ACTS.length; i++) upd['cls' + i] = (i === this._focus) ? 'banner' : 'banner ghost';
+    this.setData(upd);
   },
   _geoStart(runIdx) {
     // 非阻塞：只挂回调，判定流程不等它。结果回来后补进对应记录。
@@ -115,13 +118,19 @@ export default {
   moveTap(d) { this._focus = (this._focus + d + ACTS.length) % ACTS.length; this.setData({ evt: 'EVT: focus ' + ACTS[this._focus] }); this._render(); },
   onHeadGesture(event) { const d = (event && event.detail) || event || {}; const g = d.gesture || d.type || ''; if (g === 'nod') this.doAct(); },
   onKeyDown(event) {
-    var k = event.key || event.code;
-    if (k === 'Enter') this.doAct();
-    else if (k === 'ArrowUp') this.moveTap(-1);
-    else if (k === 'ArrowDown') this.moveTap(1);
-    else if (k === 'Backspace') this.backTap();
+    // 按键一律以 event.code 为准：真机 event.key 不可靠且会遮蔽 code（v1.0.1 修复）。
+    var code = (event && event.code) || '';
+    if (!code && event && event.key) code = event.key;
+    if (code === 'Enter' || code === 'GlobalHook') this.doAct();
+    else if (code === 'ArrowUp') this.moveTap(-1);
+    else if (code === 'ArrowDown') this.moveTap(1);
+    else if (code === 'Backspace') this.backTap();
   },
-  onKeyUp(event) { const k = event && event.key; if ((k === 'Enter' || k === 'ArrowUp' || k === 'ArrowDown') && event.preventDefault) event.preventDefault(); }
+  onKeyUp(event) {
+    var code = (event && event.code) || '';
+    if (!code && event && event.key) code = event.key;
+    if ((code === 'Enter' || code === 'GlobalHook' || code === 'ArrowUp' || code === 'ArrowDown') && event.preventDefault) event.preventDefault();
+  }
 };
 </script>
 
@@ -134,12 +143,15 @@ export default {
       <text class="line">拍什么都行（你日常待的地方），照片不保存，判定完只留数字与一句概括。</text>
       <text class="line">每次同时顺手读一次定位（不阻塞）：成功记精度，失败记码，都不影响判定。</text>
     </view>
-    <button class="banner" bindtap="actTap" data-idx="0">跑一次判定</button>
-    <button class="banner ghost" bindtap="actTap" data-idx="1">BACK 返回</button>
+    <button class="{{cls0}}" bindtap="actTap" data-idx="0">跑一次判定</button>
+    <button class="{{cls1}}" bindtap="actTap" data-idx="1">BACK 返回</button>
     <text class="line">{{runLine}}</text>
     <text class="line">{{geoLine}}</text>
     <text class="line dim">{{focusLine}}</text>
-    <text class="foot">{{evt}} · {{ver}}</text>
+    <view class="foot-row">
+      <text class="foot">{{evt}}</text>
+      <text class="ver">{{ver}}</text>
+    </view>
   </view>
 </page>
 
@@ -152,5 +164,7 @@ export default {
 .dim { color: rgba(64,255,94,0.55); }
 .banner { color: #04140a; background-color: #40ff5e; padding: 6px; font-size: 13px; font-weight: 500; text-align: center; margin-top: 6px; }
 .banner.ghost { color: #7dff9e; background-color: #04140a; border: 1px solid rgba(125,255,158,0.6); }
-.foot { color: rgba(64,255,94,0.55); font-family: monospace; font-size: 10px; line-height: 12px; margin-top: 3px; }
+.foot-row { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-top: auto; padding-top: 3px; }
+.foot { flex-grow: 1; color: rgba(64,255,94,0.55); font-family: monospace; font-size: 10px; line-height: 12px; }
+.ver { color: rgba(125,255,158,0.75); font-family: monospace; font-size: 10px; line-height: 12px; text-align: right; }
 </style>

@@ -24,8 +24,9 @@ export default {
     judgeLine: '判定：还没拍',
     truthLine: '真值：判定后由你标 对 / 错',
     focusLine: '',
+    cls0: 'act hot', cls1: 'act', cls2: 'act', cls3: 'act',
     evt: 'EVT: ready',
-    ver: 'v1.0.0'
+    ver: 'v1.0.1'
   },
   onLoad() { this._focus = 0; this._busy = false; this._cur = null; this._render(); },
   onShow() { if (!this._busy) this._render(); },
@@ -34,10 +35,12 @@ export default {
     const trials = this._trials();
     const marked = trials.filter(function (t) { return t && t.truth; });
     const right = marked.filter(function (t) { return t.truth === 'right'; }).length;
-    this.setData({
+    const upd = {
       progLine: '进度：已标真值 ' + marked.length + '/10 · 当前认对 ' + right + ' 次' + (marked.length >= 10 ? ' · 本站完成' : ''),
       focusLine: '焦点：' + ACTS[this._focus] + '（上下切换，单击执行；摆好后点头也可拍照）'
-    });
+    };
+    for (var i = 0; i < ACTS.length; i++) upd['cls' + i] = (i === this._focus) ? 'act hot' : 'act';
+    this.setData(upd);
   },
   async shootTap() {
     if (this._busy) return;
@@ -99,13 +102,19 @@ export default {
   moveTap(d) { this._focus = (this._focus + d + ACTS.length) % ACTS.length; this.setData({ evt: 'EVT: focus ' + ACTS[this._focus] }); this._render(); },
   onHeadGesture(event) { const d = (event && event.detail) || event || {}; const g = d.gesture || d.type || ''; if (g === 'nod' && !this._cur) this.shootTap(); },
   onKeyDown(event) {
-    var k = event.key || event.code;
-    if (k === 'Enter') this.doAct();
-    else if (k === 'ArrowUp') this.moveTap(-1);
-    else if (k === 'ArrowDown') this.moveTap(1);
-    else if (k === 'Backspace') this.backTap();
+    // 按键一律以 event.code 为准：真机 event.key 不可靠且会遮蔽 code（v1.0.1 修复）。
+    var code = (event && event.code) || '';
+    if (!code && event && event.key) code = event.key;
+    if (code === 'Enter' || code === 'GlobalHook') this.doAct();
+    else if (code === 'ArrowUp') this.moveTap(-1);
+    else if (code === 'ArrowDown') this.moveTap(1);
+    else if (code === 'Backspace') this.backTap();
   },
-  onKeyUp(event) { const k = event && event.key; if ((k === 'Enter' || k === 'ArrowUp' || k === 'ArrowDown') && event.preventDefault) event.preventDefault(); }
+  onKeyUp(event) {
+    var code = (event && event.code) || '';
+    if (!code && event && event.key) code = event.key;
+    if ((code === 'Enter' || code === 'GlobalHook' || code === 'ArrowUp' || code === 'ArrowDown') && event.preventDefault) event.preventDefault();
+  }
 };
 </script>
 
@@ -119,16 +128,19 @@ export default {
       <text class="line">每次判定后必须标真值才计入次数；失败（没拍到/没网）不占次数。</text>
     </view>
     <view class="acts">
-      <button class="act hot" bindtap="actTap" data-idx="0">拍照判定</button>
-      <button class="act" bindtap="actTap" data-idx="1">判对</button>
-      <button class="act" bindtap="actTap" data-idx="2">判错</button>
-      <button class="act" bindtap="actTap" data-idx="3">BACK</button>
+      <button class="{{cls0}}" bindtap="actTap" data-idx="0">拍照判定</button>
+      <button class="{{cls1}}" bindtap="actTap" data-idx="1">判对</button>
+      <button class="{{cls2}}" bindtap="actTap" data-idx="2">判错</button>
+      <button class="{{cls3}}" bindtap="actTap" data-idx="3">BACK</button>
     </view>
     <text class="line">{{progLine}}</text>
     <text class="line">{{judgeLine}}</text>
     <text class="line">{{truthLine}}</text>
     <text class="line dim">{{focusLine}}</text>
-    <text class="foot">{{evt}} · {{ver}}</text>
+    <view class="foot-row">
+      <text class="foot">{{evt}}</text>
+      <text class="ver">{{ver}}</text>
+    </view>
   </view>
 </page>
 
@@ -142,5 +154,7 @@ export default {
 .acts { display: flex; flex-direction: row; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
 .act { color: #7dff9e; background-color: #04140a; border: 1px solid rgba(125,255,158,0.6); padding: 5px 9px; font-size: 12px; text-align: center; }
 .act.hot { color: #04140a; background-color: #40ff5e; font-weight: 500; }
-.foot { color: rgba(64,255,94,0.55); font-family: monospace; font-size: 10px; line-height: 12px; margin-top: 3px; }
+.foot-row { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-top: auto; padding-top: 3px; }
+.foot { flex-grow: 1; color: rgba(64,255,94,0.55); font-family: monospace; font-size: 10px; line-height: 12px; }
+.ver { color: rgba(125,255,158,0.75); font-family: monospace; font-size: 10px; line-height: 12px; text-align: right; }
 </style>
