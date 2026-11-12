@@ -2,6 +2,7 @@
 
 被替代的旧版快照，新版在前。现行版是 docs/CAPABILITIES.md，旧版只作沿革查证，不作开发依据。
 
+- [CAPABILITIES-v2.3.0.md](CAPABILITIES-v2.3.0.md) 2026-11-13 被 v2.4.0 取代（上游 #104 给出媒体库操作指引，C7004 至 C7007 改写、第 5 节第 12 条撤下）。
 - [CAPABILITIES-v2.2.0.md](CAPABILITIES-v2.2.0.md) 2026-10-31 被 v2.3.0 取代（第 4 节登记二维码容量探针、C6003 补句柄调用约束）。
 - [CAPABILITIES-v2.1.0.md](CAPABILITIES-v2.1.0.md) 2026-10-30 被 v2.2.0 取代（第 4 节登记存储探针、第 5 节新增媒体库操作面未明条）。
 - [CAPABILITIES-v2.0.0.md](CAPABILITIES-v2.0.0.md) 原子注册表初版，2026-10-30 被 v2.1.0 取代（C6003 结论订正）。

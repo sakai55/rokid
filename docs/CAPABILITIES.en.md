@@ -2,9 +2,9 @@
 
 [中文](CAPABILITIES.md) | English | [日本語](CAPABILITIES.ja.md)
 
-English edition of the Chinese version v2.3.0, dated 2026-10-31. The Chinese text is authoritative; where the two differ, the Chinese governs.
+English edition of the Chinese version v2.4.0, dated 2026-11-13. The Chinese text is authoritative; where the two differ, the Chinese governs.
 
-> Compiled 2026-10-24. Current version: v2.3.0, 2026-10-31.
+> Compiled 2026-10-24. Current version: v2.4.0, 2026-11-13.
 > Sources: **official Rokid material only** — the product pages, the documentation site, and the `yodaos-project/AIUI` GitHub repository, including the `aiui-dev` skill references bundled with it — supplemented by the maintainer's own device and build testing. Anything that rests on testing rather than documentation is flagged as such in the entry itself. The API contract comes primarily from `skills/aiui-dev` in the official repository; citations below take the form `skill: references/…`.
 
 ## About this registry
@@ -183,17 +183,17 @@ Sources: `skill: references/apis/web.md`, `skill: references/apis/wx.md`, and th
 
 ### 3.7 Permissions
 
-Source: the permissions table in the official framework documentation, `app-json.md`, as corrected by a full audit on 2026-10-29. There are seven permissions. Names are case-sensitive, and an unrecognized name grants nothing. Note also the upstream inconsistency recorded at C7008.
+Source: the permissions table in the official framework documentation, `app-json.md`, as corrected by a full audit on 2026-10-29. There are seven permissions. Names are case-sensitive, and an unrecognized name grants nothing. Note also the upstream inconsistency recorded at C7008. The media-library operation surface additionally follows `skill: references/apis/media.md` (upstream #104, synced 2026-11-12).
 
 | ID | Primitive | Finding | Verification |
 |---|---|---|---|
 | C7001 | `GEOLOCATION` | Current position and position updates — see C4009 | Docs only |
 | C7002 | `CAMERA` | Camera access; stills and video capture — see section 3.2 | Docs only |
 | C7003 | `RECORD_AUDIO` | Microphone access and audio capture. Speech recognition depends on this permission to open the microphone; there is no separate ASR permission. The legacy `SPEECH_RECOGNITION` was removed in Ink 0.19 | Docs only |
-| C7004 | `READ_MEDIA_IMAGES` | List and read images in the system media library | Docs only |
-| C7005 | `CREATE_MEDIA_IMAGES` | Add images to the system media library. Modifying or overwriting existing assets is not included | Docs only |
-| C7006 | `READ_MEDIA_AUDIO` | List and read audio in the system media library | Docs only |
-| C7007 | `CREATE_MEDIA_AUDIO` | Add audio to the system media library. Modifying or overwriting existing assets is not included | Docs only |
+| C7004 | `READ_MEDIA_IMAGES` | List and read images in the system media library via `navigator.mediaLibrary.list()` and `get()`; read authorization via `getAuthorizationStatus` / `requestAuthorization('read', 'image')`, returning `prompt` / `restricted` / `denied` / `limited` / `granted` | Docs only |
+| C7005 | `CREATE_MEDIA_IMAGES` | Add images to the system media library via `navigator.mediaLibrary.save(blob)` — the Blob must be a non-empty `image/*`, with optional `filename` / `creationTime` / `idempotencyKey`; write authorization via `requestAuthorization('add', 'image')`. Modifying or overwriting existing assets is not included | Docs only |
+| C7006 | `READ_MEDIA_AUDIO` | List and read audio in the system media library via `navigator.mediaLibrary.list()` and `get()` (`mediaType: 'audio'`); iOS does not support audio library operations | Docs only |
+| C7007 | `CREATE_MEDIA_AUDIO` | Add audio to the system media library via `navigator.mediaLibrary.save(blob)` — the Blob must be a non-empty `audio/*`. Modifying or overwriting existing assets is not included; iOS does not support audio library operations | Docs only |
 | C7008 | The permission list in the upstream docs | The framework reference bundled with the `aiui-dev` skill still lists only the first three permissions — an inconsistency inside the upstream documentation itself. The seven names in the formal framework document govern | Docs only |
 
 ### 3.8 Interaction and host
@@ -261,7 +261,6 @@ None of the following are entries. Each is a place where Rokid's own sources dis
 9. Hardware generations differ: for Rokid Glasses 2 and the first-generation full-color glasses, the official events reference marks the key mappings unverified. Do not assume the mappings in section 3.8 carry over.
 10. The official documentation runs on two tracks: open.rokid.com/aiui is current and js.rokid.com is older, and the two have never been diffed page by page. This registry follows the official repository's documentation and the `aiui-dev` skill.
 11. The package size limit, the exact place to file domains for the allowlist, and review turnaround times are all unspecified in official material (C9002, C6011).
-12. The media-library operation surface is undocumented: the four media permissions are defined in the app.json permission table (C7004 through C7007), but no official document names the API for listing, reading or saving media-library assets — the table says only that the relevant operations check the permission. Establish the operation surface before building album features, and never assume a same-named API from another platform.
 
 ## 6. Official sources
 
@@ -288,6 +287,10 @@ None of the following are entries. Each is a place where Rokid's own sources dis
 - Documentation index, including the unsupported markings for topics such as LAN access, prefetch, and source maps: https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
 
 ## 7. Changelog
+
+### v2.4.0 — 2026-11-13
+
+Upstream aiui-dev #104 (cf2908b, synced 2026-11-12) supplies the media-library operation guidance: entries C7004 through C7007 are rewritten per `skill: references/apis/media.md` — reads and writes both go through `navigator.mediaLibrary` (`list` / `get` / `save`), with authorization split into `read` and `add`; verification stays "Docs only", device behaviour still to be confirmed. Section 5 item 12 (media-library operation surface undocumented) is now clarified and retired. Noted boundaries: video library operations and `allowNetwork` are unsupported, and a cloud-only image unavailable locally can fail with `OperationError`.
 
 ### v2.3.0 — 2026-10-31
 

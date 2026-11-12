@@ -2,7 +2,7 @@
 
 中文 | [English](CAPABILITIES.en.md) | [日本語](CAPABILITIES.ja.md)
 
-> 编制日期：2026-10-24；当前版本 v2.3.0，2026-10-31
+> 编制日期：2026-10-24；当前版本 v2.4.0，2026-11-13
 > 资料原则：**只采用 Rokid 官方来源**（官方产品页、官方文档站、官方 GitHub 仓库 `yodaos-project/AIUI` 及其内置的 `aiui-dev` skill 参考），外加本注册表维护者自己的真机与构建实测，实测结论在条目里单独标明。官方仓库 `skills/aiui-dev` 是 API 契约的主来源，下文依据写作 `skill: references/…`。
 
 ## 写在前面
@@ -181,17 +181,17 @@
 
 ### 3.7 权限
 
-依据：官方 framework 文档 app-json.md 权限表，2026-10-29 全量审计订正。共 7 个，名称大小写敏感，未识别的名称不授予任何能力；另注意 C7008 的上游不一致。
+依据：官方 framework 文档 app-json.md 权限表，2026-10-29 全量审计订正。共 7 个，名称大小写敏感，未识别的名称不授予任何能力；另注意 C7008 的上游不一致。媒体库操作面另据 `skill: references/apis/media.md`（上游 #104，2026-11-12 同步）。
 
 | 编号 | 原语 | 结论 | 实测 |
 |---|---|---|---|
 | C7001 | 权限 GEOLOCATION | 获取当前位置与监听位置变化，见 C4009 | 文档 |
 | C7002 | 权限 CAMERA | 访问摄像头、拍摄图像或视频，见 3.2 节 | 文档 |
 | C7003 | 权限 RECORD_AUDIO | 访问麦克风与采集音频；ASR 开麦也靠它，没有独立的 ASR 权限，旧 SPEECH_RECOGNITION 已于 Ink 0.19 移除 | 文档 |
-| C7004 | 权限 READ_MEDIA_IMAGES | 列出和读取系统媒体库中的图片 | 文档 |
-| C7005 | 权限 CREATE_MEDIA_IMAGES | 向系统媒体库新增图片，不含修改与覆盖已有资源 | 文档 |
-| C7006 | 权限 READ_MEDIA_AUDIO | 列出和读取系统媒体库中的音频 | 文档 |
-| C7007 | 权限 CREATE_MEDIA_AUDIO | 向系统媒体库新增音频，不含修改与覆盖已有资源 | 文档 |
+| C7004 | 权限 READ_MEDIA_IMAGES | navigator.mediaLibrary 的 list() 与 get() 列出和读取系统媒体库中的图片；读授权用 getAuthorizationStatus / requestAuthorization('read', 'image')，返回 prompt / restricted / denied / limited / granted | 文档 |
+| C7005 | 权限 CREATE_MEDIA_IMAGES | navigator.mediaLibrary.save(blob) 向系统媒体库新增图片，Blob 须为非空 image/*，可带 filename / creationTime / idempotencyKey；写授权用 requestAuthorization('add', 'image')，不含修改与覆盖已有资源 | 文档 |
+| C7006 | 权限 READ_MEDIA_AUDIO | navigator.mediaLibrary 的 list() 与 get() 列出和读取系统媒体库中的音频（mediaType: 'audio'）；iOS 不支持音频库操作 | 文档 |
+| C7007 | 权限 CREATE_MEDIA_AUDIO | navigator.mediaLibrary.save(blob) 向系统媒体库新增音频，Blob 须为非空 audio/*，不含修改与覆盖已有资源；iOS 不支持音频库操作 | 文档 |
 | C7008 | 权限清单的文档口径 | aiui-dev skill 的 framework 参考仍只列前三个权限，属上游文档内部不一致；以 framework 正式文档的七名为准 | 文档 |
 
 ### 3.8 交互与宿主
@@ -259,7 +259,6 @@
 9. 设备代际差异：Rokid Glasses 2 与第一代全彩眼镜的按键映射在官方 events 参考中标注未验证，不得套用本表 3.8 节的映射。
 10. 官方文档双轨：open.rokid.com/aiui 为当前版，js.rokid.com 为较早版本，两站差异未逐页比对；本表以官方仓库 documentation 与 aiui-dev skill 为准。
 11. 包大小上限与域名白名单报备入口、审核时效，官方未细化（C9002、C6011）。
-12. 媒体库操作面未明：四项媒体权限在 app.json 权限表中有定义（C7004 至 C7007），官方文档未给出列出、读取、保存媒体库资源的具体 API，权限表仅注明相应操作会检查权限。开发相册功能前须先探明操作面，不得按其他平台的同类接口猜用。
 
 ## 6. 官方来源清单
 
@@ -286,6 +285,10 @@
 - 文档目录（含 lan、prefetch、sourcemap 等 unsupported 标注）：https://github.com/yodaos-project/AIUI/blob/main/documentation/toc.json
 
 ## 7. 变更日志
+
+### v2.4.0 2026-11-13
+
+上游 aiui-dev #104（cf2908b，2026-11-12 同步）给出媒体库操作指引：C7004 至 C7007 结论按 `skill: references/apis/media.md` 改写——读/写均走 navigator.mediaLibrary（list / get / save），授权分 read / add 两档；实测仍为「文档」，真机行为待验。第 5 节第 12 条（媒体库操作面未明）已澄清，撤下。另记边界：视频库操作与 allowNetwork 不支持，云端-only 图片本地不可用时可能报 OperationError。
 
 ### v2.3.0 2026-10-31
 
