@@ -1,0 +1,1 @@
+{"pages": ["pages/index/index", "pages/photo/index", "pages/record/index"], "permissions": ["CAMERA"], "window": {"navigationBarTitleText": "胡同拍照核对"}}
