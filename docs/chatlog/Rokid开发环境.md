@@ -1,5 +1,5 @@
 # Rokid开发环境
-chat_id：38f7ed16-6a3f-423f-8648-f6bc21f9f522，类型：旁聊，备份时间：2026-11-07 18:00，消息数：454，脱敏处数：12（邮箱 2、手机号 0、验证码 1、密钥 0、链接参数 0、账号 8、整条 1），本文为脱敏稿，用于回顾思考过程，非原始记录
+chat_id：38f7ed16-6a3f-423f-8648-f6bc21f9f522，类型：旁聊，备份时间：2026-11-13 18:00（Asia/Tokyo），消息数：456，脱敏处数：12（邮箱 2、手机号 0、验证码 1、密钥 0、链接参数 0、账号 8、整条 1），本文为脱敏稿，用于回顾思考过程，非原始记录
 
 ---
 
@@ -3149,3 +3149,21 @@ aiui-dev 上游从 5239e49 前进到 **482766a「docs: add full-color palette re
 ## Muse — 2026-11-07 07:19
 
 今早的上游检查：aiui-dev 没有更新。AIX CLI 又出了新版，已从 **0.11.0 升到 0.12.0**（~/tools 前缀），my-agent 打包冒烟验证通过。
+
+## Muse — 2026-11-13 07:20
+
+今早的上游检查有更新，这次值得注意：
+
+aiui-dev 上游从 482766a 前进到 **cf2908b「skill: add media library guidance and benchmark (#104)」**，变了 4 个文件（`references/apis/media.md`、`index.md`、`navigator.md`、`framework.md`）。关键是上游终于给了**媒体库操作指引**——`navigator.mediaLibrary` 的授权、列表、读取与保存，这正是注册表里挂了很久的未明项（§5 第 12 条：媒体库操作面无官方文档）。
+
+三处副本已同步并 diff 校验一致，仓库推送 main `f8f1431`。AIX CLI 无变化（0.12.0）。
+
+我下一步把这份指引对进注册表——§5 第 12 条和 C7004–C7007 的「未明」可以撤了，按新文档写实测结论。
+
+## Muse — 2026-11-13 07:34
+
+注册表 v2.4.0 已落地并推送，远端回读确认 main = 1d640a9。
+
+- 做了什么：上游 aiui-dev #104 的媒体库指引（navigator.mediaLibrary：getAuthorizationStatus / requestAuthorization('read'|'add','image'|'audio')、list()、get(id)、save(blob,{filename,creationTime,idempotencyKey})；iOS 无音频操作，视频操作与 allowNetwork 不支持）已对进注册表三语版。C7004–C7007 现在写明具体 API 与授权调用；§5 第 12 条删除（§5 到第 11 条止，三语都 grep 验过）；版本 v2.3.0 → v2.4.0（2026-11-13，带变更日志），v2.3.0 快照归档 base/capabilities/。提交 1d640a9，5 个文件 +345/−23，刚才补推成功（研究那轮推的时候被网络拒了一次）。
+- 口径要说清、别说过头：四条的实测状态仍是「文档」——这是文档落定，不是真机验证。变化在于：QR 的「相册出」最后一公里和 MUD 探针结果图入相册，现在有了文档化的调用（canvas → Blob → mediaLibrary.save() 配 CREATE_MEDIA_IMAGES），之前只有权限名、没有 API。
+- 存量不动（按你的规矩）：real-mud-probe v1.0.3 和 qr-capacity-probe 的文档仍引「§5 第 12 条未明」、仍走截屏路线，它们「Agent 不能自己把图写进相册」的说法对已建成版本仍成立。哪天要出一个试 save() 的探针新版，你说了再做。GO 这边没有要做的事。
