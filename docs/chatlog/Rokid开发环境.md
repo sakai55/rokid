@@ -1,5 +1,5 @@
 # Rokid开发环境
-chat_id：38f7ed16-6a3f-423f-8648-f6bc21f9f522，类型：旁聊，备份时间：2026-11-13 18:00（Asia/Tokyo），消息数：456，脱敏处数：12（邮箱 2、手机号 0、验证码 1、密钥 0、链接参数 0、账号 8、整条 1），本文为脱敏稿，用于回顾思考过程，非原始记录
+chat_id：38f7ed16-6a3f-423f-8648-f6bc21f9f522，类型：旁聊，备份时间：2026-11-16 18:00（Asia/Tokyo），消息数：457，脱敏处数：12（邮箱 2、手机号 0、验证码 1、密钥 0、链接参数 0、账号 8、整条 1），本文为脱敏稿，用于回顾思考过程，非原始记录
 
 ---
 
@@ -3167,3 +3167,8 @@ aiui-dev 上游从 482766a 前进到 **cf2908b「skill: add media library guidan
 - 做了什么：上游 aiui-dev #104 的媒体库指引（navigator.mediaLibrary：getAuthorizationStatus / requestAuthorization('read'|'add','image'|'audio')、list()、get(id)、save(blob,{filename,creationTime,idempotencyKey})；iOS 无音频操作，视频操作与 allowNetwork 不支持）已对进注册表三语版。C7004–C7007 现在写明具体 API 与授权调用；§5 第 12 条删除（§5 到第 11 条止，三语都 grep 验过）；版本 v2.3.0 → v2.4.0（2026-11-13，带变更日志），v2.3.0 快照归档 base/capabilities/。提交 1d640a9，5 个文件 +345/−23，刚才补推成功（研究那轮推的时候被网络拒了一次）。
 - 口径要说清、别说过头：四条的实测状态仍是「文档」——这是文档落定，不是真机验证。变化在于：QR 的「相册出」最后一公里和 MUD 探针结果图入相册，现在有了文档化的调用（canvas → Blob → mediaLibrary.save() 配 CREATE_MEDIA_IMAGES），之前只有权限名、没有 API。
 - 存量不动（按你的规矩）：real-mud-probe v1.0.3 和 qr-capacity-probe 的文档仍引「§5 第 12 条未明」、仍走截屏路线，它们「Agent 不能自己把图写进相册」的说法对已建成版本仍成立。哪天要出一个试 save() 的探针新版，你说了再做。GO 这边没有要做的事。
+
+## Muse — 2026-11-16 07:20
+今早的上游检查有更新，已同步完：
+
+aiui-dev 上游从 cf2908b 前进到 **bf1b860「docs: complete 0.21 developer guidance (#107)」**（含中间 #106），变了 15 个文件，新增 `references/apis/geo/maps.md`。三处副本（个人 skills、仓库 skills/aiui-dev、my-agent 工程内）已同步并校验一致，仓库推送 main `cb8ff7a`。AIX CLI 无变化（0.12.0）。
