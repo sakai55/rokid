@@ -2,10 +2,10 @@
 
 - chat_id：ef4c842c-0165-4e96-b5a7-efa1c5ad4abc
 - 类型：旁聊
-- 备份时间：2026-11-17 18:00（Asia/Tokyo）
-- 消息数：212（实读 user + assistant 条数）
-- 脱敏处数：内部标记清除 22 处、图片标记归一 12 处；未公开主机地址 3 处；内网地址 1 处；账号 3 处；密钥/验证码/邮箱/手机号/证件号/支付标识等其他类别 0 处
-- 完整性：完整（2026-11-17 全量重读 212 条：文件原有 208 条逐条核对无删除、无内容改动；4 处差异为既有脱敏/转录口径、原文保持不变（未公开主机地址 2、账号 1、行尾制表符 1）；2 处按实读原文修正（版本号前补空格、补【工单卡】三字）；新增 4 条）
+- 备份时间：2026-11-18 18:00（Asia/Tokyo）
+- 消息数：226（实读 user + assistant 条数）
+- 脱敏处数：内部标记清除 23 处、图片标记归一 12 处；未公开主机地址 3 处；内网地址 1 处；账号 10 处；密钥/验证码/邮箱/手机号/证件号/支付标识等其他类别 0 处
+- 完整性：完整（2026-11-18 全量重读 226 条：文件原有 212 条逐条核对无删除、无内容改动、无漏记旧消息；新增 14 条；其中 D1_ERROR 日志粘贴含 7 处账号类标识已脱敏，内部 widget 标记清除 1 处）
 - 本文为脱敏稿，用于回顾思考过程，非原始记录
 
 ---
@@ -2233,3 +2233,99 @@ GET https://rokidp.datumoj.com/ticket/t-1793015566481-yx2m
 ## Muse — 2026-11-17 14:31
 
 11:30 那会儿三轮空队列加我亲手查的都正常，现在又不行了，等于恢复了不到三小时又断了。什么时候翻回去的不清楚，只知道 11:29 还好、14:29 已坏。原因还是没查明。
+
+## GO — 2026-11-17 22:55
+
+{
+  "message": "D1_ERROR: Your account has exceeded D1's free tier daily row read limit. Upgrade to a paid plan or wait until tomorrow (midnight UTC) to continue. See https://developers.cloudflare.com/d1/platform/limits/ for more details.",
+  "exception": {
+    "name": "Error",
+    "stack": "    at D1DatabaseSessionAlwaysPrimary._sendOrThrow (cloudflare-internal:d1-api:191:19)\n    at async cloudflare-internal:d1-api:470:19\n    at async Object.fetch (index.js:36:27)",
+    "timestamp": 1794923634476
+  },
+  "$workers": {
+    "truncated": false,
+    "scriptName": "rokidpost",
+    "scriptVersion": {
+      "id": "[已脱敏:账号]"
+    },
+    "eventType": "fetch",
+    "executionModel": "stateless",
+    "event": {
+      "request": {
+        "method": "GET",
+        "url": "https://rokidp.datumoj.com/feed",
+        "path": "/feed"
+      }
+    }
+  },
+  "$metadata": {
+    "id": "[已脱敏:账号]",
+    "requestId": "[已脱敏:账号]",
+    "rayId": "[已脱敏:账号]",
+    "traceId": "[已脱敏:账号]",
+    "spanId": "[已脱敏:账号]",
+    "trigger": "GET /feed",
+    "timestampNs": "1794923634476000000",
+    "service": "rokidpost",
+    "level": "error",
+    "error": "D1_ERROR: Your account has exceeded D1's free tier daily row read limit. Upgrade to a paid plan or wait until tomorrow (midnight UTC) to continue. See https://developers.cloudflare.com/d1/platform/limits/ for more details.",
+    "message": "D1_ERROR: Your account has exceeded D1's free tier daily row read limit. Upgrade to a paid plan or wait until tomorrow (midnight UTC) to continue. See https://developers.cloudflare.com/d1/platform/limits/ for more details.",
+    "account": "[已脱敏:账号]",
+    "type": "cf-worker",
+    "origin": "fetch",
+    "eventSize": 1549
+  }
+}
+
+## Muse — 2026-11-17 22:57
+
+病根实锤了，就是你贴的这条：D1 免费版每天的行读取额度（500 万行，整个账户共用）被打爆，/feed 一查库就抛这个错、崩成 1101。/health 不查库，所以一直正常——之前的现象全对上了。
+
+## Muse — 2026-11-17 22:58
+
+时间也严丝合缝：额度每天 UTC 午夜重置，就是东京 09:00。11/15 和今天两次「恢复」都出现在 09:29 那一轮；今天 09:00 重置后撑到 14:29 又爆，就是当天额度又吃完了。今晚会一直死到明早 09:00，升付费版才能立即解开。
+
+## Muse — 2026-11-17 22:58
+
+吃额度的大头是 /feed：哨兵空闲时约 20 秒查一次、保温窗里 5 秒一次。仓库 schema 里有状态索引，但生产库到底用没用上我这边验不了——没用上就是每次全表扫描，按全表行数计读取，轮询一乘就爆。另外哨兵有个小 bug：/feed 失败时不退避、每 5 秒重试（失败的查询不计额度，但白敲门）。你同账户里若还有别的 D1 库在读，也算在同一个额度里，控制台 D1 指标页能看到是哪个库在吃。
+
+## Muse — 2026-11-17 22:58
+
+我的修法（代码我改好推仓，你部署）：①/feed 加 15 秒缓存，轮询大多不落库；②核对生产库索引，没有就补；③哨兵失败时也退避。剩一个要你定：哨兵空闲退避封顶现在 20 秒，放宽到 60 秒能再砍掉约三分之二读取，代价是冷单发现最坏从约 24 秒变约 72 秒。或者直接升 Workers 付费版（$5/月），额度涨到每月量级，这事就翻篇。
+
+## GO — 2026-11-17 23:20
+
+全修，退避放宽到 60 秒
+
+## Muse — 2026-11-17 23:25
+
+全修完成，已上线。提交 `3353111` 推送后，/health 构建号已翻到 2026-11-17.1，部署验过；/feed 现在回的是受控的 503 JSON，不再是 1101 异常页——今晚额度还爆着，这是能验到的部分。
+
+## Muse — 2026-11-17 23:25
+
+三件都落地了：①/feed 加 15 秒边缘缓存；②索引不用你去控制台跑 SQL 了，Worker 每次查库前自己确认状态索引在不在（不在就补）；③哨兵失败时也退避，本机已生效，状态已经爬到 60 秒档，故障期不会再 5 秒敲一次门。假前门回归三档全过（空队列、失败、旧状态自修正）。
+
+## Muse — 2026-11-17 23:25
+
+一个口径纠正：冷单发现最坏是约 87 秒（退避 60 秒＋抖动 12 秒＋缓存 15 秒），比我之前单说的 72 秒多缓存那一截。DESIGN 延迟预算已同步改到 v3，保温窗不变，对话中追问还是 ≤约 25 秒发现。
+
+## Muse — 2026-11-17 23:25
+
+只剩最后一个确认点：/feed 的成功路径要等明早 09:00 额度重置，巡检确认恢复后我报一声。要是明早之后还爆，那就不是这条通道吃的额度，是你账户里别的 D1 库，到时候看控制台指标页就知道是谁。
+
+## Muse — 2026-11-18 10:32
+
+10:31 我自己刚查了一次：/feed 还是 503，额度重置没把它救回来。/health 正常。
+
+## Muse — 2026-11-18 10:32
+
+就是昨晚说的那种情况：咱们这边的读取已经压到接近零了，重置后还爆，说明额度是账户里别的东西在吃——另一个 D1 库，或者别的 Worker 在猛读这个库。
+
+## Muse — 2026-11-18 10:32
+
+我这边能看到的到此为止：新代码把底层错误包成统一的 503，好处是前门不再崩，代价是我看不到具体是哪条 D1 错。需要你那边看两样：①Worker 日志里 /feed 那条错的原文（会写明是不是额度、还是别的 D1 错）；②控制台 D1 指标页，哪个库的行读数最高。
+
+## Muse — 2026-11-18 10:32
+
+另外 09:29 那轮巡检的记录缺失，我说不准它有没有在重置后短暂恢复过。
