@@ -1,5 +1,5 @@
 # Rokid开发环境
-chat_id：38f7ed16-6a3f-423f-8648-f6bc21f9f522，类型：旁聊，备份时间：2026-11-17 18:00（Asia/Tokyo），消息数：458，脱敏处数：12（邮箱 2、手机号 0、验证码 1、密钥 0、链接参数 0、账号 8、整条 1），本文为脱敏稿，用于回顾思考过程，非原始记录
+chat_id：38f7ed16-6a3f-423f-8648-f6bc21f9f522，类型：旁聊，备份时间：2026-11-19 18:00（Asia/Tokyo），消息数：459，脱敏处数：12（邮箱 2、手机号 0、验证码 1、密钥 0、链接参数 0、账号 8、整条 1），本文为脱敏稿，用于回顾思考过程，非原始记录
 
 ---
 
@@ -3176,3 +3176,9 @@ aiui-dev 上游从 cf2908b 前进到 **bf1b860「docs: complete 0.21 developer g
 ## Muse — 2026-11-17 07:19
 
 今早的上游检查：aiui-dev 没有更新。AIX CLI 出了新版，已从 **0.12.0 升到 0.13.0**（~/tools 前缀），my-agent 打包冒烟验证通过。
+
+## Muse — 2026-11-19 07:19
+
+今早的上游检查有更新，已同步完：
+
+aiui-dev 上游到 **77adf8b「docs: explain geolocation coordinate systems (#112)」**，只改了 1 个文件——`references/apis/geo/geolocation.md` 加 2 行，说明 getCurrentPosition / watchPosition 返回的经纬度是 **WGS-84 十进制度**。三处副本已同步并校验一致，仓库推送 main `f169a0e`。AIX CLI 无变化（0.13.0）。
