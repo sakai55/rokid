@@ -1,9 +1,9 @@
 # 日本ローカライズ（japan/）
 
 [中文](README.md) | [English](README.en.md) | 日本語
-中国語版（2026-11-01 時点）の翻訳。
+中国語版（2026-11-28 時点）の翻訳。
 
-日韓ローカライズシリーズ。JP01–JP47、全48件。日本の生活シーンに合わせたローカライズ Agent。
+日韓ローカライズシリーズ。JP01–JP74、全75件。日本の生活シーンに合わせたローカライズ Agent。
 
 - JP01 [shinkansen-quiet](shinkansen-quiet/) — 新幹線の静音見守り、自分の発声だけを監視
 - JP02 [jinja-bow](jinja-bow/) — 神社参拝を頭を下げたまま完走、二拝二拍手一拝
@@ -53,5 +53,32 @@
 - JP45 [eki-shuugou](eki-shuugou/) — 駅での集合：GPSの方位と距離で相手を探す
 - JP46 [fukuwarai](fukuwarai/) — 福笑い：頭の向きで顔のパーツ6点を置く
 - JP47 [senior-kurashi-hub](senior-kurashi-hub/) — 高齢者の暮らし：ツール20本を1冊の手帳に
+- JP48 [koen-shuugou](koen-shuugou/) — 公園で散らばった高齢者：GPSの方位と距離で集合ベンチへ戻る
+- JP49 [daruma-otoshi](daruma-otoshi/) — お正月の家族：頭の向きとうなずきでだるま落としを遊ぶ
+- JP50 [oshogatsu-game-shuu](oshogatsu-game-shuu/) — お正月の家族：頭の動きで遊ぶお正月ゲーム20本を1冊に
+- JP51 [undoukai-shuugou](undoukai-shuugou/) — 運動会で両手がふさがった保護者：GPSの方位と距離で集合テントへ戻る
+- JP52 [kendama-game](kendama-game/) — 家族の集まり：頭の向きで狙いを定め、うなずきでけん玉を投げ10投で精算
+- JP53 [fuyu-game-shuu](fuyu-game-shuu/) — 冬の家族：頭の動きで遊ぶ冬ゲーム20本を1冊に
+- JP54 [aki-matsuri-game-shuu](aki-matsuri-game-shuu/) — 秋祭りの家族：うなずきと頭の向きで遊ぶ秋ゲーム20本を1冊に
+- JP55 [nabe-cook-steps](nabe-cook-steps/) — 家庭の鍋料理：両手が濡れたまま、うなずきで24ステップ進めて1鍋完成
+- JP56 [ramen-order](ramen-order/) — ラーメン店の券売機前：荷物と傘で両手がふさがり、頭の向きで麺を選び、うなずきでトッピングを確認、TTSが代わりに注文
+- JP57 [kaiten-sushi-order](kaiten-sushi-order/) — 回転寿司：両手に皿を持ち、寿司を見てうなずきでネタを確認し代行音声で注文
+- JP58 [eki-coin-locker](eki-coin-locker/) — 駅の旅行者：両手に荷物を持ち、ロッカーを見てうなずきで預け・取り出し手順を確認
+- JP59 [jinja-hatsumode](jinja-hatsumode/) — 初詣の参拝者：両手にお供えを持ち、頭を向けて参拝所を選び、うなずきで参拝手順を確認
+- JP60 [osechi-steps](osechi-steps/) — おせち作り：両手が離せないまま、うなずきで手順を進め、1品完成ごとに記録
+- JP61 [sakura-hanami-photo](sakura-hanami-photo/) — お花見の観光客：弁当とガイドブックを両手に、名所を見てうなずきで撮影し12か所を照合
+- JP62 [furoshiki-steps](furoshiki-steps/) — 風呂敷包み：布と贈り物で両手がふさがり、うなずきで1品ずつ包んで記録
+- JP63 [depachika-guide](depachika-guide/) — デパ地下の買い物：両手に袋を持ち、売り場を見てうなずきで価格と賞味期限を照合
+- JP64 [sakura-game-shuu](sakura-game-shuu/) — お花見待ちの家族：顔を上げて遊ぶ桜ゲーム20本、クリアと得点を保存
+- JP65 [asakusa-guide](asakusa-guide/) — 浅草仲見世の買い物：両手に袋を持ち、屋台を見てうなずきで買い物4件を照合
+- JP66 [hatsumode-steps](hatsumode-steps/) — 初詣の高齢参拝者：お守りと絵馬を両手に、うなずきで参拝の流れを進めて記録
+- JP67 [undoukai-game-shuu](undoukai-game-shuu/) — 運動会待ちの家族：顔を上げて遊ぶ運動会ゲーム20本、得点を保存
+- JP68 [tanabata-game-shuu](tanabata-game-shuu/) — 七夕待ちの家族：顔を上げて遊ぶ七夕ゲーム20本、得点を保存
+- JP69 [ginkou-atm-guide](ginkou-atm-guide/) — 銀行ATM前：両手に荷物を持ち、頭を向けて手続きを選び、うなずきで4件の完了を確認
+- JP70 [setsbun-game-shuu](setsbun-game-shuu/) — 節分待ちの家族：顔を上げて遊ぶ節分ゲーム20本、得点を保存
+- JP71 [hinamatsuri-game-shuu](hinamatsuri-game-shuu/) — ひな祭り待ちの家族：顔を上げて遊ぶひな祭りゲーム20本、得点を保存
+- JP72 [shichigosan-game](shichigosan-game/) — 七五三待ちの家族：顔を上げてゲームを選び、うなずきで10ラウンド遊んで精算
+- JP73 [bon-odori-games-shuu](bon-odori-games-shuu/) — 盆踊り待ちの家族：頭を向けてゲームを選び、うなずきで20本遊んで得点
+- JP74 [ekiden-cheer](ekiden-cheer/) — 駅伝の沿道応援：両手に旗を持ち、頭を向けてチームを選び、うなずきで通過時刻を記録
 
 全リストはルートの [README](../README.md) 末尾にある Agent リストを参照。

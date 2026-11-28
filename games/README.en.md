@@ -1,9 +1,9 @@
 # Head-Motion Mini-Games (games/)
 
 [中文](README.md) | English | [日本語](README.ja.md)
-Translated from the Chinese version (as of 2026-10-29).
+Translated from the Chinese version (as of 2026-11-28).
 
-Head-motion and photo-interaction mini-games · IDs GA01–GA50: head-motion games GA01–GA40, photo games GA41–GA50. Bare-bones little games you play by moving your head or snapping photos of the world around you.
+Head-motion and photo-interaction mini-games · IDs GA01–GA98, 84 in total, mostly head-motion mini-games. Bare-bones little games you play by moving your head or snapping photos of the world around you.
 
 - GA01 [nod-count](nod-count/) — Voice-guided slow nods, 10 of them; down and back to center counts as one
 - GA02 [turn-count](turn-count/) — Voice-guided head turns, alternating left and right, 5 each for 10 total
@@ -41,4 +41,52 @@ Head-motion and photo-interaction mini-games · IDs GA01–GA50: head-motion gam
 - GA48 [size-sort](size-sort/) — Lay out 3 similar objects, order them by size first, then photo for a full-order comparison
 - GA49 [texture-hunt](texture-hunt/) — Each round names a texture; get up close to a real surface, photo it, and get judged on the texture
 - GA50 [snap-diff](snap-diff/) — Shoot the same scene twice; declare the type of change first, then both photos are judged together (series finale)
+- GA51 [us-fair-games](us-fair-games/) — An American family at a county fair plays 20 fair games by head motion alone
+- GA52 [dengmi-game](dengmi-game/) — A family at Lantern Festival picks lantern-riddle answers by head direction; 12 riddles to settle
+- GA53 [ireland-dance-step](ireland-dance-step/) — An Irish family gathering: pick dance steps by head direction and nod on the beat, 10 rounds to settle
+- GA54 [china-tangram-game](china-tangram-game/) — A Chinese family gathering: pick placements by head direction and nod to drop the pieces, 12 tangram figures
+- GA55 [china-festival-game-shuu](china-festival-game-shuu/) — A Chinese family at Spring Festival plays 20 festival games by head motion, all in one set
+- GA56 [us-thanksgiving-games](us-thanksgiving-games/) — An American Thanksgiving family plays 20 Thanksgiving games by nods and head turns, all in one set
+- GA57 [china-square-dance](china-square-dance/) — A Chinese neighborhood family picks square-dance steps by head direction and nods on the beat, 10 rounds
+- GA58 [uk-christmas-games](uk-christmas-games/) — A British family waiting at Christmas plays 20 Christmas games by nods and head turns, all in one set
+- GA59 [china-lantern-games](china-lantern-games/) — A Chinese family at the Lantern Festival plays 20 lantern-fair games by nods and head turns, all in one set
+- GA60 [us-july4-games](us-july4-games/) — An American family on Independence Day plays 20 July 4th games in one set, scoring by nods
+- GA61 [china-midautumn-games](china-midautumn-games/) — A Chinese family waiting at Mid-Autumn plays 20 Mid-Autumn games in one set, scoring by nods
+- GA62 [canada-hockey-games](canada-hockey-games/) — A Canadian family in hockey season passes the wait playing 20 hockey games by nods
+- GA63 [china-dragonboat-games](china-dragonboat-games/) — A Chinese family at Dragon Boat Festival passes the wait playing 20 dragon-boat games by nods
+- GA64 [us-easter-games](us-easter-games/) — An American family at Easter passes the wait playing 20 Easter games by nods
+- GA65 [china-chongyang-games](china-chongyang-games/) — A Chinese family at Double Ninth passes the wait playing 20 festival games by nods
+- GA66 [australia-summer-games](australia-summer-games/) — An Australian family in summer passes the wait playing 20 summer games by nods
+- GA67 [china-qixi-games](china-qixi-games/) — A Chinese family at Qixi passes the wait playing 20 Qixi games by nods
+- GA68 [uk-bonfire-games](uk-bonfire-games/) — A British family at Bonfire Night passes the wait playing 20 bonfire games by nods
+- GA69 [china-winter-games](china-winter-games/) — A Chinese family at Winter Solstice passes the wait playing 20 solstice games by nods
+- GA70 [us-valentines-games](us-valentines-games/) — An American family on Valentine's Day passes the wait playing 20 Valentine's games by nods
+- GA71 [china-qingming-games](china-qingming-games/) — A Chinese family at Qingming passes the wait playing 20 Qingming games by nods
+- GA72 [ireland-st-patricks-games](ireland-st-patricks-games/) — An Irish family on St Patrick's Day passes the wait playing 20 festival games by nods
+- GA73 [china-laba-games](china-laba-games/) — A Chinese family at Laba passes the wait playing 20 Laba games by nods
+- GA74 [australia-christmas-games](australia-christmas-games/) — An Australian family on Christmas holiday plays 20 Christmas games by head movement, clearing stages, scoring and saving progress
+- GA75 [china-ice-games](china-ice-games/) — Visitors at a Chinese ice festival play 20 ice-and-snow games by head movement, clearing stages, scoring and saving progress
+- GA76 [ireland-stpatrick-games](ireland-stpatrick-games/) — An Irish family on St Patrick's Day plays 20 festival games by head movement, clearing stages and scoring
+- GA77 [china-kite-game](china-kite-game/) — A Chinese family flying a kite picks wind direction by head alone and nods to let out line, 10 rounds to settle
+- GA78 [canada-winter-games](canada-winter-games/) — A Canadian family at a winter carnival plays 20 winter games by head movement, clearing stages, scoring and saving progress
+- GA79 [china-zigong-lantern-games](china-zigong-lantern-games/) — A Chinese family at the Zigong Lantern Festival plays 20 lantern-fair games by head movement, clearing stages, scoring and saving progress
+- GA80 [usa-thanksgiving-games](usa-thanksgiving-games/) — An American Thanksgiving family plays 20 Thanksgiving games by head movement, clearing stages, scoring and saving progress
+- GA81 [china-dongzhi-games](china-dongzhi-games/) — A Chinese family at the Winter Solstice plays 20 solstice games by head movement, clearing stages, scoring and saving progress
+- GA82 [uk-boxing-day-games](uk-boxing-day-games/) — A British family on Boxing Day plays 20 Boxing Day games by head movement, clearing stages, scoring and saving progress
+- GA83 [china-jianzi-game](china-jianzi-game/) — A Chinese family gathering picks the shuttlecock's landing spot by head direction alone and nods to kick, 10 rounds to settle the score, with saves
+- GA84 [scotland-highland-games](scotland-highland-games/) — A Scottish family at the Highland Games picks events by head direction alone and nods to enter, 10 rounds to settle the score, with saves
+- GA85 [china-folk-games](china-folk-games/) — A Chinese family passing the wait plays 20 folk games by head movement, clearing stages, scoring and saving progress
+- GA86 [jamaica-games-shuu](jamaica-games-shuu/) — A Jamaican family passing the wait plays 20 Jamaican games by head movement, clearing stages, scoring and saving progress
+- GA87 [china-ropejump-game](china-ropejump-game/) — A Chinese family at rope-skipping time turns to pick a pattern and nods to start, 10 rounds to settle the score, with saves
+- GA88 [trinidad-carnival-game](trinidad-carnival-game/) — A Trinidad family at carnival turns to pick an event and nods to compete, 10 rounds to settle
+- GA89 [china-board-games-shuu](china-board-games-shuu/) — A Chinese family passing the wait plays 20 board-and-card games by head movement, clearing stages, scoring and saving progress
+- GA90 [china-peking-opera-games-shuu](china-peking-opera-games-shuu/) — A Chinese family passing the wait plays 20 Peking opera games by head movement, clearing stages, scoring and saving progress
+- GA91 [barbados-crop-over-game](barbados-crop-over-game/) — A Barbados family at Crop Over turns to pick an event and nods to compete, 10 rounds to settle
+- GA92 [ireland-games-shuu](ireland-games-shuu/) — An Irish family gathering plays 20 Irish games by head movement, clearing stages, scoring and saving progress
+- GA93 [china-diabolo-game](china-diabolo-game/) — A Chinese family at diabolo time turns to pick a trick and nods to start spinning, 10 rounds to settle
+- GA94 [nz-haka-game](nz-haka-game/) — A New Zealand family gathering turns to pick haka elements and nods to perform, 10 rounds head-to-head
+- GA95 [china-tang-poetry-games-shuu](china-tang-poetry-games-shuu/) — A Chinese family passing the wait turns to play 20 Tang-poetry games, reciting poems to score
+- GA96 [china-taiji-game](china-taiji-game/) — A Chinese family at taiji time turns to pick a move and nods to start practicing, 10 rounds head-to-head
+- GA97 [australia-games-shuu](australia-games-shuu/) — An Australian family gathering turns to pick a game and nods to play through 20 Australian games, scoring as they go
+- GA98 [china-lion-dance-game](china-lion-dance-game/) — A Chinese family at lion-dance time turns to pick a move and nods to start practicing, 10 rounds to settle
 For the full list, see the Agent index at the end of the [root README](../README.md).

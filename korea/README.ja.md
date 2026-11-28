@@ -1,9 +1,9 @@
 # 韓国ローカライズ（korea/）
 
 [中文](README.md) | [English](README.en.md) | 日本語
-中国語版（2026-11-01 時点）の翻訳。
+中国語版（2026-11-28 時点）の翻訳。
 
-日韓ローカライズシリーズ。KR01–KR25、全26件。韓国の生活シーンに合わせたローカライズ Agent。
+日韓ローカライズシリーズ。KR01–KR48、全49件。韓国の生活シーンに合わせたローカライズ Agent。
 
 - KR01 [samgyeop-flip](samgyeop-flip/) — サムギョプサルの返し時リズム、時間になったら声で知らせる
 - KR02 [noise-diary](noise-diary/) — 自宅の夜の音だけを記録し、朝に再生して確認
@@ -31,5 +31,28 @@
 - KR23 [gyeongju-trip-hub](gyeongju-trip-hub/) — 慶州旅行：ツール20本を1冊の手帳に
 - KR24 [ddakji-game](ddakji-game/) — 家族の集まり：頭の向きでタッジ遊び、6枚を投げる
 - KR25 [gyeongbok-palace](gyeongbok-palace/) — 景福宮の見学：6か所を順に確認
+- KR26 [hangang-cycle](hangang-cycle/) — 漢江サイクリング：両手でハンドル、頭の向きで分岐を選びGPSで休憩地点を探す
+- KR27 [seoul-palace-photo](seoul-palace-photo/) — 景福宮の初訪問：宮エリアを見てうなずいて撮影、12か所を確認
+- KR28 [kimjang-steps](kimjang-steps/) — 家族のキムチ漬け：両手に調味料、うなずいて24ステップ進め1壺仕上げる
+- KR29 [jagalchi-guide](jagalchi-guide/) — 釜山チャガルチ市場の買い物：両手に荷物、振り向いて店を選びうなずいて4点確認
+- KR30 [namsan-meet](namsan-meet/) — 南山タワー下で家族とはぐれた高齢の観光客が、GPSの方位と距離で登録した集合地点へ戻る
+- KR31 [pojangmacha-guide](pojangmacha-guide/) — 釜山の夜の屋台：両手にお盆、振り向いて店を選びうなずいて4点確認
+- KR32 [gamcheon-photo](gamcheon-photo/) — 甘川の観光客：両手にガイドブック、見どころを見てうなずいて撮影、12か所を確認
+- KR33 [insadong-tea-watch](insadong-tea-watch/) — 仁寺洞でお茶を淹れる：両手に急須と杯、茶の種類を見てうなずいて計時し頃合いに出す
+- KR34 [haeundae-meet](haeundae-meet/) — 海雲台で家族とはぐれた高齢の観光客が、GPSの方位と距離で集合地点へ戻る
+- KR35 [gwangjang-market](gwangjang-market/) — 広蔵市場で軽食を買う：両手に荷物、振り向いて店を選びうなずいて1品ずつ確認
+- KR36 [noryangjin-guide](noryangjin-guide/) — 鷺梁津で魚を買う：両手に荷物、振り向いて店を選びうなずいて1品ずつ確認
+- KR37 [samgyeopsal-watch](samgyeopsal-watch/) — 韓国の焼肉：両手で肉を返し、1種類の肉を見てうなずいて計時、返し時を知らせる
+- KR38 [dongdaemun-guide](dongdaemun-guide/) — 東大門市場の買い物：両手に荷物、店先を見てうなずいて4点照合
+- KR39 [busan-eomuk-watch](busan-eomuk-watch/) — 釜山でおでんを煮る：両手がふさがり、1つの鍋を見てうなずいて計時、時間で取り出す
+- KR40 [gwangjang-guide](gwangjang-guide/) — 広蔵市場で食材を買う：両手に荷物、振り向いて店を選びうなずいて4点確認
+- KR41 [templestay-guide](templestay-guide/) — 寺院体験の初参加：両手に物を持ち、うなずいて6段階24ステップを進め終えて記録
+- KR42 [jeju-market-guide](jeju-market-guide/) — 済州の市場で食材を買う：両手に荷物、振り向いて店を選びうなずいて4点確認
+- KR43 [korea-folk-games-shuu](korea-folk-games-shuu/) — 祝日の待ち時間：顔を上げて民俗ゲーム20本を遊び、クリアと得点を保存
+- KR44 [bukhansan-hike-meet](bukhansan-hike-meet/) — 北漢山の登山者：両手にストック、GPSの方位と距離で登録した集合地点へ戻る
+- KR45 [jegichagi-game](jegichagi-game/) — 祝日の家族の集まり：振り向いて方向を選びうなずいてチェギを蹴る、10回で決着
+- KR46 [jeonju-trip-hub](jeonju-trip-hub/) — 全州旅行：ツール20本を1冊の手帳に、うなずいて進める
+- KR47 [taekwondo-game](taekwondo-game/) — テコンドー家族：振り向いて技を選びうなずいて繰り出す、10ラウンドで対決
+- KR48 [gangneung-trip-hub](gangneung-trip-hub/) — 江陵旅行：ハンドブック1冊でうなずいて旅行ツール20件を進める
 
 全リストはルートの [README](../README.md) 末尾にある Agent リストを参照。

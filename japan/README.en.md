@@ -1,9 +1,9 @@
 # Japan Localization (japan/)
 
 [中文](README.md) | English | [日本語](README.ja.md)
-Translated from the Chinese version (as of 2026-11-01).
+Translated from the Chinese version (as of 2026-11-28).
 
-Japan–Korea localization series · IDs JP01–JP47 · 48 agents. Agents localized for everyday scenes in Japan.
+Japan–Korea localization series · IDs JP01–JP74 · 75 agents. Agents localized for everyday scenes in Japan.
 
 - JP01 [shinkansen-quiet](shinkansen-quiet/) — Shinkansen quiet watch: monitors only your own voice
 - JP02 [jinja-bow](jinja-bow/) — A shrine visit completed head-down: two bows, two claps, one bow
@@ -53,5 +53,32 @@ Japan–Korea localization series · IDs JP01–JP47 · 48 agents. Agents locali
 - JP45 [eki-shuugou](eki-shuugou/) — Station meetup: GPS direction and distance to the meeting spot
 - JP46 [fukuwarai](fukuwarai/) — New Year fukuwarai: head direction places the face pieces
 - JP47 [senior-kurashi-hub](senior-kurashi-hub/) — Senior daily life: twenty tools in one notebook
+- JP48 [koen-shuugou](koen-shuugou/) — Park meetup for seniors: GPS bearing and distance back to the meeting bench
+- JP49 [daruma-otoshi](daruma-otoshi/) — New Year family game: head direction and nods to play daruma-otoshi blocks
+- JP50 [oshogatsu-game-shuu](oshogatsu-game-shuu/) — New Year family: twenty New Year games played by head motion in one collection
+- JP51 [undoukai-shuugou](undoukai-shuugou/) — Sports-day parents with hands full: GPS bearing and distance back to the team tent
+- JP52 [kendama-game](kendama-game/) — Family gathering: aim by head direction, nod to throw kendama, ten throws scored
+- JP53 [fuyu-game-shuu](fuyu-game-shuu/) — Winter family: twenty winter games played by head motion in one collection
+- JP54 [aki-matsuri-game-shuu](aki-matsuri-game-shuu/) — Autumn festival family: twenty autumn games by nods and head direction in one collection
+- JP55 [nabe-cook-steps](nabe-cook-steps/) — Cooking a nabe at home: hands wet, nod through 24 steps to finish the pot
+- JP56 [ramen-order](ramen-order/) — At the ramen ticket machine with luggage and umbrella in hand: head direction picks the noodles, a nod confirms toppings, TTS speaks the order
+- JP57 [kaiten-sushi-order](kaiten-sushi-order/) — Conveyor-belt sushi: plates in both hands, look at a sushi and nod to confirm toppings and order by proxy speech
+- JP58 [eki-coin-locker](eki-coin-locker/) — Station traveller with luggage in both hands: look at a locker and nod through the store and retrieve steps
+- JP59 [jinja-hatsumode](jinja-hatsumode/) — New Year shrine visit: offerings in both hands, turn your head to pick a stop and nod through the worship steps
+- JP60 [osechi-steps](osechi-steps/) — Making osechi dishes: hands busy, nod through the steps, one dish logged as each is finished
+- JP61 [sakura-hanami-photo](sakura-hanami-photo/) — Cherry-blossom viewing: bento and guidebook in hand, look at a famous spot and nod to photograph and check off twelve spots
+- JP62 [furoshiki-steps](furoshiki-steps/) — Wrapping with a furoshiki: hands full of cloth and gift, nod to wrap item by item and log the wrap
+- JP63 [depachika-guide](depachika-guide/) — Department-store food hall: bags in both hands, look at a stall and nod to check prices and expiry dates
+- JP64 [sakura-game-shuu](sakura-game-shuu/) — Family waiting at cherry-blossom viewing: twenty sakura games by head-up play, cleared and scored with saves
+- JP65 [asakusa-guide](asakusa-guide/) — Shopping in Asakusa's Nakamise: bags in both hands, look at a stall and nod to check off four purchases
+- JP66 [hatsumode-steps](hatsumode-steps/) — Senior's first shrine visit of the year: charms and ema in hand, nod through the worship flow to the finish
+- JP67 [undoukai-game-shuu](undoukai-game-shuu/) — Family waiting at the school sports day: twenty sports-day games by head-up play, scored with saves
+- JP68 [tanabata-game-shuu](tanabata-game-shuu/) — Family waiting at Tanabata: twenty Tanabata games by head-up play, scored with saves
+- JP69 [ginkou-atm-guide](ginkou-atm-guide/) — At the bank ATM with bags in hand: turn your head to pick a procedure and nod to confirm four items done
+- JP70 [setsbun-game-shuu](setsbun-game-shuu/) — Family waiting at Setsubun: twenty Setsubun games by head-up play, scored with saves
+- JP71 [hinamatsuri-game-shuu](hinamatsuri-game-shuu/) — Family waiting at Hinamatsuri: twenty Hinamatsuri games by head-up play, scored with saves
+- JP72 [shichigosan-game](shichigosan-game/) — Family waiting at Shichi-Go-San: look up to pick a game, nod through ten rounds to settle the score
+- JP73 [bon-odori-games-shuu](bon-odori-games-shuu/) — Family waiting at Bon Odori: turn your head to pick a game, nod through twenty games scored
+- JP74 [ekiden-cheer](ekiden-cheer/) — Ekiden roadside cheering: flags in both hands, turn your head to pick a team and nod to log passing times
 
 For the full list, see the Agent index at the end of the [root README](../README.md).

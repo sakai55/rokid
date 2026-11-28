@@ -1,9 +1,9 @@
 # Korea Localization (korea/)
 
 [中文](README.md) | English | [日本語](README.ja.md)
-Translated from the Chinese version (as of 2026-11-01).
+Translated from the Chinese version (as of 2026-11-28).
 
-Japan–Korea localization series · IDs KR01–KR25 · 26 agents. Agents localized for everyday scenes in Korea.
+Japan–Korea localization series · IDs KR01–KR48 · 49 agents. Agents localized for everyday scenes in Korea.
 
 - KR01 [samgyeop-flip](samgyeop-flip/) — A rhythm for flipping grilled pork belly; it calls out when to flip
 - KR02 [noise-diary](noise-diary/) — Logs only your own home's night sounds; replay in the morning to check
@@ -31,5 +31,28 @@ Japan–Korea localization series · IDs KR01–KR25 · 26 agents. Agents locali
 - KR23 [gyeongju-trip-hub](gyeongju-trip-hub/) — Gyeongju trip: twenty tools in one travel notebook
 - KR24 [ddakji-game](ddakji-game/) — Family holiday ddakji: head-aimed throws
 - KR25 [gyeongbok-palace](gyeongbok-palace/) — Gyeongbok Palace: six spots checked in order
+- KR26 [hangang-cycle](hangang-cycle/) — Han River cycling: hands on the grips, pick forks by head direction and find rest stops by GPS
+- KR27 [seoul-palace-photo](seoul-palace-photo/) — First visit to Gyeongbok Palace: look at a palace area and nod to photograph and check off twelve spots
+- KR28 [kimjang-steps](kimjang-steps/) — Family kimchi-making: hands covered in seasoning, nod through 24 steps to finish one crock
+- KR29 [jagalchi-guide](jagalchi-guide/) — Shopping at Busan's Jagalchi Market: bags in both hands, turn to pick a stall and nod to confirm four items
+- KR30 [namsan-meet](namsan-meet/) — An older visitor separated from family below Namsan Tower returns to the registered meeting point by GPS bearing and distance
+- KR31 [pojangmacha-guide](pojangmacha-guide/) — Busan night food stalls: tray in both hands, turn to pick a stall and nod to confirm four items
+- KR32 [gamcheon-photo](gamcheon-photo/) — A Gamcheon visitor with a guidebook in both hands: look at a sight and nod to photograph and check off twelve spots
+- KR33 [insadong-tea-watch](insadong-tea-watch/) — Brewing tea in Insadong: pot and cup in both hands, look at a tea and nod to time it until it is ready to pour
+- KR34 [haeundae-meet](haeundae-meet/) — An older visitor separated from family at Haeundae returns to the meeting point by GPS bearing and distance
+- KR35 [gwangjang-market](gwangjang-market/) — Buying snacks at Gwangjang Market: bags in both hands, turn to pick a stall and nod to confirm each item
+- KR36 [noryangjin-guide](noryangjin-guide/) — Buying fish at Noryangjin: bags in both hands, turn to pick a stall and nod to confirm each item
+- KR37 [samgyeopsal-watch](samgyeopsal-watch/) — Korean barbecue: hands busy flipping meat, look at one cut and nod to time it, reminded when to flip
+- KR38 [dongdaemun-guide](dongdaemun-guide/) — Shopping at Dongdaemun Market: bags in both hands, look at a stall and nod to check off four items
+- KR39 [busan-eomuk-watch](busan-eomuk-watch/) — Cooking fish cakes in Busan: hands busy, look at one pot and nod to time it, take it off when done
+- KR40 [gwangjang-guide](gwangjang-guide/) — Grocery shopping at Gwangjang Market: bags in both hands, turn to pick a stall and nod to confirm four items
+- KR41 [templestay-guide](templestay-guide/) — A first temple stay: holding items in both hands, nod through six stages and twenty-four steps to finish and log it
+- KR42 [jeju-market-guide](jeju-market-guide/) — Grocery shopping at a Jeju market: bags in both hands, turn to pick a stall and nod to confirm four items
+- KR43 [korea-folk-games-shuu](korea-folk-games-shuu/) — Holiday waiting time: look up and play twenty folk games, clear them, keep score and save
+- KR44 [bukhansan-hike-meet](bukhansan-hike-meet/) — Hiking Bukhansan with poles in both hands: return to the registered meeting point by GPS bearing and distance
+- KR45 [jegichagi-game](jegichagi-game/) — A holiday family gathering: turn to pick a direction and nod to kick the jegi, ten kicks settle it
+- KR46 [jeonju-trip-hub](jeonju-trip-hub/) — Jeonju trip: twenty tools in one notebook, worked through by nodding
+- KR47 [taekwondo-game](taekwondo-game/) — A taekwondo family: turn to pick a technique and nod to strike, ten rounds settle the match
+- KR48 [gangneung-trip-hub](gangneung-trip-hub/) — Gangneung trip: one handbook, nod through twenty travel tools
 
 For the full list, see the Agent index at the end of the [root README](../README.md).

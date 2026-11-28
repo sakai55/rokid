@@ -1,9 +1,9 @@
 # Directional (directional/)
 
 [中文](README.md) | English | [日本語](README.ja.md)
-Translated from the Chinese version (as of 2026-10-29).
+Translated from the Chinese version (as of 2026-11-28).
 
-Directional series · IDs DI01–DI50 · 50 agents. They put gaze-axis alignment and head direction to work on everyday problems.
+Directional series · IDs DI01–DI119 · 119 agents. They put gaze-axis alignment and head direction to work on everyday problems.
 
 - DI01 [gaze-translate](gaze-translate/) — Look at foreign text and hold your head still; a telephoto shot gets it translated and read aloud
 - DI02 [shelf-compare](shelf-compare/) — Scan shelf barcodes into a price-comparison table; nod to add an item to your list
@@ -55,5 +55,74 @@ Directional series · IDs DI01–DI50 · 50 agents. They put gaze-axis alignment
 - DI48 [teleprompter-gaze](teleprompter-gaze/) — Losing your lines in a speech or on video, and glancing down at notes looks unnatural
 - DI49 [site-patrol](site-patrol/) — Site and warehouse patrols mean looking at and logging every item, both hands busy with tools
 - DI50 [elder-day](elder-day/) — A daily checklist for an older adult living alone: medication, water, heading out — confirmed one item at a time
+- DI51 [london-bus-meet](london-bus-meet/) — A London visitor with both hands full of bags gets back to the bus-stop meeting point by GPS bearing and distance
+- DI52 [aussie-market-photo](aussie-market-photo/) — An Australian market shopper with both hands full nods to photo-check the basket so nothing gets missed
+- DI53 [china-rail-meet](china-rail-meet/) — An older traveller separated at a high-speed rail station gets back to the meeting point by GPS bearing and distance
+- DI54 [china-market-photo](china-market-photo/) — A market shopper with both hands full of vegetables nods to photo-check the basket; a missing item stops checkout
+- DI55 [canada-trail-meet](canada-trail-meet/) — A Banff hiker with both hands on trekking poles gets back to the trailhead by GPS bearing
+- DI56 [china-school-meet](china-school-meet/) — A parent at school pickup gets back to the meeting post at the school gate by GPS bearing and distance
+- DI57 [singapore-hawker-guide](singapore-hawker-guide/) — A hawker-centre diner carrying a tray picks a stall by head direction and nods to confirm pickup
+- DI58 [china-westlake-meet](china-westlake-meet/) — An older West Lake visitor who got separated gets back to the meeting pavilion by GPS bearing and distance
+- DI59 [china-pickup-photo](china-pickup-photo/) — A group-buy pickup shopper with both hands full looks at the shelf and nods to photo-check twelve items
+- DI60 [ireland-coast-guide](ireland-coast-guide/) — An Irish coast walker gets back to the registered meeting point by GPS bearing and distance
+- DI61 [china-morning-market](china-morning-market/) — A morning-market shopper with both hands full turns to pick a stall and nods to confirm four items
+- DI62 [china-park-meet](china-park-meet/) — An older park visitor who got separated gets back to the meeting pavilion by GPS bearing and distance
+- DI63 [uk-coast-meet](uk-coast-meet/) — A Cornwall coast walker separated from companions gets back to the registered meeting point by GPS bearing and distance
+- DI64 [china-subway-meet](china-subway-meet/) — An older traveller separated from family inside a subway station gets back to the registered meeting point by GPS bearing and distance
+- DI65 [china-night-market](china-night-market/) — A night-market snack buyer with both hands full picks stalls by head and nods to confirm four items one by one
+- DI66 [australia-beach-meet](australia-beach-meet/) — An Australian beach walker separated from companions gets back to the meeting point by GPS bearing and distance
+- DI67 [china-greatwall-meet](china-greatwall-meet/) — An older Great Wall visitor separated from family gets back to the meeting pavilion by GPS bearing and distance
+- DI68 [china-temple-photo](china-temple-photo/) — A temple visitor holding incense in both hands looks at the halls and nods to photo-check twelve spots
+- DI69 [uk-lake-meet](uk-lake-meet/) — A Lake District hiker separated from companions gets back to the meeting point by GPS bearing and distance
+- DI70 [china-mountain-meet](china-mountain-meet/) — An older Huangshan visitor separated from family gets back to the meeting pavilion by GPS bearing and distance
+- DI71 [china-garden-photo](china-garden-photo/) — A Suzhou garden visitor holding a guidebook in both hands looks at the garden and nods to photo-check twelve spots
+- DI72 [ireland-cliff-meet](ireland-cliff-meet/) — A Cliffs of Moher walker separated from companions gets back to the meeting point by GPS bearing and distance
+- DI73 [china-summerpalace-meet](china-summerpalace-meet/) — An older Summer Palace visitor separated from family gets back to the meeting pavilion by GPS bearing and distance
+- DI74 [china-flower-market](china-flower-market/) — A Kunming flower-market buyer with both hands full turns to pick a stall and nods to confirm four purchases
+- DI75 [nz-alps-meet](nz-alps-meet/) — A Southern Alps hiker separated from companions gets back to the meeting point by GPS bearing and distance
+- DI76 [china-oldtown-photo](china-oldtown-photo/) — A Lijiang old-town visitor holding a guidebook in both hands looks at the old town and nods to photo-check twelve spots
+- DI77 [china-seafood-market](china-seafood-market/) — A seafood-market shopper with both hands full turns to pick a stall and nods to confirm each item
+- DI78 [canada-rockies-meet](canada-rockies-meet/) — A Rockies hiker separated from companions gets back to the meeting point by GPS bearing and distance
+- DI79 [china-terracotta-meet](china-terracotta-meet/) — An older Terracotta Army visitor separated from family gets back to the meeting pavilion by GPS bearing and distance
+- DI80 [china-tea-market](china-tea-market/) — A tea-market buyer with both hands full turns to pick a stall and nods to confirm each item
+- DI81 [us-canyon-meet](us-canyon-meet/) — A Grand Canyon hiker separated from companions gets back to the trailhead meeting point by GPS bearing and distance
+- DI82 [china-jiuzhaigou-meet](china-jiuzhaigou-meet/) — An older Jiuzhaigou visitor separated from family gets back to the meeting pavilion by GPS bearing and distance
+- DI83 [china-panda-photo](china-panda-photo/) — A Chengdu panda-base visitor holding a guidebook in both hands looks at the enclosures and nods to photo-check twelve spots
+- DI84 [scotland-highlands-meet](scotland-highlands-meet/) — A Scottish Highlands driver finds six meeting points by GPS bearing and distance and nods to confirm everyone has arrived
+- DI85 [china-zhangjiajie-meet](china-zhangjiajie-meet/) — A Zhangjiajie visitor finds six meeting points by GPS bearing and distance and nods to confirm arrival
+- DI86 [china-panjiayuan-market](china-panjiayuan-market/) — A Panjiayuan antique-market browser with both hands full looks at a stall and nods to log price, condition, and bargaining
+- DI87 [nz-milford-meet](nz-milford-meet/) — A Milford Sound hiker gets back to the trailhead meeting point by GPS bearing and distance
+- DI88 [china-gulangyu-meet](china-gulangyu-meet/) — A Gulangyu visitor gets back to the registered meeting point by GPS bearing and distance and confirms everyone has arrived
+- DI89 [china-hutong-photo](china-hutong-photo/) — A Beijing hutong visitor holding a guidebook in both hands looks at the lanes and nods to photo-check twelve spots
+- DI90 [usa-yellowstone-meet](usa-yellowstone-meet/) — A Yellowstone hiker gets back to the trailhead meeting point by GPS bearing and distance and confirms arrival
+- DI91 [china-huangshan-meet](china-huangshan-meet/) — A Huangshan visitor gets back to the registered meeting point by GPS bearing and distance and confirms arrival
+- DI92 [china-greatwall-photo](china-greatwall-photo/) — A Great Wall visitor holding a guidebook in both hands looks at the watchtowers and nods to photo-check twelve spots
+- DI93 [singapore-botanic-meet](singapore-botanic-meet/) — A Singapore Botanic Gardens walker gets back to the registered meeting point by GPS bearing and distance and confirms arrival
+- DI94 [china-chengdu-meet](china-chengdu-meet/) — A Chengdu Kuanzhai Alley visitor gets back to the registered meeting point by GPS bearing and distance and confirms arrival
+- DI95 [china-xitang-photo](china-xitang-photo/) — A Xitang visitor holding a guidebook in both hands looks at the sights and nods to photo-check twelve spots
+- DI96 [canada-ski-meet](canada-ski-meet/) — A Whistler skier gets back to the registered meeting point by GPS bearing and distance and confirms arrival
+- DI97 [china-harbin-meet](china-harbin-meet/) — A Harbin Ice and Snow World visitor gets back to the registered meeting point by GPS bearing and distance and confirms arrival
+- DI98 [china-pingyao-photo](china-pingyao-photo/) — A Pingyao visitor holding a guidebook in both hands looks at the sights and nods to photo-check twelve spots
+- DI99 [australia-coast-meet](australia-coast-meet/) — An Australian coast hiker gets back to the registered meeting point by GPS bearing and distance and confirms arrival
+- DI100 [china-suzhou-meet](china-suzhou-meet/) — A Suzhou visitor gets back to the registered meeting point by GPS bearing and distance and confirms arrival
+- DI101 [china-wuzhen-photo](china-wuzhen-photo/) — A Wuzhen visitor holding a guidebook in both hands looks at the sights and nods to photo-check twelve spots
+- DI102 [kenya-safari-meet](kenya-safari-meet/) — A Kenya safari visitor gets back to the registered meeting point by GPS bearing and distance and confirms arrival
+- DI103 [china-zhouzhuang-meet](china-zhouzhuang-meet/) — A Zhouzhuang visitor gets back to the registered meeting point by GPS bearing and distance and confirms arrival
+- DI104 [china-huangguoshu-photo](china-huangguoshu-photo/) — A Huangguoshu visitor holding a guidebook in both hands looks at the sights and nods to photo-check twelve spots
+- DI105 [wales-coast-meet](wales-coast-meet/) — A Welsh coast hiker with both hands on trekking poles gets back to the registered meeting point by GPS bearing and distance
+- DI106 [china-qiandao-meet](china-qiandao-meet/) — A Qiandao Lake visitor gets back to the registered meeting point by GPS bearing and distance and confirms arrival
+- DI107 [china-dunhuang-photo](china-dunhuang-photo/) — A Dunhuang visitor holding a guidebook in both hands looks at the sights and nods to photo-check twelve spots
+- DI108 [philippines-manila-meet](philippines-manila-meet/) — A Manila visitor with both hands full of bags gets back to the registered meeting point by GPS bearing and distance
+- DI109 [china-taishan-meet](china-taishan-meet/) — A Mount Tai visitor gets back to the registered meeting point by GPS bearing and distance and confirms arrival
+- DI110 [china-terracotta-photo](china-terracotta-photo/) — A Terracotta Army visitor holding a guidebook in both hands looks at the halls and nods to photo-check twelve spots
+- DI111 [canada-niagara-meet](canada-niagara-meet/) — A Niagara visitor with both hands full of bags gets back to the registered meeting point by GPS bearing and distance
+- DI112 [china-lijiang-meet](china-lijiang-meet/) — A Lijiang old-town visitor holding the railing gets back to the registered meeting point by GPS bearing and distance
+- DI113 [china-forbidden-city-photo](china-forbidden-city-photo/) — A Forbidden City visitor holding a guidebook in both hands looks at the halls and nods to photo-check twelve spots
+- DI114 [usa-liberty-photo](usa-liberty-photo/) — A Statue of Liberty visitor looks at the sights and nods to photo-check twelve spots to finish the route
+- DI115 [scotland-edinburgh-meet](scotland-edinburgh-meet/) — An Edinburgh visitor with both hands full of bags gets back to the meeting point by GPS bearing and distance
+- DI116 [china-huashan-meet](china-huashan-meet/) — A Mount Hua visitor holding the railing gets back to the meeting point by GPS bearing and distance
+- DI117 [south-africa-capetown-meet](south-africa-capetown-meet/) — A Cape Town visitor with both hands full of bags finds the meeting point again by GPS bearing and distance
+- DI118 [china-emei-meet](china-emei-meet/) — A Mount Emei visitor holding the railing gets back to the meeting point by GPS bearing and distance
+- DI119 [china-yungang-photo](china-yungang-photo/) — A Yungang Grottoes visitor looks at the caves and nods to photo-check twelve spots to finish the route
 
 For the full list, see the Agent index at the end of the [root README](../README.md).

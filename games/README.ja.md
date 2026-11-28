@@ -1,9 +1,9 @@
 # 頭部動作ミニゲーム（games/）
 
 [中文](README.md) | [English](README.en.md) | 日本語
-中国語版（2026-10-29 時点）の翻訳。
+中国語版（2026-11-28 時点）の翻訳。
 
-頭部動作＋撮影の現実連動ミニゲームシリーズ。GA01–GA50（頭部動作 GA01–GA40、撮影 GA41–GA50）。頭の動きや撮影で現実とやり取りする、最小構成の小ゲーム集。
+頭部動作＋撮影の現実連動ミニゲームシリーズ。GA01–GA98、全84作、頭部動作ミニゲームが中心。頭の動きや撮影で現実とやり取りする、最小構成の小ゲーム集。
 
 - GA01 [nod-count](nod-count/) — 音声ガイドでゆっくり10回うなずく。下を向いて正面に戻ると1回
 - GA02 [turn-count](turn-count/) — 音声ガイドで左右交互に振り向く。左右各5回で計10回
@@ -41,4 +41,52 @@
 - GA48 [size-sort](size-sort/) — 同種3個を並べ、先に大小順に並べてから撮影し、全順序を照合して判定する
 - GA49 [texture-hunt](texture-hunt/) — ラウンドごとに出た質感に合う実物の表面に寄って撮影し、質感を判定する
 - GA50 [snap-diff](snap-diff/) — 同じ場面を2回撮影。先に変更の種類を宣言してから、2枚で判定する（シリーズ完結）
+- GA51 [us-fair-games](us-fair-games/) — アメリカの家族が郡の祭りで頭の動きだけで20の屋台ゲームを遊ぶ
+- GA52 [dengmi-game](dengmi-game/) — 元宵の家族が頭の向きで灯謎の答えを選び、12問で決着
+- GA53 [ireland-dance-step](ireland-dance-step/) — アイルランドの家族の集まりで、頭の向きでステップを選び拍に合わせてうなずく。10ラウンドで決着
+- GA54 [china-tangram-game](china-tangram-game/) — 中国の家族の集まりで、頭の向きで置き場所を選びうなずいてピースを置く七巧板12図
+- GA55 [china-festival-game-shuu](china-festival-game-shuu/) — 中国の春節の家族が頭の動きで20の正月ゲームを遊ぶ一本集
+- GA56 [us-thanksgiving-games](us-thanksgiving-games/) — アメリカの感謝祭の家族がうなずきと頭の向きで20の感謝祭ゲームを遊ぶ一本集
+- GA57 [china-square-dance](china-square-dance/) — 中国の団地の家族が頭の向きでステップを選び拍に合わせてうなずく広場ダンス10ラウンド
+- GA58 [uk-christmas-games](uk-christmas-games/) — イギリスの家族がクリスマスの待ち時間にうなずきと頭の向きで20のクリスマスゲームを遊ぶ一本集
+- GA59 [china-lantern-games](china-lantern-games/) — 中国の元宵灯会の一家がうなずきと頭の向きで20の灯会ゲームを遊ぶ一本集
+- GA60 [us-july4-games](us-july4-games/) — アメリカの独立記念日の家族が一本で20の独立記念日ゲームを遊び、うなずきで得点
+- GA61 [china-midautumn-games](china-midautumn-games/) — 中秋の待ち時間に中国の家族が一本で20の中秋ゲームを遊び、うなずきで得点
+- GA62 [canada-hockey-games](canada-hockey-games/) — カナダのアイスホッケーシーズンの家族が待ち時間にうなずいて20のホッケーゲームを遊ぶ
+- GA63 [china-dragonboat-games](china-dragonboat-games/) — 中国の端午の家族が待ち時間にうなずいて20のドラゴンボートゲームを遊ぶ
+- GA64 [us-easter-games](us-easter-games/) — アメリカのイースターの家族が待ち時間にうなずいて20のイースターゲームを遊ぶ
+- GA65 [china-chongyang-games](china-chongyang-games/) — 中国の重陽の家族が待ち時間にうなずいて20の重陽ゲームを遊ぶ
+- GA66 [australia-summer-games](australia-summer-games/) — オーストラリアの夏の家族が待ち時間にうなずいて20の夏ゲームを遊ぶ
+- GA67 [china-qixi-games](china-qixi-games/) — 中国の七夕の家族が待ち時間にうなずいて20の七夕ゲームを遊ぶ
+- GA68 [uk-bonfire-games](uk-bonfire-games/) — イギリスのかがり火祭りの家族が待ち時間にうなずいて20の祭りゲームを遊ぶ
+- GA69 [china-winter-games](china-winter-games/) — 中国の冬至の家族が待ち時間にうなずいて20の冬至ゲームを遊ぶ
+- GA70 [us-valentines-games](us-valentines-games/) — アメリカのバレンタインデーの家族が待ち時間にうなずいて20のバレンタインゲームを遊ぶ
+- GA71 [china-qingming-games](china-qingming-games/) — 中国の清明の家族が待ち時間にうなずいて20の清明ゲームを遊ぶ
+- GA72 [ireland-st-patricks-games](ireland-st-patricks-games/) — アイルランドの聖パトリックデーの家族が待ち時間にうなずいて20の祭りゲームを遊ぶ
+- GA73 [china-laba-games](china-laba-games/) — 中国の臘八の家族が待ち時間にうなずいて20の臘八ゲームを遊ぶ
+- GA74 [australia-christmas-games](australia-christmas-games/) — オーストラリアのクリスマス休暇の家族が頭の動きで20のクリスマスゲームを遊び、クリア・得点・記録を残す
+- GA75 [china-ice-games](china-ice-games/) — 中国の氷雪祭りの観光客が頭の動きで20の氷雪ゲームを遊び、クリア・得点・記録を残す
+- GA76 [ireland-stpatrick-games](ireland-stpatrick-games/) — アイルランドの聖パトリックデーの家族が頭の動きで20の祭りゲームを遊び、クリアして得点
+- GA77 [china-kite-game](china-kite-game/) — 中国の家族が凧揚げで頭の向きだけで風向きを選び、うなずいて糸を出す。10ラウンドで決着
+- GA78 [canada-winter-games](canada-winter-games/) — カナダの冬カーニバルの家族が頭の動きで20の冬ゲームを遊び、クリア・得点・記録を残す
+- GA79 [china-zigong-lantern-games](china-zigong-lantern-games/) — 中国の自貢灯会の家族が頭の動きで20の灯会ゲームを遊び、クリア・得点・記録を残す
+- GA80 [usa-thanksgiving-games](usa-thanksgiving-games/) — アメリカの感謝祭の家族が頭の動きで20の感謝祭ゲームを遊び、クリア・得点・記録を残す
+- GA81 [china-dongzhi-games](china-dongzhi-games/) — 中国の冬至の家族が頭の動きで20の冬至ゲームを遊び、クリア・得点・記録を残す
+- GA82 [uk-boxing-day-games](uk-boxing-day-games/) — イギリスのボクシングデーの家族が頭の動きで20のボクシングデーゲームを遊び、クリア・得点・記録を残す
+- GA83 [china-jianzi-game](china-jianzi-game/) — 中国の家族の集まりで頭の向きだけで落下地点を選び、うなずいて羽根を蹴る。10ラウンドで決着し記録
+- GA84 [scotland-highland-games](scotland-highland-games/) — スコットランドのハイランドゲームズの家族が頭の向きだけで種目を選び、うなずいて出場。10ラウンドで決着し記録
+- GA85 [china-folk-games](china-folk-games/) — 中国の家族が待ち時間に頭の動きで20の民俗ゲームを遊び、クリア・得点・記録を残す
+- GA86 [jamaica-games-shuu](jamaica-games-shuu/) — ジャマイカの家族が待ち時間に頭の動きで20のジャマイカゲームを遊び、クリア・得点・記録を残す
+- GA87 [china-ropejump-game](china-ropejump-game/) — 中国の家族が縄跳びの時間に振り向いて型を選び、うなずいて跳び始める。10ラウンドで決着し得点と記録
+- GA88 [trinidad-carnival-game](trinidad-carnival-game/) — トリニダードのカーニバルの家族が振り向いて種目を選び、うなずいて出場。10ラウンドで決着
+- GA89 [china-board-games-shuu](china-board-games-shuu/) — 中国の家族が待ち時間に頭の動きで20のボード・カードゲームを遊び、クリア・得点・記録を残す
+- GA90 [china-peking-opera-games-shuu](china-peking-opera-games-shuu/) — 中国の家族が待ち時間に頭の動きで20の京劇ゲームを遊び、クリア・得点・記録を残す
+- GA91 [barbados-crop-over-game](barbados-crop-over-game/) — バルバドスの収穫祭の家族が振り向いて種目を選び、うなずいて出場。10ラウンドで決着
+- GA92 [ireland-games-shuu](ireland-games-shuu/) — アイルランドの家族の集まりで頭の動きで20のアイルランドゲームを遊び、クリア・得点・記録を残す
+- GA93 [china-diabolo-game](china-diabolo-game/) — 中国の家族がディアボロの時間に振り向いて技を選び、うなずいて回し始める。10ラウンドで決着
+- GA94 [nz-haka-game](nz-haka-game/) — ニュージーランドの家族の集まりで振り向いてハカの要素を選び、うなずいて演じる。10ラウンドで競う
+- GA95 [china-tang-poetry-games-shuu](china-tang-poetry-games-shuu/) — 中国の家族が待ち時間に振り向いて20の唐詩ゲームを遊び、詩を暗唱して得点
+- GA96 [china-taiji-game](china-taiji-game/) — 中国の家族が太極の時間に振り向いて型を選び、うなずいて練習を始める。10ラウンドで競う
+- GA97 [australia-games-shuu](australia-games-shuu/) — オーストラリアの家族の集まりで振り向いてゲームを選び、うなずいて20のオーストラリアゲームを遊んで得点
+- GA98 [china-lion-dance-game](china-lion-dance-game/) — 中国の家族が獅子舞の時間に振り向いて型を選び、うなずいて練習を始める。10ラウンドで競って決着
 全リストはルートの [README](../README.md) 末尾にある Agent リストを参照。

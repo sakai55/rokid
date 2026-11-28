@@ -2,7 +2,7 @@
 
 中文 | [English](README.en.md) | [日本語](README.ja.md)
 
-指向性系列 · 编号 DI01–DI50，共 50 个。利用视线同轴、头部朝向等指向性能力解决生活问题。
+指向性系列 · 编号 DI01–DI119，共 119 个。利用视线同轴、头部朝向等指向性能力解决生活问题。
 
 - DI01 [gaze-translate](gaze-translate/) — 看着外文稳头，长焦拍下翻译并朗读
 - DI02 [shelf-compare](shelf-compare/) — 扫货架条码入表比价，点头加入清单
@@ -54,5 +54,74 @@
 - DI48 [teleprompter-gaze](teleprompter-gaze/) — 演讲/录视频忘词，低头看稿不自然
 - DI49 [site-patrol](site-patrol/) — 工地/仓库巡检要逐项看、逐项记，双手拿工具
 - DI50 [elder-day](elder-day/) — 独居老人一日清单：吃药喝水出门逐项确认
+- DI51 [london-bus-meet](london-bus-meet/) — 伦敦游客双手提袋，GPS 方位距离回巴士站集合点
+- DI52 [aussie-market-photo](aussie-market-photo/) — 澳洲市场双手提袋，点头拍照核对菜篮不漏买
+- DI53 [china-rail-meet](china-rail-meet/) — 高铁站走散的年长旅客，GPS 方位距离回集合点
+- DI54 [china-market-photo](china-market-photo/) — 菜市场双手提菜，点头拍照核对菜篮差件不结账
+- DI55 [canada-trail-meet](canada-trail-meet/) — 班夫徒步者双手持杖，凭 GPS 方位回步道口
+- DI56 [china-school-meet](china-school-meet/) — 放学接娃家长，凭 GPS 方位距离回校门口集合柱
+- DI57 [singapore-hawker-guide](singapore-hawker-guide/) — 小贩中心双手端托盘，头向选摊点头确认取餐
+- DI58 [china-westlake-meet](china-westlake-meet/) — 西湖年长游客走散，凭 GPS 方位距离回集合亭
+- DI59 [china-pickup-photo](china-pickup-photo/) — 社区团购取货双手提袋，点头拍照核对十二件
+- DI60 [ireland-coast-guide](ireland-coast-guide/) — 爱尔兰海岸步行者，凭 GPS 方位距离回集合点
+- DI61 [china-morning-market](china-morning-market/) — 早市买菜双手提袋，转头选摊点头确认四项
+- DI62 [china-park-meet](china-park-meet/) — 公园年长游客走散，凭 GPS 方位距离回集合亭
+- DI63 [uk-coast-meet](uk-coast-meet/) — 康沃尔海岸走散步行者，凭 GPS 方位距离回集合点
+- DI64 [china-subway-meet](china-subway-meet/) — 地铁站内走散的年长旅客，凭 GPS 方位距离回集合点
+- DI65 [china-night-market](china-night-market/) — 夜市买小吃双手提袋，头部选摊点头逐项确认四项
+- DI66 [australia-beach-meet](australia-beach-meet/) — 澳大利亚海滩走散步行者，凭 GPS 方位距离回集合点
+- DI67 [china-greatwall-meet](china-greatwall-meet/) — 长城年长游客走散，凭 GPS 方位距离回集合亭
+- DI68 [china-temple-photo](china-temple-photo/) — 寺庙参观双手拿香，看向殿区点头拍照核对十二处
+- DI69 [uk-lake-meet](uk-lake-meet/) — 英国湖区徒步者走散，凭 GPS 方位距离回集合点
+- DI70 [china-mountain-meet](china-mountain-meet/) — 黄山年长游客走散，凭 GPS 方位距离回集合亭
+- DI71 [china-garden-photo](china-garden-photo/) — 苏州园林参观双手拿导览册，点头拍照核对十二处
+- DI72 [ireland-cliff-meet](ireland-cliff-meet/) — 莫赫悬崖步行者走散，凭 GPS 方位距离回集合点
+- DI73 [china-summerpalace-meet](china-summerpalace-meet/) — 颐和园年长游客走散，凭 GPS 方位距离回集合亭
+- DI74 [china-flower-market](china-flower-market/) — 昆明花市双手提袋，转头选摊点头确认四项买完
+- DI75 [nz-alps-meet](nz-alps-meet/) — 南阿尔卑斯徒步者走散，凭 GPS 方位距离回集合点
+- DI76 [china-oldtown-photo](china-oldtown-photo/) — 丽江古城参观双手拿导览册，点头拍照核对十二处
+- DI77 [china-seafood-market](china-seafood-market/) — 海鲜市场双手提袋，转头选摊点头逐项确认
+- DI78 [canada-rockies-meet](canada-rockies-meet/) — 落基山徒步者走散，凭 GPS 方位距离回集合点
+- DI79 [china-terracotta-meet](china-terracotta-meet/) — 兵马俑年长游客走散，凭 GPS 方位距离回集合亭
+- DI80 [china-tea-market](china-tea-market/) — 茶叶市场双手提袋，转头选摊点头逐项确认
+- DI81 [us-canyon-meet](us-canyon-meet/) — 大峡谷徒步者走散，凭 GPS 方位距离回步道口
+- DI82 [china-jiuzhaigou-meet](china-jiuzhaigou-meet/) — 九寨沟年长游客走散，凭 GPS 方位距离回集合亭
+- DI83 [china-panda-photo](china-panda-photo/) — 熊猫基地参观双手拿导览册，点头拍照核对十二处
+- DI84 [scotland-highlands-meet](scotland-highlands-meet/) — 苏格兰高地自驾，凭 GPS 方位距离找六个集合点
+- DI85 [china-zhangjiajie-meet](china-zhangjiajie-meet/) — 张家界游客凭 GPS 方位距离找六个集合点
+- DI86 [china-panjiayuan-market](china-panjiayuan-market/) — 潘家园逛旧货双手提袋，看向摊位点头核对问价
+- DI87 [nz-milford-meet](nz-milford-meet/) — 米尔福德峡湾徒步者，凭 GPS 方位距离回步道口
+- DI88 [china-gulangyu-meet](china-gulangyu-meet/) — 鼓浪屿游客凭 GPS 方位距离回集合点确认到齐
+- DI89 [china-hutong-photo](china-hutong-photo/) — 北京胡同参观双手拿导览册，点头拍照核对十二处
+- DI90 [usa-yellowstone-meet](usa-yellowstone-meet/) — 黄石徒步者凭 GPS 方位距离回步道口确认到齐
+- DI91 [china-huangshan-meet](china-huangshan-meet/) — 黄山游客凭 GPS 方位距离回集合点确认到齐
+- DI92 [china-greatwall-photo](china-greatwall-photo/) — 长城参观双手拿导览册，看向城楼点头拍照核对十二处
+- DI93 [singapore-botanic-meet](singapore-botanic-meet/) — 新加坡植物园徒步者，凭 GPS 方位距离回集合点
+- DI94 [china-chengdu-meet](china-chengdu-meet/) — 成都宽窄巷子游客，凭 GPS 方位距离回集合点
+- DI95 [china-xitang-photo](china-xitang-photo/) — 西塘参观双手拿导览册，看向景点点头拍照核对十二处
+- DI96 [canada-ski-meet](canada-ski-meet/) — 惠斯勒滑雪者凭 GPS 方位距离回集合点确认到齐
+- DI97 [china-harbin-meet](china-harbin-meet/) — 哈尔滨冰雪大世界游客，凭 GPS 方位距离回集合点
+- DI98 [china-pingyao-photo](china-pingyao-photo/) — 平遥古城参观双手拿导览册，点头拍照核对十二处
+- DI99 [australia-coast-meet](australia-coast-meet/) — 澳大利亚海岸徒步者，凭 GPS 方位距离回集合点
+- DI100 [china-suzhou-meet](china-suzhou-meet/) — 苏州游客凭 GPS 方位距离回集合点确认到齐
+- DI101 [china-wuzhen-photo](china-wuzhen-photo/) — 乌镇参观双手拿导览册，看向景点点头拍照核对十二处
+- DI102 [kenya-safari-meet](kenya-safari-meet/) — 肯尼亚游猎游客凭 GPS 方位距离回集合点确认到齐
+- DI103 [china-zhouzhuang-meet](china-zhouzhuang-meet/) — 周庄游客凭 GPS 方位距离回集合点确认到齐
+- DI104 [china-huangguoshu-photo](china-huangguoshu-photo/) — 黄果树参观双手拿导览册，点头拍照核对十二处
+- DI105 [wales-coast-meet](wales-coast-meet/) — 威尔士海岸徒步者双手持杖，凭 GPS 方位距离回集合点
+- DI106 [china-qiandao-meet](china-qiandao-meet/) — 千岛湖游客凭 GPS 方位距离回集合点确认到齐
+- DI107 [china-dunhuang-photo](china-dunhuang-photo/) — 敦煌参观双手拿导览册，看向景点点头拍照核对十二处
+- DI108 [philippines-manila-meet](philippines-manila-meet/) — 马尼拉游客双手提袋，凭 GPS 方位距离回集合点
+- DI109 [china-taishan-meet](china-taishan-meet/) — 泰山游客凭 GPS 方位距离回集合点确认到齐
+- DI110 [china-terracotta-photo](china-terracotta-photo/) — 兵马俑参观双手拿导览册，看向展厅点头拍照核对十二处
+- DI111 [canada-niagara-meet](canada-niagara-meet/) — 尼亚加拉游客双手提袋，凭 GPS 方位距离回集合点
+- DI112 [china-lijiang-meet](china-lijiang-meet/) — 丽江古城游客双手扶栏，凭 GPS 方位距离回集合点
+- DI113 [china-forbidden-city-photo](china-forbidden-city-photo/) — 故宫参观双手拿导览册，看向展厅点头拍照核对十二处
+- DI114 [usa-liberty-photo](usa-liberty-photo/) — 自由女神像游客看向景点，点头拍照核对十二处
+- DI115 [scotland-edinburgh-meet](scotland-edinburgh-meet/) — 爱丁堡游客双手提袋，凭 GPS 方位距离回集合点
+- DI116 [china-huashan-meet](china-huashan-meet/) — 华山游客双手扶栏，凭 GPS 方位距离回集合点
+- DI117 [south-africa-capetown-meet](south-africa-capetown-meet/) — 开普敦游客双手提袋，凭 GPS 方位距离找回集合点
+- DI118 [china-emei-meet](china-emei-meet/) — 峨眉山游客双手扶栏，凭 GPS 方位距离回集合点
+- DI119 [china-yungang-photo](china-yungang-photo/) — 云冈石窟参观者看向石窟，点头拍照核对十二处
 
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。

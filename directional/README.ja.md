@@ -1,9 +1,9 @@
 # 指向性（directional/）
 
 [中文](README.md) | [English](README.en.md) | 日本語
-中国語版（2026-10-29 時点）の翻訳。
+中国語版（2026-11-28 時点）の翻訳。
 
-指向性シリーズ。DI01–DI50、全50件。視線の向きや頭の向きといった指向性の仕組みを使って、日常の課題を解く。
+指向性シリーズ。DI01–DI119、全119件。視線の向きや頭の向きといった指向性の仕組みを使って、日常の課題を解く。
 
 - DI01 [gaze-translate](gaze-translate/) — 外国語の文を見て頭を止め、望遠で撮って翻訳し、読み上げる
 - DI02 [shelf-compare](shelf-compare/) — 棚のバーコードを読み取って表にし、価格を比較。うなずきでリストに追加する
@@ -55,5 +55,74 @@
 - DI48 [teleprompter-gaze](teleprompter-gaze/) — スピーチや動画撮影で言葉を忘れる。下を向いて原稿を見るのは不自然
 - DI49 [site-patrol](site-patrol/) — 現場や倉庫の巡回で、項目ごとに目視と記録。両手は道具で塞がっている
 - DI50 [elder-day](elder-day/) — 独居高齢者の1日のチェックリスト：服薬・水分・外出を項目ごとに確認する
+- DI51 [london-bus-meet](london-bus-meet/) — ロンドンの観光客が両手に荷物を持ったまま、GPSの方位と距離でバス停の集合地点に戻る
+- DI52 [aussie-market-photo](aussie-market-photo/) — オーストラリアの市場の買い物客が両手に袋を持ったまま、うなずいて写真で買い物かごを確認し、買い漏れを防ぐ
+- DI53 [china-rail-meet](china-rail-meet/) — 高速鉄道駅ではぐれた高齢の旅行者が、GPSの方位と距離で集合地点に戻る
+- DI54 [china-market-photo](china-market-photo/) — 市場の買い物客が両手に野菜を持ったまま、うなずいて写真でかごを確認。不足があれば会計を止める
+- DI55 [canada-trail-meet](canada-trail-meet/) — バンフのハイカーが両手にストックを持ったまま、GPSの方位で登山口に戻る
+- DI56 [china-school-meet](china-school-meet/) — 下校時の迎えの保護者が、GPSの方位と距離で校門の集合柱に戻る
+- DI57 [singapore-hawker-guide](singapore-hawker-guide/) — ホーカーセンターでトレイを持つ客が、頭の向きで屋台を選び、うなずいて受け取りを確認する
+- DI58 [china-westlake-meet](china-westlake-meet/) — 西湖ではぐれた高齢の観光客が、GPSの方位と距離で集合亭に戻る
+- DI59 [china-pickup-photo](china-pickup-photo/) — 共同購入の受け取り客が両手に袋を持ったまま、棚を見てうなずき、写真で12件を確認する
+- DI60 [ireland-coast-guide](ireland-coast-guide/) — アイルランドの海岸を歩く人が、GPSの方位と距離で登録した集合地点に戻る
+- DI61 [china-morning-market](china-morning-market/) — 朝市の買い物客が両手に袋を持ったまま、振り向いて屋台を選び、うなずいて4品を確認する
+- DI62 [china-park-meet](china-park-meet/) — 公園ではぐれた高齢の来園者が、GPSの方位と距離で集合亭に戻る
+- DI63 [uk-coast-meet](uk-coast-meet/) — コーンウォールの海岸で仲間とはぐれた歩行者が、GPSの方位と距離で登録した集合地点に戻る
+- DI64 [china-subway-meet](china-subway-meet/) — 地下鉄駅構内で家族とはぐれた高齢の旅行者が、GPSの方位と距離で登録した集合地点に戻る
+- DI65 [china-night-market](china-night-market/) — 夜市で両手に袋を持つ軽食の買い物客が、頭の向きで屋台を選び、うなずいて4品を1品ずつ確認する
+- DI66 [australia-beach-meet](australia-beach-meet/) — オーストラリアのビーチで仲間とはぐれた歩行者が、GPSの方位と距離で集合地点に戻る
+- DI67 [china-greatwall-meet](china-greatwall-meet/) — 万里の長城で家族とはぐれた高齢の観光客が、GPSの方位と距離で集合亭に戻る
+- DI68 [china-temple-photo](china-temple-photo/) — 寺院の参拝者が両手に線香を持ったまま、堂宇を見てうなずき、写真で12か所を確認する
+- DI69 [uk-lake-meet](uk-lake-meet/) — 湖水地方のハイカーが仲間とはぐれたあと、GPSの方位と距離で集合地点に戻る
+- DI70 [china-mountain-meet](china-mountain-meet/) — 黄山で家族とはぐれた高齢の観光客が、GPSの方位と距離で集合亭に戻る
+- DI71 [china-garden-photo](china-garden-photo/) — 蘇州園林の参観者が両手にガイドブックを持ったまま、園林を見てうなずき、写真で12か所を確認する
+- DI72 [ireland-cliff-meet](ireland-cliff-meet/) — モハーの断崖を歩く人が仲間とはぐれたあと、GPSの方位と距離で集合地点に戻る
+- DI73 [china-summerpalace-meet](china-summerpalace-meet/) — 頤和園で家族とはぐれた高齢の観光客が、GPSの方位と距離で集合亭に戻る
+- DI74 [china-flower-market](china-flower-market/) — 昆明の花市の買い物客が両手に袋を持ったまま、振り向いて屋台を選び、うなずいて4品の購入を確認する
+- DI75 [nz-alps-meet](nz-alps-meet/) — 南アルプスのハイカーが仲間とはぐれたあと、GPSの方位と距離で集合地点に戻る
+- DI76 [china-oldtown-photo](china-oldtown-photo/) — 麗江古城の参観者が両手にガイドブックを持ったまま、古城を見てうなずき、写真で12か所を確認する
+- DI77 [china-seafood-market](china-seafood-market/) — 海鮮市場の買い物客が両手に袋を持ったまま、振り向いて屋台を選び、うなずいて1品ずつ確認する
+- DI78 [canada-rockies-meet](canada-rockies-meet/) — ロッキー山脈のハイカーが仲間とはぐれたあと、GPSの方位と距離で集合地点に戻る
+- DI79 [china-terracotta-meet](china-terracotta-meet/) — 兵馬俑で家族とはぐれた高齢の観光客が、GPSの方位と距離で集合亭に戻る
+- DI80 [china-tea-market](china-tea-market/) — 茶葉市場の買い物客が両手に袋を持ったまま、振り向いて屋台を選び、うなずいて1品ずつ確認する
+- DI81 [us-canyon-meet](us-canyon-meet/) — グランドキャニオンのハイカーが仲間とはぐれたあと、GPSの方位と距離で登山口の集合地点に戻る
+- DI82 [china-jiuzhaigou-meet](china-jiuzhaigou-meet/) — 九寨溝で家族とはぐれた高齢の観光客が、GPSの方位と距離で集合亭に戻る
+- DI83 [china-panda-photo](china-panda-photo/) — 成都パンダ基地の参観者が両手にガイドブックを持ったまま、館区を見てうなずき、写真で12か所を確認する
+- DI84 [scotland-highlands-meet](scotland-highlands-meet/) — スコットランド高地のドライバーが、GPSの方位と距離で6か所の集合地点を探し、うなずいて全員の到着を確認する
+- DI85 [china-zhangjiajie-meet](china-zhangjiajie-meet/) — 張家界の観光客が、GPSの方位と距離で6か所の集合地点を探し、うなずいて到着を確認する
+- DI86 [china-panjiayuan-market](china-panjiayuan-market/) — 潘家園で骨董市を回る人が両手に袋を持ったまま、屋台を見てうなずき、値段・状態・値引き交渉を記録する
+- DI87 [nz-milford-meet](nz-milford-meet/) — ミルフォードサウンドのハイカーが、GPSの方位と距離で登山口の集合地点に戻る
+- DI88 [china-gulangyu-meet](china-gulangyu-meet/) — 鼓浪嶼の観光客が、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI89 [china-hutong-photo](china-hutong-photo/) — 北京の胡同の参観者が両手にガイドブックを持ったまま、胡同を見てうなずき、写真で12か所を確認する
+- DI90 [usa-yellowstone-meet](usa-yellowstone-meet/) — イエローストーンのハイカーが、GPSの方位と距離で登山口の集合地点に戻り、到着を確認する
+- DI91 [china-huangshan-meet](china-huangshan-meet/) — 黄山の観光客が、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI92 [china-greatwall-photo](china-greatwall-photo/) — 万里の長城の参観者が両手にガイドブックを持ったまま、城楼を見てうなずき、写真で12か所を確認する
+- DI93 [singapore-botanic-meet](singapore-botanic-meet/) — シンガポール植物園を歩く人が、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI94 [china-chengdu-meet](china-chengdu-meet/) — 成都・寛窄巷子の観光客が、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI95 [china-xitang-photo](china-xitang-photo/) — 西塘の参観者が両手にガイドブックを持ったまま、名所を見てうなずき、写真で12か所を確認する
+- DI96 [canada-ski-meet](canada-ski-meet/) — ウィスラーのスキーヤーが、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI97 [china-harbin-meet](china-harbin-meet/) — ハルビン氷雪大世界の観光客が、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI98 [china-pingyao-photo](china-pingyao-photo/) — 平遥古城の参観者が両手にガイドブックを持ったまま、名所を見てうなずき、写真で12か所を確認する
+- DI99 [australia-coast-meet](australia-coast-meet/) — オーストラリアの海岸のハイカーが、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI100 [china-suzhou-meet](china-suzhou-meet/) — 蘇州の観光客が、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI101 [china-wuzhen-photo](china-wuzhen-photo/) — 烏鎮の参観者が両手にガイドブックを持ったまま、名所を見てうなずき、写真で12か所を確認する
+- DI102 [kenya-safari-meet](kenya-safari-meet/) — ケニアのサファリ観光客が、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI103 [china-zhouzhuang-meet](china-zhouzhuang-meet/) — 周荘の観光客が、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI104 [china-huangguoshu-photo](china-huangguoshu-photo/) — 黄果樹の参観者が両手にガイドブックを持ったまま、名所を見てうなずき、写真で12か所を確認する
+- DI105 [wales-coast-meet](wales-coast-meet/) — ウェールズの海岸のハイカーが両手にストックを持ったまま、GPSの方位と距離で登録した集合地点に戻る
+- DI106 [china-qiandao-meet](china-qiandao-meet/) — 千島湖の観光客が、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI107 [china-dunhuang-photo](china-dunhuang-photo/) — 敦煌の参観者が両手にガイドブックを持ったまま、名所を見てうなずき、写真で12か所を確認する
+- DI108 [philippines-manila-meet](philippines-manila-meet/) — マニラの観光客が両手に袋を持ったまま、GPSの方位と距離で登録した集合地点に戻る
+- DI109 [china-taishan-meet](china-taishan-meet/) — 泰山の観光客が、GPSの方位と距離で登録した集合地点に戻り、全員の到着を確認する
+- DI110 [china-terracotta-photo](china-terracotta-photo/) — 兵馬俑の参観者が両手にガイドブックを持ったまま、展示ホールを見てうなずき、写真で12か所を確認する
+- DI111 [canada-niagara-meet](canada-niagara-meet/) — ナイアガラの観光客が両手に袋を持ったまま、GPSの方位と距離で登録した集合地点に戻る
+- DI112 [china-lijiang-meet](china-lijiang-meet/) — 麗江古城の観光客が手すりにつかまりながら、GPSの方位と距離で登録した集合地点に戻る
+- DI113 [china-forbidden-city-photo](china-forbidden-city-photo/) — 故宮の参観者が両手にガイドブックを持ったまま、展示ホールを見てうなずき、写真で12か所を確認する
+- DI114 [usa-liberty-photo](usa-liberty-photo/) — 自由の女神の観光客が名所を見てうなずき、写真で12か所を確認して回り終える
+- DI115 [scotland-edinburgh-meet](scotland-edinburgh-meet/) — エディンバラの観光客が両手に袋を持ったまま、GPSの方位と距離で集合地点に戻る
+- DI116 [china-huashan-meet](china-huashan-meet/) — 華山の観光客が手すりにつかまりながら、GPSの方位と距離で集合地点に戻る
+- DI117 [south-africa-capetown-meet](south-africa-capetown-meet/) — ケープタウンの観光客が両手に袋を持ったまま、GPSの方位と距離で集合地点を見つけ直す
+- DI118 [china-emei-meet](china-emei-meet/) — 峨眉山の観光客が手すりにつかまりながら、GPSの方位と距離で集合地点に戻る
+- DI119 [china-yungang-photo](china-yungang-photo/) — 雲岡石窟の参観者が石窟を見てうなずき、写真で12か所を確認して回り終える
 
 全リストはルートの [README](../README.md) 末尾にある Agent リストを参照。

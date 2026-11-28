@@ -2,7 +2,7 @@
 
 中文 | [English](README.en.md) | [日本語](README.ja.md)
 
-日韩本地化系列 · 编号 JP01–JP47，共 48 个。日本在地场景的本地化 Agent。
+日韩本地化系列 · 编号 JP01–JP74，共 75 个。日本在地场景的本地化 Agent。
 
 - JP01 [shinkansen-quiet](shinkansen-quiet/) — 新干线静音守候，只监测自己的发声
 - JP02 [jinja-bow](jinja-bow/) — 神社参拜全程低头完成，二拝二拍手一拝
@@ -52,5 +52,32 @@
 - JP45 [eki-shuugou](eki-shuugou/) — 车站集合：GPS方位距离找人
 - JP46 [fukuwarai](fukuwarai/) — 福笑：头部方向置脸部六件
 - JP47 [senior-kurashi-hub](senior-kurashi-hub/) — 高龄暮らし：二十工具一本手账
+- JP48 [koen-shuugou](koen-shuugou/) — 公园散开的高龄者：GPS方位距离回集合长椅
+- JP49 [daruma-otoshi](daruma-otoshi/) — 正月家庭：头部方向点头玩达摩落积木
+- JP50 [oshogatsu-game-shuu](oshogatsu-game-shuu/) — 正月家庭：头部动作玩二十个正月游戏一本集
+- JP51 [undoukai-shuugou](undoukai-shuugou/) — 运动会家长双手拿东西：GPS方位距离回集合帐篷
+- JP52 [kendama-game](kendama-game/) — 家庭聚会：头向选落点，点头投剑玉十投结算
+- JP53 [fuyu-game-shuu](fuyu-game-shuu/) — 冬季家庭：头部动作玩二十个冬季游戏一本集
+- JP54 [aki-matsuri-game-shuu](aki-matsuri-game-shuu/) — 秋日祭典家庭：点头头向玩二十个秋日游戏一本集
+- JP55 [nabe-cook-steps](nabe-cook-steps/) — 家庭做锅料理：双手沾水时点头推进24步做完一锅
+- JP56 [ramen-order](ramen-order/) — 拉面店券卖机前：头向选面点头确认配料，代说点单
+- JP57 [kaiten-sushi-order](kaiten-sushi-order/) — 回转寿司：双手拿盘看向寿司，点头确认代说点单
+- JP58 [eki-coin-locker](eki-coin-locker/) — 车站旅客：双手提行李，看向储物柜点头确认存取
+- JP59 [jinja-hatsumode](jinja-hatsumode/) — 初诣参拜：双手拿供品，转头选参拜所点头确认
+- JP60 [osechi-steps](osechi-steps/) — 做御节料理：双手忙时点头推进，做完一品记一品
+- JP61 [sakura-hanami-photo](sakura-hanami-photo/) — 花见游客：双手拿便当，看向名所点头拍照核对十二处
+- JP62 [furoshiki-steps](furoshiki-steps/) — 包风吕敷：双手占满时点头逐项包好记一次
+- JP63 [depachika-guide](depachika-guide/) — 百货地下卖场：双手提袋看向摊位，点头核对价格保质期
+- JP64 [sakura-game-shuu](sakura-game-shuu/) — 花见等待家庭：抬头玩二十个赏樱游戏计分存档
+- JP65 [asakusa-guide](asakusa-guide/) — 浅草仲见世购物：双手提袋看向屋台，点头核对四项
+- JP66 [hatsumode-steps](hatsumode-steps/) — 初詣高龄参拜者：双手拿御守绘马，点头推进参拜流程
+- JP67 [undoukai-game-shuu](undoukai-game-shuu/) — 运动会等待家庭：抬头玩二十个运动会游戏计分存档
+- JP68 [tanabata-game-shuu](tanabata-game-shuu/) — 七夕等待家庭：抬头玩二十个七夕游戏计分存档
+- JP69 [ginkou-atm-guide](ginkou-atm-guide/) — 银行ATM前：双手提物，转头选手続き点头确认四项
+- JP70 [setsbun-game-shuu](setsbun-game-shuu/) — 節分等待家庭：抬头玩二十个节分游戏计分存档
+- JP71 [hinamatsuri-game-shuu](hinamatsuri-game-shuu/) — 雛祭り等待家庭：抬头玩二十个雛祭り游戏计分存档
+- JP72 [shichigosan-game](shichigosan-game/) — 七五三等待家庭：抬头选游戏，点头玩十轮结算
+- JP73 [bon-odori-games-shuu](bon-odori-games-shuu/) — 盆踊等待家庭：转头选游戏，点头玩二十个计分
+- JP74 [ekiden-cheer](ekiden-cheer/) — 駅伝沿道应援：双手持旗，转头选队点头记通过时刻
 
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。

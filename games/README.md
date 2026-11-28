@@ -2,7 +2,7 @@
 
 中文 | [English](README.en.md) | [日本語](README.ja.md)
 
-头部动作 + 拍照现实交互小游戏系列 · 编号 GA01–GA50：头部动作 GA01–GA40 与拍照游戏 GA41–GA50。用头部动作或拍照与现实互动玩的极简小游戏。
+头部动作 + 拍照现实交互小游戏系列 · 编号 GA01–GA98，共 84 个，以头部动作小游戏为主。用头部动作或拍照与现实互动玩的极简小游戏。
 
 - GA01 [nod-count](nod-count/) — 语音指导10次慢速点头，低头回正算一次
 - GA02 [turn-count](turn-count/) — 语音指导左右转头交替，各5次满10次
@@ -40,4 +40,52 @@
 - GA48 [size-sort](size-sort/) — 摆3个同类物先排大小顺序，再拍照判定全序比对
 - GA49 [texture-hunt](texture-hunt/) — 每轮出一种质地，凑近实物表面拍照判质地
 - GA50 [snap-diff](snap-diff/) — 同场景两拍，先声明改动类再双图判定（系列收官）
+- GA51 [us-fair-games](us-fair-games/) — 美国县集市家庭：头部动作玩二十个集市游戏
+- GA52 [dengmi-game](dengmi-game/) — 元宵家庭猜灯谜：头部方向选答案，十二谜结算
+- GA53 [ireland-dance-step](ireland-dance-step/) — 爱尔兰家庭聚会：头向选舞步点头踩拍十轮结算
+- GA54 [china-tangram-game](china-tangram-game/) — 中国家庭聚会：头向选位点头落板玩七巧板十二图
+- GA55 [china-festival-game-shuu](china-festival-game-shuu/) — 中国春节家庭：头部动作玩二十个春节游戏一本集
+- GA56 [us-thanksgiving-games](us-thanksgiving-games/) — 美国感恩节家庭：点头与头向玩二十个感恩节游戏一本集
+- GA57 [china-square-dance](china-square-dance/) — 中国小区家人：头部方向选舞步点头踩拍玩广场舞十轮
+- GA58 [uk-christmas-games](uk-christmas-games/) — 英国家庭圣诞等待时：点头与头向玩二十个圣诞游戏一本集
+- GA59 [china-lantern-games](china-lantern-games/) — 中国元宵灯会一家人：点头与头向玩二十个灯会游戏一本集
+- GA60 [us-july4-games](us-july4-games/) — 美国独立日家庭：全家一本玩20个独立日游戏，点头计分
+- GA61 [china-midautumn-games](china-midautumn-games/) — 中秋家庭等待时：全家一本玩20个中秋游戏，点头计分
+- GA62 [canada-hockey-games](canada-hockey-games/) — 加拿大冰球季家庭：等待时点头玩二十个冰球游戏
+- GA63 [china-dragonboat-games](china-dragonboat-games/) — 中国端午家庭：等待时点头玩二十个龙舟游戏
+- GA64 [us-easter-games](us-easter-games/) — 美国复活节家庭：等待时点头玩二十个复活节游戏
+- GA65 [china-chongyang-games](china-chongyang-games/) — 中国重阳家庭：等待时点头玩二十个重阳游戏
+- GA66 [australia-summer-games](australia-summer-games/) — 澳大利亚夏季家庭：等待时点头玩二十个夏季游戏
+- GA67 [china-qixi-games](china-qixi-games/) — 中国七夕家庭：等待时点头玩二十个七夕游戏
+- GA68 [uk-bonfire-games](uk-bonfire-games/) — 英国篝火节家庭：等待时点头玩二十个篝火节游戏
+- GA69 [china-winter-games](china-winter-games/) — 中国冬至家庭：等待时点头玩二十个冬至游戏
+- GA70 [us-valentines-games](us-valentines-games/) — 美国情人节家庭：等待时点头玩二十个情人节游戏
+- GA71 [china-qingming-games](china-qingming-games/) — 中国清明家庭：等待时点头玩二十个清明游戏
+- GA72 [ireland-st-patricks-games](ireland-st-patricks-games/) — 爱尔兰圣帕特里克节家庭：等待时点头玩二十个节日游戏
+- GA73 [china-laba-games](china-laba-games/) — 中国腊八家庭：等待时点头玩二十个腊八游戏
+- GA74 [australia-christmas-games](australia-christmas-games/) — 澳大利亚圣诞假期家庭：抬头玩二十个圣诞游戏通关计分存档
+- GA75 [china-ice-games](china-ice-games/) — 中国冰雪节游客：抬头玩二十个冰雪游戏通关计分存档
+- GA76 [ireland-stpatrick-games](ireland-stpatrick-games/) — 爱尔兰圣帕特里克节家庭：抬头玩二十个节日游戏通关计分
+- GA77 [china-kite-game](china-kite-game/) — 中国家庭放风筝：只用头部方向选风向点头放线十轮结算
+- GA78 [canada-winter-games](canada-winter-games/) — 加拿大冬季嘉年华家庭：抬头玩二十个冬季游戏通关计分存档
+- GA79 [china-zigong-lantern-games](china-zigong-lantern-games/) — 中国自贡灯会家庭：抬头玩二十个灯会游戏通关计分存档
+- GA80 [usa-thanksgiving-games](usa-thanksgiving-games/) — 美国感恩节家庭：抬头玩二十个感恩节游戏通关计分存档
+- GA81 [china-dongzhi-games](china-dongzhi-games/) — 中国冬至家庭：抬头玩二十个冬至游戏通关计分存档
+- GA82 [uk-boxing-day-games](uk-boxing-day-games/) — 英国节礼日家庭：抬头玩二十个节礼日游戏通关计分存档
+- GA83 [china-jianzi-game](china-jianzi-game/) — 中国家庭聚会：只用头向选落点点头踢毽子十轮结算存档
+- GA84 [scotland-highland-games](scotland-highland-games/) — 苏格兰高地运动会家庭：只用头向选项目点头参赛十轮结算存档
+- GA85 [china-folk-games](china-folk-games/) — 中国家庭等待时：抬头玩二十个民间游戏通关计分存档
+- GA86 [jamaica-games-shuu](jamaica-games-shuu/) — 牙买加家庭等待时：抬头玩二十个牙买加游戏通关计分存档
+- GA87 [china-ropejump-game](china-ropejump-game/) — 中国家庭跳绳：转头选花样点头开跳十轮结算计分存档
+- GA88 [trinidad-carnival-game](trinidad-carnival-game/) — 特立尼达狂欢节家庭聚会：转头选项目点头参赛十轮结算
+- GA89 [china-board-games-shuu](china-board-games-shuu/) — 中国家庭等待时：抬头玩二十个棋牌游戏通关计分存档
+- GA90 [china-peking-opera-games-shuu](china-peking-opera-games-shuu/) — 中国家庭等待时：抬头玩二十个京剧游戏通关计分存档
+- GA91 [barbados-crop-over-game](barbados-crop-over-game/) — 巴巴多斯丰收节家庭聚会：转头选项目点头参赛十轮结算
+- GA92 [ireland-games-shuu](ireland-games-shuu/) — 爱尔兰家庭聚会：抬头玩二十个爱尔兰游戏通关计分存档
+- GA93 [china-diabolo-game](china-diabolo-game/) — 中国家庭空竹时间：转头选花样点头开抖十轮结算
+- GA94 [nz-haka-game](nz-haka-game/) — 新西兰家庭聚会：转头选哈卡元素点头表演十轮比拼
+- GA95 [china-tang-poetry-games-shuu](china-tang-poetry-games-shuu/) — 中国家庭等待时：转头玩20个唐诗游戏背诗计分
+- GA96 [china-taiji-game](china-taiji-game/) — 中国家庭太极时间：转头选招式点头开练十轮比拼
+- GA97 [australia-games-shuu](australia-games-shuu/) — 澳大利亚家庭聚会：转头选游戏点头玩20个澳洲游戏计分
+- GA98 [china-lion-dance-game](china-lion-dance-game/) — 中国家庭舞狮时间：转头选招式点头开练十轮比拼结算
 完整清单见 [仓库根 README](../README.md) 文末的 Agent 清单。
